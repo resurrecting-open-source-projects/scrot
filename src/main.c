@@ -5,6 +5,7 @@ Copyright 1999-2000 Tom Gilbert <tom@linuxbrit.co.uk,
                                   scrot_sucks@linuxbrit.co.uk>
 Copyright 2009      James Cameron <quozl@us.netrek.org>
 Copyright 2010      Ibragimov Rinat <ibragimovrinat@mail.ru>
+Copyright 2017      Stoney Sauce <stoneysauce@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -56,7 +57,10 @@ main(int argc,
     image = scrot_grab_focused();
   else if (opt.select)
     image = scrot_sel_and_grab_image();
-  else {
+  else if (opt.autoselect)
+    image = gib_imlib_create_image_from_drawable(root, 0, opt.autoselect_x, opt.autoselect_y, opt.autoselect_w, opt.autoselect_h, 1);
+  else
+  {
     scrot_do_delay();
     if (opt.multidisp) {
       image = scrot_grab_shot_multi();

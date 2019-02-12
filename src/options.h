@@ -5,6 +5,7 @@ Copyright 1999-2000 Tom Gilbert <tom@linuxbrit.co.uk,
                                   scrot_sucks@linuxbrit.co.uk>
 Copyright 2009      James Cameron <quozl@us.netrek.org>
 Copyright 2010      Ibragimov Rinat <ibragimovrinat@mail.ru>
+Copyright 2017      Stoney Sauce <stoneysauce@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -47,11 +48,17 @@ struct __scrotoptions
    char *output_file;
    char *thumb_file;
    char *exec;
+   int autoselect;
+   int autoselect_x;
+   int autoselect_y;
+   int autoselect_h;
+   int autoselect_w;
 };
 
 void init_parse_options(int argc, char **argv);
 char *name_thumbnail(char *name);
 void options_parse_thumbnail(char *optarg);
+void options_parse_autoselect(char *optarg);
 extern scrotoptions opt;
 
 #endif

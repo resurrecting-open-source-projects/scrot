@@ -7,6 +7,7 @@ Copyright 2008      William Vera <billy@billy.com.mx>
 Copyright 2009      George Danchev <danchev@spnet.net>
 Copyright 2009      James Cameron <quozl@us.netrek.org>
 Copyright 2010      Ibragimov Rinat <ibragimovrinat@mail.ru>
+Copyright 2017      Stoney Sauce <stoneysauce@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -50,7 +51,7 @@ init_parse_options(int argc, char **argv)
 static void
 scrot_parse_option_array(int argc, char **argv)
 {
-   static char stropts[] = "bcd:e:hmq:st:uv+:z";
+   static char stropts[] = "a:bcd:e:hmq:st:uv+:z";
    static struct option lopts[] = {
       /* actions */
       {"help", 0, 0, 'h'},                  /* okay */
@@ -61,13 +62,14 @@ scrot_parse_option_array(int argc, char **argv)
       {"focussed", 0, 0, 'u'},	/* macquarie dictionary has both spellings */
       {"border", 0, 0, 'b'},
       {"multidisp", 0, 0, 'm'},
-	  {"silent", 0, 0, 'z'},
+      {"silent", 0, 0, 'z'},
       /* toggles */
       {"thumb", 1, 0, 't'},
       {"delay", 1, 0, 'd'},
       {"quality", 1, 0, 'q'},
       {"exec", 1, 0, 'e'},
       {"debug-level", 1, 0, '+'},
+      {"autoselect", required_argument, 0, 'a'},
       {0, 0, 0, 0}
    };
    int optch = 0, cmdx = 0;
@@ -119,6 +121,9 @@ scrot_parse_option_array(int argc, char **argv)
         case 'z':
            opt.silent = 1;
            break;
+        case 'a':
+	  options_parse_autoselect(optarg);
+	   break;
         default:
            break;
       }
@@ -176,6 +181,27 @@ name_thumbnail(char *name)
       sprintf(new_title, "%s-thumb", name);
 
    return new_title;
+}
+
+void
+options_parse_autoselect(char *optarg)
+{
+   char *tok;
+   const char tokdelim[2] = ",";
+   int dimensions[4];
+   int i=0;
+
+   if (strchr(optarg, ',')) /* geometry dimensions must be in format x,y,w,h   */
+   {
+     dimensions[i++] = atoi(strtok(optarg, tokdelim));
+     while (tok = strtok(NULL, tokdelim) )
+        dimensions[i++] = atoi(tok);
+     opt.autoselect=1;
+     opt.autoselect_x=dimensions[0];
+     opt.autoselect_y=dimensions[1];
+     opt.autoselect_w=dimensions[2];
+     opt.autoselect_h=dimensions[3];
+   }
 }
 
 void
@@ -240,6 +266,7 @@ show_usage(void)
            "  current directory.\n" "  See man " PACKAGE " for more details\n"
            "  -h, --help                display this help and exit\n"
            "  -v, --version             output version information and exit\n"
+           "  -a, --autoselect          non-interactively choose a rectangle of x,y,w,h\n"
            "  -b, --border              When selecting a window, grab wm border too\n"
            "  -c, --count               show a countdown before taking the shot\n"
            "  -d, --delay NUM           wait NUM seconds before taking a shot\n"
