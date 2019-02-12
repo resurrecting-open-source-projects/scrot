@@ -28,7 +28,7 @@
 AUTOMAKE_OPTIONS = 1.4 foreign
 
 # A list of all the files in the current directory which can be regenerated
-MAINTAINERCLEANFILES = Makefile.in scrot.spec
+MAINTAINERCLEANFILES = Makefile.in
 
 AM_LDFLAGS        = -L/usr/X11R6/lib -L/usr/lib -L/usr/local/lib
 AM_CPPFLAGS       = -I/usr/X11R6/include \
