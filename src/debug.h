@@ -26,17 +26,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef DEBUG_H
 #define DEBUG_H
 
-#define DEBUG
-
-#ifdef WITH_DMALLOC
-#include <dmalloc.h>
-#define emalloc(a) malloc(a)
-#define estrdup(a) strdup(a)
-#define erealloc(a,b) realloc(a,b)
-#else
-#define emalloc(a) _emalloc(a)
-#define estrdup(a) _estrdup(a)
-#define erealloc(a,b) _erealloc(a,b)
-#endif
+/* #define DEBUG */
 
 #endif

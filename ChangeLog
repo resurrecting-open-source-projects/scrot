@@ -1,3 +1,33 @@
+Wed Mar 12 13:20:11 GMT 2003  Tom Gilbert <tom@linuxbrit.co.uk>
+
+  * Patch from Claes Nasten <pekdon@gmx.net>
+  * Enhances thumbnail related options:
+  "First, specifying -t would break the $f param to -exec.
+   Second, the thumbnail and the screenshot got different timestamps.
+   Third, one weren't able to specify geometry with -t.
+  
+   I fixed those and added, $m ( mini, instead of $t as it was taken ) so
+   that one can do.
+  
+   $ scrot -t 91x0 -e 'echo $f,$m'
+   2003-03-08-104735_800x600_scrot.png,2003-03-08-104735_91x68_scrot-thumb.png`
+  
+   About the geometry, having either the width or height set to 0 makes it
+   fill in the other pertaining the aspect ratio.
+  "
+  * Once I update the docs I'll release 0.8
+
+Tue Feb 25 13:13:03 GMT 2003  Tom Gilbert <tom@linuxbrit.co.uk>
+
+  * Update for latest giblib. Requires latest release now.
+  * release 0.7
+
+Sat Feb 23 12:37:29 GMT 2002  Tom Gilbert <tom@linuxbrit.co.uk>
+
+  * Patch from Eric Z. Ayers <eric.ayers@compgen.com>
+  * Changes the cursor to a bottom left corner when you start to drag to
+    select a grab region.
+
 Thu Jan 11 17:43:19 2001  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
 
 	* Patch from Michael Roberts <m.t.roberts@student.murdoch.edu.au>

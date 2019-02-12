@@ -68,7 +68,8 @@ void show_mini_usage(void);
 void init_x_and_imlib(char *dispstr, int screen_num);
 char *chop_file_from_full_path(char *str);
 Imlib_Image scrot_grab_shot(void);
-void scrot_exec_app(Imlib_Image im, char *filename);
+void scrot_exec_app(Imlib_Image image, struct tm *tm,
+                    char *filename_im, char *filename_thumb);
 void scrot_do_delay(void);
 Imlib_Image scrot_sel_and_grab_image(void);
 void scrot_sel_area(int *x, int *y, int *w, int *h);
@@ -76,7 +77,9 @@ Window scrot_get_window(Display *display,Window window,int x,int y);
 Window scrot_get_client_window(Display * display, Window target);
 Window scrot_find_window_by_property(Display * display, const Window window,
                                      const Atom property);
-char *im_printf(char *str, char *filename, Imlib_Image im);
+char *im_printf(char *str, struct tm *tm,
+                char *filename_im, char *filename_thumb,
+                Imlib_Image im);
 Imlib_Image scrot_grab_shot_multi(void);
 Imlib_Image stalk_image_concat(gib_list *images);
 

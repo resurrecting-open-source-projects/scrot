@@ -1,7 +1,7 @@
 dnl Process this file with autoconf to create configure.
 
 AC_INIT(src/main.c)
-AM_INIT_AUTOMAKE(scrot, 0.6)
+AM_INIT_AUTOMAKE(scrot, 0.8)
 AM_CONFIG_HEADER(src/config.h)
 
 AC_PROG_CC
@@ -13,7 +13,7 @@ AC_PROG_MAKE_SET
 
 AM_MAINTAINER_MODE
 
-AC_PATH_GENERIC(giblib, 1.2.1, [
+AC_PATH_GENERIC(giblib, 1.2.3, [
   AC_SUBST(GIBLIB_LIBS)
   AC_SUBST(GIBLIB_CFLAGS) ],
   AC_MSG_ERROR(Cannot find giblib: Is giblib-config in the path?) )

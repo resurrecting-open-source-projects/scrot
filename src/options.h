@@ -36,14 +36,16 @@ struct __scrotoptions
    int border;
    int multidisp;
    int thumb;
-
+   int thumb_width;
+   int thumb_height;
    char *output_file;
    char *thumb_file;
    char *exec;
 };
 
 void init_parse_options(int argc, char **argv);
-char *name_thumbnail(char *);
+char *name_thumbnail(char *name);
+void options_parse_thumbnail(char *optarg);
 extern scrotoptions opt;
 
 #endif

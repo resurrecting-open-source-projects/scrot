@@ -84,7 +84,7 @@ scrot_parse_option_array(int argc, char **argv)
            opt.delay = atoi(optarg);
            break;
         case 'e':
-           opt.exec = estrdup(optarg);
+           opt.exec = gib_estrdup(optarg);
            break;
         case 'm':
            opt.multidisp = 1;
@@ -102,11 +102,7 @@ scrot_parse_option_array(int argc, char **argv)
            opt.countdown = 1;
            break;
         case 't':
-           opt.thumb = atoi(optarg);
-           if (opt.thumb < 1)
-              opt.thumb = 1;
-           if (opt.thumb > 100)
-              opt.thumb = 100;
+           options_parse_thumbnail(optarg);
            break;
         default:
            break;
@@ -127,7 +123,7 @@ scrot_parse_option_array(int argc, char **argv)
                opt.thumb_file = name_thumbnail(opt.output_file);
          }
          else
-            weprintf("unrecognised option %s\n", argv[optind++]);
+            gib_weprintf("unrecognised option %s\n", argv[optind++]);
       }
    }
 
@@ -144,7 +140,7 @@ name_thumbnail(char *name)
    size_t diff = 0;
 
    length = strlen(name) + 7;
-   new_title = emalloc(length);
+   new_title = gib_emalloc(length);
 
    dot_pos = strrchr(name, '.');
    if (dot_pos)
@@ -159,6 +155,42 @@ name_thumbnail(char *name)
       sprintf(new_title, "%s-thumb", name);
 
    return new_title;
+}
+
+void
+options_parse_thumbnail(char *optarg)
+{
+   char *tok;
+
+   if (strchr(optarg, 'x')) /* We want to specify the geometry */
+   {
+     tok = strtok(optarg, "x");
+     opt.thumb_width = atoi(tok);
+     tok = strtok(NULL, "x");
+     if (tok)
+     {
+       opt.thumb_width = atoi(optarg);
+       opt.thumb_height = atoi(tok);
+
+       if (opt.thumb_width < 0)
+         opt.thumb_width = 1;
+       if (opt.thumb_height < 0)
+         opt.thumb_height = 1;
+
+       if (!opt.thumb_width && !opt.thumb_height)
+         opt.thumb = 0;
+       else
+         opt.thumb = 1;
+     }
+   }
+   else
+   {
+     opt.thumb = atoi(optarg);
+     if (opt.thumb < 1)
+       opt.thumb = 1;
+     else if (opt.thumb > 100)
+       opt.thumb = 100;
+   }
 }
 
 void
@@ -200,7 +232,8 @@ show_usage(void)
            "  -s, --select              interactively choose a window or rectnagle\n"
            "                            with the mouse\n"
            "  -t, --thumb NUM           generate thumbnail too. NUM is the percentage\n"
-           "                            of the original size for the thumbnail to be.\n"
+           "                            of the original size for the thumbnail to be,\n"
+           "                            or the geometry in percent, e.g. 50x60 or 80x20.\n"
            "\n" "  SPECIAL STRINGS\n"
            "  Both the --exec and filename parameters can take format specifiers\n"
            "  that are expanded by " PACKAGE " when encountered.\n"
@@ -211,6 +244,7 @@ show_usage(void)
            "  and are prefixed by '$'\n"
            "  The following specifiers are recognised:\n"
            "                  $f image path/filename (ignored when used in the filename)\n"
+           "                  $m thumbnail path/filename\n"
            "                  $n image name (ignored when used in the filename)\n"
            "                  $s image size (bytes) (ignored when used in the filename)\n"
            "                  $p image pixel size\n"
