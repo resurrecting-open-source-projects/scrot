@@ -26,7 +26,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 AM_LDFLAGS        = -L/usr/X11R6/lib
-INCLUDES          = -g -O3 -Wall -I/usr/X11R6/include \
+AM_CPPFLAGS       = -g -O3 -Wall -I/usr/X11R6/include \
 $(X_CFLAGS) -I$(prefix)/include -I$(includedir) -I. \
 -DPREFIX=\""$(prefix)"\" @GIBLIB_CFLAGS@
 LIBOBJS = @LIBOBJS@

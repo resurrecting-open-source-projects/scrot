@@ -31,7 +31,7 @@ AUTOMAKE_OPTIONS = 1.4 foreign
 MAINTAINERCLEANFILES = Makefile.in scrot.spec
 
 AM_LDFLAGS        = -L/usr/X11R6/lib -L/usr/lib -L/usr/local/lib
-INCLUDES          = -I/usr/X11R6/include \
+AM_CPPFLAGS       = -I/usr/X11R6/include \
 $(X_CFLAGS) -I$(prefix)/include -I$(includedir) -I.
 
 man_MANS = scrot.1

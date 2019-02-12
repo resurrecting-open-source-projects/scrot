@@ -1,8 +1,8 @@
 dnl Process this file with autoconf to create configure.
 
-AC_INIT
+AC_INIT([scrot], [0.9], [https://github.com/resurrecting-open-source-projects/scrot/issues])
 AC_CONFIG_SRCDIR([src/main.c])
-AM_INIT_AUTOMAKE(scrot, 0.8)
+AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(src/config.h)
 
 AC_PROG_CC
@@ -28,8 +28,5 @@ AC_SUBST(GIBLIB_CFLAGS)
 AC_CHECK_FUNC(getopt_long,,[LIBOBJS="$LIBOBJS getopt.o getopt1.o"])
 AC_SUBST(LIBOBJS)
 
-AC_CONFIG_FILES([Makefile \
-scrot.spec \
-src/Makefile \
-])
+AC_CONFIG_FILES([Makefile src/Makefile])
 AC_OUTPUT
