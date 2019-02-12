@@ -34,7 +34,7 @@ AM_LDFLAGS        = -L/usr/X11R6/lib -L/usr/lib -L/usr/local/lib
 AM_CPPFLAGS       = -I/usr/X11R6/include \
 $(X_CFLAGS) -I$(prefix)/include -I$(includedir) -I.
 
-man_MANS = scrot.1
+man_MANS = man/scrot.1
 
 #docs_DATA = README AUTHORS ChangeLog TODO
 #docsdir = $(prefix)/doc/scrot
