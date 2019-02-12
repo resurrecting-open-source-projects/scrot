@@ -1,6 +1,9 @@
 /* main.c
 
-Copyright (C) 1999,2000 Tom Gilbert.
+Copyright 1999-2000 Tom Gilbert <tom@linuxbrit.co.uk,
+                                  gilbertt@linuxbrit.co.uk,
+                                  scrot_sucks@linuxbrit.co.uk>
+Copyright 2009      James Cameron <quozl@us.netrek.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -48,7 +51,9 @@ main(int argc,
   }
 
 
-  if (opt.select)
+  if (opt.focused)
+    image = scrot_grab_focused();
+  else if (opt.select)
     image = scrot_sel_and_grab_image();
   else {
     scrot_do_delay();
@@ -168,6 +173,22 @@ scrot_exec_app(Imlib_Image image, struct tm *tm,
   execstr = im_printf(opt.exec, tm, filename_im, filename_thumb, image);
   system(execstr);
   exit(0);
+}
+
+Imlib_Image
+scrot_grab_focused(void)
+{
+  Imlib_Image im = NULL;
+  int rx = 0, ry = 0, rw = 0, rh = 0;
+  Window target = None;
+  int ignored;
+
+  scrot_do_delay();
+  XGetInputFocus(disp, &target, &ignored);
+  if (!scrot_get_geometry(target, &rx, &ry, &rw, &rh)) return NULL;
+  scrot_nice_clip(&rx, &ry, &rw, &rh);
+  im = gib_imlib_create_image_from_drawable(root, 0, rx, ry, rw, rh, 1);
+  return im;
 }
 
 Imlib_Image
@@ -313,62 +334,81 @@ scrot_sel_and_grab_image(void)
         rh = 0 - rh;
       }
     } else {
-      Window child;
-      XWindowAttributes attr;
-      int stat;
-
       /* else it's a window click */
-      /* get geometry of window and use that */
-      /* get windowmanager frame of window */
-      if (target != root) {
-        unsigned int d, x;
-        int status;
-
-        status = XGetGeometry(disp, target, &root, &x, &x, &d, &d, &d, &d);
-        if (status != 0) {
-          Window rt, *children, parent;
-
-          for (;;) {
-            /* Find window manager frame. */
-            status = XQueryTree(disp, target, &rt, &parent, &children, &d);
-            if (status && (children != None))
-              XFree((char *) children);
-            if (!status || (parent == None) || (parent == rt))
-              break;
-            target = parent;
-          }
-          /* Get client window. */
-          if (!opt.border)
-            target = scrot_get_client_window(disp, target);
-          XRaiseWindow(disp, target);
-        }
-      }
-      stat = XGetWindowAttributes(disp, target, &attr);
-      if ((stat == False) || (attr.map_state != IsViewable))
-        return NULL;
-      rw = attr.width;
-      rh = attr.height;
-      XTranslateCoordinates(disp, target, root, 0, 0, &rx, &ry, &child);
+      if (!scrot_get_geometry(target, &rx, &ry, &rw, &rh)) return NULL;
     }
-
-    /* clip rectangle nicely */
-    if (rx < 0) {
-      rw += rx;
-      rx = 0;
-    }
-    if (ry < 0) {
-      rh += ry;
-      ry = 0;
-    }
-    if ((rx + rw) > scr->width)
-      rw = scr->width - rx;
-    if ((ry + rh) > scr->height)
-      rh = scr->height - ry;
+    scrot_nice_clip(&rx, &ry, &rw, &rh);
 
     XBell(disp, 0);
     im = gib_imlib_create_image_from_drawable(root, 0, rx, ry, rw, rh, 1);
   }
   return im;
+}
+
+/* clip rectangle nicely */
+void
+scrot_nice_clip(int *rx, 
+		int *ry, 
+		int *rw, 
+		int *rh)
+{
+  if (*rx < 0) {
+    *rw += *rx;
+    *rx = 0;
+  }
+  if (*ry < 0) {
+    *rh += *ry;
+    *ry = 0;
+  }
+  if ((*rx + *rw) > scr->width)
+    *rw = scr->width - *rx;
+  if ((*ry + *rh) > scr->height)
+    *rh = scr->height - *ry;
+}
+
+/* get geometry of window and use that */
+int
+scrot_get_geometry(Window target,
+		   int *rx, 
+		   int *ry, 
+		   int *rw, 
+		   int *rh)
+{
+  Window child;
+  XWindowAttributes attr;
+  int stat;
+
+  /* get windowmanager frame of window */
+  if (target != root) {
+    unsigned int d, x;
+    int status;
+    
+    status = XGetGeometry(disp, target, &root, &x, &x, &d, &d, &d, &d);
+    if (status != 0) {
+      Window rt, *children, parent;
+      
+      for (;;) {
+	/* Find window manager frame. */
+	status = XQueryTree(disp, target, &rt, &parent, &children, &d);
+	if (status && (children != None))
+	  XFree((char *) children);
+	if (!status || (parent == None) || (parent == rt))
+	  break;
+	target = parent;
+      }
+      /* Get client window. */
+      if (!opt.border)
+	target = scrot_get_client_window(disp, target);
+      XRaiseWindow(disp, target);
+    }
+  }
+  stat = XGetWindowAttributes(disp, target, &attr);
+  if ((stat == False) || (attr.map_state != IsViewable))
+    return 0;
+  *rw = attr.width;
+  *rh = attr.height;
+  XTranslateCoordinates(disp, target, root, 0, 0, rx, ry, &child);
+  return 1;
 }
 
 Window

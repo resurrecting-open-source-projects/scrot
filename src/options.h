@@ -1,6 +1,9 @@
 /* options.h
 
-Copyright (C) 1999,2000 Tom Gilbert.
+Copyright 1999-2000 Tom Gilbert <tom@linuxbrit.co.uk,
+                                  gilbertt@linuxbrit.co.uk,
+                                  scrot_sucks@linuxbrit.co.uk>
+Copyright 2009      James Cameron <quozl@us.netrek.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -32,6 +35,7 @@ struct __scrotoptions
    int delay;
    int countdown;
    int select;
+   int focused;
    int quality;
    int border;
    int multidisp;
