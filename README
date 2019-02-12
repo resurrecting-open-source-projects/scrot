@@ -1,7 +1,36 @@
-Compile:
+SCReenshOT - command line screen capture utility
+================================================
 
+scrot (SCReenshOT) is a simple command line screen capture
+utility that uses imlib2 to grab and save images. Multiple
+image formats are supported through imlib2's dynamic saver
+modules.
+
+Some features of the scrot:
+  - support to multiple image formats (JPG, PNG, GIF, etc.).
+  - optimization of the screen shots image quality.
+  - capture a specific window or a rectangular area on the
+    screen with the help of switch.
+
+scrot also can be used to monitor a desktop PC in admin absent
+and register unwanted activities.
+
+
+BUILD
+=====
+
+$ ./autogen.sh
 $ ./configure
 $ make
-$ su -c "make install"
+# make install
 
-(Red hat users, use $ ./configure --prefix=/usr)
+To return to original source code, you can use '$ make distclean' command.
+
+
+AUTHOR
+======
+
+scrot was originally developed by Tom Gilbert under MIT-advertising license.
+
+Currently, source code and newer versions are available at
+https://github.com/resurrecting-open-source-projects/scrot
