@@ -1,3 +1,23 @@
+Tue Feb 12 19:06:11 -03:00 2019  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
+Version 0.9
+
+  * Added --autoselect rectangle option. Thanks to Stoney Sauce
+    <stoneysauce@gmail.com>.
+  * Added --focused option. Thanks to James Cameron <quozl@us.netrek.org>.
+  * Added an autogen.sh file.
+  * Character cleanup for UTF-8 compatibility. Thanks to William Vera
+    <billy@billy.com.mx>.
+  * Fixed a missing option for beep prevention. Thanks to Ibragimov Rinat
+    <ibragimovrinat@mail.ru>.
+  * Fixed spelling errors in final binary. Thanks to William Vera
+    <billy@billy.com.mx>.
+  * Improved the autotools (acinclude.m4, configure.ac, Makefile.am and
+    src/Makefile.am).
+  * Improved the GCC hardening.
+  * Prevent arbitrary long file names. Thanks to George Danchev
+    <danchev@spnet.net>.
+  * Several fixes in manpage.
+
 Wed Mar 12 13:20:11 GMT 2003  Tom Gilbert <tom@linuxbrit.co.uk>
 
   * Patch from Claes Nasten <pekdon@gmx.net>
