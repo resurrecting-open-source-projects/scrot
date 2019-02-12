@@ -4,6 +4,7 @@ Copyright 1999-2000 Tom Gilbert <tom@linuxbrit.co.uk,
                                   gilbertt@linuxbrit.co.uk,
                                   scrot_sucks@linuxbrit.co.uk>
 Copyright 2009      James Cameron <quozl@us.netrek.org>
+Copyright 2010      Ibragimov Rinat <ibragimovrinat@mail.ru>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -38,6 +39,7 @@ struct __scrotoptions
    int focused;
    int quality;
    int border;
+   int silent;   
    int multidisp;
    int thumb;
    int thumb_width;

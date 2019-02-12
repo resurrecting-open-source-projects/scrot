@@ -6,6 +6,7 @@ Copyright 1999-2000 Tom Gilbert <tom@linuxbrit.co.uk,
 Copyright 2008      William Vera <billy@billy.com.mx>
 Copyright 2009      George Danchev <danchev@spnet.net>
 Copyright 2009      James Cameron <quozl@us.netrek.org>
+Copyright 2010      Ibragimov Rinat <ibragimovrinat@mail.ru>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -49,7 +50,7 @@ init_parse_options(int argc, char **argv)
 static void
 scrot_parse_option_array(int argc, char **argv)
 {
-   static char stropts[] = "bcd:e:hmq:st:uv+:";
+   static char stropts[] = "bcd:e:hmq:st:uv+:z";
    static struct option lopts[] = {
       /* actions */
       {"help", 0, 0, 'h'},                  /* okay */
@@ -60,6 +61,7 @@ scrot_parse_option_array(int argc, char **argv)
       {"focussed", 0, 0, 'u'},	/* macquarie dictionary has both spellings */
       {"border", 0, 0, 'b'},
       {"multidisp", 0, 0, 'm'},
+	  {"silent", 0, 0, 'z'},
       /* toggles */
       {"thumb", 1, 0, 't'},
       {"delay", 1, 0, 'd'},
@@ -113,6 +115,9 @@ scrot_parse_option_array(int argc, char **argv)
            break;
         case 't':
            options_parse_thumbnail(optarg);
+           break;
+        case 'z':
+           opt.silent = 1;
            break;
         default:
            break;
@@ -251,6 +256,7 @@ show_usage(void)
            "  -t, --thumb NUM           generate thumbnail too. NUM is the percentage\n"
            "                            of the original size for the thumbnail to be,\n"
            "                            or the geometry in percent, e.g. 50x60 or 80x20.\n"
+           "  -z, --silent              Prevent beeping\n"		   
            "\n" "  SPECIAL STRINGS\n"
            "  Both the --exec and filename parameters can take format specifiers\n"
            "  that are expanded by " PACKAGE " when encountered.\n"

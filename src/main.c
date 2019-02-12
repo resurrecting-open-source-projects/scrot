@@ -4,6 +4,7 @@ Copyright 1999-2000 Tom Gilbert <tom@linuxbrit.co.uk,
                                   gilbertt@linuxbrit.co.uk,
                                   scrot_sucks@linuxbrit.co.uk>
 Copyright 2009      James Cameron <quozl@us.netrek.org>
+Copyright 2010      Ibragimov Rinat <ibragimovrinat@mail.ru>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -157,7 +158,7 @@ scrot_grab_shot(void)
 {
   Imlib_Image im;
 
-  XBell(disp, 0);
+  if (! opt.silent) XBell(disp, 0);
   im =
     gib_imlib_create_image_from_drawable(root, 0, 0, 0, scr->width,
                                          scr->height, 1);
@@ -339,7 +340,7 @@ scrot_sel_and_grab_image(void)
     }
     scrot_nice_clip(&rx, &ry, &rw, &rh);
 
-    XBell(disp, 0);
+    if (! opt.silent) XBell(disp, 0);
     im = gib_imlib_create_image_from_drawable(root, 0, rx, ry, rw, rh, 1);
   }
   return im;
