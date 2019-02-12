@@ -1,0 +1,89 @@
+Thu Jan 11 17:43:19 2001  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
+
+	* Patch from Michael Roberts <m.t.roberts@student.murdoch.edu.au>
+        to add -t, --thumb option to generate thumbnails. I modified it a
+	little, specify the percentage size of the thumbnail on the
+	commandline.
+
+Mon Dec  4 23:46:03 2000  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
+
+	* Adde -m, --multidisp, which is for multiple heads (not xinerama)
+	grabs shots from each and joins them together.
+	* Fixed doing the string escapes when saving files. My bad.
+
+
+Sun Nov 12 15:16:40 2000  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
+
+	* Now uses giblib. You'll need the very latest giblib from CVS as
+	of right now.
+
+Sun Nov  5 02:17:57 2000  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
+
+	* Beep when about to take the shot.
+	* Added -b, --border to grab wm borders too.
+	* Ungrab mouse, keyboard before sleeping for --delay.
+	* -e 'feh &f' is not intuitive. Can't use '%' cos that's reserved
+	for strftime, so now the internal format specifiers are prefixed
+	'$'. Trouble is, you now _must_ use '', not "", or the shell will
+	interpret the $ sign and perform variable
+	substiution. Suggestions?
+	* Purged boring debugging shit.
+
+Mon Oct 30 18:54:05 2000  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
+
+	* I can't be arsed to type all this again, so here's the new
+	manpage entrys:
+	* If [file] is not specified, a date-stamped file will be
+	dropped in the current directory.
+	* SPECIAL STRINGS
+	Both the --exec and filename parameters  can  take  format
+        specifiers  that  are  expanded by scrot when encountered.
+        There are two types of format specifier.  Characters  pre-
+        ceded  by  a  '%' are interpretted by strftime(2). See man
+        strftime for examples.  These options may be used to refer
+        to  the current date and time.  The second kind are inter-
+        nal to scrot and are prefixed by '&' The following  speci-
+        fiers are recognised:
+        &f image path/filename (ignored when used in the filename)
+        &n image name (ignored when used in the filename)
+        &s image size (bytes) (ignored when used in the filename)
+        &p image pixel size
+        &w image width
+        &h image height
+        &t image format
+        && prints a literal '&'
+        \n prints a newline (ignored when used in the filename)
+        EXAMPLE
+        scrot '%Y-%m-%d_&wx&h.png' -e 'mv &f ~/shots/'
+        This  would  create   a   file   called   something   like
+        2000-10-30_2560x1024.png  and move it to your shots direc-
+        tory.
+	
+
+Sun Oct 29 01:02:16 2000  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
+
+	* Added -q, --quality for setting compression quality.
+
+Fri Oct 27 21:01:45 2000  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
+
+	* Added -s, --select. Let's you pick which window to grab by
+	clicking on it, or you can draw a rectangle and grab that area :-)
+	Also, while scrot has the mouse grabbed, hitting any key will
+	cancel the shot and release it.
+	* Plus, something import won't do, if you set a delay, you can
+	choose the window or area first, then the delay occurs before the
+	shot is taken.
+
+Thu Oct 26 20:37:08 2000  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
+
+	* Patch from richlowe to show countdown with delay (-c,
+	--count). Cheers bud.
+
+Thu Oct 26 15:22:22 2000  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
+
+	* Added -d, --delay option to wait before shooting.
+
+Thu Oct 26 14:09:52 2000  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
+
+	* Created scrot.
+

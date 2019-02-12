@@ -1,0 +1,10 @@
+/* src/config.h.in.  Generated automatically from configure.ac by autoheader.  */
+
+/* Name of package */
+#undef PACKAGE
+
+/* Version number of package */
+#undef VERSION
+
+/* Define to empty if `const' does not conform to ANSI C. */
+#undef const

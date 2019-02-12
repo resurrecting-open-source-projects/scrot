@@ -1,0 +1,120 @@
+.TH scrot 1 "Oct 26, 2000"
+.SH NAME
+scrot - Screen capture using imlib2
+.SH SYNOPSIS
+scrot [options] [file]
+.SH DESCRIPTION
+.B scrot
+is a screen capture utility using the
+.B imlib2
+library to aquire and save images.
+.B scrot
+has a few options, detailed below. Specify [file] as the filename to save
+the screenshot to.
+If [file] is not specified, a date-stamped file will be dropped in the
+current directory.
+.SH OPTIONS
+.TP 5
+.B -h, --help
+display help output and exit.
+.TP 5
+.B -v, --version
+output version information and exit.
+.TP 5
+.B -b, --border
+When selecting a window, grab wm border too
+.TP 5
+.B -c, --count
+Display a countdown when used with delay.
+.TP 5
+.B -d, --delay NUM
+Wait NUM seconds before taking a shot.
+.TP 5
+.B -e, --exec APP
+Exec APP on the saved image.
+.TP 5
+.B -q, --quality NUM
+Image quality (1-100) high value means high size, low compression. Default:
+75. (Effect differs depending on file format chosen).
+.TP 5
+.B -m, --multidisp
+For multiple heads, grab shot from each and join them together.
+.TP 5
+.B -s, --select
+Interactively select a window or rectangle with the mouse.
+.TP 5
+.B -t, --thumb NUM
+generate thumbnail too. NUM is the percentage of the original size for the
+thumbnail to be.
+.SH SPECIAL STRINGS
+Both the
+.B --exec
+and
+.B filename
+parameters can take format specifiers
+that are expanded by scrot when encountered.
+There are two types of format specifier. Characters preceded by a '%'
+are interpretted by strftime(2). See man strftime for examples.
+These options may be used to refer to the current date and time.
+The second kind are internal to scrot and are prefixed by '$'
+The following specifiers are recognised:
+.br
+.B $f
+image path/filename (ignored when used in the filename)
+.br
+.B $n
+image name (ignored when used in the filename)
+.br
+.B $s
+image size (bytes) (ignored when used in the filename)
+.br
+.B $p
+image pixel size
+.br
+.B $w
+image width
+.br
+.B $h
+image height
+.br
+.B $t
+image format
+.br
+.B $$
+prints a literal '$'
+.br
+.nf
+\\n prints a newline (ignored when used in the filename)
+.fi
+.SH EXAMPLE
+scrot '%Y-%m-%d_$wx$h.png' -e 'mv $f ~/shots/'
+.br
+This would create a file called something like
+2000-10-30_2560x1024.png and move it to your shots directory.
+.SH BUGS
+None known.
+.SH LICENSE
+Copyright Tom Gilbert 2000
+.PP
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to
+deal in the Software without restriction, including without limitation the
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+sell copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+.PP
+The above copyright notice and this permission notice shall be included in
+all copies of the Software, its documentation and marketing & publicity
+materials, and acknowledgment shall be given in the documentation, materials
+and software packages that this Software was used.
+.PP
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+.PP
+Email bugs and feature requests to
+.br
+.B <scrot_sucks@linuxbrit.co.uk>
