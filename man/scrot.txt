@@ -1,0 +1,68 @@
+NAME
+  scrot - command line screen capture utility
+
+SYNOPSIS
+  scrot [options] [file]
+
+DESCRIPTION
+  scrot (SCReenshOT) is a simple command line screen capture
+  utility that uses imlib2 to grab and save images. Multiple
+  image formats are supported through imlib2's dynamic saver
+  modules.
+
+  Some features of the scrot:
+    - support to multiple image formats (JPG, PNG, GIF, etc.).
+    - optimization of the screen shots image quality.
+    - capture a specific window or a rectangular area on the
+      screen with the help of switch.
+
+  scrot also can be used to monitor a desktop PC in admin absent
+  and register unwanted activities.
+
+OPTIONS
+  -h, --help         Display help output and exit.
+  -v, --version      Output version information and exit.
+  -a, --autoselect   Non-interactively choose a rectangle of x,y,w,h.
+  -b, --border       When selecting a window, grab wm border too.
+  -c, --count        Display a countdown when used with delay.
+  -d, --delay NUM    Wait NUM seconds before taking a shot.
+  -e, --exec APP     Exec APP on the saved image.
+  -q, --quality NUM  Image  quality (1-100) high value means high size, low
+                     compression. Default: 75. (Effect differs depending on
+                     file format chosen).
+  -m, --multidisp    For multiple heads, grab shot from each and join them
+                     together.
+  -s, --select       Interactively select a window or rectangle with the mouse.
+  -u, --focused      Use the currently focused window.
+  -t, --thumb NUM    Generate thumbnail too. NUM is the percentage of the
+                     original size for the thumbnail to be.
+  -z, --silent       Prevent beeping.
+
+SPECIAL STRINGS
+  Both the --exec and filename parameters can take format specifiers that are
+  expanded by scrot when encountered. There are two types of format specifier.
+  Characters preceded by a '%' are interpreted by strftime(2). See man strftime
+  for examples. These options may be used to refer to the current date and
+  time. The second kind are internal to scrot and are prefixed by '$' The
+  following specifiers are recognised:
+
+    $f  image path/filename (ignored when used in the filename)
+    $n  image name (ignored when used in the filename)
+    $s  image size (bytes) (ignored when used in the filename)
+    $p  image pixel size
+    $w  image width
+    $h  image height
+    $t  image format
+    $$  print a literal '$'
+    \\n  print a newline (ignored when used in the filename)
+
+EXAMPLE
+  scrot '%Y-%m-%d_$wx$h.png' -e 'mv $f ~/shots/'  
+       This would create a file called something like 2000-10-30_2560x1024.png
+       and move it to your shots directory.
+
+AUTHOR
+  scrot was originally developed by Tom Gilbert under MIT-advertising license.
+
+  Currently, source code and newer versions are available at
+  https://github.com/resurrecting-open-source-projects/scrot
