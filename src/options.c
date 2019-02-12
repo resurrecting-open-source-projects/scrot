@@ -4,6 +4,7 @@ Copyright 1999-2000 Tom Gilbert <tom@linuxbrit.co.uk,
                                   gilbertt@linuxbrit.co.uk,
                                   scrot_sucks@linuxbrit.co.uk>
 Copyright 2008      William Vera <billy@billy.com.mx>
+Copyright 2009      George Danchev <danchev@spnet.net>
 Copyright 2009      James Cameron <quozl@us.netrek.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -128,6 +129,12 @@ scrot_parse_option_array(int argc, char **argv)
          if (!opt.output_file)
          {
             opt.output_file = argv[optind++];
+
+            if ( strlen(opt.output_file) > 256 ) {
+               printf("output filename too long.\n");
+               exit(EXIT_FAILURE);
+            }
+
             if (opt.thumb)
                opt.thumb_file = name_thumbnail(opt.output_file);
          }
