@@ -1,8 +1,7 @@
 # Copyright 1999-2000 Tom Gilbert <tom@linuxbrit.co.uk,
 #                                   gilbertt@linuxbrit.co.uk,
 #                                   scrot_sucks@linuxbrit.co.uk>
-# Copyright 2009      James Cameron <quozl@us.netrek.org>
-# Copyright 2015      Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
+# Copyright 2015-2016 Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to
@@ -31,7 +30,7 @@ AUTOMAKE_OPTIONS = 1.4 foreign
 # A list of all the files in the current directory which can be regenerated
 MAINTAINERCLEANFILES = Makefile.in scrot.spec
 
-LDFLAGS           = -L/usr/X11R6/lib -L/usr/lib -L/usr/local/lib
+AM_LDFLAGS        = -L/usr/X11R6/lib -L/usr/lib -L/usr/local/lib
 INCLUDES          = -I/usr/X11R6/include \
 $(X_CFLAGS) -I$(prefix)/include -I$(includedir) -I.
 
