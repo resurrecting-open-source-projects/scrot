@@ -1,6 +1,9 @@
 /* options.c
 
-Copyright (C) 1999,2000 Tom Gilbert.
+Copyright 1999-2000 Tom Gilbert <tom@linuxbrit.co.uk,
+                                  gilbertt@linuxbrit.co.uk,
+                                  scrot_sucks@linuxbrit.co.uk>
+Copyright 2008      William Vera <billy@billy.com.mx>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -229,7 +232,7 @@ show_usage(void)
            "                            low quality means high compression.\n"
            "  -m, --multidisp           For multiple heads, grab shot from each\n"
            "                            and join them together.\n"
-           "  -s, --select              interactively choose a window or rectnagle\n"
+           "  -s, --select              interactively choose a window or rectangle\n"
            "                            with the mouse\n"
            "  -t, --thumb NUM           generate thumbnail too. NUM is the percentage\n"
            "                            of the original size for the thumbnail to be,\n"
@@ -238,7 +241,7 @@ show_usage(void)
            "  Both the --exec and filename parameters can take format specifiers\n"
            "  that are expanded by " PACKAGE " when encountered.\n"
            "  There are two types of format specifier. Characters preceded by a '%%'\n"
-           "  are interpretted by strftime(2). See man strftime for examples.\n"
+           "  are interpreted by strftime(2). See man strftime for examples.\n"
            "  These options may be used to refer to the current date and time.\n"
            "  The second kind are internal to " PACKAGE
            "  and are prefixed by '$'\n"
