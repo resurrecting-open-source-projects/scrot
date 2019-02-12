@@ -43,3 +43,18 @@ EXTRA_DIST = \
 scrot.spec scrot.1
 
 SUBDIRS = src
+
+distclean-local:
+	-rm -rf autom4te.cache/
+
+	-rm -f *~ \
+	src/*~ \
+	aclocal.m4 \
+	compile \
+	configure \
+	depcomp \
+	install-sh \
+	Makefile.in \
+	missing \
+	src/config.h.in \
+	src/Makefile.in
