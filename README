@@ -27,6 +27,22 @@ $ make
 To return to original source code, you can use '$ make distclean' command.
 
 
+HELP THIS PROJECT
+=================
+
+scrot needs your help. If you are a programmer and if you wants to help a
+nice project, this is your opportunity.
+
+scrot was imported from some tarballs (the original homepage and developers
+are inactive). After this, all patches found in Debian project and other places
+for this program were applied. All initial work was registered in ChangeLog
+file (version 0.9 and later releases). scrot is being packaged in Debian[1].
+
+If you are interested to help scrot, read the CONTRIBUTING.md file.
+
+[1] https://tracker.debian.org/pkg/scrot
+
+
 AUTHOR
 ======
 

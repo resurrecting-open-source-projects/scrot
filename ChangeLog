@@ -5,6 +5,7 @@ Version 0.9
     <stoneysauce@gmail.com>.
   * Added --focused option. Thanks to James Cameron <quozl@us.netrek.org>.
   * Added an autogen.sh file.
+  * Added some explanation about how to help the project.
   * Character cleanup for UTF-8 compatibility. Thanks to William Vera
     <billy@billy.com.mx>.
   * Fixed a missing option for beep prevention. Thanks to Ibragimov Rinat
