@@ -81,9 +81,10 @@ Interactively select a window or rectangle with the mouse.
 Use the currently focused window.
 .TP
 .B
-\fB-t\fP, \fB--thumb\fP NUM
+\fB-t\fP, \fB--thumb\fP NUM|GEOM
 Generate thumbnail too. NUM is the percentage of the
-original size for the thumbnail to be.
+original size for the thumbnail to be. Alternatively,
+a GEOMetry can be specified, example: 300x200
 .TP
 .B
 \fB-z\fP, \fB--silent\fP
@@ -99,6 +100,7 @@ following specifiers are recognised:
 .nf
 .fam C
     $f  image path/filename (ignored when used in the filename)
+    $m  thumb image path/filename (ignored when used in the filename)
     $n  image name (ignored when used in the filename)
     $s  image size (bytes) (ignored when used in the filename)
     $p  image pixel size
