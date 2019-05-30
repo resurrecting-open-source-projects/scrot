@@ -300,7 +300,7 @@ show_usage(void)
            "                  $p image pixel size\n"
            "                  $w image width\n"
            "                  $h image height\n"
-           "                  $t image format\n"
+           "                  $t image format (ignored when used in the filename)\n"
            "                  $$  prints a literal '$'\n"
            "                  \\n prints a newline (ignored when used in the filename)\n"
            "  Example:\n" "          " PACKAGE
