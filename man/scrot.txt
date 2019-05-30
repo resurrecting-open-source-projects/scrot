@@ -34,8 +34,9 @@ OPTIONS
                      together.
   -s, --select       Interactively select a window or rectangle with the mouse.
   -u, --focused      Use the currently focused window.
-  -t, --thumb NUM    Generate thumbnail too. NUM is the percentage of the
-                     original size for the thumbnail to be.
+  -t, --thumb NUM|GEOM  Generate thumbnail too. NUM is the percentage of the
+                        original size for the thumbnail to be. Alternatively,
+                        a GEOMetry can be specified, example: 300x200
   -z, --silent       Prevent beeping.
 
 SPECIAL STRINGS
@@ -47,6 +48,7 @@ SPECIAL STRINGS
   following specifiers are recognised:
 
     $f  image path/filename (ignored when used in the filename)
+    $m  thumb image path/filename (ignored when used in the filename)
     $n  image name (ignored when used in the filename)
     $s  image size (bytes) (ignored when used in the filename)
     $p  image pixel size
