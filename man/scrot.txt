@@ -52,7 +52,7 @@ SPECIAL STRINGS
     $p  image pixel size
     $w  image width
     $h  image height
-    $t  image format
+    $t  image format (ignored when used in the filename)
     $$  print a literal '$'
     \\n  print a newline (ignored when used in the filename)
 

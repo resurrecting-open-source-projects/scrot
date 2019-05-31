@@ -513,7 +513,10 @@ im_printf(char *str, struct tm *tm,
           strcat(ret, buf);
           break;
         case 't':
-          strcat(ret, gib_imlib_image_format(im));
+          tmp = gib_imlib_image_format(im);
+          if (tmp) {
+            strcat(ret, gib_imlib_image_format(im));
+          }
           break;
         case '$':
           strcat(ret, "$");
