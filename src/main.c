@@ -40,6 +40,8 @@ main(int argc,
   Imlib_Load_Error err;
   char *filename_im = NULL, *filename_thumb = NULL;
 
+  char *have_extension = NULL;
+
   time_t t;
   struct tm *tm;
 
@@ -50,6 +52,9 @@ main(int argc,
   if (!opt.output_file) {
     opt.output_file = gib_estrdup("%Y-%m-%d-%H%M%S_$wx$h_scrot.png");
     opt.thumb_file = gib_estrdup("%Y-%m-%d-%H%M%S_$wx$h_scrot-thumb.png");
+  } else {
+    char *ext = strrchr(opt.output_file, '.');
+    have_extension = (ext && (strlen(ext + 1) == 3)) ? ext : NULL;
   }
 
 
@@ -77,6 +82,10 @@ main(int argc,
 
   imlib_context_set_image(image);
   imlib_image_attach_data_value("quality", NULL, opt.quality, NULL);
+
+  if (!have_extension) {
+    imlib_image_set_format("png");
+  }
 
   filename_im = im_printf(opt.output_file, tm, NULL, NULL, image);
   gib_imlib_save_image_with_error_return(image, filename_im, &err);
