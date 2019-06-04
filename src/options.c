@@ -76,7 +76,7 @@ parse_option_required_number(char *str)
 static void
 scrot_parse_option_array(int argc, char **argv)
 {
-   static char stropts[] = "a:bcd:e:hmq:st:uv+:z";
+   static char stropts[] = "a:pbcd:e:hmq:st:uv+:z";
    static struct option lopts[] = {
       /* actions */
       {"help", 0, 0, 'h'},                  /* okay */
@@ -88,6 +88,7 @@ scrot_parse_option_array(int argc, char **argv)
       {"border", 0, 0, 'b'},
       {"multidisp", 0, 0, 'm'},
       {"silent", 0, 0, 'z'},
+      {"pointer", 0, 0, 'p'},
       /* toggles */
       {"thumb", 1, 0, 't'},
       {"delay", 1, 0, 'd'},
@@ -146,9 +147,12 @@ scrot_parse_option_array(int argc, char **argv)
         case 'z':
            opt.silent = 1;
            break;
+        case 'p':
+           opt.pointer = 1;
+           break;
         case 'a':
-	  options_parse_autoselect(optarg);
-	   break;
+           options_parse_autoselect(optarg);
+           break;
         case '?':
            exit(EXIT_FAILURE);
         default:
@@ -311,6 +315,8 @@ show_usage(void)
            "                            of the original size for the thumbnail to be,\n"
            "                            or the geometry in percent, e.g. 50x60 or 80x20.\n"
            "  -z, --silent              Prevent beeping\n"		   
+           "  -p, --pointer             Capture the mouse pointer.\n"
+
            "\n" "  SPECIAL STRINGS\n"
            "  Both the --exec and filename parameters can take format specifiers\n"
            "  that are expanded by " PACKAGE " when encountered.\n"
