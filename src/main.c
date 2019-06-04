@@ -169,13 +169,15 @@ scrot_do_delay(void)
 
 
 void
-scrot_grab_mouse_pointer(const Imlib_Image image)
+scrot_grab_mouse_pointer(const Imlib_Image image,
+		const int iwidth, const int iheight,
+		const int ix_off, const int iy_off)
 {
   imlib_context_set_image(image);
 
   DATA32 *pixels = imlib_image_get_data();
 
-  XImage *ximage = XCreateImage(disp, CopyFromParent, 32, ZPixmap, 0, pixels, scr->width, scr->height, 32, 0);
+  XImage *ximage = XCreateImage(disp, CopyFromParent, 32, ZPixmap, 0, pixels, iwidth, iheight, 32, 0);
 
   if (!ximage) {
      fprintf(stderr, "scrot_grab_mouse_pointer: Failed XCreateImage.");
@@ -194,10 +196,10 @@ scrot_grab_mouse_pointer(const Imlib_Image image)
             - use fprintf
             - add custom FFMIN and FFMAX.
     */
-    int x_off = 0;
-    int y_off = 0;
-    int width = scr->width;
-    int height = scr->height;
+    int x_off = ix_off;
+    int y_off = iy_off;
+    int width = iwidth;
+    int height = iheight;
     XFixesCursorImage *xcim;
     int x, y;
     int line, column;
@@ -272,7 +274,7 @@ scrot_grab_shot(void)
     gib_imlib_create_image_from_drawable(root, 0, 0, 0, scr->width,
                                          scr->height, 1);
   if (opt.pointer == 1)
-    scrot_grab_mouse_pointer(im);
+    scrot_grab_mouse_pointer(im, scr->width, scr->height, 1, 1);
 
   return im;
 }
@@ -301,6 +303,8 @@ scrot_grab_focused(void)
   if (!scrot_get_geometry(target, &rx, &ry, &rw, &rh)) return NULL;
   scrot_nice_clip(&rx, &ry, &rw, &rh);
   im = gib_imlib_create_image_from_drawable(root, 0, rx, ry, rw, rh, 1);
+  if (opt.pointer == 1)
+	  scrot_grab_mouse_pointer(im, rw, rh, rx, ry);
   return im;
 }
 
@@ -454,6 +458,9 @@ scrot_sel_and_grab_image(void)
 
     if (! opt.silent) XBell(disp, 0);
     im = gib_imlib_create_image_from_drawable(root, 0, rx, ry, rw, rh, 1);
+
+    if (opt.pointer == 1)
+       scrot_grab_mouse_pointer(im, rw, rh, rx, ry);
   }
   return im;
 }
@@ -461,9 +468,9 @@ scrot_sel_and_grab_image(void)
 /* clip rectangle nicely */
 void
 scrot_nice_clip(int *rx, 
-		int *ry, 
-		int *rw, 
-		int *rh)
+  int *ry,
+  int *rw,
+  int *rh)
 {
   if (*rx < 0) {
     *rw += *rx;
