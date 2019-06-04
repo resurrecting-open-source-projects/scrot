@@ -36,12 +36,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <X11/keysym.h>
 #include <X11/Xresource.h>
 #include <X11/cursorfont.h>
+#include <X11/extensions/Xfixes.h>
+#include <X11/Xcursor/Xcursor.h>
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <stdint.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/time.h>
@@ -88,6 +91,8 @@ char *im_printf(char *str, struct tm *tm,
                 Imlib_Image im);
 Imlib_Image scrot_grab_shot_multi(void);
 Imlib_Image stalk_image_concat(gib_list *images);
+
+void scrot_grab_mouse_pointer(const Imlib_Image image);
 
 /* Imlib stuff */
 extern Display *disp;

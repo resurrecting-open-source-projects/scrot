@@ -166,15 +166,110 @@ scrot_do_delay(void)
   }
 }
 
+
+
+void
+scrot_grab_mouse_pointer(const Imlib_Image image)
+{
+  imlib_context_set_image(image);
+
+  DATA32 *pixels = imlib_image_get_data();
+
+  XImage *ximage = XCreateImage(disp, CopyFromParent, 32, ZPixmap, 0, pixels, scr->width, scr->height, 32, 0);
+
+  if (!ximage)
+     gib_eprintf("Error image.");
+
+  { /*ffmpeg*/
+
+    /*  LICENSE
+
+        https://www.ffmpeg.org/doxygen/0.7/x11grab_8c-source.html
+
+        Notes:
+           (daltomi) Some modifications include:
+            - delete comments
+            - add gib_eprintf
+            - add custom FFMIN and FFMAX.
+    */
+    int x_off = 0;
+    int y_off = 0;
+    int width = scr->width;
+    int height = scr->height;
+    XFixesCursorImage *xcim;
+    int x, y;
+    int line, column;
+    int to_line, to_column;
+    int pixstride = ximage->bits_per_pixel >> 3;
+    uint8_t *pix = ximage->data;
+
+    /* Code doesn't currently support 16-bit or PAL8 */
+    if (ximage->bits_per_pixel != 24 && ximage->bits_per_pixel != 32)
+        gib_eprintf("Only 24 or 32 BPP.");
+
+    xcim = XFixesGetCursorImage(disp);
+
+    x = xcim->x - xcim->xhot;
+    y = xcim->y - xcim->yhot;
+
+#define FFMAX(a,b) ({     \
+  __typeof__ (a) _a = (a);  \
+  __typeof__ (b) _b = (b);  \
+  _a > _b ? _a : _b;        \
+})
+
+#define FFMIN(a,b) ({     \
+  __typeof__ (a) _a = (a);  \
+  __typeof__ (b) _b = (b);  \
+  _a < _b ? _a : _b;        \
+})
+
+    to_line = FFMIN((y + xcim->height), (height + y_off));
+    to_column = FFMIN((x + xcim->width), (width + x_off));
+
+    for (line = FFMAX(y, y_off); line < to_line; line++) {
+        for (column = FFMAX(x, x_off); column < to_column; column++) {
+            int  xcim_addr = (line - y) * xcim->width + column - x;
+            int image_addr = ((line - y_off) * width + column - x_off) * pixstride;
+            int r = (uint8_t)(xcim->pixels[xcim_addr] >>  0);
+            int g = (uint8_t)(xcim->pixels[xcim_addr] >>  8);
+            int b = (uint8_t)(xcim->pixels[xcim_addr] >> 16);
+            int a = (uint8_t)(xcim->pixels[xcim_addr] >> 24);
+
+            if (a == 255) {
+                pix[image_addr+0] = r;
+                pix[image_addr+1] = g;
+                pix[image_addr+2] = b;
+            } else if (a) {
+                /* pixel values from XFixesGetCursorImage come premultiplied by alpha */
+                pix[image_addr+0] = r + (pix[image_addr+0]*(255-a) + 255/2) / 255;
+                pix[image_addr+1] = g + (pix[image_addr+1]*(255-a) + 255/2) / 255;
+                pix[image_addr+2] = b + (pix[image_addr+2]*(255-a) + 255/2) / 255;
+            }
+        }
+    }
+    XFree(xcim);
+    xcim = NULL;
+  }/*ffmpeg*/
+
+  XFree(ximage);
+
+}
+
+
 Imlib_Image
 scrot_grab_shot(void)
 {
   Imlib_Image im;
 
   if (! opt.silent) XBell(disp, 0);
+
   im =
     gib_imlib_create_image_from_drawable(root, 0, 0, 0, scr->width,
                                          scr->height, 1);
+  if (opt.pointer == 1)
+    scrot_grab_mouse_pointer(im);
+
   return im;
 }
 
