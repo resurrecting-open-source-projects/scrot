@@ -177,8 +177,10 @@ scrot_grab_mouse_pointer(const Imlib_Image image)
 
   XImage *ximage = XCreateImage(disp, CopyFromParent, 32, ZPixmap, 0, pixels, scr->width, scr->height, 32, 0);
 
-  if (!ximage)
-     gib_eprintf("Error image.");
+  if (!ximage) {
+     fprintf(stderr, "scrot_grab_mouse_pointer: Failed XCreateImage.");
+     exit(EXIT_FAILURE);
+  }
 
   { /*ffmpeg*/
 
@@ -188,8 +190,8 @@ scrot_grab_mouse_pointer(const Imlib_Image image)
 
         Notes:
            (daltomi) Some modifications include:
-            - delete comments
-            - add gib_eprintf
+            - delete some comments
+            - use fprintf
             - add custom FFMIN and FFMAX.
     */
     int x_off = 0;
@@ -204,8 +206,10 @@ scrot_grab_mouse_pointer(const Imlib_Image image)
     uint8_t *pix = ximage->data;
 
     /* Code doesn't currently support 16-bit or PAL8 */
-    if (ximage->bits_per_pixel != 24 && ximage->bits_per_pixel != 32)
-        gib_eprintf("Only 24 or 32 BPP.");
+    if (ximage->bits_per_pixel != 24 && ximage->bits_per_pixel != 32) {
+        fprintf(stderr, "scrot_grab_mouse_pointer: Only 24 or 32 BPP.");
+        exit(EXIT_FAILURE);
+    }
 
     xcim = XFixesGetCursorImage(disp);
 
