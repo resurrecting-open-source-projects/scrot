@@ -170,96 +170,42 @@ scrot_do_delay(void)
 
 void
 scrot_grab_mouse_pointer(const Imlib_Image image,
-		const int iwidth, const int iheight,
 		const int ix_off, const int iy_off)
 {
-  imlib_context_set_image(image);
+  XFixesCursorImage *xcim = XFixesGetCursorImage(disp);
 
-  DATA32 *pixels = imlib_image_get_data();
+  const int width       = xcim->width;
+  const int height      = xcim->height;
+  const int x           = (xcim->x - xcim->xhot) - ix_off;
+  const int y           = (xcim->y - xcim->yhot) - iy_off;
+  DATA32 *pixels        = NULL;
 
-  XImage *ximage = XCreateImage(disp, CopyFromParent, 32, ZPixmap, 0, pixels, iwidth, iheight, 32, 0);
+#ifdef __i386__
+  pixels = xcim->pixels;
+#else
+  DATA32 data[width * height * 4];
 
-  if (!ximage) {
-     fprintf(stderr, "scrot_grab_mouse_pointer: Failed XCreateImage.");
+  for (size_t i = 0; i < (width * height); i++)
+    ((DATA32*)data)[i] = (DATA32)xcim->pixels[i];
+
+  pixels = data;
+#endif
+
+  Imlib_Image imcursor  = imlib_create_image_using_data(width, height, pixels);
+
+  XFree(xcim);
+
+  if (!imcursor) {
+     fprintf(stderr, "scrot_grab_mouse_pointer: Failed create image using data.");
      exit(EXIT_FAILURE);
   }
 
-  { /*ffmpeg*/
-
-    /*  LICENSE
-
-        https://www.ffmpeg.org/doxygen/0.7/x11grab_8c-source.html
-
-        Notes:
-           (daltomi) Some modifications include:
-            - delete some comments
-            - use fprintf
-            - add custom FFMIN and FFMAX.
-    */
-    int x_off = ix_off;
-    int y_off = iy_off;
-    int width = iwidth;
-    int height = iheight;
-    XFixesCursorImage *xcim;
-    int x, y;
-    int line, column;
-    int to_line, to_column;
-    int pixstride = ximage->bits_per_pixel >> 3;
-    uint8_t *pix = ximage->data;
-
-    /* Code doesn't currently support 16-bit or PAL8 */
-    if (ximage->bits_per_pixel != 24 && ximage->bits_per_pixel != 32) {
-        fprintf(stderr, "scrot_grab_mouse_pointer: Only 24 or 32 BPP.");
-        exit(EXIT_FAILURE);
-    }
-
-    xcim = XFixesGetCursorImage(disp);
-
-    x = xcim->x - xcim->xhot;
-    y = xcim->y - xcim->yhot;
-
-#define FFMAX(a,b) ({     \
-  __typeof__ (a) _a = (a);  \
-  __typeof__ (b) _b = (b);  \
-  _a > _b ? _a : _b;        \
-})
-
-#define FFMIN(a,b) ({     \
-  __typeof__ (a) _a = (a);  \
-  __typeof__ (b) _b = (b);  \
-  _a < _b ? _a : _b;        \
-})
-
-    to_line = FFMIN((y + xcim->height), (height + y_off));
-    to_column = FFMIN((x + xcim->width), (width + x_off));
-
-    for (line = FFMAX(y, y_off); line < to_line; line++) {
-        for (column = FFMAX(x, x_off); column < to_column; column++) {
-            int  xcim_addr = (line - y) * xcim->width + column - x;
-            int image_addr = ((line - y_off) * width + column - x_off) * pixstride;
-            int r = (uint8_t)(xcim->pixels[xcim_addr] >>  0);
-            int g = (uint8_t)(xcim->pixels[xcim_addr] >>  8);
-            int b = (uint8_t)(xcim->pixels[xcim_addr] >> 16);
-            int a = (uint8_t)(xcim->pixels[xcim_addr] >> 24);
-
-            if (a == 255) {
-                pix[image_addr+0] = r;
-                pix[image_addr+1] = g;
-                pix[image_addr+2] = b;
-            } else if (a) {
-                /* pixel values from XFixesGetCursorImage come premultiplied by alpha */
-                pix[image_addr+0] = r + (pix[image_addr+0]*(255-a) + 255/2) / 255;
-                pix[image_addr+1] = g + (pix[image_addr+1]*(255-a) + 255/2) / 255;
-                pix[image_addr+2] = b + (pix[image_addr+2]*(255-a) + 255/2) / 255;
-            }
-        }
-    }
-    XFree(xcim);
-    xcim = NULL;
-  }/*ffmpeg*/
-
-  XFree(ximage);
-
+  imlib_context_set_image(imcursor);
+  imlib_image_set_has_alpha(1);
+  imlib_context_set_image(image);
+  imlib_blend_image_onto_image(imcursor, 0, 0, 0, width, height, x, y, width, height);
+  imlib_context_set_image(imcursor);
+  imlib_free_image();
 }
 
 
@@ -274,7 +220,7 @@ scrot_grab_shot(void)
     gib_imlib_create_image_from_drawable(root, 0, 0, 0, scr->width,
                                          scr->height, 1);
   if (opt.pointer == 1)
-    scrot_grab_mouse_pointer(im, scr->width, scr->height, 1, 1);
+    scrot_grab_mouse_pointer(im, 0, 0);
 
   return im;
 }
@@ -304,7 +250,7 @@ scrot_grab_focused(void)
   scrot_nice_clip(&rx, &ry, &rw, &rh);
   im = gib_imlib_create_image_from_drawable(root, 0, rx, ry, rw, rh, 1);
   if (opt.pointer == 1)
-	  scrot_grab_mouse_pointer(im, rw, rh, rx, ry);
+	  scrot_grab_mouse_pointer(im, rx, ry);
   return im;
 }
 
@@ -460,7 +406,7 @@ scrot_sel_and_grab_image(void)
     im = gib_imlib_create_image_from_drawable(root, 0, rx, ry, rw, rh, 1);
 
     if (opt.pointer == 1)
-       scrot_grab_mouse_pointer(im, rw, rh, rx, ry);
+       scrot_grab_mouse_pointer(im, rx, ry);
   }
   return im;
 }
