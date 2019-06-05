@@ -93,7 +93,6 @@ Imlib_Image scrot_grab_shot_multi(void);
 Imlib_Image stalk_image_concat(gib_list *images);
 
 void scrot_grab_mouse_pointer(const Imlib_Image image,
-		const int iwidth, const int iheight,
 		const int ix_off, const int iy_off);
 
 /* Imlib stuff */
