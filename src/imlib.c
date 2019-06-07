@@ -37,8 +37,11 @@ void
 init_x_and_imlib(char *dispstr, int screen_num)
 {
    disp = XOpenDisplay(dispstr);
-   if (!disp)
-      gib_eprintf("Can't open X display. It *is* running, yeah?");
+   if (!disp) {
+      fprintf(stderr, "Can't open X display. It *is* running, yeah?");
+      exit(EXIT_FAILURE);
+   }
+
    if (screen_num)
       scr = ScreenOfDisplay(disp, screen_num);
    else

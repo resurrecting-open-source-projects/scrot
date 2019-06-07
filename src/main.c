@@ -166,15 +166,62 @@ scrot_do_delay(void)
   }
 }
 
+
+
+void
+scrot_grab_mouse_pointer(const Imlib_Image image,
+		const int ix_off, const int iy_off)
+{
+  XFixesCursorImage *xcim = XFixesGetCursorImage(disp);
+
+  const int width       = xcim->width;
+  const int height      = xcim->height;
+  const int x           = (xcim->x - xcim->xhot) - ix_off;
+  const int y           = (xcim->y - xcim->yhot) - iy_off;
+  DATA32 *pixels        = NULL;
+
+#ifdef __i386__
+  pixels = xcim->pixels;
+#else
+  DATA32 data[width * height * 4];
+
+  for (size_t i = 0; i < (width * height); i++)
+    ((DATA32*)data)[i] = (DATA32)xcim->pixels[i];
+
+  pixels = data;
+#endif
+
+  Imlib_Image imcursor  = imlib_create_image_using_data(width, height, pixels);
+
+  XFree(xcim);
+
+  if (!imcursor) {
+     fprintf(stderr, "scrot_grab_mouse_pointer: Failed create image using data.");
+     exit(EXIT_FAILURE);
+  }
+
+  imlib_context_set_image(imcursor);
+  imlib_image_set_has_alpha(1);
+  imlib_context_set_image(image);
+  imlib_blend_image_onto_image(imcursor, 0, 0, 0, width, height, x, y, width, height);
+  imlib_context_set_image(imcursor);
+  imlib_free_image();
+}
+
+
 Imlib_Image
 scrot_grab_shot(void)
 {
   Imlib_Image im;
 
   if (! opt.silent) XBell(disp, 0);
+
   im =
     gib_imlib_create_image_from_drawable(root, 0, 0, 0, scr->width,
                                          scr->height, 1);
+  if (opt.pointer == 1)
+    scrot_grab_mouse_pointer(im, 0, 0);
+
   return im;
 }
 
@@ -202,6 +249,8 @@ scrot_grab_focused(void)
   if (!scrot_get_geometry(target, &rx, &ry, &rw, &rh)) return NULL;
   scrot_nice_clip(&rx, &ry, &rw, &rh);
   im = gib_imlib_create_image_from_drawable(root, 0, rx, ry, rw, rh, 1);
+  if (opt.pointer == 1)
+	  scrot_grab_mouse_pointer(im, rx, ry);
   return im;
 }
 
@@ -241,13 +290,25 @@ scrot_sel_and_grab_image(void)
   if ((XGrabPointer
        (disp, root, False,
         ButtonMotionMask | ButtonPressMask | ButtonReleaseMask, GrabModeAsync,
-        GrabModeAsync, root, cursor, CurrentTime) != GrabSuccess))
-    gib_eprintf("couldn't grab pointer:");
+        GrabModeAsync, root, cursor, CurrentTime) != GrabSuccess)) {
+    fprintf(stderr, "couldn't grab pointer:");
+    XFreeCursor(disp, cursor);
+    XFreeCursor(disp, cursor2);
+    XFreeGC(disp, gc);
+    exit(EXIT_FAILURE);
+  }
+
 
   if ((XGrabKeyboard
        (disp, root, False, GrabModeAsync, GrabModeAsync,
-        CurrentTime) != GrabSuccess))
-    gib_eprintf("couldn't grab keyboard:");
+        CurrentTime) != GrabSuccess)) {
+    fprintf(stderr, "couldn't grab keyboard:");
+    XFreeCursor(disp, cursor);
+    XFreeCursor(disp, cursor2);
+    XFreeGC(disp, gc);
+    exit(EXIT_FAILURE);
+  }
+
 
 
   while (1) {
@@ -318,8 +379,10 @@ scrot_sel_and_grab_image(void)
     errno = 0;
     count = select(fdsize, &fdset, NULL, NULL, NULL);
     if ((count < 0)
-        && ((errno == ENOMEM) || (errno == EINVAL) || (errno == EBADF)))
-      gib_eprintf("Connection to X display lost");
+        && ((errno == ENOMEM) || (errno == EINVAL) || (errno == EBADF))) {
+      fprintf(stderr, "Connection to X display lost");
+      exit(EXIT_FAILURE);
+    }
   }
   if (rect_w) {
     XDrawRectangle(disp, root, gc, rect_x, rect_y, rect_w, rect_h);
@@ -328,6 +391,7 @@ scrot_sel_and_grab_image(void)
   XUngrabPointer(disp, CurrentTime);
   XUngrabKeyboard(disp, CurrentTime);
   XFreeCursor(disp, cursor);
+  XFreeCursor(disp, cursor2);
   XFreeGC(disp, gc);
   XSync(disp, True);
 
@@ -355,6 +419,9 @@ scrot_sel_and_grab_image(void)
 
     if (! opt.silent) XBell(disp, 0);
     im = gib_imlib_create_image_from_drawable(root, 0, rx, ry, rw, rh, 1);
+
+    if (opt.pointer == 1)
+       scrot_grab_mouse_pointer(im, rx, ry);
   }
   return im;
 }
@@ -362,9 +429,9 @@ scrot_sel_and_grab_image(void)
 /* clip rectangle nicely */
 void
 scrot_nice_clip(int *rx, 
-		int *ry, 
-		int *rw, 
-		int *rh)
+  int *ry,
+  int *rw,
+  int *rh)
 {
   if (*rx < 0) {
     *rw += *rx;

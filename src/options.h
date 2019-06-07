@@ -45,6 +45,7 @@ struct __scrotoptions
    int thumb;
    int thumb_width;
    int thumb_height;
+   int pointer;
    char *output_file;
    char *thumb_file;
    char *exec;
