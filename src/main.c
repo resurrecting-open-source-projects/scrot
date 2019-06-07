@@ -290,13 +290,25 @@ scrot_sel_and_grab_image(void)
   if ((XGrabPointer
        (disp, root, False,
         ButtonMotionMask | ButtonPressMask | ButtonReleaseMask, GrabModeAsync,
-        GrabModeAsync, root, cursor, CurrentTime) != GrabSuccess))
-    gib_eprintf("couldn't grab pointer:");
+        GrabModeAsync, root, cursor, CurrentTime) != GrabSuccess)) {
+    fprintf(stderr, "couldn't grab pointer:");
+    XFreeCursor(disp, cursor);
+    XFreeCursor(disp, cursor2);
+    XFreeGC(disp, gc);
+    exit(EXIT_FAILURE);
+  }
+
 
   if ((XGrabKeyboard
        (disp, root, False, GrabModeAsync, GrabModeAsync,
-        CurrentTime) != GrabSuccess))
-    gib_eprintf("couldn't grab keyboard:");
+        CurrentTime) != GrabSuccess)) {
+    fprintf(stderr, "couldn't grab keyboard:");
+    XFreeCursor(disp, cursor);
+    XFreeCursor(disp, cursor2);
+    XFreeGC(disp, gc);
+    exit(EXIT_FAILURE);
+  }
+
 
 
   while (1) {
@@ -367,8 +379,10 @@ scrot_sel_and_grab_image(void)
     errno = 0;
     count = select(fdsize, &fdset, NULL, NULL, NULL);
     if ((count < 0)
-        && ((errno == ENOMEM) || (errno == EINVAL) || (errno == EBADF)))
-      gib_eprintf("Connection to X display lost");
+        && ((errno == ENOMEM) || (errno == EINVAL) || (errno == EBADF))) {
+      fprintf(stderr, "Connection to X display lost");
+      exit(EXIT_FAILURE);
+    }
   }
   if (rect_w) {
     XDrawRectangle(disp, root, gc, rect_x, rect_y, rect_w, rect_h);
@@ -377,6 +391,7 @@ scrot_sel_and_grab_image(void)
   XUngrabPointer(disp, CurrentTime);
   XUngrabKeyboard(disp, CurrentTime);
   XFreeCursor(disp, cursor);
+  XFreeCursor(disp, cursor2);
   XFreeGC(disp, gc);
   XSync(disp, True);
 

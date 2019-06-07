@@ -225,7 +225,7 @@ options_parse_autoselect(char *optarg)
    if (strchr(optarg, ',')) /* geometry dimensions must be in format x,y,w,h   */
    {
      dimensions[i++] = parse_option_required_number(strtok(optarg, tokdelim));
-     while (tok = strtok(NULL, tokdelim) )
+     while ((tok = strtok(NULL, tokdelim)) )
         dimensions[i++] = parse_option_required_number(tok);
      opt.autoselect=1;
      opt.autoselect_x=dimensions[0];
