@@ -309,7 +309,8 @@ scrot_sel_and_grab_image(void)
     exit(EXIT_FAILURE);
   }
 
-
+  if (opt.freeze == 1)
+      XGrabServer(disp);
 
   while (1) {
     /* handle events here */
@@ -395,6 +396,8 @@ scrot_sel_and_grab_image(void)
   XFreeGC(disp, gc);
   XSync(disp, True);
 
+  if (opt.freeze == 1)
+      XUngrabServer(disp);
 
   if (done < 2) {
     scrot_do_delay();
