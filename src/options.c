@@ -9,6 +9,7 @@ Copyright 2009      James Cameron <quozl@us.netrek.org>
 Copyright 2010      Ibragimov Rinat <ibragimovrinat@mail.ru>
 Copyright 2017      Stoney Sauce <stoneysauce@gmail.com>
 Copyright 2019      Daniel Lublin <daniel@lublin.se>
+Copyright 2019      Daniel T. Borelli <danieltborelli@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -76,7 +77,7 @@ parse_option_required_number(char *str)
 static void
 scrot_parse_option_array(int argc, char **argv)
 {
-   static char stropts[] = "a:pbcd:e:hmq:st:uv+:z";
+   static char stropts[] = "a:fpbcd:e:hmq:st:uv+:z";
    static struct option lopts[] = {
       /* actions */
       {"help", 0, 0, 'h'},                  /* okay */
@@ -89,6 +90,7 @@ scrot_parse_option_array(int argc, char **argv)
       {"multidisp", 0, 0, 'm'},
       {"silent", 0, 0, 'z'},
       {"pointer", 0, 0, 'p'},
+      {"freeze", 0, 0, 'f'},
       /* toggles */
       {"thumb", 1, 0, 't'},
       {"delay", 1, 0, 'd'},
@@ -149,6 +151,9 @@ scrot_parse_option_array(int argc, char **argv)
            break;
         case 'p':
            opt.pointer = 1;
+           break;
+        case 'f':
+           opt.freeze = 1;
            break;
         case 'a':
            options_parse_autoselect(optarg);
@@ -316,6 +321,7 @@ show_usage(void)
            "                            or the geometry in percent, e.g. 50x60 or 80x20.\n"
            "  -z, --silent              Prevent beeping\n"		   
            "  -p, --pointer             Capture the mouse pointer.\n"
+           "  -f, --freeze              Freeze the screen when the selection is used: --select\n"
 
            "\n" "  SPECIAL STRINGS\n"
            "  Both the --exec and filename parameters can take format specifiers\n"

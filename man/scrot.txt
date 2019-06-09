@@ -38,6 +38,9 @@ OPTIONS
                         original size for the thumbnail to be. Alternatively,
                         a GEOMetry can be specified, example: 300x200
   -z, --silent       Prevent beeping.
+  -p, --pointer      Capture the mouse pointer.
+  -f, --freeze       Freeze the screen when the selection is used: --select
+
 
 SPECIAL STRINGS
   Both the --exec and filename parameters can take format specifiers that are

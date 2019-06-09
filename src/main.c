@@ -6,6 +6,7 @@ Copyright 1999-2000 Tom Gilbert <tom@linuxbrit.co.uk,
 Copyright 2009      James Cameron <quozl@us.netrek.org>
 Copyright 2010      Ibragimov Rinat <ibragimovrinat@mail.ru>
 Copyright 2017      Stoney Sauce <stoneysauce@gmail.com>
+Copyright 2019      Daniel T. Borelli <danieltborelli@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -309,7 +310,8 @@ scrot_sel_and_grab_image(void)
     exit(EXIT_FAILURE);
   }
 
-
+  if (opt.freeze == 1)
+      XGrabServer(disp);
 
   while (1) {
     /* handle events here */
@@ -395,6 +397,8 @@ scrot_sel_and_grab_image(void)
   XFreeGC(disp, gc);
   XSync(disp, True);
 
+  if (opt.freeze == 1)
+      XUngrabServer(disp);
 
   if (done < 2) {
     scrot_do_delay();
