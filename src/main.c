@@ -465,7 +465,8 @@ scrot_get_geometry(Window target,
 
   /* get windowmanager frame of window */
   if (target != root) {
-    unsigned int d, x;
+    unsigned int d;
+    int x;
     int status;
     
     status = XGetGeometry(disp, target, &root, &x, &x, &d, &d, &d, &d);
