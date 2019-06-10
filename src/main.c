@@ -217,12 +217,19 @@ void scrot_check_if_overwrite_file(char **filename)
 
   free(*filename);
   *filename = newname;
+
+  if (count == max_count) {
+    fprintf(stderr, "scrot can no longer generate new file names.\n"
+                    "The last attempt is %s\n", newname);
+    free(newname);
+    exit(EXIT_FAILURE);
+  }
 }
 
 
 void
 scrot_grab_mouse_pointer(const Imlib_Image image,
-		const int ix_off, const int iy_off)
+    const int ix_off, const int iy_off)
 {
   XFixesCursorImage *xcim = XFixesGetCursorImage(disp);
 
