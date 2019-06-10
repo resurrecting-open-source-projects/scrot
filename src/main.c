@@ -231,9 +231,20 @@ scrot_exec_app(Imlib_Image image, struct tm *tm,
                char *filename_im, char *filename_thumb)
 {
   char *execstr;
+  int ret;
 
   execstr = im_printf(opt.exec, tm, filename_im, filename_thumb, image);
-  system(execstr);
+
+  errno = 0;
+
+  ret = system(execstr);
+
+  if (ret == -1) {
+    fprintf(stderr, "The child process could not be created: %s\n", strerror(errno));
+  } else if (WEXITSTATUS(ret) == 127) {
+    fprintf(stderr, "scrot could not be executed the command: %s.\n", execstr);
+  }
+
   exit(0);
 }
 

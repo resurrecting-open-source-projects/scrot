@@ -279,14 +279,14 @@ options_parse_thumbnail(char *optarg)
 void
 show_version(void)
 {
-   printf(PACKAGE " version " VERSION "\n");
+   printf(SCROT_PACKAGE " version " SCROT_VERSION "\n");
    exit(0);
 }
 
 void
 show_mini_usage(void)
 {
-   printf("Usage : " PACKAGE " [OPTIONS]... FILE\nUse " PACKAGE
+   printf("Usage : " SCROT_PACKAGE " [OPTIONS]... FILE\nUse " SCROT_PACKAGE
           " --help for detailed usage information\n");
    exit(0);
 }
@@ -296,10 +296,10 @@ void
 show_usage(void)
 {
    fprintf(stdout,
-           "Usage : " PACKAGE " [OPTIONS]... [FILE]\n"
+           "Usage : " SCROT_PACKAGE " [OPTIONS]... [FILE]\n"
            "  Where FILE is the target file for the screenshot.\n"
            "  If FILE is not specified, a date-stamped file will be dropped in the\n"
-           "  current directory.\n" "  See man " PACKAGE " for more details\n"
+           "  current directory.\n" "  See man " SCROT_PACKAGE " for more details\n"
            "  -h, --help                display this help and exit\n"
            "  -v, --version             output version information and exit\n"
            "  -a, --autoselect          non-interactively choose a rectangle of x,y,w,h\n"
@@ -325,11 +325,11 @@ show_usage(void)
 
            "\n" "  SPECIAL STRINGS\n"
            "  Both the --exec and filename parameters can take format specifiers\n"
-           "  that are expanded by " PACKAGE " when encountered.\n"
+           "  that are expanded by " SCROT_PACKAGE " when encountered.\n"
            "  There are two types of format specifier. Characters preceded by a '%%'\n"
            "  are interpreted by strftime(2). See man strftime for examples.\n"
            "  These options may be used to refer to the current date and time.\n"
-           "  The second kind are internal to " PACKAGE
+           "  The second kind are internal to " SCROT_PACKAGE
            "  and are prefixed by '$'\n"
            "  The following specifiers are recognised:\n"
            "                  $f image path/filename (ignored when used in the filename)\n"
@@ -342,7 +342,7 @@ show_usage(void)
            "                  $t image format (ignored when used in the filename)\n"
            "                  $$  prints a literal '$'\n"
            "                  \\n prints a newline (ignored when used in the filename)\n"
-           "  Example:\n" "          " PACKAGE
+           "  Example:\n" "          " SCROT_PACKAGE
            " '%%Y-%%m-%%d_$wx$h_scrot.png' -e 'mv $f ~/images/shots/'\n"
            "          Creates a file called something like 2000-10-30_2560x1024_scrot.png\n"
            "          and moves it to your images directory.\n" "\n"
