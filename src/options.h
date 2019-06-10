@@ -49,6 +49,7 @@ struct __scrotoptions
    int thumb_height;
    int pointer;
    int freeze;
+   int overwrite;
    char *output_file;
    char *thumb_file;
    char *exec;
