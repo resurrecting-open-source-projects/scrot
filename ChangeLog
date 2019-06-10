@@ -1,3 +1,26 @@
+Sun Jun 09 20:55:00 -03:00 2019  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
+Version 0.10
+
+  [ Daniel Lublin ]
+
+  * Added EXIT_FAILURE when are no arguments required by some options. Fix
+    Debian bug #685173.
+  * Improved the manpage to show undocumented options.
+
+  [ Daniel T. Borelli ]
+
+  * Added support to grab mouse pointer (-p option). Fix Ubuntu bug #1698375.
+  * Added support to freeze the screen when selection is actived (-f option).
+  * Do not use gib_eprintf in calls to X11 functions. Fix Ubuntu bug #1523212.
+  * Fix: scrot can't save files without extension. Fix Ubuntu bug #148659.
+  * Fix: scrot don't complain about invalid numeric argument. Fix Ubuntu
+    bug #371784.
+  * Fixed some compiling warnings.
+
+  [ Joao Eriberto Mota Filho ]
+
+  * Final adjustments for a new release.
+
 Tue Feb 12 19:06:11 -03:00 2019  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 Version 0.9
 
@@ -77,7 +100,7 @@ Sun Nov  5 02:17:57 2000  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
 	for strftime, so now the internal format specifiers are prefixed
 	'$'. Trouble is, you now _must_ use '', not "", or the shell will
 	interpret the $ sign and perform variable
-	substiution. Suggestions?
+	substitution. Suggestions?
 	* Purged boring debugging shit.
 
 Mon Oct 30 18:54:05 2000  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
@@ -90,7 +113,7 @@ Mon Oct 30 18:54:05 2000  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
 	Both the --exec and filename parameters  can  take  format
         specifiers  that  are  expanded by scrot when encountered.
         There are two types of format specifier.  Characters  pre-
-        ceded  by  a  '%' are interpretted by strftime(2). See man
+        ceded  by  a  '%' are interpreted by strftime(2). See man
         strftime for examples.  These options may be used to refer
         to  the current date and time.  The second kind are inter-
         nal to scrot and are prefixed by '&' The following  speci-
