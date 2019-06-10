@@ -199,9 +199,9 @@ void scrot_check_if_overwrite_file(char **filename)
 
   if (extension)
     // exclude extension
-    strncpy(newname, curfile, slen - 4);
+    memcpy(newname, curfile, slen - 4);
   else
-    strncpy(newname, curfile, slen);
+    memcpy(newname, curfile, slen);
 
   do {
     snprintf(fmt, 5, "_%03d", count++);
