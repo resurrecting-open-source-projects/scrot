@@ -54,8 +54,7 @@ main(int argc,
     opt.output_file = gib_estrdup("%Y-%m-%d-%H%M%S_$wx$h_scrot.png");
     opt.thumb_file = gib_estrdup("%Y-%m-%d-%H%M%S_$wx$h_scrot-thumb.png");
   } else {
-    char *ext = strrchr(opt.output_file, '.');
-    have_extension = (ext && (strlen(ext + 1) == 3)) ? ext : NULL;
+    have_extension = scrot_have_file_extension(opt.output_file);
   }
 
 
@@ -89,6 +88,8 @@ main(int argc,
   }
 
   filename_im = im_printf(opt.output_file, tm, NULL, NULL, image);
+  scrot_check_if_overwrite_file(&filename_im);
+
   gib_imlib_save_image_with_error_return(image, filename_im, &err);
   if (err)
     gib_eprintf("Saving to file %s failed\n", filename_im);
@@ -133,6 +134,7 @@ main(int argc,
     else
     {
       filename_thumb = im_printf(opt.thumb_file, tm, NULL, NULL, thumbnail);
+      scrot_check_if_overwrite_file(&filename_thumb);
       gib_imlib_save_image_with_error_return(thumbnail, filename_thumb, &err);
       if (err)
         gib_eprintf("Saving thumbnail %s failed\n", filename_thumb);
@@ -167,6 +169,55 @@ scrot_do_delay(void)
   }
 }
 
+char* scrot_have_file_extension(char *filename)
+{
+    char *ext = strrchr(filename, '.');
+    return (ext && (strlen(ext + 1) == 3)) ? ext : NULL;
+}
+
+void scrot_check_if_overwrite_file(char **filename)
+{
+  const int max_count = 999;
+  static int count = 0;
+  char *curfile = *filename;
+
+  if (opt.overwrite) return;
+
+  if (access(curfile, F_OK) == -1) return;
+
+  const char *extension = scrot_have_file_extension(curfile);
+  const size_t slen = strlen(curfile);
+
+  int nalloc = slen + 4 + 1; // _000 + NUL byte
+  char fmt[5];
+  char *newname = NULL;
+
+  if (extension)
+    nalloc += 4; // .ext
+
+  newname = calloc(nalloc, sizeof(char));
+
+  if (extension)
+    // exclude extension
+    strncpy(newname, curfile, slen - 4);
+  else
+    strncpy(newname, curfile, slen);
+
+  do {
+    snprintf(fmt, 5, "_%03d", count++);
+
+    if (!extension) {
+      strncpy(newname + slen, fmt, 5);
+    } else {
+        strncpy((newname + slen)-4, fmt, 5);
+        strncat(newname, extension, 4);
+    }
+      curfile = newname;
+  } while ((count < max_count) && (access(curfile, F_OK) == 0));
+
+  free(*filename);
+  *filename = newname;
+}
 
 
 void
