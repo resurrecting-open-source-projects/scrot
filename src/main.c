@@ -177,17 +177,16 @@ char* scrot_have_file_extension(char *filename)
 
 void scrot_check_if_overwrite_file(char **filename)
 {
-  const int max_count = 999;
-  static int count = 0;
   char *curfile = *filename;
 
-  if (opt.overwrite) return;
+  if (opt.overwrite == 1) return;
 
   if (access(curfile, F_OK) == -1) return;
 
+  const int max_count = 999;
+  static int count = 0;
   const char *extension = scrot_have_file_extension(curfile);
   const size_t slen = strlen(curfile);
-
   int nalloc = slen + 4 + 1; // _000 + NUL byte
   char fmt[5];
   char *newname = NULL;
