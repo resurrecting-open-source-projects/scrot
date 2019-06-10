@@ -45,6 +45,7 @@ init_parse_options(int argc, char **argv)
    memset(&opt, 0, sizeof(scrotoptions));
 
    opt.quality = 75;
+   opt.overwrite = 1;
 
    /* Parse the cmdline args */
    scrot_parse_option_array(argc, argv);
@@ -77,7 +78,7 @@ parse_option_required_number(char *str)
 static void
 scrot_parse_option_array(int argc, char **argv)
 {
-   static char stropts[] = "a:fpbcd:e:hmq:st:uv+:z";
+   static char stropts[] = "a:o:fpbcd:e:hmq:st:uv+:z";
    static struct option lopts[] = {
       /* actions */
       {"help", 0, 0, 'h'},                  /* okay */
@@ -92,6 +93,7 @@ scrot_parse_option_array(int argc, char **argv)
       {"pointer", 0, 0, 'p'},
       {"freeze", 0, 0, 'f'},
       /* toggles */
+      {"overwrite", 1, 0, 'o'},
       {"thumb", 1, 0, 't'},
       {"delay", 1, 0, 'd'},
       {"quality", 1, 0, 'q'},
@@ -154,6 +156,9 @@ scrot_parse_option_array(int argc, char **argv)
            break;
         case 'f':
            opt.freeze = 1;
+           break;
+        case 'o':
+           opt.overwrite = !!parse_option_required_number(optarg);
            break;
         case 'a':
            options_parse_autoselect(optarg);
