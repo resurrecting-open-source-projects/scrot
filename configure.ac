@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to create configure.
 
-AC_INIT([scrot], [0.10], [https://github.com/resurrecting-open-source-projects/scrot/issues])
+AC_INIT([scrot], [1.0], [https://github.com/resurrecting-open-source-projects/scrot/issues])
 AC_CONFIG_SRCDIR([src/main.c])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADER([src/config.h])
