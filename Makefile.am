@@ -2,6 +2,7 @@
 #                                   gilbertt@linuxbrit.co.uk,
 #                                   scrot_sucks@linuxbrit.co.uk>
 # Copyright 2015-2016 Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
+# Copyright 2019      Daniel T. Borelli <danieltborelli@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to
