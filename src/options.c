@@ -45,7 +45,7 @@ init_parse_options(int argc, char **argv)
    memset(&opt, 0, sizeof(scrotoptions));
 
    opt.quality = 75;
-   opt.overwrite = 1;
+   opt.overwrite = 0;
 
    /* Parse the cmdline args */
    scrot_parse_option_array(argc, argv);
@@ -78,7 +78,7 @@ parse_option_required_number(char *str)
 static void
 scrot_parse_option_array(int argc, char **argv)
 {
-   static char stropts[] = "a:o:fpbcd:e:hmq:st:uv+:z";
+   static char stropts[] = "a:ofpbcd:e:hmq:st:uv+:z";
    static struct option lopts[] = {
       /* actions */
       {"help", 0, 0, 'h'},                  /* okay */
@@ -92,8 +92,8 @@ scrot_parse_option_array(int argc, char **argv)
       {"silent", 0, 0, 'z'},
       {"pointer", 0, 0, 'p'},
       {"freeze", 0, 0, 'f'},
+      {"overwrite", 0, 0, 'o'},
       /* toggles */
-      {"overwrite", 1, 0, 'o'},
       {"thumb", 1, 0, 't'},
       {"delay", 1, 0, 'd'},
       {"quality", 1, 0, 'q'},
@@ -158,7 +158,7 @@ scrot_parse_option_array(int argc, char **argv)
            opt.freeze = 1;
            break;
         case 'o':
-           opt.overwrite = !!parse_option_required_number(optarg);
+           opt.overwrite = 1;
            break;
         case 'a':
            options_parse_autoselect(optarg);
@@ -324,9 +324,10 @@ show_usage(void)
            "  -t, --thumb NUM           generate thumbnail too. NUM is the percentage\n"
            "                            of the original size for the thumbnail to be,\n"
            "                            or the geometry in percent, e.g. 50x60 or 80x20.\n"
-           "  -z, --silent              Prevent beeping\n"		   
+           "  -z, --silent              Prevent beeping\n"
            "  -p, --pointer             Capture the mouse pointer.\n"
            "  -f, --freeze              Freeze the screen when the selection is used: --select\n"
+           "  -o, --overwrite           By default " PACKAGE " does not overwrite the files, use this option to allow it.\n"
 
            "\n" "  SPECIAL STRINGS\n"
            "  Both the --exec and filename parameters can take format specifiers\n"
