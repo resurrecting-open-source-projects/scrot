@@ -68,7 +68,7 @@ void scrot_note_new(char *format)
      break;
      case 't':
      {
-            if (tok[0] != '\'' || tok[0] == '\0') break;
+            if (tok[0] != '\'') break;
 
             char *end = strchr(++tok, '\'');
 
