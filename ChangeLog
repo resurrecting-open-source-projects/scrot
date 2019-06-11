@@ -1,4 +1,4 @@
-Sun Jun 10 20:55:00 -03:00 2019  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
+Sun Jun 11 11:01:00 -03:00 2019  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 Version 1.0
 
   [ Daniel Lublin ]
@@ -9,8 +9,10 @@ Version 1.0
 
   [ Daniel T. Borelli ]
 
+  * Added option: --overwrite or -o. Now, by default do not overwrite the file.
+    Fix Debian bug #807139.
   * Added support to grab mouse pointer (-p option). Fix Ubuntu bug #1698375.
-  * Added support to freeze the screen when selection is actived (-f option).
+  * Added support to freeze the screen when selection is activated (-f option).
   * Do not use gib_eprintf in calls to X11 functions. Fix Ubuntu bug #1523212.
   * Fix: scrot can't save files without extension. Fix Ubuntu bug #148659.
   * Fix: scrot don't complain about invalid numeric argument. Fix Ubuntu
@@ -20,6 +22,8 @@ Version 1.0
   [ Joao Eriberto Mota Filho ]
 
   * Final adjustments for a new release.
+  * Several tests in Debian.
+  * Updated AUTHORS file.
 
 Tue Feb 12 19:06:11 -03:00 2019  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 Version 0.9
@@ -77,11 +81,11 @@ Thu Jan 11 17:43:19 2001  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
 	* Patch from Michael Roberts <m.t.roberts@student.murdoch.edu.au>
         to add -t, --thumb option to generate thumbnails. I modified it a
 	little, specify the percentage size of the thumbnail on the
-	commandline.
+	command line.
 
 Mon Dec  4 23:46:03 2000  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
 
-	* Adde -m, --multidisp, which is for multiple heads (not xinerama)
+	* Added -m, --multidisp, which is for multiple heads (not xinerama)
 	grabs shots from each and joins them together.
 	* Fixed doing the string escapes when saving files. My bad.
 
@@ -106,18 +110,18 @@ Sun Nov  5 02:17:57 2000  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
 Mon Oct 30 18:54:05 2000  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
 
 	* I can't be arsed to type all this again, so here's the new
-	manpage entrys:
+	manpage entries:
 	* If [file] is not specified, a date-stamped file will be
 	dropped in the current directory.
 	* SPECIAL STRINGS
 	Both the --exec and filename parameters  can  take  format
         specifiers  that  are  expanded by scrot when encountered.
-        There are two types of format specifier.  Characters  pre-
-        ceded  by  a  '%' are interpreted by strftime(2). See man
+        There are two types of format specifier.  Characters
+        preceded  by  a  '%' are interpreted by strftime(2). See man
         strftime for examples.  These options may be used to refer
-        to  the current date and time.  The second kind are inter-
-        nal to scrot and are prefixed by '&' The following  speci-
-        fiers are recognised:
+        to  the current date and time.  The second kind are internal
+        to scrot and are prefixed by '&' The following  specifiers
+        are recognised:
         &f image path/filename (ignored when used in the filename)
         &n image name (ignored when used in the filename)
         &s image size (bytes) (ignored when used in the filename)
@@ -130,8 +134,7 @@ Mon Oct 30 18:54:05 2000  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
         EXAMPLE
         scrot '%Y-%m-%d_&wx&h.png' -e 'mv &f ~/shots/'
         This  would  create   a   file   called   something   like
-        2000-10-30_2560x1024.png  and move it to your shots direc-
-        tory.
+        2000-10-30_2560x1024.png  and move it to your shots directory.
 	
 
 Sun Oct 29 01:02:16 2000  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
