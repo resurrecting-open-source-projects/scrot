@@ -31,7 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "options.h"
 
 /*
- * Format: f=STRING/NUM:x=NUM:y=NUM:t:STRING:c=NUM,NUM,NUM,NUM
+ * Format: -f STRING/NUM -x NUM -y NUM -t 'STRING' -c NUM,NUM,NUM,NUM
  *
  * f= fontname/size
  * x= screen position x
@@ -45,7 +45,6 @@ struct __scrotnote
 {
    char *font;    /* font name         */
    char *text;    /* text of the note  */
-   int size;      /* font size         */
    int x;         /* position screen   */
    int y;         /* position screen   */
 

@@ -36,53 +36,59 @@ static Imlib_Font imfont = NULL;
 
 static void load_font(void);
 
-
 void scrot_note_new(char *format)
 {
    scrot_note_free();
 
-   note = (scrotnote){NULL, NULL, -1, -1, -1, {0,0}};
+   note = (scrotnote){NULL, NULL, -1, -1, {0,0}};
 
-   char *tok = strtok(format, ":");
+   char *tok = strtok(format, "-");
 
    while (tok) {
+
      const char type = tok[0];
+
+     if (tok[1] == ' ') tok += 2;
 
      switch(type) {
      case 'f':
-        if (tok[1] == '=') {
-           if (-1 == sscanf(tok, "f=%m[^/]/%d", &note.font, &note.size)) {
-              free(note.font);
-              note.font = NULL;
-              note.size = -1;
+           if ((-1 == sscanf(tok, "%ms", &note.font)) ||
+               (NULL == strchr(note.font, '/'))) {
+                free(note.font);
+                note.font = NULL;
             }
-        }
      break;
      case 'x':
-        if (tok[1] == '=') {
-           if (-1 == sscanf(tok, "x=%d", &note.x))
+           if (-1 == sscanf(tok, "%d", &note.x))
               note.x = -1;
-        }
      break;
      case 'y':
-        if (tok[1] == '=') {
-           if (-1 == sscanf(tok, "y=%d", &note.y))
+           if (-1 == sscanf(tok, "%d", &note.y))
               note.y = -1;
-        }
      break;
      case 't':
-        if (tok[1] == '=') {
-            const size_t size = strlen(tok) - 2;
-            note.text = malloc(size + 1);
+     {
+            if (tok[0] != '\'' || tok[0] == '\0') break;
+
+            char *end = strchr(++tok, '\'');
+
+            if ((end == NULL) || (*end == '\0')) break;
+
+            const ptrdiff_t len = end - tok;
+
+            note.text = malloc(len + 1);
             assert(NULL != note.text);
-            strncpy(note.text, tok + 2, size);
-            note.text[size] = '\0';
-        }
+
+            strncpy(note.text, tok, len);
+            note.text[len] = '\0';
+
+            tok = tok + len + 1;
+     }
      break;
      case 'c':
-        if (tok[1] == '=') {
+     {
            char *saveptr;
-           char *c = strtok_r(tok + 2, ",", &saveptr);
+           char *c = strtok_r(tok, ",", &saveptr);
 
            while (c) {
 
@@ -108,20 +114,20 @@ void scrot_note_new(char *format)
 
            if (note.color.n != 4)
               note.color.n = -1;
-        }
+     }
      break;
      default:
-      fprintf(stderr, "Malformed syntax, unknown option: %c\n", tok[0]);
-      scrot_note_free();
-      exit(EXIT_FAILURE);
+           fprintf(stderr, "Malformed syntax, unknown option: %c\n", tok[0]);
+           scrot_note_free();
+           exit(EXIT_FAILURE);
      }
 
-     tok = strtok(NULL, ":");
+     tok = strtok(NULL, "-");
    }
 
    int error = 0;
 
-   if (!note.font || note.size < 0) {
+   if (!note.font) {
       fprintf(stderr, "Malformed syntax for f=\n");
       error = 1;
    }
@@ -183,18 +189,13 @@ void scrot_note_draw(Imlib_Image im)
 
 void load_font(void)
 {
-   const size_t len = strlen(note.font) + 1 + 3;
-   char *fontname = malloc(len);
-
-   snprintf(fontname, len, "%s/%d", note.font, note.size);
-
    imlib_add_path_to_font_path("/usr/share/fonts/TTF");
 
-   imfont = imlib_load_font(fontname);
+   imfont = imlib_load_font(note.font);
 
    if (!imfont) {
       scrot_note_free();
-      fprintf(stderr, "Failed to load fontname: %s\n", fontname);
+      fprintf(stderr, "Failed to load fontname: %s\n", note.font);
       exit(EXIT_FAILURE);
    }
 }
