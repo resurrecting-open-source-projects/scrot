@@ -51,8 +51,8 @@ init_parse_options(int argc, char **argv)
    scrot_parse_option_array(argc, argv);
 }
 
-static int
-parse_option_required_number(char *str)
+int
+options_parse_required_number(char *str)
 {
    char *end = NULL;
    int ret = 0;
@@ -123,7 +123,7 @@ scrot_parse_option_array(int argc, char **argv)
            opt.border = 1;
            break;
         case 'd':
-           opt.delay = parse_option_required_number(optarg);
+           opt.delay = options_parse_required_number(optarg);
            break;
         case 'e':
            opt.exec = gib_estrdup(optarg);
@@ -132,7 +132,7 @@ scrot_parse_option_array(int argc, char **argv)
            opt.multidisp = 1;
            break;
         case 'q':
-           opt.quality = parse_option_required_number(optarg);
+           opt.quality = options_parse_required_number(optarg);
            break;
         case 's':
            opt.select = 1;
@@ -141,7 +141,7 @@ scrot_parse_option_array(int argc, char **argv)
            opt.focused = 1;
            break;
         case '+':
-           opt.debug_level = parse_option_required_number(optarg);
+           opt.debug_level = options_parse_required_number(optarg);
            break;
         case 'c':
            opt.countdown = 1;
@@ -238,9 +238,9 @@ options_parse_autoselect(char *optarg)
 
    if (strchr(optarg, ',')) /* geometry dimensions must be in format x,y,w,h   */
    {
-     dimensions[i++] = parse_option_required_number(strtok(optarg, tokdelim));
+     dimensions[i++] = options_parse_required_number(strtok(optarg, tokdelim));
      while ((tok = strtok(NULL, tokdelim)) )
-        dimensions[i++] = parse_option_required_number(tok);
+        dimensions[i++] = options_parse_required_number(tok);
      opt.autoselect=1;
      opt.autoselect_x=dimensions[0];
      opt.autoselect_y=dimensions[1];
@@ -257,12 +257,12 @@ options_parse_thumbnail(char *optarg)
    if (strchr(optarg, 'x')) /* We want to specify the geometry */
    {
      tok = strtok(optarg, "x");
-     opt.thumb_width = parse_option_required_number(tok);
+     opt.thumb_width = options_parse_required_number(tok);
      tok = strtok(NULL, "x");
      if (tok)
      {
-       opt.thumb_width = parse_option_required_number(optarg);
-       opt.thumb_height = parse_option_required_number(tok);
+       opt.thumb_width = options_parse_required_number(optarg);
+       opt.thumb_height = options_parse_required_number(tok);
 
        if (opt.thumb_width < 0)
          opt.thumb_width = 1;
@@ -277,7 +277,7 @@ options_parse_thumbnail(char *optarg)
    }
    else
    {
-     opt.thumb = parse_option_required_number(optarg);
+     opt.thumb = options_parse_required_number(optarg);
      if (opt.thumb < 1)
        opt.thumb = 1;
      else if (opt.thumb > 100)

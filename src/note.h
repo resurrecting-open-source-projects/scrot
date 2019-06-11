@@ -28,7 +28,18 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef NOTE_H
 #define NOTE_H
 
-/* Format: f=FONTNAME/SIZE:x=NUM:y=NUM:t:STRING */
+#include "options.h"
+
+/*
+ * Format: f=STRING/NUM:x=NUM:y=NUM:t:STRING:c=NUM,NUM,NUM,NUM
+ *
+ * f= fontname/size
+ * x= screen position x
+ * y= screen position y
+ * t= string note
+ * c= color(red,green,blue,alpha) range 0..255
+ *
+ * */
 
 struct __scrotnote
 {
@@ -37,6 +48,19 @@ struct __scrotnote
    int size;      /* font size         */
    int x;         /* position screen   */
    int y;         /* position screen   */
+
+   struct color   /* optional          */
+   {
+      int n;      /* counter colors found
+                   * -1 == error parser
+                   *  0 == the user did not indicate the color
+                   * */
+
+      int r,      /* red               */
+          g,      /* green             */
+          b,      /* blue              */
+          a;      /* alpha             */
+   } color;
 };
 
 extern scrotnote note;

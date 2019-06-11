@@ -66,6 +66,7 @@ char *name_thumbnail(char *name);
 void options_parse_thumbnail(char *optarg);
 void options_parse_autoselect(char *optarg);
 void options_parse_note(char *optarg);
+int  options_parse_required_number(char *str);
 extern scrotoptions opt;
 
 #endif

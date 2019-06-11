@@ -41,7 +41,7 @@ void scrot_note_new(char *format)
 {
    scrot_note_free();
 
-   note = (scrotnote){NULL, NULL, -1, -1, -1};
+   note = (scrotnote){NULL, NULL, -1, -1, -1, {0,0}};
 
    char *tok = strtok(format, ":");
 
@@ -77,7 +77,38 @@ void scrot_note_new(char *format)
             assert(NULL != note.text);
             strncpy(note.text, tok + 2, size);
             note.text[size] = '\0';
-         }
+        }
+     break;
+     case 'c':
+        if (tok[1] == '=') {
+           char *saveptr;
+           char *c = strtok_r(tok + 2, ",", &saveptr);
+
+           while (c) {
+
+              int color = options_parse_required_number(c);
+
+              if ((color < 0) || color > 255) {
+                 fprintf(stderr, "color '%d' out of range 0..255\n", color);
+                 note.color.n = -1;
+                 break;
+              }
+
+              note.color.n++;
+
+              switch(note.color.n) {
+              case 1 : note.color.r = color;
+              case 2 : note.color.g = color;
+              case 3 : note.color.b = color;
+              case 4 : note.color.a = color;
+              }
+
+              c = strtok_r(NULL, ",", &saveptr);
+           }
+
+           if (note.color.n != 4)
+              note.color.n = -1;
+        }
      break;
      default:
       fprintf(stderr, "Malformed syntax, unknown option: %c\n", tok[0]);
@@ -110,6 +141,11 @@ void scrot_note_new(char *format)
       error = 1;
    }
 
+   if (note.color.n == -1) {
+      fprintf(stderr, "Malformed syntax for c=\n");
+      error = 1;
+   }
+
    if (error) {
       scrot_note_free();
       exit(EXIT_FAILURE);
@@ -135,6 +171,13 @@ void scrot_note_draw(Imlib_Image im)
 {
    imlib_context_set_image(im);
    imlib_context_set_font(imfont);
+
+   if (note.color.n != 0)
+      imlib_context_set_color(note.color.r,
+                              note.color.g,
+                              note.color.b,
+                              note.color.a);
+
    imlib_text_draw(note.x, note.y, note.text);
 }
 
