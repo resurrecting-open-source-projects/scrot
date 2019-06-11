@@ -1,7 +1,7 @@
 # Copyright 1999-2000 Tom Gilbert <tom@linuxbrit.co.uk,
 #                                   gilbertt@linuxbrit.co.uk,
 #                                   scrot_sucks@linuxbrit.co.uk>
-# Copyright 2015-2016 Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
+# Copyright 2015-2019 Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 # Copyright 2019      Daniel T. Borelli <danieltborelli@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -58,4 +58,5 @@ distclean-local:
 	Makefile.in \
 	missing \
 	src/config.h.in \
-	src/Makefile.in
+	src/Makefile.in \
+	src/scrot_config.h
