@@ -1,7 +1,8 @@
 When updating, change the following files (if needed):
 
 - ChangeLog
-- Check for spelling errors in ChangeLog and manpage.
+- Check for spelling errors in ChangeLog, manpage and README.
+- Check final manpage with man command.
 - configure.ac (VERSION)
 - man/create-man.sh (DATE, version)
 - Generate a new manpage.
