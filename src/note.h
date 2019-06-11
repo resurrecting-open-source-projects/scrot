@@ -1,6 +1,6 @@
-/* structs.h
+/* note.h
 
-Copyright (C) 1999,2000 Tom Gilbert.
+Copyright 2019  Daniel T. Borelli <danieltborelli@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -23,10 +23,28 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#ifndef STRUCTS_H
-#define STRUCTS_H
+/* This file is part of the scrot project. */
+ 
+#ifndef NOTE_H
+#define NOTE_H
 
-typedef struct __scrotoptions scrotoptions;
-typedef struct __scrotnote scrotnote;
+/* Format: f=FONTNAME/SIZE:x=NUM:y=NUM:t:STRING */
+
+struct __scrotnote
+{
+   char *font;    /* font name         */
+   char *text;    /* text of the note  */
+   int size;      /* font size         */
+   int x;         /* position screen   */
+   int y;         /* position screen   */
+};
+
+extern scrotnote note;
+
+void scrot_note_new(char *format);
+
+void scrot_note_free(void);
+
+void scrot_note_draw(Imlib_Image im);
 
 #endif

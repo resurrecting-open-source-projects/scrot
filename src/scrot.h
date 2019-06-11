@@ -62,6 +62,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "structs.h"
 #include "getopt.h"
 #include "debug.h"
+#include "note.h"
 
 #ifndef __GNUC__
 # define __attribute__(x)

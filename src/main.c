@@ -74,6 +74,9 @@ main(int argc,
     }
   }
 
+  if (opt.note != NULL)
+    scrot_note_draw(image);
+
   if (!image)
     gib_eprintf("no image grabbed");
 
@@ -279,6 +282,9 @@ scrot_grab_shot(void)
                                          scr->height, 1);
   if (opt.pointer == 1)
     scrot_grab_mouse_pointer(im, 0, 0);
+
+  if (opt.note != NULL)
+    scrot_note_draw(im);
 
   return im;
 }

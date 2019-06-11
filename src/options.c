@@ -78,7 +78,7 @@ parse_option_required_number(char *str)
 static void
 scrot_parse_option_array(int argc, char **argv)
 {
-   static char stropts[] = "a:ofpbcd:e:hmq:st:uv+:z";
+   static char stropts[] = "a:fpbcd:e:hmq:st:uv+:zn:";
    static struct option lopts[] = {
       /* actions */
       {"help", 0, 0, 'h'},                  /* okay */
@@ -100,6 +100,7 @@ scrot_parse_option_array(int argc, char **argv)
       {"exec", 1, 0, 'e'},
       {"debug-level", 1, 0, '+'},
       {"autoselect", required_argument, 0, 'a'},
+      {"note", required_argument, 0, 'n'},
       {0, 0, 0, 0}
    };
    int optch = 0, cmdx = 0;
@@ -162,6 +163,9 @@ scrot_parse_option_array(int argc, char **argv)
            break;
         case 'a':
            options_parse_autoselect(optarg);
+           break;
+        case 'n':
+           options_parse_note(optarg);
            break;
         case '?':
            exit(EXIT_FAILURE);
@@ -279,6 +283,15 @@ options_parse_thumbnail(char *optarg)
      else if (opt.thumb > 100)
        opt.thumb = 100;
    }
+}
+
+void options_parse_note(char *optarg)
+{
+   opt.note = gib_estrdup(optarg);
+
+   if(opt.note == NULL) return;
+
+   scrot_note_new(opt.note);
 }
 
 void
