@@ -19,12 +19,23 @@ and register unwanted activities.
 BUILD
 =====
 
+scrot depends of the following libraries/artifacts to build:
+
+- autoconf-archive
+- giblib
+- imlib2
+- libtool
+- libxcursor
+- libxfixes
+
+To build, run the following commands:
+
 $ ./autogen.sh
 $ ./configure
 $ make
 # make install
 
-To return to original source code, you can use '$ make distclean' command.
+To return to original source code you can use '$ make distclean' command.
 
 
 HELP THIS PROJECT
