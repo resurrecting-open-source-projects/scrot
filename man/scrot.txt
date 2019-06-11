@@ -40,6 +40,7 @@ OPTIONS
   -z, --silent       Prevent beeping.
   -p, --pointer      Capture the mouse pointer.
   -f, --freeze       Freeze the screen when the selection is used: --select
+  -o, --overwrite    By default scrot does not overwrite the files, use this option to allow it.
 
 
 SPECIAL STRINGS

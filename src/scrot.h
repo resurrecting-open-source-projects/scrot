@@ -96,6 +96,9 @@ Imlib_Image stalk_image_concat(gib_list *images);
 void scrot_grab_mouse_pointer(const Imlib_Image image,
 		const int ix_off, const int iy_off);
 
+void scrot_check_if_overwrite_file(char **filename);
+char *scrot_have_file_extension(char *filename);
+
 /* Imlib stuff */
 extern Display *disp;
 extern Visual *vis;
