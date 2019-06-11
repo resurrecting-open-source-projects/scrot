@@ -327,7 +327,7 @@ show_usage(void)
            "  -z, --silent              Prevent beeping\n"
            "  -p, --pointer             Capture the mouse pointer.\n"
            "  -f, --freeze              Freeze the screen when the selection is used: --select\n"
-           "  -o, --overwrite           By default " PACKAGE " does not overwrite the files, use this option to allow it.\n"
+           "  -o, --overwrite           By default " SCROT_PACKAGE " does not overwrite the files, use this option to allow it.\n"
 
            "\n" "  SPECIAL STRINGS\n"
            "  Both the --exec and filename parameters can take format specifiers\n"
