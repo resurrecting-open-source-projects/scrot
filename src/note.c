@@ -79,6 +79,10 @@ void scrot_note_new(char *format)
             note.text[size] = '\0';
          }
      break;
+     default:
+      fprintf(stderr, "Malformed syntax, unknown option: %c\n", tok[0]);
+      scrot_note_free();
+      exit(EXIT_FAILURE);
      }
 
      tok = strtok(NULL, ":");
