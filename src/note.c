@@ -194,8 +194,8 @@ void load_font(void)
    imfont = imlib_load_font(note.font);
 
    if (!imfont) {
-      scrot_note_free();
       fprintf(stderr, "Failed to load fontname: %s\n", note.font);
+      scrot_note_free();
       exit(EXIT_FAILURE);
    }
 }
