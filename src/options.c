@@ -78,7 +78,7 @@ parse_option_required_number(char *str)
 static void
 scrot_parse_option_array(int argc, char **argv)
 {
-   static char stropts[] = "a:fpbcd:e:hmq:st:uv+:zn:";
+   static char stropts[] = "a:ofpbcd:e:hmq:st:uv+:zn:";
    static struct option lopts[] = {
       /* actions */
       {"help", 0, 0, 'h'},                  /* okay */
