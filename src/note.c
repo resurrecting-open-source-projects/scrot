@@ -30,141 +30,155 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "scrot.h"
 
+
 scrotnote note;
 
 static Imlib_Font imfont = NULL;
 
 static void load_font(void);
 
+static char *parse_text(char **tok, char *const end);
+
+static char *new_text(const char *src, const size_t len);
+
+static inline void pfree(char **ptr)
+{
+   free(*ptr);
+   *ptr = NULL;
+}
+
+static inline void next_space(char **tok)
+{
+  while (*++*tok == ' ');
+}
+
+static inline void next_not_space(char **tok)
+{
+  while (*++*tok != ' ');
+}
+
 void scrot_note_new(char *format)
 {
    scrot_note_free();
 
-   note = (scrotnote){NULL, NULL, -1, -1, {0,0}};
+   note = (scrotnote){NULL,NULL,0,0,{COLOR_OPTIONAL,0,0,0,0}};
 
-   char *tok = strtok(format, "-");
+   char *const end = format + strlen(format);
 
-   while (tok) {
+   char *tok = strpbrk(format, "-");
 
-     const char type = tok[0];
+   if ((NULL == tok) || (strlen(tok) == 1)) {
 
-     if (tok[1] == ' ') tok += 2;
+malformed:
 
-     switch(type) {
-     case 'f':
-           if ((-1 == sscanf(tok, "%ms", &note.font)) ||
-               (NULL == strchr(note.font, '/'))) {
-                free(note.font);
-                note.font = NULL;
-            }
-     break;
-     case 'x':
-           if (-1 == sscanf(tok, "%d", &note.x))
-              note.x = -1;
-     break;
-     case 'y':
-           if (-1 == sscanf(tok, "%d", &note.y))
-              note.y = -1;
-     break;
-     case 't':
-     {
-            if (tok[0] != '\'') break;
-
-            char *end = strchr(++tok, '\'');
-
-            if ((end == NULL) || (*end == '\0')) break;
-
-            const ptrdiff_t len = end - tok;
-
-            note.text = malloc(len + 1);
-            assert(NULL != note.text);
-
-            strncpy(note.text, tok, len);
-            note.text[len] = '\0';
-
-            tok = tok + len + 1;
-     }
-     break;
-     case 'c':
-     {
-           char *saveptr;
-           char *c = strtok_r(tok, ",", &saveptr);
-
-           while (c) {
-
-              int color = options_parse_required_number(c);
-
-              if ((color < 0) || color > 255) {
-                 fprintf(stderr, "color '%d' out of range 0..255\n", color);
-                 note.color.n = -1;
-                 break;
-              }
-
-              note.color.n++;
-
-              switch(note.color.n) {
-              case 1 : note.color.r = color;
-              case 2 : note.color.g = color;
-              case 3 : note.color.b = color;
-              case 4 : note.color.a = color;
-              }
-
-              c = strtok_r(NULL, ",", &saveptr);
-           }
-
-           if (note.color.n != 4)
-              note.color.n = -1;
-     }
-     break;
-     default:
-           fprintf(stderr, "Malformed syntax, unknown option: %c\n", tok[0]);
-           scrot_note_free();
-           exit(EXIT_FAILURE);
-     }
-
-     tok = strtok(NULL, "-");
-   }
-
-   int error = 0;
-
-   if (!note.font) {
-      fprintf(stderr, "Malformed syntax for f=\n");
-      error = 1;
-   }
-
-   if (!note.text) {
-      fprintf(stderr, "Malformed syntax for t=\n");
-      error = 1;
-   }
-
-   if (note.x < 0) {
-      fprintf(stderr, "Malformed syntax for x=\n");
-      error = 1;
-   }
-
-   if (note.y < 0) {
-      fprintf(stderr, "Malformed syntax for y=\n");
-      error = 1;
-   }
-
-   if (note.color.n == -1) {
-      fprintf(stderr, "Malformed syntax for c=\n");
-      error = 1;
-   }
-
-   if (error) {
-      scrot_note_free();
+      pfree(&format);
+      fprintf(stderr, "Error --note option : Malformed syntax.\n");
       exit(EXIT_FAILURE);
    }
 
-   load_font();
+   while (tok != NULL) {
 
+     const char type = *++tok;
+
+     next_space(&tok);
+
+     switch(type) {
+     case 'f': {
+        note.font = parse_text(&tok, end);
+
+        if (NULL == note.font) {
+           fprintf(stderr, "Error --note option : Malformed syntax for -f\n");
+           exit(EXIT_FAILURE);
+        }
+
+        char *number = strrchr(note.font, '/');
+
+        if (NULL == number) {
+           fprintf(stderr, "Error --note option : Malformed syntax for -f, required number.\n");
+           exit(EXIT_FAILURE);
+        }
+
+        options_parse_required_number(++number);
+     }
+     break;
+     case 'x': {
+        if ((1 != sscanf(tok, "%d", &note.x) || (note.x < 0))) {
+           fprintf(stderr, "Error --note option : Malformed syntax for -x\n");
+           exit(EXIT_FAILURE);
+        }
+        next_not_space(&tok);
+     }
+     break;
+     case 'y': {
+        if ((1 != sscanf(tok, "%d", &note.y)) || (note.y < 0)) {
+           fprintf(stderr, "Error --note option : Malformed syntax for -y\n");
+           exit(EXIT_FAILURE);
+        }
+        next_not_space(&tok);
+     }
+     break;
+     case 't':
+        note.text = parse_text(&tok, end);
+        if (NULL == note.text) {
+           fprintf(stderr, "Error --note option : Malformed syntax for -t\n");
+           exit(EXIT_FAILURE);
+        }
+     break;
+     case 'c': {
+        char *saveptr = NULL;
+
+        char *c = strtok_r(tok, ",", &saveptr);
+
+        int nclrs = 0;
+
+        note.color.status = COLOR_OK;
+
+        while (c) {
+
+           tok = c;
+
+           int color = options_parse_required_number(c);
+
+           if ((color < 0) || color > 255) {
+              fprintf(stderr, "Error --note option : color '%d' out of range 0..255\n", color);
+              note.color.status = COLOR_ERROR;
+              break;
+           }
+
+           switch(++nclrs) {
+           case 1 : note.color.r = color;
+           case 2 : note.color.g = color;
+           case 3 : note.color.b = color;
+           case 4 : note.color.a = color;
+           }
+
+           c = strtok_r(NULL, ",", &saveptr);
+        }
+
+        if (nclrs != 4) {
+           fprintf(stderr, "Error --note option : Malformed syntax for -c\n");
+           note.color.status = COLOR_ERROR;
+        }
+     }
+     break;
+     default:
+        fprintf(stderr, "Error --note option : unknown option: '-%c'\n", type);
+        exit(EXIT_FAILURE);
+     }
+
+     tok = strpbrk(tok, "-");
+   }
+
+   if ((NULL == note.font) || (NULL == note.text))
+     goto malformed;
+
+   load_font();
 }
 
 void scrot_note_free(void)
 {
-    if (note.text) (free(note.text), note.text = NULL);
-    if (note.font) (free(note.font), note.font = NULL);
+    if (note.text) pfree(&note.text);
+    if (note.font) pfree(&note.font);
 
     if (imfont) {
        imlib_context_set_font(imfont);
@@ -172,13 +186,12 @@ void scrot_note_free(void)
     }
 }
 
-
 void scrot_note_draw(Imlib_Image im)
 {
    imlib_context_set_image(im);
    imlib_context_set_font(imfont);
 
-   if (note.color.n != 0)
+   if (note.color.status == COLOR_OK)
       imlib_context_set_color(note.color.r,
                               note.color.g,
                               note.color.b,
@@ -189,13 +202,48 @@ void scrot_note_draw(Imlib_Image im)
 
 void load_font(void)
 {
-   imlib_add_path_to_font_path("/usr/share/fonts/TTF");
-
    imfont = imlib_load_font(note.font);
 
    if (!imfont) {
-      fprintf(stderr, "Failed to load fontname: %s\n", note.font);
+      fprintf(stderr, "Error --note option : Failed to load fontname: %s\n", note.font);
       scrot_note_free();
       exit(EXIT_FAILURE);
    }
+}
+
+char *parse_text(char **tok, char *const end)
+{
+   assert(NULL != *tok);
+   assert(NULL != end);
+
+   if (**tok != '\'') return NULL;
+
+   (*tok)++;
+
+   char *begin = *tok;
+
+   while ((*tok != end) && **tok != '\'') {
+      (*tok)++;
+   }
+
+   ptrdiff_t len = (*tok - begin);
+
+   if (len == 0) return NULL;
+
+   return new_text(begin, len);
+}
+
+char *new_text(const char *src, const size_t len)
+{
+   assert(NULL != src);
+
+   char *text = malloc(len + 1);
+
+   assert(NULL != text);
+
+   strncpy(text, src, len);
+
+   text[len] = '\0';
+
+   return text;
 }

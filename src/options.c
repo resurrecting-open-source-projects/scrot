@@ -289,7 +289,12 @@ void options_parse_note(char *optarg)
 {
    opt.note = gib_estrdup(optarg);
 
-   if(opt.note == NULL) return;
+   if (opt.note == NULL) return;
+
+   if (opt.note[0] == '\0') {
+      fprintf(stderr, "Required arguments for --note.");
+      exit(EXIT_FAILURE);
+   }
 
    scrot_note_new(opt.note);
 }

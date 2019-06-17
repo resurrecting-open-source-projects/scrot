@@ -31,34 +31,36 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "options.h"
 
 /*
- * Format: -f STRING/NUM -x NUM -y NUM -t 'STRING' -c NUM,NUM,NUM,NUM
+ * Format: -f 'NAME/SIZE' -x NUM -y NUM -t 'TEXT' -c NUM,NUM,NUM,NUM
  *
- * f= fontname/size
- * x= screen position x
- * y= screen position y
- * t= string note
- * c= color(red,green,blue,alpha) range 0..255
+ * -f fontname/size - absolute path
+ * -x screen position x
+ * -y screen position y
+ * -t text note
+ * -c color(red,green,blue,alpha) range 0..255
  *
  * */
 
+enum ecolor {
+   COLOR_ERROR    = -1, /* error parser                        */
+   COLOR_OPTIONAL = 0,  /* the user did not indicate the color */
+   COLOR_OK       = 1,  /* the user indicate the color         */
+};
+
 struct __scrotnote
 {
-   char *font;    /* font name         */
-   char *text;    /* text of the note  */
-   int x;         /* position screen   */
-   int y;         /* position screen   */
+   char *font;    /* font name                   */
+   char *text;    /* text of the note            */
+   int x;         /* position screen (optional)  */
+   int y;         /* position screen (optional)  */
 
-   struct color   /* optional          */
+   struct color   /*                 (optional)  */
    {
-      int n;      /* counter colors found
-                   * -1 == error parser
-                   *  0 == the user did not indicate the color
-                   * */
-
-      int r,      /* red               */
-          g,      /* green             */
-          b,      /* blue              */
-          a;      /* alpha             */
+      enum ecolor status;
+      int r,                  /* red             */
+          g,                  /* green           */
+          b,                  /* blue            */
+          a;                  /* alpha           */
    } color;
 };
 
