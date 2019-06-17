@@ -239,7 +239,7 @@ scrot_grab_mouse_pointer(const Imlib_Image image,
   DATA32 *pixels        = NULL;
 
 #ifdef __i386__
-  pixels = xcim->pixels;
+  pixels = (DATA32*)xcim->pixels;
 #else
   DATA32 data[width * height * 4];
 
