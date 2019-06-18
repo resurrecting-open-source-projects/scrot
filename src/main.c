@@ -403,6 +403,9 @@ scrot_sel_and_grab_image(void)
             rect_w = ev.xmotion.x - rect_x;
             rect_h = ev.xmotion.y - rect_y;
 
+            if (rect_w == 0) ++rect_w;
+            if (rect_h == 0) ++rect_h;
+
             if (rect_w < 0) {
               rect_x += rect_w;
               rect_w = 0 - rect_w;
