@@ -101,10 +101,13 @@ Freeze the screen when the selection is used: \fB--select\fP
 .B
 \fB-o\fP, \fB--overwrite\fP
 By default \fBscrot\fP does not overwrite the files, use this option to allow it.
-.RE
-.PP
-
+.TP
+.B
+\fB-l\fP, \fB--line\fP
+Indicates the style of the line when the selection is used: \fB--select\fP
+See SELECTION STYLE
 .SH SPECIAL STRINGS
+
 Both the \fB--exec\fP and filename parameters can take format specifiers that are
 expanded by \fBscrot\fP when encountered. There are two types of format specifier.
 Characters preceded by a '%' are interpreted by \fBstrftime\fP(2). See man strftime
@@ -133,6 +136,28 @@ following specifiers are recognised:
 \fBscrot\fP '%Y-%m-%d_$wx$h.png' \fB-e\fP 'mv $f ~/shots/'
 This would create a \fIfile\fP called something like 2000-10-30_2560x1024.png
 and move it to your shots directory.
+.RE
+.PP
+
+.SH SELECTION STYLE
+
+When using \fB--select\fP you can indicate the style of the line with \fB--line\fP.
+.PP
+The following specifiers are recognised:
+.PP
+.nf
+.fam C
+                  style=(solid,dash),width=(range 1 to 8)
+
+.fam T
+.fi
+The default style are:
+style=solid,width=1
+.SH EXAMPLE
+.TP
+.B
+\fBscrot\fP
+\fB--line\fP style=dash,width=3 \fB--select\fP
 .SH AUTHOR
 \fBscrot\fP was originally developed by Tom Gilbert under MIT-advertising license.
 .PP
