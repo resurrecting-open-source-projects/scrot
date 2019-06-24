@@ -98,7 +98,10 @@ malformed:
            exit(EXIT_FAILURE);
         }
 
-        options_parse_required_number(++number);
+        int fntsize = options_parse_required_number(++number);
+
+        if (fntsize < 6)
+           fprintf(stderr, "Warning: --note option: font size < 6\n");
      }
      break;
      case 'x': {
