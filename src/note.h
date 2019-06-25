@@ -53,6 +53,7 @@ struct __scrotnote
    char *text;    /* text of the note            */
    int x;         /* position screen (optional)  */
    int y;         /* position screen (optional)  */
+   double angle;  /* angle text (optional)       */
 
    struct color   /*                 (optional)  */
    {

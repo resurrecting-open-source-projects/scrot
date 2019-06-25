@@ -61,7 +61,7 @@ void scrot_note_new(char *format)
 {
    scrot_note_free();
 
-   note = (scrotnote){NULL,NULL,0,0,{COLOR_OPTIONAL,0,0,0,0}};
+   note = (scrotnote){NULL,NULL,0,0,0.0,{COLOR_OPTIONAL,0,0,0,0}};
 
    char *const end = format + strlen(format);
 
@@ -115,6 +115,14 @@ malformed:
      case 'y': {
         if ((1 != sscanf(tok, "%d", &note.y)) || (note.y < 0)) {
            fprintf(stderr, "Error --note option : Malformed syntax for -y\n");
+           exit(EXIT_FAILURE);
+        }
+        next_not_space(&tok);
+     }
+     break;
+     case 'a': {
+        if ((1 != sscanf(tok, "%lf", &note.angle))) {
+           fprintf(stderr, "Error --note option : Malformed syntax for -a\n");
            exit(EXIT_FAILURE);
         }
         next_not_space(&tok);
@@ -191,8 +199,13 @@ void scrot_note_free(void)
 
 void scrot_note_draw(Imlib_Image im)
 {
+   if (NULL == im) return;
+
    imlib_context_set_image(im);
    imlib_context_set_font(imfont);
+
+   imlib_context_set_direction(IMLIB_TEXT_TO_ANGLE);
+   imlib_context_set_angle(note.angle);
 
    if (note.color.status == COLOR_OK)
       imlib_context_set_color(note.color.r,
