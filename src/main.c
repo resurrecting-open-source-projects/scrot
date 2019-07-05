@@ -621,6 +621,10 @@ im_printf(char *str, struct tm *tm,
     if (*c == '$') {
       c++;
       switch (*c) {
+        case 'a':
+          gethostname(buf, sizeof(buf));
+          strcat(ret, buf);
+          break;
         case 'f':
           if (filename_im)
             strcat(ret, filename_im);
