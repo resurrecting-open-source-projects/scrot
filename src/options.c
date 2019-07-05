@@ -338,6 +338,7 @@ show_usage(void)
            "  The second kind are internal to " SCROT_PACKAGE
            "  and are prefixed by '$'\n"
            "  The following specifiers are recognised:\n"
+           "                  $a hostname\n"
            "                  $f image path/filename (ignored when used in the filename)\n"
            "                  $m thumbnail path/filename\n"
            "                  $n image name (ignored when used in the filename)\n"
