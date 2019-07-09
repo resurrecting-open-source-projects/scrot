@@ -416,6 +416,8 @@ show_usage(void)
            "  -o, --overwrite           By default " SCROT_PACKAGE " does not overwrite the files, use this option to allow it.\n"
            "  -l, --line                Indicates the style of the line when the selection is used: --select\n"
            "                            See SELECTION STYLE\n"
+           "  -n, --note                Draw a text note.\n"
+           "                            See NOTE FORMAT\n"
 
            "\n" "  SPECIAL STRINGS\n"
            "  Both the --exec and filename parameters can take format specifiers\n"
@@ -448,7 +450,16 @@ show_usage(void)
            "  The default style are:\n"
            "                  style=solid,width=1\n"
            "  Example:\n" "          " SCROT_PACKAGE
-           "  --line style=dash,width=3 --select\n\n"
+           " --line style=dash,width=3 --select\n\n"
+           "\n" "  NOTE FORMAT\n"
+           "  The following specifiers are recognised for the option --note\n"
+           "                  -f 'FontName/size'\n"
+           "                  -t 'text'\n"
+           "                  -x position (optional)\n"
+           "                  -y position (optional)\n"
+           "                  -c color(RGBA) (optional)\n"
+           "  Example:\n" "          " SCROT_PACKAGE
+           " --note \"-f '/usr/share/fonts/TTF/DroidSans-Bold/40' -x 10 -y 20 -c 255,0,0,255 -t 'Hi'\"\n\n"
            "This program is free software see the file COPYING for licensing info.\n"
            "Copyright Tom Gilbert 2000\n"
            "Email bugs to <scrot_sucks@linuxbrit.co.uk>\n");
