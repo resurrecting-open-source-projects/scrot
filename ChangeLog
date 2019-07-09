@@ -1,3 +1,24 @@
+Tue Jul 09 18:51:00 -03:00 2019  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
+Version 1.1
+
+  [ Daniel T. Borelli ]
+
+  * Added (-n, --note) to draw a text.
+  * Added (-l, --line) to define the line to use to select an area to capture.
+
+  [ Jade Auer ]
+
+  * Added a specifier ($a) to embed hostname in output file.
+
+  [ Joao Eriberto Mota Filho ]
+
+  * Added a check for autoconf-archive presence in configure.ac.
+  * Added rights for Jade.
+  * Adjusted Makefile.am to remove src/scrot_config.h when distclean.
+  * Updated manpage.
+  * Final adjustments for a new release.
+  * Several tests in Debian.
+
 Sun Jun 11 11:01:00 -03:00 2019  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 Version 1.0
 
