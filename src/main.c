@@ -244,7 +244,7 @@ scrot_grab_mouse_pointer(const Imlib_Image image,
   DATA32 *pixels        = NULL;
 
 #ifdef __i386__
-  pixels = xcim->pixels;
+  pixels = (DATA32*)xcim->pixels;
 #else
   DATA32 data[width * height * 4];
 
@@ -361,6 +361,8 @@ scrot_sel_and_grab_image(void)
               GCFunction | GCForeground | GCBackground | GCSubwindowMode,
               &gcval);
 
+  XSetLineAttributes(disp, gc, opt.line_width, opt.line_style, CapRound, JoinRound);
+
   if ((XGrabPointer
        (disp, root, False,
         ButtonMotionMask | ButtonPressMask | ButtonReleaseMask, GrabModeAsync,
@@ -407,6 +409,9 @@ scrot_sel_and_grab_image(void)
             rect_y = ry;
             rect_w = ev.xmotion.x - rect_x;
             rect_h = ev.xmotion.y - rect_y;
+
+            if (rect_w == 0) ++rect_w;
+            if (rect_h == 0) ++rect_h;
 
             if (rect_w < 0) {
               rect_x += rect_w;
@@ -623,6 +628,10 @@ im_printf(char *str, struct tm *tm,
     if (*c == '$') {
       c++;
       switch (*c) {
+        case 'a':
+          gethostname(buf, sizeof(buf));
+          strcat(ret, buf);
+          break;
         case 'f':
           if (filename_im)
             strcat(ret, filename_im);

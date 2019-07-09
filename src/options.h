@@ -50,6 +50,8 @@ struct __scrotoptions
    int pointer;
    int freeze;
    int overwrite;
+   int line_style;
+   int line_width;
    char *output_file;
    char *thumb_file;
    char *exec;
