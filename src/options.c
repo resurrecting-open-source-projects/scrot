@@ -46,6 +46,8 @@ init_parse_options(int argc, char **argv)
 
    opt.quality = 75;
    opt.overwrite = 0;
+   opt.line_style = LineSolid;
+   opt.line_width = 1;
 
    /* Parse the cmdline args */
    scrot_parse_option_array(argc, argv);
@@ -73,12 +75,73 @@ parse_option_required_number(char *str)
    return ret;
 }
 
+static void
+options_parse_line(char *optarg)
+{
+   enum {STYLE = 0, WIDTH };
+
+   char *const token[] = {
+      [STYLE] = "style",
+      [WIDTH] = "width",
+      NULL
+   };
+
+   char *subopts = optarg;
+   char *value = NULL;
+
+   while (*subopts != '\0') {
+      switch(getsubopt(&subopts, token, &value)) {
+
+         case STYLE:
+
+            if (value == NULL) {
+               fprintf(stderr, "Missing value for "
+                     "suboption '%s'\n", token[STYLE]);
+               exit(EXIT_FAILURE);
+            }
+
+            if (!strncmp(value, "dash", 4))
+               opt.line_style = LineOnOffDash;
+            else if (!strncmp(value, "solid", 5))
+               opt.line_style = LineSolid;
+            else {
+               fprintf(stderr, "Unknown value for "
+                     "suboption '%s': %s\n", token[STYLE], value);
+               exit(EXIT_FAILURE);
+            }
+            break;
+
+         case WIDTH:
+
+            if (value == NULL) {
+               fprintf(stderr, "Missing value for "
+                     "suboption '%s'\n", token[WIDTH]);
+               exit(EXIT_FAILURE);
+            }
+
+            opt.line_width = parse_option_required_number(value);
+
+            if (opt.line_width <= 0 || opt.line_width > 8){
+               fprintf(stderr, "Value of the range (1..8) for "
+                     "suboption '%s': %d\n", token[WIDTH], opt.line_width);
+               exit(EXIT_FAILURE);
+            }
+            break;
+
+         default:
+            fprintf(stderr, "No match found for token: '%s'\n", value);
+            exit(EXIT_FAILURE);
+            break;
+      }
+
+   } /* while */
+}
 
 
 static void
 scrot_parse_option_array(int argc, char **argv)
 {
-   static char stropts[] = "a:ofpbcd:e:hmq:st:uv+:z";
+   static char stropts[] = "a:ofpbcd:e:hmq:st:uv+:zl:";
    static struct option lopts[] = {
       /* actions */
       {"help", 0, 0, 'h'},                  /* okay */
@@ -100,6 +163,7 @@ scrot_parse_option_array(int argc, char **argv)
       {"exec", 1, 0, 'e'},
       {"debug-level", 1, 0, '+'},
       {"autoselect", required_argument, 0, 'a'},
+      {"line", required_argument, 0, 'l'},
       {0, 0, 0, 0}
    };
    int optch = 0, cmdx = 0;
@@ -162,6 +226,9 @@ scrot_parse_option_array(int argc, char **argv)
            break;
         case 'a':
            options_parse_autoselect(optarg);
+           break;
+        case 'l':
+           options_parse_line(optarg);
            break;
         case '?':
            exit(EXIT_FAILURE);
@@ -328,6 +395,8 @@ show_usage(void)
            "  -p, --pointer             Capture the mouse pointer.\n"
            "  -f, --freeze              Freeze the screen when the selection is used: --select\n"
            "  -o, --overwrite           By default " SCROT_PACKAGE " does not overwrite the files, use this option to allow it.\n"
+           "  -l, --line                Indicates the style of the line when the selection is used: --select\n"
+           "                            See SELECTION STYLE\n"
 
            "\n" "  SPECIAL STRINGS\n"
            "  Both the --exec and filename parameters can take format specifiers\n"
@@ -353,6 +422,14 @@ show_usage(void)
            " '%%Y-%%m-%%d_$wx$h_scrot.png' -e 'mv $f ~/images/shots/'\n"
            "          Creates a file called something like 2000-10-30_2560x1024_scrot.png\n"
            "          and moves it to your images directory.\n" "\n"
+           "\n" "  SELECTION STYLE\n"
+           "  When using --select you can indicate the style of the line with --line.\n"
+           "  The following specifiers are recognised:\n"
+           "                  style=(solid,dash),width=(range 1 to 8)\n"
+           "  The default style are:\n"
+           "                  style=solid,width=1\n"
+           "  Example:\n" "          " SCROT_PACKAGE
+           "  --line style=dash,width=3 --select\n\n"
            "This program is free software see the file COPYING for licensing info.\n"
            "Copyright Tom Gilbert 2000\n"
            "Email bugs to <scrot_sucks@linuxbrit.co.uk>\n");

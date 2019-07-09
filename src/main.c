@@ -356,6 +356,8 @@ scrot_sel_and_grab_image(void)
               GCFunction | GCForeground | GCBackground | GCSubwindowMode,
               &gcval);
 
+  XSetLineAttributes(disp, gc, opt.line_width, opt.line_style, CapRound, JoinRound);
+
   if ((XGrabPointer
        (disp, root, False,
         ButtonMotionMask | ButtonPressMask | ButtonReleaseMask, GrabModeAsync,

@@ -41,9 +41,11 @@ OPTIONS
   -p, --pointer      Capture the mouse pointer.
   -f, --freeze       Freeze the screen when the selection is used: --select
   -o, --overwrite    By default scrot does not overwrite the files, use this option to allow it.
-
+  -l, --line         Indicates the style of the line when the selection is used: --select
+                     See SELECTION STYLE
 
 SPECIAL STRINGS
+
   Both the --exec and filename parameters can take format specifiers that are
   expanded by scrot when encountered. There are two types of format specifier.
   Characters preceded by a '%' are interpreted by strftime(2). See man strftime
@@ -67,6 +69,20 @@ EXAMPLE
   scrot '%Y-%m-%d_$wx$h.png' -e 'mv $f ~/shots/'  
        This would create a file called something like 2000-10-30_2560x1024.png
        and move it to your shots directory.
+
+
+SELECTION STYLE
+
+  When using --select you can indicate the style of the line with --line.
+
+  The following specifiers are recognised:
+
+                  style=(solid,dash),width=(range 1 to 8)
+
+  The default style are:
+                  style=solid,width=1
+EXAMPLE
+ scrot  --line style=dash,width=3 --select
 
 AUTHOR
   scrot was originally developed by Tom Gilbert under MIT-advertising license.
