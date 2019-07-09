@@ -33,21 +33,21 @@ OPTIONS
   -m, --multidisp    For multiple heads, grab shot from each and join them
                      together.
   -s, --select       Interactively select a window or rectangle with the mouse.
+                     See -l and -f options.
+  -l, --line         Indicates the style of the line when the -s option is used.
+                     See SELECTION STYLE.
+  -f, --freeze       Freeze the screen when the -s option is used.
   -u, --focused      Use the currently focused window.
   -t, --thumb NUM|GEOM  Generate thumbnail too. NUM is the percentage of the
                         original size for the thumbnail to be. Alternatively,
                         a GEOMetry can be specified, example: 300x200
   -z, --silent       Prevent beeping.
   -p, --pointer      Capture the mouse pointer.
-  -f, --freeze       Freeze the screen when the selection is used: --select
+
   -o, --overwrite    By default scrot does not overwrite the files, use this option to allow it.
-  -l, --line         Indicates the style of the line when the selection is used: --select
-                     See SELECTION STYLE
-  -n, --note         Draw a text note.
-                     See NOTE FORMAT
+  -n, --note         Draw a text note. See NOTE FORMAT.
 
 SPECIAL STRINGS
-
   Both the --exec and filename parameters can take format specifiers that are
   expanded by scrot when encountered. There are two types of format specifier.
   Characters preceded by a '%' are interpreted by strftime(2). See man strftime
@@ -67,29 +67,30 @@ SPECIAL STRINGS
     $$  print a literal '$'
     \\n  print a newline (ignored when used in the filename)
 
-EXAMPLE
-  scrot '%Y-%m-%d_$wx$h.png' -e 'mv $f ~/shots/'  
-       This would create a file called something like 2000-10-30_2560x1024.png
-       and move it to your shots directory.
+  Example:
 
+    scrot '%Y-%m-%d_$wx$h.png' -e 'mv $f ~/shots/'
+
+  This would create a file called something like 2000-10-30_2560x1024.png
+  and move it to your shots directory.
 
 SELECTION STYLE
-
   When using --select you can indicate the style of the line with --line.
 
   The following specifiers are recognised:
 
-                  style=(solid,dash),width=(range 1 to 8)
+    style=(solid,dash),width=(range 1 to 8)
 
-  The default style are:
-                  style=solid,width=1
-EXAMPLE
-  scrot --line style=dash,width=3 --select
+  The default style is:
 
+    style=solid,width=1
+
+  Example:
+
+    scrot --line style=dash,width=3 --select
 
 NOTE FORMAT
-
-  The following specifiers are recognised for the option --note
+  The following specifiers are recognised for the option --note:
 
     -f 'FontName/size'
     -t 'text'
@@ -97,11 +98,13 @@ NOTE FORMAT
     -y position (optional)
     -c color(RGBA) (optional)
 
-EXAMPLE
-  scrot --note "-f '/usr/share/fonts/TTF/DroidSans-Bold/40' -x 10 -y 20 -c 255,0,0,255 -t 'Hi'"
+  Example:
+
+    scrot --note "-f '/usr/share/fonts/TTF/DroidSans-Bold/40' -x 10 -y 20 -c 255,0,0,255 -t 'Hi'"
 
 AUTHOR
-  scrot was originally developed by Tom Gilbert under MIT-advertising license.
+  scrot was originally developed by Tom Gilbert under MIT-advertising license
+  and is maintained by some people.
 
   Currently, source code and newer versions are available at
   https://github.com/resurrecting-open-source-projects/scrot

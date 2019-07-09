@@ -8,9 +8,9 @@
 TEST=$(txt2man -h 2> /dev/null)
 [ "$TEST" ] || { echo -e "\nYou need to install txt2man, from https://github.com/mvertes/txt2man.\n"; exit 1; }
 
-T2M_DATE="10 June 2019"
+T2M_DATE="09 July 2019"
 T2M_NAME=scrot
-T2M_VERSION=1.0
+T2M_VERSION=1.1
 T2M_LEVEL=1
 T2M_DESC="command line screen capture utility"
 
