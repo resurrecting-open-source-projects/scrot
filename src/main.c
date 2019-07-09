@@ -74,6 +74,9 @@ main(int argc,
     }
   }
 
+  if (opt.note != NULL)
+    scrot_note_draw(image);
+
   if (!image)
     gib_eprintf("no image grabbed");
 
@@ -133,6 +136,8 @@ main(int argc,
       gib_eprintf("Unable to create scaled Image\n");
     else
     {
+      if (opt.note != NULL)
+        scrot_note_draw(image);
       filename_thumb = im_printf(opt.thumb_file, tm, NULL, NULL, thumbnail);
       scrot_check_if_overwrite_file(&filename_thumb);
       gib_imlib_save_image_with_error_return(thumbnail, filename_thumb, &err);

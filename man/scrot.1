@@ -106,6 +106,11 @@ By default \fBscrot\fP does not overwrite the files, use this option to allow it
 \fB-l\fP, \fB--line\fP
 Indicates the style of the line when the selection is used: \fB--select\fP
 See SELECTION STYLE
+.TP
+.B
+\fB-n\fP, \fB--note\fP
+Draw a text note.
+See NOTE FORMAT
 .SH SPECIAL STRINGS
 
 Both the \fB--exec\fP and filename parameters can take format specifiers that are
@@ -155,10 +160,26 @@ The following specifiers are recognised:
 The default style are:
 style=solid,width=1
 .SH EXAMPLE
-.TP
-.B
-\fBscrot\fP
-\fB--line\fP style=dash,width=3 \fB--select\fP
+\fBscrot\fP \fB--line\fP style=dash,width=3 \fB--select\fP
+.RE
+.PP
+
+.SH NOTE FORMAT
+
+The following specifiers are recognised for the option \fB--note\fP
+.PP
+.nf
+.fam C
+    -f 'FontName/size'
+    -t 'text'
+    -x position (optional)
+    -y position (optional)
+    -c color(RGBA) (optional)
+
+.fam T
+.fi
+.SH EXAMPLE
+\fBscrot\fP \fB--note\fP "\fB-f\fP '/usr/share/fonts/TTF/DroidSans-Bold/40' \fB-x\fP 10 \fB-y\fP 20 \fB-c\fP 255,0,0,255 \fB-t\fP 'Hi'"
 .SH AUTHOR
 \fBscrot\fP was originally developed by Tom Gilbert under MIT-advertising license.
 .PP

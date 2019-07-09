@@ -27,5 +27,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define STRUCTS_H
 
 typedef struct __scrotoptions scrotoptions;
+typedef struct __scrotnote scrotnote;
 
 #endif

@@ -43,6 +43,8 @@ OPTIONS
   -o, --overwrite    By default scrot does not overwrite the files, use this option to allow it.
   -l, --line         Indicates the style of the line when the selection is used: --select
                      See SELECTION STYLE
+  -n, --note         Draw a text note.
+                     See NOTE FORMAT
 
 SPECIAL STRINGS
 
@@ -82,7 +84,21 @@ SELECTION STYLE
   The default style are:
                   style=solid,width=1
 EXAMPLE
- scrot  --line style=dash,width=3 --select
+  scrot --line style=dash,width=3 --select
+
+
+NOTE FORMAT
+
+  The following specifiers are recognised for the option --note
+
+    -f 'FontName/size'
+    -t 'text'
+    -x position (optional)
+    -y position (optional)
+    -c color(RGBA) (optional)
+
+EXAMPLE
+  scrot --note "-f '/usr/share/fonts/TTF/DroidSans-Bold/40' -x 10 -y 20 -c 255,0,0,255 -t 'Hi'"
 
 AUTHOR
   scrot was originally developed by Tom Gilbert under MIT-advertising license.

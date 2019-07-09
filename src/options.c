@@ -53,8 +53,8 @@ init_parse_options(int argc, char **argv)
    scrot_parse_option_array(argc, argv);
 }
 
-static int
-parse_option_required_number(char *str)
+int
+options_parse_required_number(char *str)
 {
    char *end = NULL;
    int ret = 0;
@@ -119,7 +119,7 @@ options_parse_line(char *optarg)
                exit(EXIT_FAILURE);
             }
 
-            opt.line_width = parse_option_required_number(value);
+            opt.line_width = options_parse_required_number(value);
 
             if (opt.line_width <= 0 || opt.line_width > 8){
                fprintf(stderr, "Value of the range (1..8) for "
@@ -141,7 +141,8 @@ options_parse_line(char *optarg)
 static void
 scrot_parse_option_array(int argc, char **argv)
 {
-   static char stropts[] = "a:ofpbcd:e:hmq:st:uv+:zl:";
+   static char stropts[] = "a:ofpbcd:e:hmq:st:uv+:zn:l:";
+
    static struct option lopts[] = {
       /* actions */
       {"help", 0, 0, 'h'},                  /* okay */
@@ -163,6 +164,7 @@ scrot_parse_option_array(int argc, char **argv)
       {"exec", 1, 0, 'e'},
       {"debug-level", 1, 0, '+'},
       {"autoselect", required_argument, 0, 'a'},
+      {"note", required_argument, 0, 'n'},
       {"line", required_argument, 0, 'l'},
       {0, 0, 0, 0}
    };
@@ -186,7 +188,7 @@ scrot_parse_option_array(int argc, char **argv)
            opt.border = 1;
            break;
         case 'd':
-           opt.delay = parse_option_required_number(optarg);
+           opt.delay = options_parse_required_number(optarg);
            break;
         case 'e':
            opt.exec = gib_estrdup(optarg);
@@ -195,7 +197,7 @@ scrot_parse_option_array(int argc, char **argv)
            opt.multidisp = 1;
            break;
         case 'q':
-           opt.quality = parse_option_required_number(optarg);
+           opt.quality = options_parse_required_number(optarg);
            break;
         case 's':
            opt.select = 1;
@@ -204,7 +206,7 @@ scrot_parse_option_array(int argc, char **argv)
            opt.focused = 1;
            break;
         case '+':
-           opt.debug_level = parse_option_required_number(optarg);
+           opt.debug_level = options_parse_required_number(optarg);
            break;
         case 'c':
            opt.countdown = 1;
@@ -226,6 +228,9 @@ scrot_parse_option_array(int argc, char **argv)
            break;
         case 'a':
            options_parse_autoselect(optarg);
+           break;
+        case 'n':
+           options_parse_note(optarg);
            break;
         case 'l':
            options_parse_line(optarg);
@@ -301,9 +306,9 @@ options_parse_autoselect(char *optarg)
 
    if (strchr(optarg, ',')) /* geometry dimensions must be in format x,y,w,h   */
    {
-     dimensions[i++] = parse_option_required_number(strtok(optarg, tokdelim));
+     dimensions[i++] = options_parse_required_number(strtok(optarg, tokdelim));
      while ((tok = strtok(NULL, tokdelim)) )
-        dimensions[i++] = parse_option_required_number(tok);
+        dimensions[i++] = options_parse_required_number(tok);
      opt.autoselect=1;
      opt.autoselect_x=dimensions[0];
      opt.autoselect_y=dimensions[1];
@@ -320,12 +325,12 @@ options_parse_thumbnail(char *optarg)
    if (strchr(optarg, 'x')) /* We want to specify the geometry */
    {
      tok = strtok(optarg, "x");
-     opt.thumb_width = parse_option_required_number(tok);
+     opt.thumb_width = options_parse_required_number(tok);
      tok = strtok(NULL, "x");
      if (tok)
      {
-       opt.thumb_width = parse_option_required_number(optarg);
-       opt.thumb_height = parse_option_required_number(tok);
+       opt.thumb_width = options_parse_required_number(optarg);
+       opt.thumb_height = options_parse_required_number(tok);
 
        if (opt.thumb_width < 0)
          opt.thumb_width = 1;
@@ -340,12 +345,26 @@ options_parse_thumbnail(char *optarg)
    }
    else
    {
-     opt.thumb = parse_option_required_number(optarg);
+     opt.thumb = options_parse_required_number(optarg);
      if (opt.thumb < 1)
        opt.thumb = 1;
      else if (opt.thumb > 100)
        opt.thumb = 100;
    }
+}
+
+void options_parse_note(char *optarg)
+{
+   opt.note = gib_estrdup(optarg);
+
+   if (opt.note == NULL) return;
+
+   if (opt.note[0] == '\0') {
+      fprintf(stderr, "Required arguments for --note.");
+      exit(EXIT_FAILURE);
+   }
+
+   scrot_note_new(opt.note);
 }
 
 void
@@ -397,6 +416,8 @@ show_usage(void)
            "  -o, --overwrite           By default " SCROT_PACKAGE " does not overwrite the files, use this option to allow it.\n"
            "  -l, --line                Indicates the style of the line when the selection is used: --select\n"
            "                            See SELECTION STYLE\n"
+           "  -n, --note                Draw a text note.\n"
+           "                            See NOTE FORMAT\n"
 
            "\n" "  SPECIAL STRINGS\n"
            "  Both the --exec and filename parameters can take format specifiers\n"
@@ -429,7 +450,16 @@ show_usage(void)
            "  The default style are:\n"
            "                  style=solid,width=1\n"
            "  Example:\n" "          " SCROT_PACKAGE
-           "  --line style=dash,width=3 --select\n\n"
+           " --line style=dash,width=3 --select\n\n"
+           "\n" "  NOTE FORMAT\n"
+           "  The following specifiers are recognised for the option --note\n"
+           "                  -f 'FontName/size'\n"
+           "                  -t 'text'\n"
+           "                  -x position (optional)\n"
+           "                  -y position (optional)\n"
+           "                  -c color(RGBA) (optional)\n"
+           "  Example:\n" "          " SCROT_PACKAGE
+           " --note \"-f '/usr/share/fonts/TTF/DroidSans-Bold/40' -x 10 -y 20 -c 255,0,0,255 -t 'Hi'\"\n\n"
            "This program is free software see the file COPYING for licensing info.\n"
            "Copyright Tom Gilbert 2000\n"
            "Email bugs to <scrot_sucks@linuxbrit.co.uk>\n");
