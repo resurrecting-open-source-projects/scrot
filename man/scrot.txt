@@ -97,6 +97,7 @@ NOTE FORMAT
     -x position (optional)
     -y position (optional)
     -c color(RGBA) (optional)
+    -a angle (optional)
 
   Example:
 

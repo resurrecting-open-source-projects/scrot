@@ -459,6 +459,7 @@ show_usage(void)
            "                  -x position (optional)\n"
            "                  -y position (optional)\n"
            "                  -c color(RGBA) (optional)\n"
+           "                  -a angle (optional)\n"
            "  Example:\n" "          " SCROT_PACKAGE
            " --note \"-f '/usr/share/fonts/TTF/DroidSans-Bold/40' -x 10 -y 20 -c 255,0,0,255 -t 'Hi'\"\n\n"
            "This program is free software see the file COPYING for licensing info.\n"
