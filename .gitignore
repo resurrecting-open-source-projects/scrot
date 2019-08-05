@@ -1,0 +1,16 @@
+*.in
+aclocal.m4
+autom4te.cache
+compile
+configure
+depcomp
+install-sh
+missing
+Makefile
+config.*
+src/.deps
+src/Makefile
+src/config.h
+src/scrot_config.h
+src/stamp-h1
+
