@@ -1,0 +1,50 @@
+Sat Sep 04 15:41:16 BST 2004  Tom Gilbert <tom@linuxbrit.co.uk>
+
+  * Applied patch from Claes Nasten <pekdon@pekdon.net>
+  * fixes some gib_hash glitches including a possible core dump
+
+Sat Sep 04 15:38:14 BST 2004  Tom Gilbert <tom@linuxbrit.co.uk>
+
+  * Moved from CVS to subversion, previous history lost
+
+Fri Apr 11 11:51:23 BST 2003  Tom Gilbert <tom@linuxbrit.co.uk>
+
+  * pkgconfig patch from Eric Dorland <eric.dorland@mail.mcgill.ca>
+
+Fri Apr 11 11:41:52 BST 2003  Tom Gilbert <tom@linuxbrit.co.uk>
+
+  * Small fix to btree find_by_data from Jon Bernard <jbernard@roanoke.edu>
+
+Tue Feb 25 13:03:01 GMT 2003  Tom Gilbert <tom@linuxbrit.co.uk>
+
+  * Fix up e* symbols, prevent clashing when building static.
+
+Sat Jan 26 15:40:01 GMT 2002  Tom Gilbert <tom@linuxbrit.co.uk>
+
+  * New lib version, 1.0.4, new giblib version, 1.2.2 - added wrapper for
+    set_orientation.
+
+Sun Jan 13 21:20:16 2002  Tom Gilbert  <tom@linuxbrit.co.uk>
+
+	* Fix for set_format dumbness.
+
+Fri May  4 18:40:04 PDT 2001  Michael Jennings  <mej@eterm.org>
+
+	* Fixed initial creation of the config header.
+	
+Sat Feb 17 03:04:36 2001  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
+
+	* Added gib_strjoin, a util function.
+
+Sun Nov 12 18:21:19 CST 2000 Lyle Kempler <term@twistedpath.org>
+
+	* Added giblib.spec.
+
+Fri Nov 10 01:48:55 2000  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
+
+	* Tidy up and added string_split list function.
+
+Thu Nov  9 00:34:45 2000  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
+
+	* Created.
+

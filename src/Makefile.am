@@ -27,11 +27,13 @@ MAINTAINERCLEANFILES = Makefile.in
 
 AM_LDFLAGS        = -L/usr/X11R6/lib
 AM_CPPFLAGS       = -g -O3 -Wall -I/usr/X11R6/include \
-$(X_CFLAGS) -I$(prefix)/include -I$(includedir) -I. \
--DPREFIX=\""$(prefix)"\" @GIBLIB_CFLAGS@
+$(X_CFLAGS) -I$(prefix)/include -I$(includedir) -I. -Igiblib \
+-DPREFIX=\""$(prefix)"\" @IMLIB2_CFLAGS@
 LIBOBJS = @LIBOBJS@
 
 bin_PROGRAMS      = scrot
 scrot_SOURCES       = main.c getopt.c getopt1.c getopt.h scrot.h \
-options.c options.h debug.h imlib.c structs.h note.c note.h
-scrot_LDADD         = -lX11 -lXfixes -lXcursor @GIBLIB_LIBS@
+options.c options.h debug.h imlib.c structs.h note.c note.h \
+giblib/gib_btree.c  giblib/gib_imlib.c  giblib/gib_queue.c  giblib/gib_style.c \
+giblib/gib_hash.c   giblib/gib_list.c   giblib/gib_stack.c  giblib/gib_utils.c
+scrot_LDADD         = -lX11 -lXfixes -lXcursor @IMLIB2_LIBS@
