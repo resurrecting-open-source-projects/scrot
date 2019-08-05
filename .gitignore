@@ -13,4 +13,5 @@ src/Makefile
 src/config.h
 src/scrot_config.h
 src/stamp-h1
-
+src/*.o
+src/scrot
