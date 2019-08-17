@@ -340,7 +340,7 @@ scrot_sel_and_grab_image(void)
   int count = 0, done = 0;
   int rx = 0, ry = 0, rw = 0, rh = 0, btn_pressed = 0;
   int rect_x = 0, rect_y = 0, rect_w = 0, rect_h = 0;
-  Cursor cursor, cursor2;
+  Cursor cur_cross, cur_angle;
   Window target = None;
   GC gc;
   XGCValues gcval;
@@ -348,8 +348,8 @@ scrot_sel_and_grab_image(void)
   xfd = ConnectionNumber(disp);
   fdsize = xfd + 1;
 
-  cursor = XCreateFontCursor(disp, XC_left_ptr);
-  cursor2 = XCreateFontCursor(disp, XC_lr_angle);
+  cur_cross = XCreateFontCursor(disp, XC_cross);
+  cur_angle = XCreateFontCursor(disp, XC_lr_angle);
 
   gcval.foreground = XWhitePixel(disp, 0);
   gcval.function = GXxor;
@@ -367,10 +367,10 @@ scrot_sel_and_grab_image(void)
   if ((XGrabPointer
        (disp, root, False,
         ButtonMotionMask | ButtonPressMask | ButtonReleaseMask, GrabModeAsync,
-        GrabModeAsync, root, cursor, CurrentTime) != GrabSuccess)) {
+        GrabModeAsync, root, cur_cross, CurrentTime) != GrabSuccess)) {
     fprintf(stderr, "couldn't grab pointer:");
-    XFreeCursor(disp, cursor);
-    XFreeCursor(disp, cursor2);
+    XFreeCursor(disp, cur_cross);
+    XFreeCursor(disp, cur_angle);
     XFreeGC(disp, gc);
     exit(EXIT_FAILURE);
   }
@@ -380,8 +380,8 @@ scrot_sel_and_grab_image(void)
        (disp, root, False, GrabModeAsync, GrabModeAsync,
         CurrentTime) != GrabSuccess)) {
     fprintf(stderr, "couldn't grab keyboard:");
-    XFreeCursor(disp, cursor);
-    XFreeCursor(disp, cursor2);
+    XFreeCursor(disp, cur_cross);
+    XFreeCursor(disp, cur_angle);
     XFreeGC(disp, gc);
     exit(EXIT_FAILURE);
   }
@@ -403,7 +403,7 @@ scrot_sel_and_grab_image(void)
               /* Change the cursor to show we're selecting a region */
               XChangeActivePointerGrab(disp,
                                        ButtonMotionMask | ButtonReleaseMask,
-                                       cursor2, CurrentTime);
+                                       cur_angle, CurrentTime);
             }
 
             rect_x = rx;
@@ -471,8 +471,8 @@ scrot_sel_and_grab_image(void)
   }
   XUngrabPointer(disp, CurrentTime);
   XUngrabKeyboard(disp, CurrentTime);
-  XFreeCursor(disp, cursor);
-  XFreeCursor(disp, cursor2);
+  XFreeCursor(disp, cur_cross);
+  XFreeCursor(disp, cur_angle);
   XFreeGC(disp, gc);
   XSync(disp, True);
 
