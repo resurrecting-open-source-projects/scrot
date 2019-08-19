@@ -1,9 +1,11 @@
-Sun Aug 18 21:05:00 -03:00 2019  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
+Sun Aug 19 08:35:00 -03:00 2019  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 Version 1.2
 
   [ Daniel T. Borelli ]
 
   * Changed the cursor to indicate the selection mode.
+  * Fixed GCC >=8.0 warning: -Wstringop-truncation.
+  * Evaluate return of strftime.
 
   [ Jade Auer ]
 
