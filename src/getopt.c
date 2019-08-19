@@ -5,6 +5,7 @@
 
    Copyright (C) 1987, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97
    	Free Software Foundation, Inc.
+   Copyright 2019 Santhosh Raju <santhosh.raju@gmail.com>
 
    The GNU C Library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public License as
