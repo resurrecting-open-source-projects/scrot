@@ -700,8 +700,11 @@ im_printf(char *str, struct tm *tm,
           strncat(ret, c, 1);
           break;
       }
-    } else
-      strncat(ret, c, 1);
+    } else {
+      const size_t len = strlen(ret);
+      ret[len] = *c;
+      ret[len + 1] = '\0';
+    }
   }
   return gib_estrdup(ret);
 }
