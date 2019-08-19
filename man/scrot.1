@@ -152,7 +152,7 @@ The following specifiers are recognised:
 .PP
 .nf
 .fam C
-    style=(solid,dash),width=(range 1 to 8)
+    style=(solid,dash),width=(range 1 to 8),color="value"
 
 .fam T
 .fi
@@ -164,11 +164,19 @@ The default style is:
 
 .fam T
 .fi
+For the color you can use a name or a hexdecimal value.
+.PP
+.nf
+.fam C
+    color="red" or color="#ff0000"
+
+.fam T
+.fi
 Example:
 .PP
 .nf
 .fam C
-    scrot --line style=dash,width=3 --select
+    scrot --line style=dash,width=3,color="red" --select
 
 .fam T
 .fi
