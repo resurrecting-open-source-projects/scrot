@@ -623,7 +623,11 @@ im_printf(char *str, struct tm *tm,
   struct stat st;
 
   ret[0] = '\0';
-  strftime(strf, 4095, str, tm);
+
+  if (strftime(strf, 4095, str, tm) == 0) {
+    fprintf(stderr, "strftime returned 0\n");
+    exit(EXIT_FAILURE);
+  }
 
   for (c = strf; *c != '\0'; c++) {
     if (*c == '$') {
@@ -700,8 +704,11 @@ im_printf(char *str, struct tm *tm,
           strncat(ret, c, 1);
           break;
       }
-    } else
-      strncat(ret, c, 1);
+    } else {
+      const size_t len = strlen(ret);
+      ret[len] = *c;
+      ret[len + 1] = '\0';
+    }
   }
   return gib_estrdup(ret);
 }
