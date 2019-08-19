@@ -345,17 +345,36 @@ scrot_sel_and_grab_image(void)
   GC gc;
   XGCValues gcval;
 
+  gcval.function = GXxor;
+  gcval.foreground = XWhitePixel(disp, 0);
+  gcval.background = XBlackPixel(disp, 0);
+  gcval.plane_mask = gcval.background ^ gcval.foreground;
+  gcval.subwindow_mode = IncludeInferiors;
+
+  if (opt.line_color != NULL) {
+    XColor clr_exact, clr_closest;
+    Status ret;
+
+    ret = XAllocNamedColor(disp, XDefaultColormap(disp, DefaultScreen(disp)),
+            opt.line_color, &clr_exact, &clr_closest);
+
+    if (ret == 0) {
+       free(opt.line_color);
+       fprintf(stderr, "Error allocate color:%s\n", strerror(BadColor));
+       exit(EXIT_FAILURE);
+    }
+
+    gcval.foreground = clr_exact.pixel;
+
+    free(opt.line_color);
+    opt.line_color = NULL;
+  }
+
   xfd = ConnectionNumber(disp);
   fdsize = xfd + 1;
 
   cur_cross = XCreateFontCursor(disp, XC_cross);
   cur_angle = XCreateFontCursor(disp, XC_lr_angle);
-
-  gcval.foreground = XWhitePixel(disp, 0);
-  gcval.function = GXxor;
-  gcval.background = XBlackPixel(disp, 0);
-  gcval.plane_mask = gcval.background ^ gcval.foreground;
-  gcval.subwindow_mode = IncludeInferiors;
 
   gc =
     XCreateGC(disp, root,

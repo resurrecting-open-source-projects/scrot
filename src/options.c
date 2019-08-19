@@ -49,6 +49,7 @@ init_parse_options(int argc, char **argv)
    opt.overwrite = 0;
    opt.line_style = LineSolid;
    opt.line_width = 1;
+   opt.line_color = NULL;
 
    /* Parse the cmdline args */
    scrot_parse_option_array(argc, argv);
@@ -79,11 +80,12 @@ options_parse_required_number(char *str)
 static void
 options_parse_line(char *optarg)
 {
-   enum {STYLE = 0, WIDTH };
+   enum {STYLE = 0, WIDTH, COLOR };
 
    char *const token[] = {
       [STYLE] = "style",
       [WIDTH] = "width",
+      [COLOR] = "color",
       NULL
    };
 
@@ -129,6 +131,17 @@ options_parse_line(char *optarg)
             }
             break;
 
+         case COLOR:
+
+            if (value == NULL || *value == '\0') {
+               fprintf(stderr, "Missing value for "
+                     "suboption '%s'\n", token[COLOR]);
+               exit(EXIT_FAILURE);
+            }
+
+            opt.line_color = strdup(value);
+
+            break;
          default:
             fprintf(stderr, "No match found for token: '%s'\n", value);
             exit(EXIT_FAILURE);
