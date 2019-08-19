@@ -46,7 +46,7 @@ init_parse_options(int argc, char **argv)
    memset(&opt, 0, sizeof(scrotoptions));
 
    opt.quality = 75;
-   opt.overwrite = 0;
+   opt.overwrite = 1;
    opt.line_style = LineSolid;
    opt.line_width = 1;
 
@@ -142,7 +142,7 @@ options_parse_line(char *optarg)
 static void
 scrot_parse_option_array(int argc, char **argv)
 {
-   static char stropts[] = "a:ofpbcd:e:hmq:st:uv+:zn:l:";
+   static char stropts[] = "a:o:fpbcd:e:hmq:st:uv+:zn:l:";
 
    static struct option lopts[] = {
       /* actions */
@@ -157,7 +157,6 @@ scrot_parse_option_array(int argc, char **argv)
       {"silent", 0, 0, 'z'},
       {"pointer", 0, 0, 'p'},
       {"freeze", 0, 0, 'f'},
-      {"overwrite", 0, 0, 'o'},
       /* toggles */
       {"thumb", 1, 0, 't'},
       {"delay", 1, 0, 'd'},
@@ -167,6 +166,7 @@ scrot_parse_option_array(int argc, char **argv)
       {"autoselect", required_argument, 0, 'a'},
       {"note", required_argument, 0, 'n'},
       {"line", required_argument, 0, 'l'},
+      {"overwrite", required_argument, 0, 'o'},
       {0, 0, 0, 0}
    };
    int optch = 0, cmdx = 0;
@@ -225,7 +225,7 @@ scrot_parse_option_array(int argc, char **argv)
            opt.freeze = 1;
            break;
         case 'o':
-           opt.overwrite = 1;
+           opt.overwrite = !!options_parse_required_number(optarg);
            break;
         case 'a':
            options_parse_autoselect(optarg);
@@ -414,7 +414,7 @@ show_usage(void)
            "  -z, --silent              Prevent beeping\n"
            "  -p, --pointer             Capture the mouse pointer.\n"
            "  -f, --freeze              Freeze the screen when the selection is used: --select\n"
-           "  -o, --overwrite           By default " SCROT_PACKAGE " does not overwrite the files, use this option to allow it.\n"
+           "  -o, --overwrite NUM       By default " SCROT_PACKAGE " overwrites the files, assign the value 0 to NUM to not overwrite.\n"
            "  -l, --line                Indicates the style of the line when the selection is used: --select\n"
            "                            See SELECTION STYLE\n"
            "  -n, --note                Draw a text note.\n"

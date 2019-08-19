@@ -44,7 +44,7 @@ OPTIONS
   -z, --silent       Prevent beeping.
   -p, --pointer      Capture the mouse pointer.
 
-  -o, --overwrite    By default scrot does not overwrite the files, use this option to allow it.
+  -o, --overwrite NUM   By default scrot overwrites the files, assign the value 0 to NUM to not overwrite.
   -n, --note         Draw a text note. See NOTE FORMAT.
 
 SPECIAL STRINGS
