@@ -49,6 +49,7 @@ init_parse_options(int argc, char **argv)
    opt.overwrite = 0;
    opt.line_style = LineSolid;
    opt.line_width = 1;
+   opt.line_color = NULL;
 
    /* Parse the cmdline args */
    scrot_parse_option_array(argc, argv);
@@ -79,11 +80,12 @@ options_parse_required_number(char *str)
 static void
 options_parse_line(char *optarg)
 {
-   enum {STYLE = 0, WIDTH };
+   enum {STYLE = 0, WIDTH, COLOR };
 
    char *const token[] = {
       [STYLE] = "style",
       [WIDTH] = "width",
+      [COLOR] = "color",
       NULL
    };
 
@@ -129,6 +131,17 @@ options_parse_line(char *optarg)
             }
             break;
 
+         case COLOR:
+
+            if (value == NULL || *value == '\0') {
+               fprintf(stderr, "Missing value for "
+                     "suboption '%s'\n", token[COLOR]);
+               exit(EXIT_FAILURE);
+            }
+
+            opt.line_color = strdup(value);
+
+            break;
          default:
             fprintf(stderr, "No match found for token: '%s'\n", value);
             exit(EXIT_FAILURE);
@@ -447,11 +460,13 @@ show_usage(void)
            "\n" "  SELECTION STYLE\n"
            "  When using --select you can indicate the style of the line with --line.\n"
            "  The following specifiers are recognised:\n"
-           "                  style=(solid,dash),width=(range 1 to 8)\n"
+           "                  style=(solid,dash),width=(range 1 to 8),color=\"value\"\n"
            "  The default style are:\n"
            "                  style=solid,width=1\n"
+           "  For the color you can use a name or a hexdecimal value.\n"
+           "                  color=\"red\" or color=\"#ff0000\"\n"
            "  Example:\n" "          " SCROT_PACKAGE
-           " --line style=dash,width=3 --select\n\n"
+           " --line style=dash,width=3,color=\"red\" --select\n\n"
            "\n" "  NOTE FORMAT\n"
            "  The following specifiers are recognised for the option --note\n"
            "                  -f 'FontName/size'\n"

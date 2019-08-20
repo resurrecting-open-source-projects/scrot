@@ -79,15 +79,19 @@ SELECTION STYLE
 
   The following specifiers are recognised:
 
-    style=(solid,dash),width=(range 1 to 8)
+    style=(solid,dash),width=(range 1 to 8),color="value"
 
   The default style is:
 
     style=solid,width=1
 
+  For the color you can use a name or a hexdecimal value.
+
+    color="red" or color="#ff0000"
+
   Example:
 
-    scrot --line style=dash,width=3 --select
+    scrot --line style=dash,width=3,color="red" --select
 
 NOTE FORMAT
   The following specifiers are recognised for the option --note:
