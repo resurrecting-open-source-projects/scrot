@@ -32,7 +32,7 @@ OPTIONS
                      file format chosen).
   -m, --multidisp    For multiple heads, grab shot from each and join them
                      together.
-  -s, --select       Interactively select a window or rectangle with the mouse.
+  -s, --select       Interactively select a window or rectangle with the mouse (use the arrow keys to resize)
                      See -l and -f options.
   -l, --line         Indicates the style of the line when the -s option is used.
                      See SELECTION STYLE.
