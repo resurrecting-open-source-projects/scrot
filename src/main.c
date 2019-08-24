@@ -329,6 +329,37 @@ scrot_grab_focused(void)
   return im;
 }
 
+
+static void
+scrot_draw_selection(GC gc, const int ex, const int ey,   /* GC, xy motion event  */
+                     const int x, const int y,            /* xy mouse press button*/
+                     int *rx, int *ry, int *rw, int *rh)  /* rectangle            */
+{
+  /* re-draw the last rect to clear it */
+  XDrawRectangle(disp, root, gc, *rx, *ry, *rw, *rh);
+
+  *rx = x;
+  *ry = y;
+  *rw = ex - *rx;
+  *rh = ey - *ry;
+
+  if (*rw == 0) ++(*rw);
+  if (*rh == 0) ++(*rh);
+
+  if (*rw < 0) {
+    *rx += *rw;
+    *rw = 0 - *rw;
+  }
+  if (*rh < 0) {
+    *ry += *rh;
+    *rh = 0 - *rh;
+  }
+  /* draw rectangle */
+  XDrawRectangle(disp, root, gc, *rx, *ry, *rw, *rh);
+  XFlush(disp);
+}
+
+
 Imlib_Image
 scrot_sel_and_grab_image(void)
 {
@@ -422,27 +453,8 @@ scrot_sel_and_grab_image(void)
                                        cur_angle, CurrentTime);
             }
 
-            /* re-draw the last rect to clear it */
-            XDrawRectangle(disp, root, gc, rect_x, rect_y, rect_w, rect_h);
-            rect_x = rx;
-            rect_y = ry;
-            rect_w = ev.xmotion.x - rect_x;
-            rect_h = ev.xmotion.y - rect_y;
-
-            if (rect_w == 0) ++rect_w;
-            if (rect_h == 0) ++rect_h;
-
-            if (rect_w < 0) {
-              rect_x += rect_w;
-              rect_w = 0 - rect_w;
-            }
-            if (rect_h < 0) {
-              rect_y += rect_h;
-              rect_h = 0 - rect_h;
-            }
-            /* draw rectangle */
-            XDrawRectangle(disp, root, gc, rect_x, rect_y, rect_w, rect_h);
-            XFlush(disp);
+            scrot_draw_selection(gc, ev.xmotion.x, ev.xmotion.y,
+                                 rx, ry, &rect_x, &rect_y, &rect_w, &rect_h);
           }
           break;
         case ButtonPress:
