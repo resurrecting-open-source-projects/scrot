@@ -415,16 +415,15 @@ scrot_sel_and_grab_image(void)
       switch (ev.type) {
         case MotionNotify:
           if (btn_pressed) {
-            if (rect_w) {
-              /* re-draw the last rect to clear it */
-              XDrawRectangle(disp, root, gc, rect_x, rect_y, rect_w, rect_h);
-            } else {
+            if (rect_w == 0) {
               /* Change the cursor to show we're selecting a region */
               XChangeActivePointerGrab(disp,
                                        ButtonMotionMask | ButtonReleaseMask,
                                        cur_angle, CurrentTime);
             }
 
+            /* re-draw the last rect to clear it */
+            XDrawRectangle(disp, root, gc, rect_x, rect_y, rect_w, rect_h);
             rect_x = rx;
             rect_y = ry;
             rect_w = ev.xmotion.x - rect_x;
