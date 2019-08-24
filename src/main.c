@@ -336,7 +336,9 @@ scrot_draw_selection(GC gc, const int ex, const int ey,   /* GC, xy motion event
                      int *rx, int *ry, int *rw, int *rh)  /* rectangle            */
 {
   /* re-draw the last rect to clear it */
-  XDrawRectangle(disp, root, gc, *rx, *ry, *rw, *rh);
+  if (*rw > 0) {
+    XDrawRectangle(disp, root, gc, *rx, *ry, *rw, *rh);
+  }
 
   *rx = x;
   *ry = y;
