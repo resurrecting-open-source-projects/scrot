@@ -50,6 +50,7 @@ init_parse_options(int argc, char **argv)
    opt.line_style = LineSolid;
    opt.line_width = 1;
    opt.line_color = NULL;
+   opt.display = NULL;
 
    /* Parse the cmdline args */
    scrot_parse_option_array(argc, argv);
@@ -155,7 +156,7 @@ options_parse_line(char *optarg)
 static void
 scrot_parse_option_array(int argc, char **argv)
 {
-   static char stropts[] = "a:ofpbcd:e:hmq:st:uv+:zn:l:";
+   static char stropts[] = "a:ofpbcd:e:hmq:st:uv+:zn:l:D:";
 
    static struct option lopts[] = {
       /* actions */
@@ -178,6 +179,7 @@ scrot_parse_option_array(int argc, char **argv)
       {"exec", 1, 0, 'e'},
       {"debug-level", 1, 0, '+'},
       {"autoselect", required_argument, 0, 'a'},
+      {"display", required_argument, 0, 'D'},
       {"note", required_argument, 0, 'n'},
       {"line", required_argument, 0, 'l'},
       {0, 0, 0, 0}
@@ -242,6 +244,9 @@ scrot_parse_option_array(int argc, char **argv)
            break;
         case 'a':
            options_parse_autoselect(optarg);
+           break;
+        case 'D':
+           options_parse_display(optarg);
            break;
         case 'n':
            options_parse_note(optarg);
@@ -332,6 +337,21 @@ options_parse_autoselect(char *optarg)
 }
 
 void
+options_parse_display(char *optarg)
+{
+   size_t length = 0;
+   char *new_display;
+
+   length = strlen(optarg) + 1;
+   if (length > 256) {
+     length = 256;
+   }
+   new_display = gib_emalloc(length);
+   strncpy(new_display, optarg, length);
+   opt.display=new_display;
+}
+
+void
 options_parse_thumbnail(char *optarg)
 {
    char *tok;
@@ -407,6 +427,7 @@ show_usage(void)
            "  current directory.\n" "  See man " SCROT_PACKAGE " for more details\n"
            "  -h, --help                display this help and exit\n"
            "  -v, --version             output version information and exit\n"
+           "  -D, --display             Set DISPLAY target other than current\n"
            "  -a, --autoselect          non-interactively choose a rectangle of x,y,w,h\n"
            "  -b, --border              When selecting a window, grab wm border too\n"
            "  -c, --count               show a countdown before taking the shot\n"
