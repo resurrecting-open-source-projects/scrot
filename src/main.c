@@ -411,6 +411,11 @@ scrot_sel_and_grab_image(void)
               rect_h = 0 - rect_h;
             }
 
+            rect_x -= opt.line_width;
+            rect_y -= opt.line_width;
+            rect_w += opt.line_width;
+            rect_h += opt.line_width;
+
             XRectangle rects[4] = {
               {rect_x, rect_y, opt.line_width, rect_h},                             //left
               {rect_x, rect_y, rect_w, opt.line_width},                             //top
