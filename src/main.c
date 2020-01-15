@@ -324,8 +324,9 @@ scrot_grab_focused(void)
   if (!scrot_get_geometry(target, &rx, &ry, &rw, &rh)) return NULL;
   scrot_nice_clip(&rx, &ry, &rw, &rh);
   im = gib_imlib_create_image_from_drawable(root, 0, rx, ry, rw, rh, 1);
-  if (opt.pointer == 1)
-	  scrot_grab_mouse_pointer(im, rx, ry);
+  if (opt.pointer == 1) {
+    scrot_grab_mouse_pointer(im, rx, ry);
+  }
   return im;
 }
 
@@ -341,47 +342,20 @@ scrot_sel_and_grab_image(void)
   int rx = 0, ry = 0, rw = 0, rh = 0, btn_pressed = 0;
   int rect_x = 0, rect_y = 0, rect_w = 0, rect_h = 0;
   Cursor cur_cross, cur_angle;
-  Window target = None;
-  GC gc;
-  XGCValues gcval;
+  Window target = None, wndDraw = None;
+  XSetWindowAttributes attr;
+  XColor color;
 
-  gcval.function = GXxor;
-  gcval.foreground = XWhitePixel(disp, 0);
-  gcval.background = XBlackPixel(disp, 0);
-  gcval.plane_mask = gcval.background ^ gcval.foreground;
-  gcval.subwindow_mode = IncludeInferiors;
-
-  if (opt.line_color != NULL) {
-    XColor clr_exact, clr_closest;
-    Status ret;
-
-    ret = XAllocNamedColor(disp, XDefaultColormap(disp, DefaultScreen(disp)),
-            opt.line_color, &clr_exact, &clr_closest);
-
-    if (ret == 0) {
-       free(opt.line_color);
-       fprintf(stderr, "Error allocate color:%s\n", strerror(BadColor));
-       exit(EXIT_FAILURE);
-    }
-
-    gcval.foreground = clr_exact.pixel;
-
-    free(opt.line_color);
-    opt.line_color = NULL;
-  }
+  if (0 == XAllocNamedColor(disp, XDefaultColormap(disp, DefaultScreen(disp)), opt.line_color, &color, &(XColor){})) {
+    fprintf(stderr, "Error allocate color:%s\n", strerror(BadColor));
+    exit(EXIT_FAILURE);
+   }
 
   xfd = ConnectionNumber(disp);
   fdsize = xfd + 1;
 
   cur_cross = XCreateFontCursor(disp, XC_cross);
   cur_angle = XCreateFontCursor(disp, XC_lr_angle);
-
-  gc =
-    XCreateGC(disp, root,
-              GCFunction | GCForeground | GCBackground | GCSubwindowMode,
-              &gcval);
-
-  XSetLineAttributes(disp, gc, opt.line_width, opt.line_style, CapRound, JoinRound);
 
   if ((XGrabPointer
        (disp, root, False,
@@ -390,7 +364,6 @@ scrot_sel_and_grab_image(void)
     fprintf(stderr, "couldn't grab pointer:");
     XFreeCursor(disp, cur_cross);
     XFreeCursor(disp, cur_angle);
-    XFreeGC(disp, gc);
     exit(EXIT_FAILURE);
   }
 
@@ -401,12 +374,14 @@ scrot_sel_and_grab_image(void)
     fprintf(stderr, "couldn't grab keyboard:");
     XFreeCursor(disp, cur_cross);
     XFreeCursor(disp, cur_angle);
-    XFreeGC(disp, gc);
     exit(EXIT_FAILURE);
   }
 
-  if (opt.freeze == 1)
-      XGrabServer(disp);
+  attr.background_pixel = color.pixel;
+  attr.override_redirect = True;
+
+  wndDraw = XCreateWindow(disp, root, 0, 0, WidthOfScreen(scr), HeightOfScreen(scr), 0,
+          CopyFromParent, InputOutput, CopyFromParent, CWOverrideRedirect | CWBackPixel, &attr);
 
   while (1) {
     /* handle events here */
@@ -415,16 +390,10 @@ scrot_sel_and_grab_image(void)
       switch (ev.type) {
         case MotionNotify:
           if (btn_pressed) {
-            if (rect_w) {
-              /* re-draw the last rect to clear it */
-              XDrawRectangle(disp, root, gc, rect_x, rect_y, rect_w, rect_h);
-            } else {
-              /* Change the cursor to show we're selecting a region */
-              XChangeActivePointerGrab(disp,
-                                       ButtonMotionMask | ButtonReleaseMask,
-                                       cur_angle, CurrentTime);
-            }
 
+            XChangeActivePointerGrab(disp,
+                                    ButtonMotionMask | ButtonReleaseMask,
+                                    cur_angle, CurrentTime);
             rect_x = rx;
             rect_y = ry;
             rect_w = ev.xmotion.x - rect_x;
@@ -441,9 +410,16 @@ scrot_sel_and_grab_image(void)
               rect_y += rect_h;
               rect_h = 0 - rect_h;
             }
-            /* draw rectangle */
-            XDrawRectangle(disp, root, gc, rect_x, rect_y, rect_w, rect_h);
-            XFlush(disp);
+
+            XRectangle rects[4] = {
+              {rect_x, rect_y, opt.line_width, rect_h},                             //left
+              {rect_x, rect_y, rect_w, opt.line_width},                             //top
+              {rect_x + rect_w, rect_y, opt.line_width, rect_h},                    //right
+              {rect_x, rect_y + rect_h, rect_w + opt.line_width, opt.line_width}    //bottom
+            };
+
+            XShapeCombineRectangles(disp, wndDraw, ShapeBounding, 0, 0, rects, 4, ShapeSet, 0);
+            XMapWindow(disp, wndDraw);
           }
           break;
         case ButtonPress:
@@ -484,19 +460,15 @@ scrot_sel_and_grab_image(void)
       exit(EXIT_FAILURE);
     }
   }
-  if (rect_w) {
-    XDrawRectangle(disp, root, gc, rect_x, rect_y, rect_w, rect_h);
-    XFlush(disp);
-  }
+
+
   XUngrabPointer(disp, CurrentTime);
   XUngrabKeyboard(disp, CurrentTime);
   XFreeCursor(disp, cur_cross);
   XFreeCursor(disp, cur_angle);
-  XFreeGC(disp, gc);
+  XUnmapWindow(disp, wndDraw);
+  XDestroyWindow(disp, wndDraw);
   XSync(disp, True);
-
-  if (opt.freeze == 1)
-      XUngrabServer(disp);
 
   if (done < 2) {
     scrot_do_delay();
@@ -530,7 +502,7 @@ scrot_sel_and_grab_image(void)
 
 /* clip rectangle nicely */
 void
-scrot_nice_clip(int *rx, 
+scrot_nice_clip(int *rx,
   int *ry,
   int *rw,
   int *rh)
@@ -552,9 +524,9 @@ scrot_nice_clip(int *rx,
 /* get geometry of window and use that */
 int
 scrot_get_geometry(Window target,
-		   int *rx, 
-		   int *ry, 
-		   int *rw, 
+		   int *rx,
+		   int *ry,
+		   int *rw,
 		   int *rh)
 {
   Window child;
@@ -566,11 +538,11 @@ scrot_get_geometry(Window target,
     unsigned int d;
     int x;
     int status;
-    
+
     status = XGetGeometry(disp, target, &root, &x, &x, &d, &d, &d, &d);
     if (status != 0) {
       Window rt, *children, parent;
-      
+
       for (;;) {
 	/* Find window manager frame. */
 	status = XQueryTree(disp, target, &rt, &parent, &children, &d);

@@ -47,9 +47,8 @@ init_parse_options(int argc, char **argv)
 
    opt.quality = 75;
    opt.overwrite = 0;
-   opt.line_style = LineSolid;
    opt.line_width = 1;
-   opt.line_color = NULL;
+   opt.line_color = "gray";
 
    /* Parse the cmdline args */
    scrot_parse_option_array(argc, argv);
@@ -80,10 +79,9 @@ options_parse_required_number(char *str)
 static void
 options_parse_line(char *optarg)
 {
-   enum {STYLE = 0, WIDTH, COLOR };
+   enum {WIDTH=0, COLOR };
 
    char *const token[] = {
-      [STYLE] = "style",
       [WIDTH] = "width",
       [COLOR] = "color",
       NULL
@@ -94,26 +92,6 @@ options_parse_line(char *optarg)
 
    while (*subopts != '\0') {
       switch(getsubopt(&subopts, token, &value)) {
-
-         case STYLE:
-
-            if (value == NULL) {
-               fprintf(stderr, "Missing value for "
-                     "suboption '%s'\n", token[STYLE]);
-               exit(EXIT_FAILURE);
-            }
-
-            if (!strncmp(value, "dash", 4))
-               opt.line_style = LineOnOffDash;
-            else if (!strncmp(value, "solid", 5))
-               opt.line_style = LineSolid;
-            else {
-               fprintf(stderr, "Unknown value for "
-                     "suboption '%s': %s\n", token[STYLE], value);
-               exit(EXIT_FAILURE);
-            }
-            break;
-
          case WIDTH:
 
             if (value == NULL) {
@@ -155,7 +133,7 @@ options_parse_line(char *optarg)
 static void
 scrot_parse_option_array(int argc, char **argv)
 {
-   static char stropts[] = "a:ofpbcd:e:hmq:st:uv+:zn:l:";
+   static char stropts[] = "a:opbcd:e:hmq:st:uv+:zn:l:";
 
    static struct option lopts[] = {
       /* actions */
@@ -169,7 +147,6 @@ scrot_parse_option_array(int argc, char **argv)
       {"multidisp", 0, 0, 'm'},
       {"silent", 0, 0, 'z'},
       {"pointer", 0, 0, 'p'},
-      {"freeze", 0, 0, 'f'},
       {"overwrite", 0, 0, 'o'},
       /* toggles */
       {"thumb", 1, 0, 't'},
@@ -233,9 +210,6 @@ scrot_parse_option_array(int argc, char **argv)
            break;
         case 'p':
            opt.pointer = 1;
-           break;
-        case 'f':
-           opt.freeze = 1;
            break;
         case 'o':
            opt.overwrite = 1;
@@ -426,7 +400,6 @@ show_usage(void)
            "                            or the geometry in percent, e.g. 50x60 or 80x20.\n"
            "  -z, --silent              Prevent beeping\n"
            "  -p, --pointer             Capture the mouse pointer.\n"
-           "  -f, --freeze              Freeze the screen when the selection is used: --select\n"
            "  -o, --overwrite           By default " SCROT_PACKAGE " does not overwrite the files, use this option to allow it.\n"
            "  -l, --line                Indicates the style of the line when the selection is used: --select\n"
            "                            See SELECTION STYLE\n"
@@ -460,13 +433,13 @@ show_usage(void)
            "\n" "  SELECTION STYLE\n"
            "  When using --select you can indicate the style of the line with --line.\n"
            "  The following specifiers are recognised:\n"
-           "                  style=(solid,dash),width=(range 1 to 8),color=\"value\"\n"
-           "  The default style are:\n"
-           "                  style=solid,width=1\n"
+           "                  width=(range 1 to 8),color=\"value\"\n"
            "  For the color you can use a name or a hexdecimal value.\n"
            "                  color=\"red\" or color=\"#ff0000\"\n"
+           "  The default style are:\n"
+           "                  color=\"gray\",width=1\n"
            "  Example:\n" "          " SCROT_PACKAGE
-           " --line style=dash,width=3,color=\"red\" --select\n\n"
+           " --line width=3,color=\"red\" --select\n\n"
            "\n" "  NOTE FORMAT\n"
            "  The following specifiers are recognised for the option --note\n"
            "                  -f 'FontName/size'\n"

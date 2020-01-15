@@ -42,15 +42,13 @@ struct __scrotoptions
    int focused;
    int quality;
    int border;
-   int silent;   
+   int silent;
    int multidisp;
    int thumb;
    int thumb_width;
    int thumb_height;
    int pointer;
-   int freeze;
    int overwrite;
-   int line_style;
    int line_width;
    char *line_color;
    char *output_file;
