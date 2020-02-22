@@ -1,0 +1,31 @@
+name: full-check
+
+on: [push, pull_request]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: install_dependencies
+      run: sudo apt install autoconf-archive giblib-dev libimlib2-dev libtool libxcursor-dev libxfixes-dev
+    - name: first_build
+      run: |
+           ./autogen.sh
+           ./configure
+           make
+           sudo make install
+           sudo make uninstall
+           make distclean 
+    - name: second_build
+      run: |
+           ./autogen.sh
+           ./configure
+           make
+           sudo make install
+    - name: run_program
+      run: |
+           scrot -v
+           
