@@ -64,7 +64,7 @@ main(int argc,
   else if (opt.select)
     image = scrot_sel_and_grab_image();
   else if (opt.autoselect)
-    image = gib_imlib_create_image_from_drawable(root, 0, opt.autoselect_x, opt.autoselect_y, opt.autoselect_w, opt.autoselect_h, 1);
+    image = scrot_grab_autoselect();
   else
   {
     scrot_do_delay();
@@ -525,6 +525,20 @@ scrot_sel_and_grab_image(void)
     if (opt.pointer == 1)
        scrot_grab_mouse_pointer(im, rx, ry);
   }
+  return im;
+}
+
+Imlib_Image
+scrot_grab_autoselect(void)
+{
+  Imlib_Image im = NULL;
+  int rx = opt.autoselect_x, ry = opt.autoselect_y, rw = opt.autoselect_w, rh = opt.autoselect_h;
+  Window target = None;
+
+  scrot_nice_clip(&rx, &ry, &rw, &rh);
+  im = gib_imlib_create_image_from_drawable(root, 0, rx, ry, rw, rh, 1);
+  if (opt.pointer == 1)
+	  scrot_grab_mouse_pointer(im, rx, ry);
   return im;
 }
 
