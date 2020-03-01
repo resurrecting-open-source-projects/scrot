@@ -533,8 +533,8 @@ scrot_grab_autoselect(void)
 {
   Imlib_Image im = NULL;
   int rx = opt.autoselect_x, ry = opt.autoselect_y, rw = opt.autoselect_w, rh = opt.autoselect_h;
-  Window target = None;
 
+  scrot_do_delay();
   scrot_nice_clip(&rx, &ry, &rw, &rh);
   im = gib_imlib_create_image_from_drawable(root, 0, rx, ry, rw, rh, 1);
   if (opt.pointer == 1)
