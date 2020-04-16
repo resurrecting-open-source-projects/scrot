@@ -8,6 +8,7 @@ Copyright 2010      Ibragimov Rinat <ibragimovrinat@mail.ru>
 Copyright 2017      Stoney Sauce <stoneysauce@gmail.com>
 Copyright 2019      Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2019      Jade Auer <jade@trashwitch.dev>
+Copyright 2020      Hinigatsu <hinigatsu@protonmail.com>
 Copyright 2020      Sean Brennan <zettix1@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
