@@ -22,7 +22,7 @@ DESCRIPTION
 OPTIONS
   -h, --help         Display help output and exit.
   -v, --version      Output version information and exit.
-  -D, --display      specify the display to use; see X(7).
+  -D, --display      Specify the display to use; see X(7).
   -a, --autoselect   Non-interactively choose a rectangle of x,y,w,h.
   -b, --border       When selecting a window, grab wm border too.
   -c, --count        Display a countdown when used with delay.
