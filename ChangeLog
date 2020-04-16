@@ -1,3 +1,20 @@
+Sun Apr 16 00:08:00 -03:00 2020  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
+Version 1.3
+
+  [ Joao Eriberto Mota Filho ]
+
+  * Added rights for Hinigatsu and Sean Brennan.
+  * Prepare for new release.
+
+  [ Hinigatsu ]
+
+  * Added delay option to autoselect.
+  * Fixed bug #39, mouse pointer not captured with -a -p options.
+
+  [ Sean Brennan ]
+
+  * Added -D option to specify the display to use.
+
 Sun Aug 19 08:35:00 -03:00 2019  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 Version 1.2
 
