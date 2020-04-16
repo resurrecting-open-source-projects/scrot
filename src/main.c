@@ -49,7 +49,7 @@ main(int argc,
 
   init_parse_options(argc, argv);
 
-  init_x_and_imlib(NULL, 0);
+  init_x_and_imlib(opt.display, 0);
 
   if (!opt.output_file) {
     opt.output_file = gib_estrdup("%Y-%m-%d-%H%M%S_$wx$h_scrot.png");

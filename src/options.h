@@ -56,6 +56,7 @@ struct __scrotoptions
    char *output_file;
    char *thumb_file;
    char *exec;
+   char *display;
    char *note;
    int autoselect;
    int autoselect_x;
@@ -68,6 +69,7 @@ void init_parse_options(int argc, char **argv);
 char *name_thumbnail(char *name);
 void options_parse_thumbnail(char *optarg);
 void options_parse_autoselect(char *optarg);
+void options_parse_display(char *optarg);
 void options_parse_note(char *optarg);
 int  options_parse_required_number(char *str);
 extern scrotoptions opt;
