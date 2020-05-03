@@ -60,5 +60,5 @@ On Debian systems you can use '# apt install scrot'.
 
 scrot was originally developed by Tom Gilbert under MIT-advertising license.
 
-Currently, source code and newer versions are available at
-https://github.com/resurrecting-open-source-projects/scrot
+Currently, source code is maintained by volunteers. Newer versions are
+available at https://github.com/resurrecting-open-source-projects/scrot
