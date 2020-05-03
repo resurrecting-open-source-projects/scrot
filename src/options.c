@@ -64,7 +64,9 @@ options_parse_required_number(char *str)
    int ret = 0;
    errno = 0;
 
-   ret = strtol(str, &end, 10);
+   if (str != NULL) {
+      ret = strtol(str, &end, 10);
+   }
 
    if (str == end) {
       fprintf(stderr, "the option is not a number: %s\n", end);
@@ -334,7 +336,19 @@ options_parse_autoselect(char *optarg)
      opt.autoselect_y=dimensions[1];
      opt.autoselect_w=dimensions[2];
      opt.autoselect_h=dimensions[3];
+
+     if (i != 4)
+     {
+       fprintf(stderr, "option 'autoselect' require 4 arguments\n");
+       exit(EXIT_FAILURE);
+     }
    }
+   else {
+       fprintf(stderr, "invalid format for option -- 'autoselect'\n");
+       exit(EXIT_FAILURE);
+   }
+
+
 }
 
 void
