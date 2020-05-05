@@ -72,6 +72,8 @@ main(int argc,
     scrot_do_delay();
     if (opt.multidisp) {
       image = scrot_grab_shot_multi();
+    } else if (opt.stack) {
+      image = scrot_grab_stack_windows();
     } else {
       image = scrot_grab_shot();
     }
@@ -805,6 +807,60 @@ scrot_find_window_by_property(Display * display,
   if (children != None)
     XFree(children);
   return (child);
+}
+
+Imlib_Image
+scrot_grab_stack_windows(void)
+{
+    if (XGetSelectionOwner(disp, XInternAtom(disp, "_NET_WM_CM_S0", False)) == None) {
+        fprintf(stderr, "Composite Manager is not running, required to use this option.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    unsigned long nitems_return;
+    unsigned long bytes_after_return;
+    unsigned char *prop_return;
+    long long_offset = 0L;
+    long long_length = ~0L;
+    Bool delete      = False;
+    int actual_format_return;
+    Atom actual_type_return;
+    gib_list *images = NULL;
+    Imlib_Image im   = NULL;
+    XWindowAttributes attr;
+
+    Atom atom_prop = XInternAtom(disp, "_NET_CLIENT_LIST", False);
+    Atom atom_type = AnyPropertyType;
+
+    if (Success != XGetWindowProperty(disp, root, atom_prop, long_offset, long_length,
+                                delete, atom_type, &actual_type_return, &actual_format_return,
+                                &nitems_return, &bytes_after_return, &prop_return)){
+       fprintf(stderr, "Failed XGetWindowProperty\n");
+       exit(EXIT_FAILURE);
+    }
+
+    XCompositeRedirectSubwindows(disp, root, CompositeRedirectAutomatic);
+
+    for (int i = 0; i < nitems_return; i++) {
+
+        Window win = *((Window*)prop_return + i);
+
+        if (0 == XGetWindowAttributes(disp, win, &attr)) {
+           fprintf(stderr, "Failed XGetWindowAttributes\n");
+           exit(EXIT_FAILURE);
+        }
+
+        /* Only visible windows */
+        if (attr.map_state != IsViewable) {
+            continue;
+        }
+
+        im = gib_imlib_create_image_from_drawable(win, 0, attr.x, attr.y, attr.width,  attr.height, 1);
+        images = gib_list_add_end(images, im);
+    }
+    im = stalk_image_concat(images);
+
+    return im;
 }
 
 Imlib_Image
