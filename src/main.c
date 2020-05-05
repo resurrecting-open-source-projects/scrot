@@ -825,8 +825,9 @@ scrot_grab_stack_windows(void)
     Bool delete      = False;
     int actual_format_return;
     Atom actual_type_return;
-    gib_list *images = NULL;
-    Imlib_Image im   = NULL;
+    gib_list *list_images   = NULL;
+    Imlib_Image im          = NULL;
+    XImage *ximage          = NULL;
     XWindowAttributes attr;
 
     Atom atom_prop = XInternAtom(disp, "_NET_CLIENT_LIST", False);
@@ -855,12 +856,21 @@ scrot_grab_stack_windows(void)
             continue;
         }
 
-        im = gib_imlib_create_image_from_drawable(win, 0, attr.x, attr.y, attr.width,  attr.height, 1);
-        images = gib_list_add_end(images, im);
-    }
-    im = stalk_image_concat(images);
+        ximage = XGetImage(disp, win, 0, 0, attr.width, attr.height, AllPlanes, ZPixmap);
 
-    return im;
+        if (ximage == NULL) {
+            fprintf(stderr, "Failed XGetImage: Window id 0x%lx.\n", win);
+            exit(EXIT_FAILURE);
+        }
+
+        im = imlib_create_image_from_ximage(ximage, NULL, attr.x, attr.y, attr.width, attr.height, 1);
+
+        XFree(ximage);
+
+        list_images = gib_list_add_end(list_images, im);
+    }
+
+    return stalk_image_concat(list_images);
 }
 
 Imlib_Image
