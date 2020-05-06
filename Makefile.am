@@ -41,7 +41,7 @@ man_MANS = man/scrot.1
 #docsdir = $(prefix)/doc/scrot
 
 EXTRA_DIST = \
-scrot.spec scrot.1
+scrot.spec man/scrot.1
 
 SUBDIRS = src
 
