@@ -830,13 +830,17 @@ scrot_grab_stack_windows(void)
     XImage *ximage          = NULL;
     XWindowAttributes attr;
 
-    Atom atom_prop = XInternAtom(disp, "_NET_CLIENT_LIST", False);
+#define EWMH_CLIENT_LIST "_NET_CLIENT_LIST" // spec EWMH
+
+    Atom atom_prop = XInternAtom(disp, EWMH_CLIENT_LIST, False);
     Atom atom_type = AnyPropertyType;
 
-    if (Success != XGetWindowProperty(disp, root, atom_prop, long_offset, long_length,
+    int result = XGetWindowProperty(disp, root, atom_prop, long_offset, long_length,
                                 delete, atom_type, &actual_type_return, &actual_format_return,
-                                &nitems_return, &bytes_after_return, &prop_return)){
-       fprintf(stderr, "Failed XGetWindowProperty\n");
+                                &nitems_return, &bytes_after_return, &prop_return);
+
+    if (result != Success || nitems_return == 0) {
+       fprintf(stderr, "Failed XGetWindowProperty: " EWMH_CLIENT_LIST "\n");
        exit(EXIT_FAILURE);
     }
 
