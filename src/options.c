@@ -53,6 +53,7 @@ init_parse_options(int argc, char **argv)
    opt.line_width = 1;
    opt.line_color = NULL;
    opt.display = NULL;
+   opt.stack = 0;
 
    /* Parse the cmdline args */
    scrot_parse_option_array(argc, argv);
@@ -160,7 +161,7 @@ options_parse_line(char *optarg)
 static void
 scrot_parse_option_array(int argc, char **argv)
 {
-   static char stropts[] = "a:ofpbcd:e:hmq:st:uv+:zn:l:D:";
+   static char stropts[] = "a:ofpbcd:e:hmq:st:uv+:zn:l:D:k";
 
    static struct option lopts[] = {
       /* actions */
@@ -176,6 +177,7 @@ scrot_parse_option_array(int argc, char **argv)
       {"pointer", 0, 0, 'p'},
       {"freeze", 0, 0, 'f'},
       {"overwrite", 0, 0, 'o'},
+      {"stack", 0, 0,'k'},
       /* toggles */
       {"thumb", 1, 0, 't'},
       {"delay", 1, 0, 'd'},
@@ -258,6 +260,9 @@ scrot_parse_option_array(int argc, char **argv)
         case 'l':
            options_parse_line(optarg);
            break;
+        case 'k':
+           opt.stack = 1;
+        break;
         case '?':
            exit(EXIT_FAILURE);
         default:
@@ -469,7 +474,8 @@ show_usage(void)
            "                            See SELECTION STYLE\n"
            "  -n, --note                Draw a text note.\n"
            "                            See NOTE FORMAT\n"
-
+           "  -k, --stack               Capture stack/overlaped windows and join them together.\n"
+           "                            A running Composite Manager is needed.\n"
            "\n" "  SPECIAL STRINGS\n"
            "  Both the --exec and filename parameters can take format specifiers\n"
            "  that are expanded by " SCROT_PACKAGE " when encountered.\n"

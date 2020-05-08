@@ -39,6 +39,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <X11/Xresource.h>
 #include <X11/cursorfont.h>
 #include <X11/extensions/Xfixes.h>
+#include <X11/extensions/Xcomposite.h>
 #include <X11/Xcursor/Xcursor.h>
 
 #include <stdio.h>
@@ -94,6 +95,7 @@ char *im_printf(char *str, struct tm *tm,
                 char *filename_im, char *filename_thumb,
                 Imlib_Image im);
 Imlib_Image scrot_grab_shot_multi(void);
+Imlib_Image scrot_grab_stack_windows(void);
 Imlib_Image stalk_image_concat(gib_list *images);
 
 void scrot_grab_mouse_pointer(const Imlib_Image image,
