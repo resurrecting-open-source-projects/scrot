@@ -821,8 +821,6 @@ scrot_grab_shot_multi(void)
   if (screens < 2)
     return scrot_grab_shot();
 
-  dispstr = DisplayString(disp);
-
   subdisp = gib_estrdup(DisplayString(disp));
 
   for (i = 0; i < screens; i++) {
