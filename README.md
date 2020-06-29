@@ -42,7 +42,7 @@ scrot depends of the following libraries/artifacts to build:
   - giblib
   - imlib2
   - libtool
-  - libxcursor
+  - libxcomposite
   - libxfixes
 
 To build and install, run the following commands:

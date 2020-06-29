@@ -40,7 +40,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <X11/cursorfont.h>
 #include <X11/extensions/Xfixes.h>
 #include <X11/extensions/Xcomposite.h>
-#include <X11/Xcursor/Xcursor.h>
 
 #include <stdio.h>
 #include <string.h>

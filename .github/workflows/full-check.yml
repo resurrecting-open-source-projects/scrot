@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: install_dependencies
-      run: sudo apt install autoconf-archive giblib-dev libimlib2-dev libtool libxcomposite-dev libxcursor-dev libxfixes-dev
+      run: sudo apt install autoconf-archive giblib-dev libimlib2-dev libtool libxcomposite-dev libxfixes-dev
     - name: first_build
       run: |
            ./autogen.sh

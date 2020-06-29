@@ -34,4 +34,4 @@ LIBOBJS = @LIBOBJS@
 bin_PROGRAMS      = scrot
 scrot_SOURCES       = main.c getopt.c getopt1.c getopt.h scrot.h \
 options.c options.h debug.h imlib.c structs.h note.c note.h
-scrot_LDADD         = -lX11 -lXfixes -lXcursor -lXcomposite @GIBLIB_LIBS@
+scrot_LDADD         = -lX11 -lXfixes -lXcomposite @GIBLIB_LIBS@
