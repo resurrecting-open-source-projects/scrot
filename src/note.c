@@ -49,12 +49,12 @@ static inline void pfree(char **ptr)
 
 static inline void next_space(char **tok)
 {
-  while (*++*tok == ' ');
+  while (*++*tok == ' ' && **tok != '\0');
 }
 
 static inline void next_not_space(char **tok)
 {
-  while (*++*tok != ' ');
+  while (*++*tok != ' ' && **tok != '\0');
 }
 
 void scrot_note_new(char *format)
