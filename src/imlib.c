@@ -34,6 +34,14 @@ Colormap cm;
 int depth;
 Window root = 0;
 
+
+/* atexit register func. */
+static void uninit_x_and_imlib(void)
+{
+  if (disp) XCloseDisplay(disp);
+}
+
+
 void
 init_x_and_imlib(char *dispstr, int screen_num)
 {
@@ -42,9 +50,11 @@ init_x_and_imlib(char *dispstr, int screen_num)
       fprintf(stderr, "Can't open X display. It *is* running, yeah? [");
       fprintf(stderr, "%s", dispstr ? dispstr :
               (getenv("DISPLAY") ? getenv("DISPLAY") : "NULL"));
-      fprintf(stderr, "]");
+      fprintf(stderr, "]\n");
       exit(EXIT_FAILURE);
    }
+
+   atexit(uninit_x_and_imlib);
 
    if (screen_num)
       scr = ScreenOfDisplay(disp, screen_num);
