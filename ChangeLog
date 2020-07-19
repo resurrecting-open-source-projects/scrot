@@ -1,3 +1,37 @@
+Sat Jul 18 23:23:00 -03:00 2020  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
+Version 1.4
+
+  [ ideal ]
+
+  * Fix SIGSEGV, if running without DISPLAY environment variable.
+
+  [ Jeroen Roovers ]
+
+  * README.md: mention libXcomposite in build requirements.
+  * Removed libXcursor references.
+
+  [ Joao Eriberto Mota Filho ]
+
+  * Added a new logo 128x128.
+  * Added rights for "ideal", Jeroen Roovers and spycapitan.
+  * Fixed spelling errors in manpage.
+  * Prepare for new release.
+  * Updated manpage.
+  * Using create-man.sh 2.0 from txt2man package from Debian.
+
+  [ spycapitan ]
+
+  * Call XCloseDisplay on exit. This is the right thing in every X server
+    program, to release acquired resources.
+  * Fixed autoselect.
+  * Fixed capturing partially hidden windows on the edge of the desktop.
+  * Fixed required number.
+  * Fixed SIGSEGV, option --note.
+  * Minor fix: variable is assigned that is never used.
+  * New Feature: capture stack/overlapping windows. Depends of libXcomposite
+    (X11). New option: --stack or -k.
+  * Stack windows: client list spec EWMH.
+
 Sun Apr 16 00:08:00 -03:00 2020  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 Version 1.3
 
