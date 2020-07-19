@@ -72,7 +72,7 @@ SPECIAL STRINGS
 
   Example:
 
-    scrot '%Y-%m-%d_$wx$h.png' -e 'mv $f ~/shots/'
+    $ scrot '%Y-%m-%d_$wx$h.png' -e 'mv $f ~/shots/'
 
   This would create a file called something like 2000-10-30_2560x1024.png
   and move it to your shots directory.
@@ -94,7 +94,7 @@ SELECTION STYLE
 
   Example:
 
-    scrot --line style=dash,width=3,color="red" --select
+    $ scrot --line style=dash,width=3,color="red" --select
 
 NOTE FORMAT
   The following specifiers are recognised for the option --note:
@@ -108,7 +108,7 @@ NOTE FORMAT
 
   Example:
 
-    scrot --note "-f '/usr/share/fonts/TTF/DroidSans-Bold/40' -x 10 -y 20 -c 255,0,0,255 -t 'Hi'"
+    $ scrot --note "-f '/usr/share/fonts/TTF/DroidSans-Bold/40' -x 10 -y 20 -c 255,0,0,255 -t 'Hi'"
 
 AUTHOR
   scrot was originally developed by Tom Gilbert under MIT-advertising license
