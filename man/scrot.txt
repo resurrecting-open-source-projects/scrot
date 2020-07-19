@@ -47,7 +47,7 @@ OPTIONS
 
   -o, --overwrite    By default scrot does not overwrite the files, use this option to allow it.
   -n, --note         Draw a text note. See NOTE FORMAT.
-  -k, --stack        Capture stack/overlaped windows and join them together.
+  -k, --stack        Capture stack/overlapped windows and join them together.
                      A running Composite Manager is needed.
 
 SPECIAL STRINGS
@@ -88,7 +88,7 @@ SELECTION STYLE
 
     style=solid,width=1
 
-  For the color you can use a name or a hexdecimal value.
+  For the color you can use a name or a hexadecimal value.
 
     color="red" or color="#ff0000"
 
