@@ -8,6 +8,7 @@ Copyright 2010      Ibragimov Rinat <ibragimovrinat@mail.ru>
 Copyright 2017      Stoney Sauce <stoneysauce@gmail.com>
 Copyright 2019      Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2019      Jade Auer <jade@trashwitch.dev>
+Copyright 2020      daltomi <daltomi@disroot.org> 
 Copyright 2020      Hinigatsu <hinigatsu@protonmail.com>
 Copyright 2020      Sean Brennan <zettix1@gmail.com>
 Copyright 2020      spycapitan <spycapitan@protonmail.com>
@@ -58,7 +59,7 @@ main(int argc,
     opt.output_file = gib_estrdup("%Y-%m-%d-%H%M%S_$wx$h_scrot.png");
     opt.thumb_file = gib_estrdup("%Y-%m-%d-%H%M%S_$wx$h_scrot-thumb.png");
   } else {
-    have_extension = scrot_have_file_extension(opt.output_file);
+    scrot_have_file_extension(opt.output_file, &have_extension);
   }
 
 
@@ -180,11 +181,17 @@ scrot_do_delay(void)
   }
 }
 
-char* scrot_have_file_extension(char *filename)
+size_t scrot_have_file_extension(char const *filename, char **ext)
 {
-    char *ext = strrchr(filename, '.');
-    return (ext && (strlen(ext + 1) == 3)) ? ext : NULL;
+    *ext = strrchr(filename, '.');
+
+    if (*ext) {
+        return strlen(*ext);
+    }
+
+    return 0;
 }
+
 
 void scrot_check_if_overwrite_file(char **filename)
 {
@@ -196,31 +203,34 @@ void scrot_check_if_overwrite_file(char **filename)
 
   const int max_count = 999;
   static int count = 0;
-  const char *extension = scrot_have_file_extension(curfile);
+  char *ext = NULL;
+  size_t ext_len = 0;
   const size_t slen = strlen(curfile);
   int nalloc = slen + 4 + 1; // _000 + NUL byte
   char fmt[5];
   char *newname = NULL;
 
-  if (extension)
-    nalloc += 4; // .ext
+  ext_len = scrot_have_file_extension(curfile, &ext);
+
+  if (ext)
+    nalloc += ext_len; // .ext
 
   newname = calloc(nalloc, sizeof(char));
 
-  if (extension)
-    // exclude extension
-    memcpy(newname, curfile, slen - 4);
+  if (ext)
+    // exclude ext
+    memcpy(newname, curfile, slen - ext_len);
   else
     memcpy(newname, curfile, slen);
 
   do {
     snprintf(fmt, 5, "_%03d", count++);
 
-    if (!extension) {
+    if (!ext) {
       strncpy(newname + slen, fmt, 5);
     } else {
-        strncpy((newname + slen)-4, fmt, 5);
-        strncat(newname, extension, 4);
+        strncpy((newname + slen) - ext_len, fmt, 5);
+        strncat(newname, ext, ext_len);
     }
       curfile = newname;
   } while ((count < max_count) && (access(curfile, F_OK) == 0));
@@ -549,7 +559,7 @@ scrot_grab_autoselect(void)
 
 /* clip rectangle nicely */
 void
-scrot_nice_clip(int *rx, 
+scrot_nice_clip(int *rx,
   int *ry,
   int *rw,
   int *rh)
@@ -571,9 +581,9 @@ scrot_nice_clip(int *rx,
 /* get geometry of window and use that */
 int
 scrot_get_geometry(Window target,
-		   int *rx, 
-		   int *ry, 
-		   int *rw, 
+		   int *rx,
+		   int *ry,
+		   int *rw,
 		   int *rh)
 {
   Window child;
@@ -585,11 +595,11 @@ scrot_get_geometry(Window target,
     unsigned int d;
     int x;
     int status;
-    
+
     status = XGetGeometry(disp, target, &root, &x, &x, &d, &d, &d, &d);
     if (status != 0) {
       Window rt, *children, parent;
-      
+
       for (;;) {
 	/* Find window manager frame. */
 	status = XQueryTree(disp, target, &rt, &parent, &children, &d);

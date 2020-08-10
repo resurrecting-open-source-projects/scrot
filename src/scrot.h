@@ -5,6 +5,7 @@ Copyright 1999-2000 Tom Gilbert <tom@linuxbrit.co.uk,
                                   scrot_sucks@linuxbrit.co.uk>
 Copyright 2009      James Cameron <quozl@us.netrek.org>
 Copyright 2019      Daniel T. Borelli <danieltborelli@gmail.com>
+Copyright 2020      daltomi <daltomi@disroot.org> 
 Copyright 2020      Jeroen Roovers <jer@gentoo.org>
 Copyright 2020      Hinigatsu <hinigatsu@protonmail.com>
 Copyright 2020      spycapitan <spycapitan@protonmail.com>
@@ -103,7 +104,7 @@ void scrot_grab_mouse_pointer(const Imlib_Image image,
 		const int ix_off, const int iy_off);
 
 void scrot_check_if_overwrite_file(char **filename);
-char *scrot_have_file_extension(char *filename);
+size_t scrot_have_file_extension(char const *filename, char **ext);
 
 /* Imlib stuff */
 extern Display *disp;
