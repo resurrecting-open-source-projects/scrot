@@ -20,6 +20,19 @@ AC_PATH_GENERIC(giblib, 1.2.3, [
   AC_SUBST(GIBLIB_CFLAGS) ],
   AC_MSG_ERROR(Cannot find giblib: Is giblib-config in the path?) )
 
+AC_ARG_ENABLE(debug,
+    [AS_HELP_STRING([--enable-debug],
+        [enable debugging code (default is no)])],
+    [debug="yes"], [debug="no"])
+
+if test "x$debug" = "xno"
+then
+    CFLAGS="-O3 -DNDEBUG"
+    LDFLAGS="-Wl,-s"
+else
+    CFLAGS="-g -O2 -DDEBUG"
+fi
+
 LIBS="$LIBS -lm"
 GIBLIB_LIBS=`giblib-config --libs`
 GIBLIB_CFLAGS=`giblib-config --cflags`
@@ -33,3 +46,10 @@ m4_pattern_forbid([^AX_],[=> GNU autoconf-archive not present. <=])
 
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_OUTPUT
+
+echo "
+    $PACKAGE_NAME version $PACKAGE_VERSION
+    Prefix...........: $prefix
+    Compiler.........: $CC
+    Debug build......: $debug
+"
