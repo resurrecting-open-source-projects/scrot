@@ -8,3 +8,4 @@ When updating, change the following files (if needed):
 - Generate a new manpage.
 - README
 - Test in Debian Sid
+- Generate extra tarballs via 'make dist' and upload to GitHub.
