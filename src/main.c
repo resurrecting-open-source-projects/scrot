@@ -320,7 +320,7 @@ scrot_exec_app(Imlib_Image image, struct tm *tm,
   if (ret == -1) {
     fprintf(stderr, "The child process could not be created: %s\n", strerror(errno));
   } else if (WEXITSTATUS(ret) == 127) {
-    fprintf(stderr, "scrot could not be executed the command: %s.\n", execstr);
+    fprintf(stderr, "scrot could not execute the command: %s.\n", execstr);
   }
 
   exit(0);
