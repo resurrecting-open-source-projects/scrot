@@ -2,7 +2,7 @@ dnl Process this file with autoconf to create configure.
 
 AC_INIT([scrot], [1.4], [https://github.com/resurrecting-open-source-projects/scrot/issues])
 AC_CONFIG_SRCDIR([src/main.c])
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE(dist-bzip2)
 AC_CONFIG_HEADER([src/config.h])
 AX_PREFIX_CONFIG_H([src/scrot_config.h])
 
