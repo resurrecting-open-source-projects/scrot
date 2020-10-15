@@ -8,7 +8,7 @@ Copyright 2010      Ibragimov Rinat <ibragimovrinat@mail.ru>
 Copyright 2017      Stoney Sauce <stoneysauce@gmail.com>
 Copyright 2019      Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2019      Jade Auer <jade@trashwitch.dev>
-Copyright 2020      daltomi <daltomi@disroot.org> 
+Copyright 2020      daltomi <daltomi@disroot.org>
 Copyright 2020      Hinigatsu <hinigatsu@protonmail.com>
 Copyright 2020      Sean Brennan <zettix1@gmail.com>
 Copyright 2020      spycapitan <spycapitan@protonmail.com>
@@ -36,6 +36,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "scrot.h"
 #include "options.h"
+#include <assert.h>
 
 int
 main(int argc,
@@ -244,6 +245,32 @@ void scrot_check_if_overwrite_file(char **filename)
     free(newname);
     exit(EXIT_FAILURE);
   }
+}
+
+
+int scrot_match_window_class_name(Window target)
+{
+    assert(disp != NULL);
+
+    const int NOT_MATCH = 0;
+    const int MATCH = 1;
+    /* By default all class names match since window_class_name by default is NULL*/
+    int retval = MATCH;
+
+    if (opt.window_class_name == NULL) {
+        return retval;
+    }
+
+    XClassHint classHint;
+    retval = NOT_MATCH; // window_class_name != NULL, by default NOT_MATCH
+
+    if (XGetClassHint(disp, target, &classHint) != BadWindow) {
+        retval = options_cmp_window_class_name(classHint.res_class);
+        XFree(classHint.res_name);
+        XFree(classHint.res_class);
+    }
+
+    return retval;
 }
 
 
@@ -868,6 +895,10 @@ scrot_grab_stack_windows(void)
 
         /* Only visible windows */
         if (attr.map_state != IsViewable) {
+            continue;
+        }
+
+        if (!scrot_match_window_class_name(win)) {
             continue;
         }
 
