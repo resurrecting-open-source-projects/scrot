@@ -275,7 +275,7 @@ scrot_grab_mouse_pointer(const Imlib_Image image,
   XFree(xcim);
 
   if (!imcursor) {
-     fprintf(stderr, "scrot_grab_mouse_pointer: Failed create image using data.");
+     fprintf(stderr, "scrot_grab_mouse_pointer: Failed create image using data.\n");
      exit(EXIT_FAILURE);
   }
 
@@ -359,6 +359,7 @@ scrot_sel_and_grab_image(void)
   Window target = None;
   GC gc;
   XGCValues gcval;
+  Status ret;
 
   gcval.function = GXxor;
   gcval.foreground = XWhitePixel(disp, 0);
@@ -368,7 +369,6 @@ scrot_sel_and_grab_image(void)
 
   if (opt.line_color != NULL) {
     XColor clr_exact, clr_closest;
-    Status ret;
 
     ret = XAllocNamedColor(disp, XDefaultColormap(disp, DefaultScreen(disp)),
             opt.line_color, &clr_exact, &clr_closest);
@@ -402,18 +402,24 @@ scrot_sel_and_grab_image(void)
        (disp, root, False,
         ButtonMotionMask | ButtonPressMask | ButtonReleaseMask, GrabModeAsync,
         GrabModeAsync, root, cur_cross, CurrentTime) != GrabSuccess)) {
-    fprintf(stderr, "couldn't grab pointer:");
+    fprintf(stderr, "couldn't grab pointer\n");
     XFreeCursor(disp, cur_cross);
     XFreeCursor(disp, cur_angle);
     XFreeGC(disp, gc);
     exit(EXIT_FAILURE);
   }
 
-
-  if ((XGrabKeyboard
-       (disp, root, False, GrabModeAsync, GrabModeAsync,
-        CurrentTime) != GrabSuccess)) {
-    fprintf(stderr, "couldn't grab keyboard:");
+  ret = XGrabKeyboard(disp, root, False, GrabModeAsync, GrabModeAsync, CurrentTime);
+  if (ret == AlreadyGrabbed) {
+    int attempts = 20;
+    struct timespec delay = {0, 50 * 1000L * 1000L};
+    do {
+      nanosleep(&delay, NULL);
+      ret = XGrabKeyboard(disp, root, False, GrabModeAsync, GrabModeAsync, CurrentTime);
+    } while (--attempts > 0 && ret == AlreadyGrabbed);
+  }
+  if (ret != GrabSuccess) {
+    fprintf(stderr, "failed to grab keyboard\n");
     XFreeCursor(disp, cur_cross);
     XFreeCursor(disp, cur_angle);
     XFreeGC(disp, gc);
@@ -495,7 +501,7 @@ scrot_sel_and_grab_image(void)
     count = select(fdsize, &fdset, NULL, NULL, NULL);
     if ((count < 0)
         && ((errno == ENOMEM) || (errno == EINVAL) || (errno == EBADF))) {
-      fprintf(stderr, "Connection to X display lost");
+      fprintf(stderr, "Connection to X display lost\n");
       exit(EXIT_FAILURE);
     }
   }
