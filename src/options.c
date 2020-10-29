@@ -37,6 +37,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "scrot.h"
 #include "options.h"
+#include <assert.h>
+
+#define MAX_LEN_WINDOW_CLASS_NAME  80
 
 static void scrot_parse_option_array(int argc, char **argv);
 scrotoptions opt;
@@ -54,6 +57,7 @@ init_parse_options(int argc, char **argv)
    opt.line_color = NULL;
    opt.display = NULL;
    opt.stack = 0;
+   opt.window_class_name = NULL;
 
    /* Parse the cmdline args */
    scrot_parse_option_array(argc, argv);
@@ -157,11 +161,22 @@ options_parse_line(char *optarg)
    } /* while */
 }
 
+static void options_parse_window_class_name(const char* window_class_name)
+{
+    assert(window_class_name != NULL);
+
+    if (window_class_name[0] != '\0' &&
+        strlen(window_class_name) < MAX_LEN_WINDOW_CLASS_NAME)
+    {
+        opt.window_class_name = strdup(window_class_name);
+    }
+}
+
 
 static void
 scrot_parse_option_array(int argc, char **argv)
 {
-   static char stropts[] = "a:ofpbcd:e:hmq:st:uv+:zn:l:D:k";
+   static char stropts[] = "a:ofpbcd:e:hmq:st:uv+:zn:l:D:kC:";
 
    static struct option lopts[] = {
       /* actions */
@@ -188,6 +203,7 @@ scrot_parse_option_array(int argc, char **argv)
       {"display", required_argument, 0, 'D'},
       {"note", required_argument, 0, 'n'},
       {"line", required_argument, 0, 'l'},
+      {"class", required_argument, 0, 'C'},
       {0, 0, 0, 0}
    };
    int optch = 0, cmdx = 0;
@@ -262,6 +278,9 @@ scrot_parse_option_array(int argc, char **argv)
            break;
         case 'k':
            opt.stack = 1;
+        break;
+        case 'C':
+            options_parse_window_class_name(optarg);
         break;
         case '?':
            exit(EXIT_FAILURE);
@@ -422,6 +441,19 @@ void options_parse_note(char *optarg)
    scrot_note_new(opt.note);
 }
 
+/*
+Return:
+    0 : It does not match
+    1 : If it matches
+*/
+int options_cmp_window_class_name(const char* target_class_name)
+    {
+    assert(target_class_name != NULL);
+    assert(opt.window_class_name != NULL);
+    return !!(!strncmp(target_class_name, opt.window_class_name, MAX_LEN_WINDOW_CLASS_NAME - 1));
+}
+
+
 void
 show_version(void)
 {
@@ -476,6 +508,7 @@ show_usage(void)
            "                            See NOTE FORMAT\n"
            "  -k, --stack               Capture stack/overlaped windows and join them together.\n"
            "                            A running Composite Manager is needed.\n"
+           "  -C,  --class NAME         Window class name. Associative with options: -k\n"
            "\n" "  SPECIAL STRINGS\n"
            "  Both the --exec and filename parameters can take format specifiers\n"
            "  that are expanded by " SCROT_PACKAGE " when encountered.\n"

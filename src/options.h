@@ -43,7 +43,7 @@ struct __scrotoptions
    int focused;
    int quality;
    int border;
-   int silent;   
+   int silent;
    int multidisp;
    int thumb;
    int thumb_width;
@@ -60,6 +60,7 @@ struct __scrotoptions
    char *exec;
    char *display;
    char *note;
+   char *window_class_name;
    int autoselect;
    int autoselect_x;
    int autoselect_y;
@@ -74,6 +75,7 @@ void options_parse_autoselect(char *optarg);
 void options_parse_display(char *optarg);
 void options_parse_note(char *optarg);
 int  options_parse_required_number(char *str);
+int  options_cmp_window_class_name(const char* target_class_name);
 extern scrotoptions opt;
 
 #endif

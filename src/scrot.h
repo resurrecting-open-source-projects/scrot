@@ -5,7 +5,7 @@ Copyright 1999-2000 Tom Gilbert <tom@linuxbrit.co.uk,
                                   scrot_sucks@linuxbrit.co.uk>
 Copyright 2009      James Cameron <quozl@us.netrek.org>
 Copyright 2019      Daniel T. Borelli <danieltborelli@gmail.com>
-Copyright 2020      daltomi <daltomi@disroot.org> 
+Copyright 2020      daltomi <daltomi@disroot.org>
 Copyright 2020      Jeroen Roovers <jer@gentoo.org>
 Copyright 2020      Hinigatsu <hinigatsu@protonmail.com>
 Copyright 2020      spycapitan <spycapitan@protonmail.com>
@@ -89,6 +89,7 @@ Imlib_Image scrot_grab_autoselect(void);
 void scrot_sel_area(int *x, int *y, int *w, int *h);
 void scrot_nice_clip(int *rx, int *ry, int *rw, int *rh);
 int scrot_get_geometry(Window target, int *rx, int *ry, int *rw, int *rh);
+int scrot_match_window_class_name(Window target);
 Window scrot_get_window(Display *display,Window window,int x,int y);
 Window scrot_get_client_window(Display * display, Window target);
 Window scrot_find_window_by_property(Display * display, const Window window,
