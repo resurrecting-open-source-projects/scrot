@@ -37,6 +37,17 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "scrot.h"
 #include "options.h"
 
+
+/* atexit register func. */
+static void uninit_x_and_imlib(void)
+{
+  if (disp) {
+     XCloseDisplay(disp);
+     disp = NULL;
+  }
+}
+
+
 int
 main(int argc,
      char **argv)
@@ -54,6 +65,8 @@ main(int argc,
   init_parse_options(argc, argv);
 
   init_x_and_imlib(opt.display, 0);
+
+  atexit(uninit_x_and_imlib);
 
   if (!opt.output_file) {
     opt.output_file = gib_estrdup("%Y-%m-%d-%H%M%S_$wx$h_scrot.png");
