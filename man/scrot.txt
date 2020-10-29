@@ -49,6 +49,7 @@ OPTIONS
   -n, --note         Draw a text note. See NOTE FORMAT.
   -k, --stack        Capture stack/overlapped windows and join them together.
                      A running Composite Manager is needed.
+  -C, --class NAME   Window class name. Associative with options: -k
 
 SPECIAL STRINGS
   Both the --exec and filename parameters can take format specifiers that are
