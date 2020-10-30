@@ -159,6 +159,14 @@ main(int argc,
     {
       if (opt.note != NULL)
         scrot_note_draw(image);
+
+      scrot_have_file_extension(opt.thumb_file, &have_extension);
+
+      if (!have_extension) {
+        imlib_context_set_image(thumbnail);
+        imlib_image_set_format("png");
+      }
+
       filename_thumb = im_printf(opt.thumb_file, tm, NULL, NULL, thumbnail);
       scrot_check_if_overwrite_file(&filename_thumb);
       gib_imlib_save_image_with_error_return(thumbnail, filename_thumb, &err);
