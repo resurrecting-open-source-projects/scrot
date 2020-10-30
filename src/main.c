@@ -223,12 +223,12 @@ void scrot_check_if_overwrite_file(char **filename)
 
   if (access(curfile, F_OK) == -1) return;
 
-  const int max_count = 999;
-  static int count = 0;
+  const size_t max_counter = 999;
+  size_t counter = 0;
   char *ext = NULL;
   size_t ext_len = 0;
   const size_t slen = strlen(curfile);
-  int nalloc = slen + 4 + 1; // _000 + NUL byte
+  size_t nalloc = slen + 4 + 1; // _000 + NUL byte
   char fmt[5];
   char *newname = NULL;
 
@@ -246,7 +246,7 @@ void scrot_check_if_overwrite_file(char **filename)
     memcpy(newname, curfile, slen);
 
   do {
-    snprintf(fmt, 5, "_%03d", count++);
+    snprintf(fmt, 5, "_%03zu", counter++);
 
     if (!ext) {
       strncpy(newname + slen, fmt, 5);
@@ -255,12 +255,12 @@ void scrot_check_if_overwrite_file(char **filename)
         strncat(newname, ext, ext_len);
     }
       curfile = newname;
-  } while ((count < max_count) && (access(curfile, F_OK) == 0));
+  } while ((counter < max_counter) && (access(curfile, F_OK) == 0));
 
   free(*filename);
   *filename = newname;
 
-  if (count == max_count) {
+  if (counter == max_counter) {
     fprintf(stderr, "scrot can no longer generate new file names.\n"
                     "The last attempt is %s\n", newname);
     free(newname);
