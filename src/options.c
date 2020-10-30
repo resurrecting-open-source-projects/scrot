@@ -337,8 +337,9 @@ name_thumbnail(char *name)
       strcat(new_title, "-thumb");
       strcat(new_title, dot_pos);
    }
-   else
-      sprintf(new_title, "%s-thumb", name);
+   else {
+      snprintf(new_title, length, "%s-thumb", name);
+   }
 
    return new_title;
 }
