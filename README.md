@@ -36,6 +36,14 @@ Nowadays, scrot is maintained by volunteers.
 
 ## Build and Install ##
 
+To build and install, run the following commands:
+
+    $ ./requirements
+    $ ./autogen.sh
+    $ ./configure
+    $ make
+    # make install
+    
 scrot depends of the following libraries/artifacts to build:
 
   - autoconf-archive
@@ -44,13 +52,6 @@ scrot depends of the following libraries/artifacts to build:
   - libtool
   - libxcomposite
   - libxfixes
-
-To build and install, run the following commands:
-
-    $ ./autogen.sh
-    $ ./configure
-    $ make
-    # make install
 
 To return to original source code you can use '$ make distclean' command.
 
