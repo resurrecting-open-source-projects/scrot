@@ -582,6 +582,10 @@ scrot_sel_and_grab_image(void)
         ry += rh;
         rh = 0 - rh;
       }
+
+      // Not record pointer if there is a selection area because it is busy on that
+      opt.pointer = 0;
+
     } else {
       /* else it's a window click */
       if (!scrot_get_geometry(target, &rx, &ry, &rw, &rh)) return NULL;
