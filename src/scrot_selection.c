@@ -51,7 +51,7 @@ static void selection_deallocate(void)
 
 void selection_calculate_rect(int x0, int y0, int x1, int y1)
 {
-    struct selection_t* sel = *selection_get();
+    struct selection_t *const sel = *selection_get();
     struct selection_rect_t rect = sel->rect;
 
     rect.x = x0;
@@ -80,7 +80,7 @@ void scrot_selection_create(void)
 {
     selection_allocate();
 
-    struct selection_t* sel = *selection_get();
+    struct selection_t *const sel = *selection_get();
 
     assert(sel != NULL);
 
@@ -117,26 +117,26 @@ void scrot_selection_create(void)
 
 void scrot_selection_destroy(void)
 {
-    struct selection_t** sel = selection_get();
+    struct selection_t *const sel = *selection_get();
     XUngrabPointer(disp, CurrentTime);
-    XFreeCursor(disp, (*sel)->cur_cross);
-    XFreeCursor(disp, (*sel)->cur_angle);
+    XFreeCursor(disp, sel->cur_cross);
+    XFreeCursor(disp, sel->cur_angle);
     XSync(disp, True);
-    (*sel)->destroy();
+    sel->destroy();
     selection_deallocate();
 }
 
 
 void scrot_selection_draw(void)
 {
-    struct selection_t* sel = *selection_get();
+    struct selection_t const *const sel = *selection_get();
     sel->draw();
 }
 
 
 void scrot_selection_motion_draw(int x0, int y0, int x1, int y1)
 {
-    struct selection_t* sel = *selection_get();
+    struct selection_t const *const sel = *selection_get();
     unsigned int const EVENT_MASK = ButtonMotionMask | ButtonReleaseMask;
     XChangeActivePointerGrab(disp, EVENT_MASK, sel->cur_angle, CurrentTime);
     sel->motion_draw(x0, y0, x1, y1);

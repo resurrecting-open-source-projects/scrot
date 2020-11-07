@@ -37,7 +37,7 @@ struct selection_classic_t {
 
 void selection_classic_create(void)
 {
-    struct selection_t* sel = *selection_get();
+    struct selection_t *const sel = *selection_get();
 
     sel->classic = calloc(1, sizeof(struct selection_classic_t));
 

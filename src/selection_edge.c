@@ -37,11 +37,11 @@ struct selection_edge_t {
 
 void selection_edge_create(void)
 { 
-    struct selection_t* sel = *selection_get();
+    struct selection_t *const sel = *selection_get();
 
     sel->edge = calloc(1, sizeof(struct selection_edge_t));
 
-    struct selection_edge_t* pe = sel->edge;
+    struct selection_edge_t *const pe = sel->edge;
 
     // It is ok that in the "classic" mode it is to NULL, but it is not "edge" mode
     if (opt.line_color == NULL) {
@@ -80,8 +80,8 @@ void selection_edge_create(void)
 
 void selection_edge_destroy()
 {
-    struct selection_t* sel = *selection_get();
-    struct selection_edge_t* pe = sel->edge;
+    struct selection_t const *const sel = *selection_get();
+    struct selection_edge_t *pe = sel->edge;
 
     XUnmapWindow(disp, pe->wndDraw);
     XDestroyWindow(disp, pe->wndDraw);
@@ -91,8 +91,8 @@ void selection_edge_destroy()
 
 void selection_edge_draw(void)
 {
-    struct selection_t const* const sel = *selection_get();
-    struct selection_edge_t const* const  pe = sel->edge;
+    struct selection_t const *const sel = *selection_get();
+    struct selection_edge_t const *const  pe = sel->edge;
 
     XRectangle rects[4] = {
             {sel->rect.x, sel->rect.y, opt.line_width, sel->rect.h},                                    //left
