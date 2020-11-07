@@ -402,60 +402,13 @@ scrot_sel_and_grab_image(void)
   fd_set fdset;
   int count = 0, done = 0;
   int rx = 0, ry = 0, rw = 0, rh = 0, btn_pressed = 0;
-  int rect_x = 0, rect_y = 0, rect_w = 0, rect_h = 0;
-  Cursor cur_cross, cur_angle;
   Window target = None;
-  GC gc;
-  XGCValues gcval;
   Status ret;
 
-  gcval.function = GXxor;
-  gcval.foreground = XWhitePixel(disp, 0);
-  gcval.background = XBlackPixel(disp, 0);
-  gcval.plane_mask = gcval.background ^ gcval.foreground;
-  gcval.subwindow_mode = IncludeInferiors;
-
-  if (opt.line_color != NULL) {
-    XColor clr_exact, clr_closest;
-
-    ret = XAllocNamedColor(disp, XDefaultColormap(disp, DefaultScreen(disp)),
-            opt.line_color, &clr_exact, &clr_closest);
-
-    if (ret == 0) {
-       free(opt.line_color);
-       fprintf(stderr, "Error allocate color:%s\n", strerror(BadColor));
-       exit(EXIT_FAILURE);
-    }
-
-    gcval.foreground = clr_exact.pixel;
-
-    free(opt.line_color);
-    opt.line_color = NULL;
-  }
+  scrot_selection_create();
 
   xfd = ConnectionNumber(disp);
   fdsize = xfd + 1;
-
-  cur_cross = XCreateFontCursor(disp, XC_cross);
-  cur_angle = XCreateFontCursor(disp, XC_lr_angle);
-
-  gc =
-    XCreateGC(disp, root,
-              GCFunction | GCForeground | GCBackground | GCSubwindowMode,
-              &gcval);
-
-  XSetLineAttributes(disp, gc, opt.line_width, opt.line_style, CapRound, JoinRound);
-
-  if ((XGrabPointer
-       (disp, root, False,
-        ButtonMotionMask | ButtonPressMask | ButtonReleaseMask, GrabModeAsync,
-        GrabModeAsync, root, cur_cross, CurrentTime) != GrabSuccess)) {
-    fprintf(stderr, "couldn't grab pointer\n");
-    XFreeCursor(disp, cur_cross);
-    XFreeCursor(disp, cur_angle);
-    XFreeGC(disp, gc);
-    exit(EXIT_FAILURE);
-  }
 
   ret = XGrabKeyboard(disp, root, False, GrabModeAsync, GrabModeAsync, CurrentTime);
   if (ret == AlreadyGrabbed) {
@@ -468,14 +421,10 @@ scrot_sel_and_grab_image(void)
   }
   if (ret != GrabSuccess) {
     fprintf(stderr, "failed to grab keyboard\n");
-    XFreeCursor(disp, cur_cross);
-    XFreeCursor(disp, cur_angle);
-    XFreeGC(disp, gc);
+    scrot_selection_destroy();
     exit(EXIT_FAILURE);
   }
 
-  if (opt.freeze == 1)
-      XGrabServer(disp);
 
   while (1) {
     /* handle events here */
@@ -484,44 +433,14 @@ scrot_sel_and_grab_image(void)
       switch (ev.type) {
         case MotionNotify:
           if (btn_pressed) {
-            if (rect_w) {
-              /* re-draw the last rect to clear it */
-              XDrawRectangle(disp, root, gc, rect_x, rect_y, rect_w, rect_h);
-            } else {
-              /* Change the cursor to show we're selecting a region */
-              XChangeActivePointerGrab(disp,
-                                       ButtonMotionMask | ButtonReleaseMask,
-                                       cur_angle, CurrentTime);
-            }
-
-            rect_x = rx;
-            rect_y = ry;
-            rect_w = ev.xmotion.x - rect_x;
-            rect_h = ev.xmotion.y - rect_y;
-
-            if (rect_w == 0) ++rect_w;
-            if (rect_h == 0) ++rect_h;
-
-            if (rect_w < 0) {
-              rect_x += rect_w;
-              rect_w = 0 - rect_w;
-            }
-            if (rect_h < 0) {
-              rect_y += rect_h;
-              rect_h = 0 - rect_h;
-            }
-            /* draw rectangle */
-            XDrawRectangle(disp, root, gc, rect_x, rect_y, rect_w, rect_h);
-            XFlush(disp);
+              scrot_selection_motion_draw(rx, ry, ev.xbutton.x, ev.xbutton.y);
           }
           break;
         case ButtonPress:
           btn_pressed = 1;
           rx = ev.xbutton.x;
           ry = ev.xbutton.y;
-          target =
-            scrot_get_window(disp, ev.xbutton.subwindow, ev.xbutton.x,
-                             ev.xbutton.y);
+          target = scrot_get_window(disp, ev.xbutton.subwindow, ev.xbutton.x, ev.xbutton.y);
           if (target == None)
             target = root;
           break;
@@ -550,26 +469,21 @@ scrot_sel_and_grab_image(void)
     if ((count < 0)
         && ((errno == ENOMEM) || (errno == EINVAL) || (errno == EBADF))) {
       fprintf(stderr, "Connection to X display lost\n");
+      scrot_selection_destroy();
       exit(EXIT_FAILURE);
     }
   }
-  if (rect_w) {
-    XDrawRectangle(disp, root, gc, rect_x, rect_y, rect_w, rect_h);
-    XFlush(disp);
-  }
-  XUngrabPointer(disp, CurrentTime);
-  XUngrabKeyboard(disp, CurrentTime);
-  XFreeCursor(disp, cur_cross);
-  XFreeCursor(disp, cur_angle);
-  XFreeGC(disp, gc);
-  XSync(disp, True);
+  scrot_selection_draw();
 
-  if (opt.freeze == 1)
-      XUngrabServer(disp);
+  XUngrabKeyboard(disp, CurrentTime);
+
+  bool const isAreaSelect = (bool)(scrot_selection_get_rect().w > 5);
+
+  scrot_selection_destroy();
 
   if (done < 2) {
     scrot_do_delay();
-    if (rect_w > 5) {
+    if (isAreaSelect) {
       /* if a rect has been drawn, it's an area selection */
       rw = ev.xbutton.x - rx;
       rh = ev.xbutton.y - ry;

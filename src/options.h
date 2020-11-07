@@ -53,8 +53,10 @@ struct __scrotoptions
    int overwrite;
    int line_style;
    int line_width;
+   int line_opacity;
    int stack;
    char *line_color;
+   char *line_mode;
    char *output_file;
    char *thumb_file;
    char *exec;
