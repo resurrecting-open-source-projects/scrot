@@ -1,6 +1,6 @@
 /* scrot_selection_classic.c
 
-Copyright 2020  Daniel T. Borelli <daltomi@disroot>
+Copyright 2020  Daniel T. Borelli <daltomi@disroot.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
