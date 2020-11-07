@@ -34,6 +34,7 @@ struct selection_edge_t {
     Window wndDraw;
 };
 
+
 void selection_edge_create(void)
 { 
     struct selection_t* sel = *selection_get();
@@ -76,6 +77,7 @@ void selection_edge_create(void)
                   1L);
 }
 
+
 void selection_edge_destroy()
 {
     struct selection_t* sel = *selection_get();
@@ -86,21 +88,11 @@ void selection_edge_destroy()
     free(pe);
 }
 
+
 void selection_edge_draw(void)
-{ /*UNUSED*/ }
-
-
-void selection_edge_motion_draw(int x0, int y0, int x1, int y1)
 {
-    selection_calculate_rect(x0, y0, x1, y1);
-
-    struct selection_t* sel = *selection_get();
-    struct selection_edge_t* pe = sel->edge;
-
-    sel->rect.x -= opt.line_width;
-    sel->rect.y -= opt.line_width;
-    sel->rect.w += opt.line_width;
-    sel->rect.h += opt.line_width;
+    struct selection_t const* const sel = *selection_get();
+    struct selection_edge_t const* const  pe = sel->edge;
 
     XRectangle rects[4] = {
             {sel->rect.x, sel->rect.y, opt.line_width, sel->rect.h},                                    //left
@@ -111,4 +103,19 @@ void selection_edge_motion_draw(int x0, int y0, int x1, int y1)
 
     XShapeCombineRectangles(disp, pe->wndDraw, ShapeBounding, 0, 0, rects, 4, ShapeSet, 0);
     XMapWindow(disp, pe->wndDraw);
+}
+
+
+void selection_edge_motion_draw(int x0, int y0, int x1, int y1)
+{
+    struct selection_t *const sel = *selection_get();
+
+    selection_calculate_rect(x0, y0, x1, y1);
+
+    sel->rect.x -= opt.line_width;
+    sel->rect.y -= opt.line_width;
+    sel->rect.w += opt.line_width;
+    sel->rect.h += opt.line_width;
+
+    selection_edge_draw();
 }
