@@ -580,10 +580,11 @@ show_usage(void)
            "  The following specifiers are recognised:\n"
            "                  style=(solid,dash),width=(range 1 to 8),color=\"value\",\n"
            "                  opacity=(range 10 to 100),mode=(edge,classic)\n"
-           "  The default style are:\n"
+           "  The default style is:\n"
            "                  mode=classic,style=solid,width=1,opacity=100\n"
            "  Mode 'edge' ignore    : style, --freeze\n"
-           "  Mode 'classic' ignore : opacity\n"
+           "  Mode 'classic' ignore : opacity\n\n"
+           "  The 'opacity' specifier is only effective if a Composite Manager is running.\n\n"
            "  For the color you can use a name or a hexdecimal value.\n"
            "                  color=\"red\" or color=\"#ff0000\"\n"
            "  Example:\n" "          " SCROT_PACKAGE

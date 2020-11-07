@@ -86,13 +86,15 @@ SELECTION STYLE
     style=(solid,dash),width=(range 1 to 8),color="value",
     opacity=(range 10 to 100),mode=(edge,classic)
 
-  The default style are:
+  The default style is:
 
     mode=classic,style=solid,width=1,opacity=100
 
   Mode 'edge' ignore: style, --freeze
 
   Mode 'classic' ignore: opacity
+
+  The 'opacity' specifier is only effective if a Composite Manager is running.
 
   For the color you can use a name or a hexadecimal value.
 
