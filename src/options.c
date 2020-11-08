@@ -163,7 +163,7 @@ options_parse_line(char *optarg)
 
             bool isValidMode = (bool)(0 == strncmp(value, LINE_MODE_CLASSIC, LINE_MODE_CLASSIC_LEN) );
 
-            isValidMode = (bool)(0 == strncmp(value, LINE_MODE_EDGE, LINE_MODE_EDGE_LEN)) || isValidMode;
+            isValidMode = isValidMode || (bool)(0 == strncmp(value, LINE_MODE_EDGE, LINE_MODE_EDGE_LEN));
 
             if(isValidMode == false) {
                fprintf(stderr, "Unknown value for "
