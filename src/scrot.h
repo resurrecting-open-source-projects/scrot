@@ -43,6 +43,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <X11/cursorfont.h>
 #include <X11/extensions/Xfixes.h>
 #include <X11/extensions/Xcomposite.h>
+#include <X11/extensions/shape.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -60,6 +61,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <signal.h>
 #include <sys/wait.h>
 #include <giblib/giblib.h>
+#include <stdbool.h>
 
 
 #include "scrot_config.h"
@@ -67,6 +69,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "getopt.h"
 #include "debug.h"
 #include "note.h"
+#include "scrot_selection.h"
 
 #ifndef __GNUC__
 # define __attribute__(x)

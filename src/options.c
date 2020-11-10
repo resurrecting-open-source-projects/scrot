@@ -54,10 +54,8 @@ init_parse_options(int argc, char **argv)
    opt.overwrite = 0;
    opt.line_style = LineSolid;
    opt.line_width = 1;
-   opt.line_color = NULL;
-   opt.display = NULL;
-   opt.stack = 0;
-   opt.window_class_name = NULL;
+   opt.line_opacity = 100;
+   opt.line_mode = LINE_MODE_CLASSIC;
 
    /* Parse the cmdline args */
    scrot_parse_option_array(argc, argv);
@@ -90,12 +88,14 @@ options_parse_required_number(char *str)
 static void
 options_parse_line(char *optarg)
 {
-   enum {STYLE = 0, WIDTH, COLOR };
+   enum {STYLE = 0, WIDTH, COLOR, OPACITY, MODE};
 
    char *const token[] = {
-      [STYLE] = "style",
-      [WIDTH] = "width",
-      [COLOR] = "color",
+      [STYLE]   = "style",
+      [WIDTH]   = "width",
+      [COLOR]   = "color",
+      [OPACITY] = "opacity",
+      [MODE]    = "mode",
       NULL
    };
 
@@ -107,7 +107,7 @@ options_parse_line(char *optarg)
 
          case STYLE:
 
-            if (value == NULL) {
+            if (value == NULL || *value == '\0') {
                fprintf(stderr, "Missing value for "
                      "suboption '%s'\n", token[STYLE]);
                exit(EXIT_FAILURE);
@@ -152,6 +152,47 @@ options_parse_line(char *optarg)
             opt.line_color = strdup(value);
 
             break;
+
+         case MODE:
+
+            if (value == NULL || *value == '\0') {
+               fprintf(stderr, "Missing value for "
+                     "suboption '%s'\n", token[MODE]);
+               exit(EXIT_FAILURE);
+            }
+
+            bool isValidMode = (bool)(0 == strncmp(value, LINE_MODE_CLASSIC, LINE_MODE_CLASSIC_LEN) );
+
+            isValidMode = isValidMode || (bool)(0 == strncmp(value, LINE_MODE_EDGE, LINE_MODE_EDGE_LEN));
+
+            if(isValidMode == false) {
+               fprintf(stderr, "Unknown value for "
+                     "suboption '%s': %s\n", token[MODE], value);
+               exit(EXIT_FAILURE);
+            }
+
+            opt.line_mode = strdup(value);
+
+            break;
+
+         case OPACITY:
+
+            if (value == NULL) {
+               fprintf(stderr, "Missing value for "
+                    "suboption '%s'\n", token[OPACITY]);
+               exit(EXIT_FAILURE);
+            }
+
+            opt.line_opacity = options_parse_required_number(value);
+
+            if (opt.line_opacity < 10 || opt.line_opacity > 100){
+               fprintf(stderr, "Value of the range (10..100) for "
+                     "suboption '%s': %d\n", token[OPACITY], opt.line_opacity);
+               exit(EXIT_FAILURE);
+             }
+
+            break;
+
          default:
             fprintf(stderr, "No match found for token: '%s'\n", value);
             exit(EXIT_FAILURE);
@@ -537,9 +578,13 @@ show_usage(void)
            "\n" "  SELECTION STYLE\n"
            "  When using --select you can indicate the style of the line with --line.\n"
            "  The following specifiers are recognised:\n"
-           "                  style=(solid,dash),width=(range 1 to 8),color=\"value\"\n"
-           "  The default style are:\n"
-           "                  style=solid,width=1\n"
+           "                  style=(solid,dash),width=(range 1 to 8),color=\"value\",\n"
+           "                  opacity=(range 10 to 100),mode=(edge,classic)\n"
+           "  The default style is:\n"
+           "                  mode=classic,style=solid,width=1,opacity=100\n"
+           "  Mode 'edge' ignore    : style, --freeze\n"
+           "  Mode 'classic' ignore : opacity\n\n"
+           "  The 'opacity' specifier is only effective if a Composite Manager is running.\n\n"
            "  For the color you can use a name or a hexdecimal value.\n"
            "                  color=\"red\" or color=\"#ff0000\"\n"
            "  Example:\n" "          " SCROT_PACKAGE
