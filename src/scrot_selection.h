@@ -23,7 +23,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-/* This file is part of the scrot project. */
+/*
+    This file is part of the scrot project.
+    Part of the code comes from the main.c file and maintains its authorship.
+*/
 
 #ifndef SCROT_SELECTION_H
 #define SCROT_SELECTION_H

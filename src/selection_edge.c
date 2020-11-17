@@ -23,8 +23,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-/* This file is part of the scrot project. */
-
+/*
+    This file is part of the scrot project.
+    Part of the code comes from the main.c file and maintains its authorship.
+*/
 #include "scrot.h"
 
 extern void selection_calculate_rect(int x0, int y0, int x1, int y1);
