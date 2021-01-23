@@ -311,8 +311,9 @@ scrot_grab_mouse_pointer(const Imlib_Image image,
   pixels = (DATA32*)xcim->pixels;
 #else
   DATA32 data[width * height * 4];
-
-  for (size_t i = 0; i < (width * height); i++)
+  
+  size_t i;
+  for (i = 0; i < (width * height); i++)
     ((DATA32*)data)[i] = (DATA32)xcim->pixels[i];
 
   pixels = data;
@@ -829,7 +830,8 @@ scrot_grab_stack_windows(void)
 
     XCompositeRedirectSubwindows(disp, root, CompositeRedirectAutomatic);
 
-    for (int i = 0; i < nitems_return; i++) {
+    int i;
+    for (i = 0; i < nitems_return; i++) {
 
         Window win = *((Window*)prop_return + i);
 
