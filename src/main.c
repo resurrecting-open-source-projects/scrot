@@ -8,10 +8,14 @@ Copyright 2010      Ibragimov Rinat <ibragimovrinat@mail.ru>
 Copyright 2017      Stoney Sauce <stoneysauce@gmail.com>
 Copyright 2019      Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2019      Jade Auer <jade@trashwitch.dev>
+Copyright 2020      blockparole
+Copyright 2020      Cungsten Tarbide <ctarbide@tuta.io>
 Copyright 2020      daltomi <daltomi@disroot.org>
 Copyright 2020      Hinigatsu <hinigatsu@protonmail.com>
+Copyright 2020      nothub
 Copyright 2020      Sean Brennan <zettix1@gmail.com>
 Copyright 2020      spycapitan <spycapitan@protonmail.com>
+Copyright 2021      c0dev0id <sh+github@codevoid.de>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to

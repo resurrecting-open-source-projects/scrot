@@ -1,5 +1,6 @@
 /* scrot_selection.c
 
+Copyright 2020  daltomi <daltomi@disroot.org>
 Copyright 2020  Daniel T. Borelli <daltomi@disroot.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

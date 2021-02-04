@@ -1,6 +1,7 @@
 /* imlib.c
 
 Copyright 1999-2000 Tom Gilbert
+Copyright 2020      daltomi <daltomi@disroot.org>
 Copyright 2020      ideal <idealities@gmail.com>
 Copyright 2020      Sean Brennan <zettix1@gmail.com>
 Copyright 2020      spycapitan <spycapitan@protonmail.com>

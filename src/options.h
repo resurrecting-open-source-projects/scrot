@@ -7,6 +7,7 @@ Copyright 2009      James Cameron <quozl@us.netrek.org>
 Copyright 2010      Ibragimov Rinat <ibragimovrinat@mail.ru>
 Copyright 2017      Stoney Sauce <stoneysauce@gmail.com>
 Copyright 2019      Daniel T. Borelli <danieltborelli@gmail.com>
+Copyright 2020      daltomi <daltomi@disroot.org>
 Copyright 2020      Sean Brennan <zettix1@gmail.com>
 Copyright 2020      spycapitan <spycapitan@protonmail.com>
 
