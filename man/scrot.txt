@@ -41,7 +41,7 @@ OPTIONS
   -u, --focused      Use the currently focused window.
   -t, --thumb NUM|GEOM  Generate thumbnail too. NUM is the percentage of the
                         original size for the thumbnail to be. Alternatively,
-                        a GEOMetry can be specified, example: 300x200
+                        a GEOMetry can be specified, example: 300x200.
   -z, --silent       Prevent beeping.
   -p, --pointer      Capture the mouse pointer.
 
@@ -49,7 +49,7 @@ OPTIONS
   -n, --note         Draw a text note. See NOTE FORMAT.
   -k, --stack        Capture stack/overlapped windows and join them together.
                      A running Composite Manager is needed.
-  -C, --class NAME   Window class name. Associative with options: -k
+  -C, --class NAME   Window class name. Associative with options: -k.
 
 SPECIAL STRINGS
   Both the --exec and filename parameters can take format specifiers that are
