@@ -1,10 +1,35 @@
-Thu Feb 04 17:02:00 -03:00 2021  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
+Thu Feb 04 22:35:00 -03:00 2021  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 Version 1.4
+
+  [ c0dev0id ]
+
+  * Fixed compilation on Sparc64.
+
+  [ Cungsten Tarbide ]
+
+  * New feature: retry to grab the keyboard for 1s in 50ms intervals if it is
+    still being grabbed by the windows manager.
+
+  [ daltomi ]
+
+  * Added 'make dist' feature.
+  * Do not record pointer when selecting an area.
+  * Fixed a possible overflow in src/options.c.
+  * Fixed a segfault with --multidisp option.
+  * Fixed issues when file extension is more than 3 characters.
+  * New feature: allow save thumbnail without extension.
+  * New option --class (-C): discriminate windows by class name.
+  * Support various modes of drawing selection.
+  * Use correct type for calloc and other assignments.
 
   [ Joao Eriberto Mota Filho ]
 
   * Added rights for blockparole, c0dev0id, Cungsten Tarbide, daltomi and
     nothub.
+
+  [ nothub ]
+
+  * Fix grammar in an error message.
 
 Sat Jul 18 23:23:00 -03:00 2020  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 Version 1.4
