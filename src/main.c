@@ -666,7 +666,7 @@ im_printf(char *str, struct tm *tm,
           if (filename_im)
             strcat(ret, filename_im);
           break;
-        case 'm': /* t was allready taken, so m as in mini */
+        case 'm': /* t was already taken, so m as in mini */
           if (filename_thumb)
             strcat(ret, filename_thumb);
           break;

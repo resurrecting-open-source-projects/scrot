@@ -549,7 +549,7 @@ show_usage(void)
            "                            See SELECTION STYLE\n"
            "  -n, --note                Draw a text note.\n"
            "                            See NOTE FORMAT\n"
-           "  -k, --stack               Capture stack/overlaped windows and join them together.\n"
+           "  -k, --stack               Capture stack/overlapped windows and join them together.\n"
            "                            A running Composite Manager is needed.\n"
            "  -C,  --class NAME         Window class name. Associative with options: -k\n"
            "\n" "  SPECIAL STRINGS\n"
@@ -586,7 +586,7 @@ show_usage(void)
            "  Mode 'edge' ignore    : style, --freeze\n"
            "  Mode 'classic' ignore : opacity\n\n"
            "  The 'opacity' specifier is only effective if a Composite Manager is running.\n\n"
-           "  For the color you can use a name or a hexdecimal value.\n"
+           "  For the color you can use a name or a hexadecimal value.\n"
            "                  color=\"red\" or color=\"#ff0000\"\n"
            "  Example:\n" "          " SCROT_PACKAGE
            " --line style=dash,width=3,color=\"red\" --select\n\n"
