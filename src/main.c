@@ -578,17 +578,20 @@ scrot_get_geometry(Window target,
       Window rt, *children, parent;
 
       for (;;) {
-	/* Find window manager frame. */
-	status = XQueryTree(disp, target, &rt, &parent, &children, &d);
-	if (status && (children != None))
-	  XFree((char *) children);
-	if (!status || (parent == None) || (parent == rt))
-	  break;
-	target = parent;
+        /* Find window manager frame. */
+        status = XQueryTree(disp, target, &rt, &parent, &children, &d);
+        if (status && (children != None)) {
+          XFree((char *) children);
+        }
+        if (!status || (parent == None) || (parent == rt)) {
+            break;
+        }
+        target = parent;
       }
       /* Get client window. */
-      if (!opt.border)
-	target = scrot_get_client_window(disp, target);
+      if (!opt.border) {
+        target = scrot_get_client_window(disp, target);
+      }
       XRaiseWindow(disp, target);
     }
   }
