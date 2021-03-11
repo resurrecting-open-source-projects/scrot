@@ -526,6 +526,7 @@ show_usage(void)
            "  -D, --display             Set DISPLAY target other than current\n"
            "  -a, --autoselect          non-interactively choose a rectangle of x,y,w,h\n"
            "  -b, --border              When selecting a window, grab wm border too\n"
+           "                            Use with --select to raise the focus of the window.\n"
            "  -c, --count               show a countdown before taking the shot\n"
            "  -d, --delay NUM           wait NUM seconds before taking a shot\n"
            "  -e, --exec APP            run APP on the resulting screenshot\n"
