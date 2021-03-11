@@ -571,7 +571,7 @@ scrot_get_geometry(Window target,
 {
   Window child;
   XWindowAttributes attr;
-  int stat;
+  int stat, frames = 0;
 
   /* get windowmanager frame of window */
   if (target != root) {
@@ -594,6 +594,7 @@ scrot_get_geometry(Window target,
             break;
         }
         target = parent;
+        ++frames;
       }
       /* Get client window. */
       if (!opt.border) {
@@ -619,6 +620,14 @@ scrot_get_geometry(Window target,
   *rw = attr.width;
   *rh = attr.height;
   XTranslateCoordinates(disp, target, root, 0, 0, rx, ry, &child);
+
+  /* Special case when the TWM emulates the border directly on the window. */
+  if (opt.border == 1 && frames < 2 && attr.border_width > 0) {
+      *rw += attr.border_width * 2;
+      *rh += attr.border_width * 2;
+      *rx -= attr.border_width;
+      *ry -= attr.border_width;
+  }
   return 1;
 }
 
