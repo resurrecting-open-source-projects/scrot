@@ -555,6 +555,12 @@ scrot_nice_clip(int *rx,
     *rh = scr->height - *ry;
 }
 
+static Bool scrot_xevent_visibility(Display *dpy, XEvent *ev, XPointer arg)
+{
+    Window *win = (Window*)arg;
+    return (ev->xvisibility.window == *win);
+}
+
 /* get geometry of window and use that */
 int
 scrot_get_geometry(Window target,
@@ -576,6 +582,7 @@ scrot_get_geometry(Window target,
     status = XGetGeometry(disp, target, &root, &x, &x, &d, &d, &d, &d);
     if (status != 0) {
       Window rt, *children, parent;
+      XEvent ev;
 
       for (;;) {
         /* Find window manager frame. */
@@ -593,6 +600,17 @@ scrot_get_geometry(Window target,
         target = scrot_get_client_window(disp, target);
       }
       XRaiseWindow(disp, target);
+
+      /* Give the WM time to update the hidden area of the window.
+         Some windows never send the event, a time limit is placed.
+      */
+      XSelectInput(disp, target, FocusChangeMask);
+      for(short i = 0; i < 30; ++i) {
+        if (XCheckIfEvent(disp, &ev, &scrot_xevent_visibility, (XPointer)&target) == True) {
+            break;
+        }
+        usleep(2000);
+      }
     }
   }
   stat = XGetWindowAttributes(disp, target, &attr);
