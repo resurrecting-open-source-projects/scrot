@@ -25,6 +25,7 @@ OPTIONS
   -D, --display      Specify the display to use; see X(7).
   -a, --autoselect   Non-interactively choose a rectangle of x,y,w,h.
   -b, --border       When selecting a window, grab wm border too.
+                     Use with --select to raise the focus of the window.
   -c, --count        Display a countdown when used with delay.
   -d, --delay NUM    Wait NUM seconds before taking a shot.
   -e, --exec APP     Exec APP on the saved image.
