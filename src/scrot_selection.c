@@ -55,29 +55,26 @@ static void selection_deallocate(void)
 
 void selection_calculate_rect(int x0, int y0, int x1, int y1)
 {
-    struct selection_t *const sel = *selection_get();
-    struct selection_rect_t rect = sel->rect;
+    struct selection_rect_t* const rect = scrot_selection_get_rect();
 
-    rect.x = x0;
-    rect.y = y0;
-    rect.w = x1 - x0;
-    rect.h = y1 - y0;
+    rect->x = x0;
+    rect->y = y0;
+    rect->w = x1 - x0;
+    rect->h = y1 - y0;
 
-    if (rect.w == 0) rect.w++;
+    if (rect->w == 0) rect->w++;
 
-    if (rect.h == 0) rect.h++;
+    if (rect->h == 0) rect->h++;
 
-    if (rect.w < 0) {
-      rect.x += rect.w;
-      rect.w = 0 - rect.w;
+    if (rect->w < 0) {
+      rect->x += rect->w;
+      rect->w = 0 - rect->w;
     }
 
-    if (rect.h < 0) {
-      rect.y += rect.h;
-      rect.h = 0 - rect.h;
+    if (rect->h < 0) {
+      rect->y += rect->h;
+      rect->h = 0 - rect->h;
     }
-
-    sel->rect = rect;
 }
 
 void scrot_selection_create(void)
@@ -146,7 +143,7 @@ void scrot_selection_motion_draw(int x0, int y0, int x1, int y1)
     sel->motion_draw(x0, y0, x1, y1);
 }
 
-struct selection_rect_t scrot_selection_get_rect(void)
+struct selection_rect_t* const scrot_selection_get_rect(void)
 {
-    return (*selection_get())->rect;
+    return &(*selection_get())->rect;
 }

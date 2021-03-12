@@ -482,7 +482,7 @@ scrot_sel_and_grab_image(void)
 
   XUngrabKeyboard(disp, CurrentTime);
 
-  bool const isAreaSelect = (bool)(scrot_selection_get_rect().w > 5);
+  bool const isAreaSelect = (bool)(scrot_selection_get_rect()->w > 5);
 
   scrot_selection_destroy();
 
