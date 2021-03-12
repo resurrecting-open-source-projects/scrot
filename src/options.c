@@ -537,7 +537,7 @@ show_usage(void)
            "  -m, --multidisp           For multiple heads, grab shot from each\n"
            "                            and join them together.\n"
            "  -s, --select              interactively choose a window or rectangle\n"
-           "                            with the mouse\n"
+           "                            with the mouse (use the arrow keys to resize)\n"
            "  -u, --focused             use the currently focused window\n"
            "  -t, --thumb NUM           generate thumbnail too. NUM is the percentage\n"
            "                            of the original size for the thumbnail to be,\n"
