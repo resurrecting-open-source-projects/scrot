@@ -453,8 +453,39 @@ scrot_sel_and_grab_image(void)
           done = 1;
           break;
         case KeyPress:
-          fprintf(stderr, "Key was pressed, aborting shot\n");
-          done = 2;
+
+          if (!btn_pressed) {
+key_abort_shot:
+              fprintf(stderr, "Key was pressed, aborting shot\n");
+              done = 2;
+              break;
+          }
+
+          KeySym *keysym = NULL;
+          int keycode; /*dummy*/
+
+          keysym = XGetKeyboardMapping(disp, ev.xkey.keycode, 1, &keycode);
+
+          if (keysym == NULL) break;
+
+          switch (*keysym) {
+          case XK_Right:
+              if (++rx > scr->width) rx = scr->width;
+              break;
+          case XK_Left:
+              if (--rx < 0 ) rx = 0;
+              break;
+          case XK_Down:
+              if (++ry > scr->height) ry = scr->height;
+              break;
+          case XK_Up:
+              if (--ry < 0 ) ry = 0;
+              break;
+          default:
+              goto key_abort_shot;
+          }
+          XFree(keysym);
+          scrot_selection_motion_draw(rx, ry, ev.xbutton.x, ev.xbutton.y);
           break;
         case KeyRelease:
           /* ignore */
