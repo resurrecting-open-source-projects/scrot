@@ -218,7 +218,7 @@ static void options_parse_window_class_name(const char* window_class_name)
 static void
 scrot_parse_option_array(int argc, char **argv)
 {
-   static char stropts[] = "a:ofpbcd:e:hmq:st:uv+:zn:l:D:kC:";
+   static char stropts[] = "a:ofpbcd:e:hmq:st:uv+:zn:l:D:kC:S:";
 
    static struct option lopts[] = {
       /* actions */
@@ -246,6 +246,7 @@ scrot_parse_option_array(int argc, char **argv)
       {"note", required_argument, 0, 'n'},
       {"line", required_argument, 0, 'l'},
       {"class", required_argument, 0, 'C'},
+      {"script", required_argument, 0, 'S'},
       {0, 0, 0, 0}
    };
    int optch = 0, cmdx = 0;
@@ -323,6 +324,9 @@ scrot_parse_option_array(int argc, char **argv)
         break;
         case 'C':
             options_parse_window_class_name(optarg);
+        break;
+        case 'S':
+           opt.script = gib_estrdup(optarg);
         break;
         case '?':
            exit(EXIT_FAILURE);
@@ -553,6 +557,7 @@ show_usage(void)
            "  -k, --stack               Capture stack/overlapped windows and join them together.\n"
            "                            A running Composite Manager is needed.\n"
            "  -C,  --class NAME         Window class name. Associative with options: -k\n"
+           "  -S,  --script CMD         Imlib2 script commands\n"
            "\n" "  SPECIAL STRINGS\n"
            "  Both the --exec and filename parameters can take format specifiers\n"
            "  that are expanded by " SCROT_PACKAGE " when encountered.\n"
