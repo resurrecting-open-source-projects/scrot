@@ -53,6 +53,14 @@ static void uninit_x_and_imlib(void)
 }
 
 
+// It assumes that the local variable 'main.c:Imlib_Image image' is in context
+static void apply_filter_if_required(void)
+{
+  if (opt.script != NULL) {
+      imlib_apply_filter(opt.script);
+  }
+}
+
 int
 main(int argc,
      char **argv)
@@ -118,6 +126,8 @@ main(int argc,
   filename_im = im_printf(opt.output_file, tm, NULL, NULL, image);
   scrot_check_if_overwrite_file(&filename_im);
 
+  apply_filter_if_required();
+
   gib_imlib_save_image_with_error_return(image, filename_im, &err);
   if (err)
     gib_eprintf("Saving to file %s failed\n", filename_im);
@@ -173,6 +183,9 @@ main(int argc,
 
       filename_thumb = im_printf(opt.thumb_file, tm, NULL, NULL, thumbnail);
       scrot_check_if_overwrite_file(&filename_thumb);
+
+      apply_filter_if_required();
+
       gib_imlib_save_image_with_error_return(thumbnail, filename_thumb, &err);
       if (err)
         gib_eprintf("Saving thumbnail %s failed\n", filename_thumb);

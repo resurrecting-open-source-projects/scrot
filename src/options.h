@@ -64,6 +64,7 @@ struct __scrotoptions
    char *display;
    char *note;
    char *window_class_name;
+   char *script;
    int autoselect;
    int autoselect_x;
    int autoselect_y;
