@@ -86,7 +86,7 @@ void selection_classic_create(void)
 }
 
 
-void selection_classic_destroy()
+void selection_classic_destroy(void)
 {
     struct selection_t const *const sel = *selection_get();
     struct selection_classic_t* pc = sel->classic;
@@ -103,7 +103,7 @@ void selection_classic_destroy()
 }
 
 
-void selection_classic_draw()
+void selection_classic_draw(void)
 {
     struct selection_t const *const sel = *selection_get();
     struct selection_classic_t const *const pc = sel->classic;

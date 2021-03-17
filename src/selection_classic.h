@@ -34,7 +34,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "scrot.h"
 
 void selection_classic_create(void);
-void selection_classic_destroy();
+void selection_classic_destroy(void);
 void selection_classic_draw(void);
 void selection_classic_motion_draw(int x0, int y0, int x1, int y1);
 #endif

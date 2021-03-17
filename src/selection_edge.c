@@ -81,7 +81,7 @@ void selection_edge_create(void)
 }
 
 
-void selection_edge_destroy()
+void selection_edge_destroy(void)
 {
     struct selection_t const *const sel = *selection_get();
     struct selection_edge_t *pe = sel->edge;
