@@ -35,6 +35,7 @@ extern struct selection_t** selection_get(void);
 
 struct selection_edge_t {
     Window wndDraw;
+    XClassHint* classHint;
 };
 
 
@@ -65,6 +66,10 @@ void selection_edge_create(void)
     attr.background_pixel = color.pixel;
     attr.override_redirect = True;
 
+    pe->classHint = XAllocClassHint();
+    pe->classHint->res_name  = "scrot";
+    pe->classHint->res_class = "scrot";
+
     pe->wndDraw = XCreateWindow(disp, root, 0, 0, WidthOfScreen(scr), HeightOfScreen(scr), 0,
           CopyFromParent, InputOutput, CopyFromParent, CWOverrideRedirect | CWBackPixel, &attr);
 
@@ -78,6 +83,8 @@ void selection_edge_create(void)
                   XA_ATOM, 32, PropModeReplace,
                   (unsigned char*)&(Atom){XInternAtom(disp, "_NET_WM_WINDOW_TYPE_DOCK", False)},
                   1L);
+
+    XSetClassHint(disp, pe->wndDraw, pe->classHint);
 }
 
 
@@ -87,6 +94,7 @@ void selection_edge_destroy(void)
     struct selection_edge_t *pe = sel->edge;
 
     XUnmapWindow(disp, pe->wndDraw);
+    XFree(pe->classHint);
     XDestroyWindow(disp, pe->wndDraw);
     free(pe);
 }
