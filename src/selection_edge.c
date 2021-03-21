@@ -39,6 +39,32 @@ struct selection_edge_t {
 };
 
 
+static Bool xevent_unmap(Display *dpy, XEvent *ev, XPointer arg)
+{
+    Window *win = (Window*)arg;
+    return (ev->xunmap.window == *win);
+}
+
+
+static void wait_unmap_window_notify(void)
+{
+    struct selection_t const *const sel = *selection_get();
+    struct selection_edge_t const *const  pe = sel->edge;
+    XEvent ev;
+
+    XSelectInput(disp, pe->wndDraw, StructureNotifyMask);
+
+    XUnmapWindow(disp, pe->wndDraw);
+
+    for(short i = 0; i < 30; ++i) {
+        if (XCheckIfEvent(disp, &ev, &xevent_unmap, (XPointer)&(pe->wndDraw)) == True) {
+            break;
+        }
+        usleep(8000);
+    }
+}
+
+
 void selection_edge_create(void)
 { 
     struct selection_t *const sel = *selection_get();
@@ -93,7 +119,7 @@ void selection_edge_destroy(void)
     struct selection_t const *const sel = *selection_get();
     struct selection_edge_t *pe = sel->edge;
 
-    XUnmapWindow(disp, pe->wndDraw);
+    wait_unmap_window_notify();
     XFree(pe->classHint);
     XDestroyWindow(disp, pe->wndDraw);
     free(pe);
