@@ -597,6 +597,11 @@ scrot_nice_clip(int *rx,
     *rw = scr->width - *rx;
   if ((*ry + *rh) > scr->height)
     *rh = scr->height - *ry;
+
+  if (opt.select) {
+    ++*rx;
+    ++*ry;
+  }
 }
 
 static Bool scrot_xevent_visibility(Display *dpy, XEvent *ev, XPointer arg)
