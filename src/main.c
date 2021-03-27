@@ -555,6 +555,9 @@ key_abort_shot:
     }
     scrot_nice_clip(&rx, &ry, &rw, &rh);
 
+    ++rx;
+    ++ry;
+
     if (! opt.silent) XBell(disp, 0);
     im = gib_imlib_create_image_from_drawable(root, 0, rx, ry, rw, rh, 1);
 
