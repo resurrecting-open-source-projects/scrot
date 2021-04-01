@@ -537,6 +537,14 @@ key_abort_shot:
       rw = ev.xbutton.x - rx;
       rh = ev.xbutton.y - ry;
 
+      if ((ev.xbutton.x + 1) == WidthOfScreen(scr)) {
+        ++rw;
+      }
+
+      if ((ev.xbutton.y + 1) == HeightOfScreen(scr)) {
+        ++rh;
+      }
+
       if (rw < 0) {
         rx += rw;
         rw = 0 - rw;
