@@ -32,6 +32,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 extern void selection_calculate_rect(int x0, int y0, int x1, int y1);
 extern struct selection_t** selection_get(void);
+extern void selection_set_line_width(struct selection_t* const sel);
 
 struct selection_classic_t {
     XGCValues gcval;
@@ -114,11 +115,12 @@ void selection_classic_draw(void)
 
 void selection_classic_motion_draw(int x0, int y0, int x1, int y1)
 {
-    struct selection_t const *const sel = *selection_get();
+    struct selection_t *const sel = *selection_get();
 
     if (sel->rect.w) {
         selection_classic_draw();
     }
     selection_calculate_rect(x0, y0, x1, y1);
+    selection_set_line_width(sel);
     selection_classic_draw();
 }

@@ -52,6 +52,14 @@ static void selection_deallocate(void)
     *sel = NULL;
 }
 
+void selection_set_line_width(struct selection_t* const sel)
+{
+    assert(sel != NULL);
+    sel->rect.x -= opt.line_width;
+    sel->rect.y -= opt.line_width;
+    sel->rect.w += opt.line_width;
+    sel->rect.h += opt.line_width;
+}
 
 void selection_calculate_rect(int x0, int y0, int x1, int y1)
 {
