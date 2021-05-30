@@ -47,7 +47,7 @@ struct selection_classic_t;
 struct selection_edge_t;
 
 struct selection_t {
-    Cursor cur_cross, cur_angle;
+    Cursor cur_cross, cur_angle_nw, cur_angle_ne, cur_angle_sw, cur_angle_se;
 
     struct selection_rect_t rect;
     struct selection_classic_t* classic;

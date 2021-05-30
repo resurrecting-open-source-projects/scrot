@@ -86,7 +86,10 @@ void scrot_selection_create(void)
     assert(sel != NULL);
 
     sel->cur_cross = XCreateFontCursor(disp, XC_cross);
-    sel->cur_angle = XCreateFontCursor(disp, XC_lr_angle);
+    sel->cur_angle_ne = XCreateFontCursor(disp, XC_ur_angle);
+    sel->cur_angle_nw = XCreateFontCursor(disp, XC_ul_angle);
+    sel->cur_angle_se = XCreateFontCursor(disp, XC_lr_angle);
+    sel->cur_angle_sw = XCreateFontCursor(disp, XC_ll_angle);
 
     if (0 == strncmp(opt.line_mode, LINE_MODE_CLASSIC, LINE_MODE_CLASSIC_LEN)) {
         sel->create         = selection_classic_create;
@@ -121,7 +124,7 @@ void scrot_selection_destroy(void)
     struct selection_t *const sel = *selection_get();
     XUngrabPointer(disp, CurrentTime);
     XFreeCursor(disp, sel->cur_cross);
-    XFreeCursor(disp, sel->cur_angle);
+    XFreeCursor(disp, sel->cur_angle_se);
     XSync(disp, True);
     sel->destroy();
     selection_deallocate();
@@ -139,7 +142,15 @@ void scrot_selection_motion_draw(int x0, int y0, int x1, int y1)
 {
     struct selection_t const *const sel = *selection_get();
     unsigned int const EVENT_MASK = ButtonMotionMask | ButtonReleaseMask;
-    XChangeActivePointerGrab(disp, EVENT_MASK, sel->cur_angle, CurrentTime);
+	if (x1 > x0 && y1 > y0) {
+		XChangeActivePointerGrab(disp, EVENT_MASK, sel->cur_angle_se, CurrentTime);
+	} else if (x1 > x0) {
+		XChangeActivePointerGrab(disp, EVENT_MASK, sel->cur_angle_ne, CurrentTime);
+	} else if (y1 > y0) {
+		XChangeActivePointerGrab(disp, EVENT_MASK, sel->cur_angle_sw, CurrentTime);
+	} else {
+		XChangeActivePointerGrab(disp, EVENT_MASK, sel->cur_angle_nw, CurrentTime);
+	}
     sel->motion_draw(x0, y0, x1, y1);
 }
 
