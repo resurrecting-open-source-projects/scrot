@@ -30,7 +30,7 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_LDFLAGS        = -L/usr/X11R6/lib
 AM_CPPFLAGS       = -g -O3 -Wall -I/usr/X11R6/include \
 $(X_CFLAGS) -I$(prefix)/include -I$(includedir) -I. \
--DPREFIX=\""$(prefix)"\" @GIBLIB_CFLAGS@
+-DPREFIX=\""$(prefix)"\" @IMLIB2_CFLAGS@
 LIBOBJS = @LIBOBJS@
 
 bin_PROGRAMS      = scrot
@@ -41,4 +41,4 @@ selection_classic.c selection_classic.h \
 selection_edge.c selection_edge.h \
 utils.c utils.h \
 slist.c slict.h
-scrot_LDADD         = -lX11 -lXfixes -lXext -lXcomposite @GIBLIB_LIBS@
+scrot_LDADD         = -lX11 -lXfixes -lXext -lXcomposite @IMLIB2_LIBS@
