@@ -44,6 +44,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <stdio.h>
 #include "utils.h"
 
+#ifndef SCROT_HAVE_STRDUP
 extern char * _strdup(const char *input)
 {
   if (! input) return NULL;
@@ -55,7 +56,7 @@ extern char * _strdup(const char *input)
 
   if (output == NULL) {
     fprintf(stderr,"Copy of %s failed on allocate", input);
-    return NULL;
+    exit(EXIT_FAILURE);
   }
 
   strcpy(output, input);
@@ -63,3 +64,4 @@ extern char * _strdup(const char *input)
 
   return output;
 }
+#endif
