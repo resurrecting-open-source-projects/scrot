@@ -61,7 +61,5 @@ extern char * _strdup(const char *input)
   strcpy(output, input);
   output[length -1] = '\0';
 
-  fprintf(stderr, "String: %s", output);
-
   return output;
 }

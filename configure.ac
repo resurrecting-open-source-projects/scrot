@@ -20,6 +20,7 @@ AC_PATH_GENERIC(Imlib2, , [
   AC_SUBST(IMLIB2_CFLAGS) ],
   AC_MSG_ERROR(Cannot find Imlib2: Is imlib2-config in the path?) )
 
+
 LIBS="$LIBS -lm"
 IMLIB2_LIBS=`imlib2-config --libs`
 IMLIB2_CFLAGS=`imlib2-config --cflags`
