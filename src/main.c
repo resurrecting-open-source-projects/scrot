@@ -177,6 +177,7 @@ main(int argc,
                                             twidth, theight);
     if (thumbnail == NULL) {
       fprintf(stderr, "Unable to create scaled Image: %s\n", strerror(errno));
+      exit(EXIT_FAILURE);
     }
     else
     {
@@ -198,6 +199,7 @@ main(int argc,
       imlib_save_image_with_error_return(filename_thumb, &err);
       if (err) {
         fprintf(stderr, "Saving thumbnail %s failed: %s\n", filename_thumb, strerror(errno));
+	exit(EXIT_FAILURE);
       }
     }
   }
