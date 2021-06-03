@@ -1,10 +1,21 @@
-/* imlib.c
+/* main.c
 
-Copyright 1999-2000 Tom Gilbert
+Copyright 1999-2000 Tom Gilbert <tom@linuxbrit.co.uk,
+                                  gilbertt@linuxbrit.co.uk,
+                                  scrot_sucks@linuxbrit.co.uk>
+Copyright 2009      James Cameron <quozl@us.netrek.org>
+Copyright 2010      Ibragimov Rinat <ibragimovrinat@mail.ru>
+Copyright 2017      Stoney Sauce <stoneysauce@gmail.com>
+Copyright 2019      Daniel T. Borelli <danieltborelli@gmail.com>
+Copyright 2019      Jade Auer <jade@trashwitch.dev>
+Copyright 2020      blockparole
+Copyright 2020      Cungsten Tarbide <ctarbide@tuta.io>
 Copyright 2020      daltomi <daltomi@disroot.org>
-Copyright 2020      ideal <idealities@gmail.com>
+Copyright 2020      Hinigatsu <hinigatsu@protonmail.com>
+Copyright 2020      nothub
 Copyright 2020      Sean Brennan <zettix1@gmail.com>
 Copyright 2020      spycapitan <spycapitan@protonmail.com>
+Copyright 2021      c0dev0id <sh+github@codevoid.de>
 Copyright 2021      Christopher Nelson <christopher.nelson@languidnights.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -28,43 +39,29 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#include "scrot.h"
-#include "options.h"
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include "utils.h"
 
-Display *disp = NULL;
-Visual *vis = NULL;
-Screen *scr = NULL;
-Colormap cm;
-int depth;
-Window root = 0;
-
-
-void
-init_x_and_imlib(char *dispstr, int screen_num)
+extern char * _strdup(const char *input)
 {
-   disp = XOpenDisplay(dispstr);
-   if (!disp) {
-      fprintf(stderr, "Can't open X display. It *is* running, yeah? [");
-      fprintf(stderr, "%s", dispstr ? dispstr :
-              (getenv("DISPLAY") ? getenv("DISPLAY") : "NULL"));
-      fprintf(stderr, "]\n");
-      exit(EXIT_FAILURE);
-   }
+  if (! input) return NULL;
 
-   if (screen_num)
-      scr = ScreenOfDisplay(disp, screen_num);
-   else
-      scr = ScreenOfDisplay(disp, DefaultScreen(disp));
+  size_t length = strlen(input) + 1;
+  if (length == 0) return NULL;
 
-   vis = DefaultVisual(disp, XScreenNumberOfScreen(scr));
-   depth = DefaultDepth(disp, XScreenNumberOfScreen(scr));
-   cm = DefaultColormap(disp, XScreenNumberOfScreen(scr));
-   root = RootWindow(disp, XScreenNumberOfScreen(scr));
+  char *output = (char *) malloc(length);
 
-   imlib_context_set_drawable(root);
-   imlib_context_set_display(disp);
-   imlib_context_set_visual(vis);
-   imlib_context_set_colormap(cm);
-   imlib_context_set_color_modifier(NULL);
-   imlib_context_set_operation(IMLIB_OP_COPY);
+  if (output == NULL) {
+    fprintf(stderr,"Copy of %s failed on allocate", input);
+    return NULL;
+  }
+
+  strcpy(output, input);
+  output[length -1] = '\0';
+
+  fprintf(stderr, "String: %s", output);
+
+  return output;
 }
