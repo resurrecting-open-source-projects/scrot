@@ -20,11 +20,7 @@ AC_PATH_GENERIC(giblib, 1.2.3, [
   AC_SUBST(GIBLIB_CFLAGS) ],
   AC_MSG_ERROR(Cannot find giblib: Is giblib-config in the path?) )
 
-LIBS="$LIBS -lm"
-GIBLIB_LIBS=`giblib-config --libs`
-GIBLIB_CFLAGS=`giblib-config --cflags`
-AC_SUBST(GIBLIB_LIBS)
-AC_SUBST(GIBLIB_CFLAGS)
+LIBS="$LIBS -lm -lImlib2"
 
 AC_CHECK_FUNC(getopt_long,,[LIBOBJS="$LIBOBJS getopt.o getopt1.o"])
 AC_SUBST(LIBOBJS)

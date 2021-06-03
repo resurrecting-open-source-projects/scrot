@@ -28,6 +28,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef NOTE_H
 #define NOTE_H
 
+#include <Imlib2.h>
 #include "options.h"
 
 /*
