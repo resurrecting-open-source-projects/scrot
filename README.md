@@ -39,7 +39,6 @@ Nowadays, scrot is maintained by volunteers.
 scrot depends of the following libraries/artifacts to build:
 
   - autoconf-archive
-  - giblib
   - imlib2
   - libtool
   - libxcomposite

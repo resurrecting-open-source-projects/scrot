@@ -60,6 +60,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <time.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <Imlib2.h>
 #include <stdbool.h>
 
 #include "scrot_config.h"
