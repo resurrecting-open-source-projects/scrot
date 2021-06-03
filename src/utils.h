@@ -27,8 +27,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define SCROT_UTILS_H
 
 #include <string.h>
+#include "scrot_config.h"
 
-#ifndef HAVE_STRDUP
+#ifndef SCROT_HAVE_STRDUP
 #define strdup(a) _strdup(a)
 extern char * _strdup(const char *input);
 #endif
