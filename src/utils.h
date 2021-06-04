@@ -1,4 +1,4 @@
-/* structs.h
+/* utils.h
 
 Copyright 2021      Christopher Nelson <christopher.nelson@languidnights.com>
 
