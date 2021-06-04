@@ -442,7 +442,7 @@ options_parse_display(char *optarg)
      fprintf(stderr, "Unable to allocate display: %s", strerror(errno));
      exit(EXIT_FAILURE);
    }
-   strcpy(new_display, optarg);
+   strncpy(new_display, optarg, length);
    opt.display=new_display;
 }
 

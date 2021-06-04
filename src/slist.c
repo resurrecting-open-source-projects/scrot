@@ -55,7 +55,7 @@ Scrot_Imlib_List * walk_to_end_of_scrot_imlib_list(Scrot_Imlib_List *list) {
 }
 
 int is_scrot_imlib_list_empty(Scrot_Imlib_List *list) {
-  if (list == NULL || list->next == NULL)
+  if (list == NULL)
     return 1;
   else 
     return 0;
