@@ -272,7 +272,7 @@ scrot_parse_option_array(int argc, char **argv)
            opt.delay = options_parse_required_number(optarg);
            break;
         case 'e':
-           opt.exec = gib_estrdup(optarg);
+           opt.exec = strdup(optarg);
            break;
         case 'm':
            opt.multidisp = 1;
@@ -326,7 +326,7 @@ scrot_parse_option_array(int argc, char **argv)
             options_parse_window_class_name(optarg);
         break;
         case 'S':
-           opt.script = gib_estrdup(optarg);
+           opt.script = strdup(optarg);
         break;
         case '?':
            exit(EXIT_FAILURE);
@@ -355,7 +355,7 @@ scrot_parse_option_array(int argc, char **argv)
                opt.thumb_file = name_thumbnail(opt.output_file);
          }
          else
-            gib_weprintf("unrecognised option %s\n", argv[optind++]);
+            fprintf(stderr, "unrecognised option %s\n", argv[optind++]);
       }
    }
 
@@ -372,7 +372,11 @@ name_thumbnail(char *name)
    size_t diff = 0;
 
    length = strlen(name) + 7;
-   new_title = gib_emalloc(length);
+   new_title = malloc(length);
+   if (! new_title) {
+     fprintf(stderr, "Unable to allocate thumbnail: %s", strerror(errno));
+     exit(EXIT_FAILURE);
+   }
 
    dot_pos = strrchr(name, '.');
    if (dot_pos)
@@ -433,7 +437,11 @@ options_parse_display(char *optarg)
    if (length > 256) {
      length = 256;
    }
-   new_display = gib_emalloc(length);
+   new_display = malloc(length);
+   if (! new_display) {
+     fprintf(stderr, "Unable to allocate display: %s", strerror(errno));
+     exit(EXIT_FAILURE);
+   }
    strncpy(new_display, optarg, length);
    opt.display=new_display;
 }
@@ -476,7 +484,7 @@ options_parse_thumbnail(char *optarg)
 
 void options_parse_note(char *optarg)
 {
-   opt.note = gib_estrdup(optarg);
+   opt.note = strdup(optarg);
 
    if (opt.note == NULL) return;
 

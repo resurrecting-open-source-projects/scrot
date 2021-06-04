@@ -60,9 +60,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <time.h>
 #include <signal.h>
 #include <sys/wait.h>
-#include <giblib/giblib.h>
+#include <Imlib2.h>
 #include <stdbool.h>
-
 
 #include "scrot_config.h"
 #include "structs.h"
@@ -70,6 +69,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "debug.h"
 #include "note.h"
 #include "scrot_selection.h"
+#include "slist.h"
 
 #ifndef __GNUC__
 # define __attribute__(x)
@@ -102,7 +102,7 @@ char *im_printf(char *str, struct tm *tm,
                 Imlib_Image im);
 Imlib_Image scrot_grab_shot_multi(void);
 Imlib_Image scrot_grab_stack_windows(void);
-Imlib_Image stalk_image_concat(gib_list *images);
+Imlib_Image stalk_image_concat(Scrot_Imlib_List *images);
 
 void scrot_grab_mouse_pointer(const Imlib_Image image,
 		const int ix_off, const int iy_off);
