@@ -5,6 +5,7 @@ Copyright 2020      daltomi <daltomi@disroot.org>
 Copyright 2020      ideal <idealities@gmail.com>
 Copyright 2020      Sean Brennan <zettix1@gmail.com>
 Copyright 2020      spycapitan <spycapitan@protonmail.com>
+Copyright 2021      Christopher Nelson <christopher.nelson@languidnights.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -60,6 +61,7 @@ init_x_and_imlib(char *dispstr, int screen_num)
    cm = DefaultColormap(disp, XScreenNumberOfScreen(scr));
    root = RootWindow(disp, XScreenNumberOfScreen(scr));
 
+   imlib_context_set_drawable(root);
    imlib_context_set_display(disp);
    imlib_context_set_visual(vis);
    imlib_context_set_colormap(cm);

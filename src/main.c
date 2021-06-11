@@ -16,6 +16,7 @@ Copyright 2020      nothub
 Copyright 2020      Sean Brennan <zettix1@gmail.com>
 Copyright 2020      spycapitan <spycapitan@protonmail.com>
 Copyright 2021      c0dev0id <sh+github@codevoid.de>
+Copyright 2021      Christopher Nelson <christopher.nelson@languidnights.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -40,6 +41,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "scrot.h"
 #include "options.h"
+#include "utils.h"
+#include "slist.h"
 #include <assert.h>
 
 
@@ -82,8 +85,8 @@ main(int argc,
   atexit(uninit_x_and_imlib);
 
   if (!opt.output_file) {
-    opt.output_file = gib_estrdup("%Y-%m-%d-%H%M%S_$wx$h_scrot.png");
-    opt.thumb_file = gib_estrdup("%Y-%m-%d-%H%M%S_$wx$h_scrot-thumb.png");
+    opt.output_file = strdup("%Y-%m-%d-%H%M%S_$wx$h_scrot.png");
+    opt.thumb_file = strdup("%Y-%m-%d-%H%M%S_$wx$h_scrot-thumb.png");
   } else {
     scrot_have_file_extension(opt.output_file, &have_extension);
   }
@@ -110,8 +113,10 @@ main(int argc,
   if (opt.note != NULL)
     scrot_note_draw(image);
 
-  if (!image)
-    gib_eprintf("no image grabbed");
+  if (!image) {
+    fprintf(stderr, "no image grabbed: %s", strerror(errno));
+    exit(EXIT_FAILURE);
+  }
 
   time(&t); /* Get the time directly after the screenshot */
   tm = localtime(&t);
@@ -128,16 +133,18 @@ main(int argc,
 
   apply_filter_if_required();
 
-  gib_imlib_save_image_with_error_return(image, filename_im, &err);
-  if (err)
-    gib_eprintf("Saving to file %s failed\n", filename_im);
+  imlib_save_image_with_error_return(filename_im, &err);
+  if (err) {
+    fprintf(stderr, "Saving to file %s failed: %s\n", filename_im, strerror(errno));
+    exit(EXIT_FAILURE);
+  }
   if (opt.thumb)
   {
     int cwidth, cheight;
     int twidth, theight;
 
-    cwidth = gib_imlib_image_get_width(image);
-    cheight = gib_imlib_image_get_height(image);
+    cwidth = imlib_image_get_width();
+    cheight = imlib_image_get_height();
 
     /* Geometry based thumb size */
     if (opt.thumb_width || opt.thumb_height)
@@ -164,11 +171,14 @@ main(int argc,
       theight = cheight * opt.thumb / 100;
     }
 
+    imlib_context_set_anti_alias(1);
     thumbnail =
-      gib_imlib_create_cropped_scaled_image(image, 0, 0, cwidth, cheight,
-                                            twidth, theight, 1);
-    if (thumbnail == NULL)
-      gib_eprintf("Unable to create scaled Image\n");
+      imlib_create_cropped_scaled_image(0, 0, cwidth, cheight,
+                                            twidth, theight);
+    if (thumbnail == NULL) {
+      fprintf(stderr, "Unable to create scaled Image: %s\n", strerror(errno));
+      exit(EXIT_FAILURE);
+    }
     else
     {
       if (opt.note != NULL)
@@ -186,14 +196,16 @@ main(int argc,
 
       apply_filter_if_required();
 
-      gib_imlib_save_image_with_error_return(thumbnail, filename_thumb, &err);
-      if (err)
-        gib_eprintf("Saving thumbnail %s failed\n", filename_thumb);
+      imlib_save_image_with_error_return(filename_thumb, &err);
+      if (err) {
+        fprintf(stderr, "Saving thumbnail %s failed: %s\n", filename_thumb, strerror(errno));
+	exit(EXIT_FAILURE);
+      }
     }
   }
   if (opt.exec)
     scrot_exec_app(image, tm, filename_im, filename_thumb);
-  gib_imlib_free_image_and_decache(image);
+  imlib_free_image_and_decache();
 
   return 0;
 }
@@ -362,7 +374,7 @@ scrot_grab_shot(void)
   if (! opt.silent) XBell(disp, 0);
 
   im =
-    gib_imlib_create_image_from_drawable(root, 0, 0, 0, scr->width,
+    imlib_create_image_from_drawable(0, 0, 0, scr->width,
                                          scr->height, 1);
   if (opt.pointer == 1)
     scrot_grab_mouse_pointer(im, 0, 0);
@@ -404,7 +416,7 @@ scrot_grab_focused(void)
   XGetInputFocus(disp, &target, &ignored);
   if (!scrot_get_geometry(target, &rx, &ry, &rw, &rh)) return NULL;
   scrot_nice_clip(&rx, &ry, &rw, &rh);
-  im = gib_imlib_create_image_from_drawable(root, 0, rx, ry, rw, rh, 1);
+  im = imlib_create_image_from_drawable(0, rx, ry, rw, rh, 1);
   if (opt.pointer == 1)
 	  scrot_grab_mouse_pointer(im, rx, ry);
   return im;
@@ -537,6 +549,14 @@ key_abort_shot:
       rw = ev.xbutton.x - rx;
       rh = ev.xbutton.y - ry;
 
+      if ((ev.xbutton.x + 1) == WidthOfScreen(scr)) {
+        ++rw;
+      }
+
+      if ((ev.xbutton.y + 1) == HeightOfScreen(scr)) {
+        ++rh;
+      }
+
       if (rw < 0) {
         rx += rw;
         rw = 0 - rw;
@@ -556,7 +576,7 @@ key_abort_shot:
     scrot_nice_clip(&rx, &ry, &rw, &rh);
 
     if (! opt.silent) XBell(disp, 0);
-    im = gib_imlib_create_image_from_drawable(root, 0, rx, ry, rw, rh, 1);
+    im = imlib_create_image_from_drawable(0, rx, ry, rw, rh, 1);
 
     if (opt.pointer == 1)
        scrot_grab_mouse_pointer(im, rx, ry);
@@ -572,7 +592,7 @@ scrot_grab_autoselect(void)
 
   scrot_do_delay();
   scrot_nice_clip(&rx, &ry, &rw, &rh);
-  im = gib_imlib_create_image_from_drawable(root, 0, rx, ry, rw, rh, 1);
+  im = imlib_create_image_from_drawable(0, rx, ry, rw, rh, 1);
   if (opt.pointer == 1)
 	  scrot_grab_mouse_pointer(im, rx, ry);
   return im;
@@ -728,6 +748,7 @@ im_printf(char *str, struct tm *tm,
     exit(EXIT_FAILURE);
   }
 
+  imlib_context_set_image(im);
   for (c = strf; *c != '\0'; c++) {
     if (*c == '$') {
       c++;
@@ -754,11 +775,11 @@ im_printf(char *str, struct tm *tm,
           }
           break;
         case 'w':
-          snprintf(buf, sizeof(buf), "%d", gib_imlib_image_get_width(im));
+          snprintf(buf, sizeof(buf), "%d", imlib_image_get_width());
           strcat(ret, buf);
           break;
         case 'h':
-          snprintf(buf, sizeof(buf), "%d", gib_imlib_image_get_height(im));
+          snprintf(buf, sizeof(buf), "%d", imlib_image_get_height());
           strcat(ret, buf);
           break;
         case 's':
@@ -775,14 +796,14 @@ im_printf(char *str, struct tm *tm,
           break;
         case 'p':
           snprintf(buf, sizeof(buf), "%d",
-                   gib_imlib_image_get_width(im) *
-                   gib_imlib_image_get_height(im));
+                   imlib_image_get_width() *
+                   imlib_image_get_height());
           strcat(ret, buf);
           break;
         case 't':
-          tmp = gib_imlib_image_format(im);
+          tmp = imlib_image_format();
           if (tmp) {
-            strcat(ret, gib_imlib_image_format(im));
+            strcat(ret, tmp);
           }
           break;
         case '$':
@@ -809,7 +830,7 @@ im_printf(char *str, struct tm *tm,
       ret[len + 1] = '\0';
     }
   }
-  return gib_estrdup(ret);
+  return strdup(ret);
 }
 
 Window
@@ -887,7 +908,7 @@ scrot_grab_stack_windows(void)
     Bool delete      = False;
     int actual_format_return;
     Atom actual_type_return;
-    gib_list *list_images   = NULL;
+    Scrot_Imlib_List *list_images   = NULL;
     Imlib_Image im          = NULL;
     XImage *ximage          = NULL;
     XWindowAttributes attr;
@@ -938,7 +959,7 @@ scrot_grab_stack_windows(void)
 
         XFree(ximage);
 
-        list_images = gib_list_add_end(list_images, im);
+        list_images = append_to_scrot_imlib(list_images, im);
     }
 
     return stalk_image_concat(list_images);
@@ -951,14 +972,14 @@ scrot_grab_shot_multi(void)
   int i;
   char *dispstr, *subdisp;
   char newdisp[255];
-  gib_list *images = NULL;
+  Scrot_Imlib_List *images = NULL;
   Imlib_Image ret = NULL;
 
   screens = ScreenCount(disp);
   if (screens < 2)
     return scrot_grab_shot();
 
-  subdisp = gib_estrdup(DisplayString(disp));
+  subdisp = strdup(DisplayString(disp));
 
   for (i = 0; i < screens; i++) {
     dispstr = strchr(subdisp, ':');
@@ -970,9 +991,9 @@ scrot_grab_shot_multi(void)
     snprintf(newdisp, sizeof(newdisp), "%s.%d", subdisp, i);
     init_x_and_imlib(newdisp, i);
     ret =
-      gib_imlib_create_image_from_drawable(root, 0, 0, 0, scr->width,
+      imlib_create_image_from_drawable(0, 0, 0, scr->width,
                                            scr->height, 1);
-    images = gib_list_add_end(images, ret);
+    images = append_to_scrot_imlib(images, ret);
   }
   free(subdisp);
 
@@ -982,39 +1003,48 @@ scrot_grab_shot_multi(void)
 }
 
 Imlib_Image
-stalk_image_concat(gib_list * images)
+stalk_image_concat(Scrot_Imlib_List * images)
 {
   int tot_w = 0, max_h = 0, w, h;
   int x = 0;
-  gib_list *l, *item;
+  Scrot_Imlib_List *l, *item;
   Imlib_Image ret, im;
 
-  if (gib_list_length(images) == 0)
+  if (is_scrot_imlib_list_empty(images))
     return NULL;
 
   l = images;
   while (l) {
     im = (Imlib_Image) l->data;
-    h = gib_imlib_image_get_height(im);
-    w = gib_imlib_image_get_width(im);
+    imlib_context_set_image(im);
+    h = imlib_image_get_height();
+    w = imlib_image_get_width();
     if (h > max_h)
       max_h = h;
     tot_w += w;
     l = l->next;
   }
   ret = imlib_create_image(tot_w, max_h);
-  gib_imlib_image_fill_rectangle(ret, 0, 0, tot_w, max_h, 255, 0, 0, 0);
+  imlib_context_set_image(ret);
+  imlib_context_set_color(255, 0, 0, 0);
+  imlib_image_fill_rectangle(0, 0, tot_w, max_h);
   l = images;
   while (l) {
     im = (Imlib_Image) l->data;
     item = l;
     l = l->next;
-    h = gib_imlib_image_get_height(im);
-    w = gib_imlib_image_get_width(im);
-    gib_imlib_blend_image_onto_image(ret, im, 0, 0, 0, w, h, x, 0, w, h, 1, 0,
-                                     0);
+    imlib_context_set_image(im);
+    h = imlib_image_get_height();
+    w = imlib_image_get_width();
+    imlib_context_set_image(ret);
+    imlib_context_set_anti_alias(0);
+    imlib_context_set_dither(1);
+    imlib_context_set_blend(0);
+    imlib_context_set_angle(0);
+    imlib_blend_image_onto_image(im, 0, 0, 0, w, h, x, 0, w, h);
     x += w;
-    gib_imlib_free_image_and_decache(im);
+    imlib_context_set_image(im);
+    imlib_free_image_and_decache();
     free(item);
   }
   return ret;

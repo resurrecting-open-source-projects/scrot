@@ -31,7 +31,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "scrot.h"
 
-
 scrotnote note;
 
 static Imlib_Font imfont = NULL;

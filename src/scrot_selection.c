@@ -2,6 +2,7 @@
 
 Copyright 2020  daltomi <daltomi@disroot.org>
 Copyright 2020  Daniel T. Borelli <daltomi@disroot.org>
+Copyright 2021  Cationiz3r
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -61,6 +62,32 @@ void selection_set_line_width(struct selection_t* const sel)
     sel->rect.h += opt.line_width;
 }
 
+static void create_cursors(void)
+{
+    struct selection_t *const sel = *selection_get();
+
+    assert(sel != NULL);
+
+    sel->cur_cross    = XCreateFontCursor(disp, XC_cross);
+    sel->cur_angle_ne = XCreateFontCursor(disp, XC_ur_angle);
+    sel->cur_angle_nw = XCreateFontCursor(disp, XC_ul_angle);
+    sel->cur_angle_se = XCreateFontCursor(disp, XC_lr_angle);
+    sel->cur_angle_sw = XCreateFontCursor(disp, XC_ll_angle);
+}
+
+static void free_cursors(void)
+{
+    struct selection_t *const sel = *selection_get();
+
+    assert(sel != NULL);
+
+    XFreeCursor(disp, sel->cur_cross);
+    XFreeCursor(disp, sel->cur_angle_ne);
+    XFreeCursor(disp, sel->cur_angle_nw);
+    XFreeCursor(disp, sel->cur_angle_se);
+    XFreeCursor(disp, sel->cur_angle_sw);
+}
+
 void selection_calculate_rect(int x0, int y0, int x1, int y1)
 {
     struct selection_rect_t* const rect = scrot_selection_get_rect();
@@ -93,8 +120,7 @@ void scrot_selection_create(void)
 
     assert(sel != NULL);
 
-    sel->cur_cross = XCreateFontCursor(disp, XC_cross);
-    sel->cur_angle = XCreateFontCursor(disp, XC_lr_angle);
+    create_cursors();
 
     if (0 == strncmp(opt.line_mode, LINE_MODE_CLASSIC, LINE_MODE_CLASSIC_LEN)) {
         sel->create         = selection_classic_create;
@@ -128,8 +154,7 @@ void scrot_selection_destroy(void)
 {
     struct selection_t *const sel = *selection_get();
     XUngrabPointer(disp, CurrentTime);
-    XFreeCursor(disp, sel->cur_cross);
-    XFreeCursor(disp, sel->cur_angle);
+    free_cursors();
     XSync(disp, True);
     sel->destroy();
     selection_deallocate();
@@ -147,7 +172,18 @@ void scrot_selection_motion_draw(int x0, int y0, int x1, int y1)
 {
     struct selection_t const *const sel = *selection_get();
     unsigned int const EVENT_MASK = ButtonMotionMask | ButtonReleaseMask;
-    XChangeActivePointerGrab(disp, EVENT_MASK, sel->cur_angle, CurrentTime);
+    Cursor cursor = None;
+
+    if (x1 > x0 && y1 > y0) {
+        cursor = sel->cur_angle_se;
+    } else if (x1 > x0) {
+        cursor =  sel->cur_angle_ne;
+    } else if (y1 > y0) {
+        cursor = sel->cur_angle_sw;
+    } else {
+        cursor = sel->cur_angle_nw;
+    }
+    XChangeActivePointerGrab(disp, EVENT_MASK, cursor, CurrentTime);
     sel->motion_draw(x0, y0, x1, y1);
 }
 

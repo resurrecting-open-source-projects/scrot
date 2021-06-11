@@ -2,6 +2,7 @@
 
 Copyright 2020  daltomi <daltomi@disroot.org>
 Copyright 2020  Daniel T. Borelli <daltomi@disroot.org>
+Copyright 2021  Cationiz3r
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -47,7 +48,7 @@ struct selection_classic_t;
 struct selection_edge_t;
 
 struct selection_t {
-    Cursor cur_cross, cur_angle;
+    Cursor cur_cross, cur_angle_nw, cur_angle_ne, cur_angle_sw, cur_angle_se;
 
     struct selection_rect_t rect;
     struct selection_classic_t* classic;
