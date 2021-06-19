@@ -566,8 +566,11 @@ key_abort_shot:
         rh = 0 - rh;
       }
 
-      // Not record pointer if there is a selection area because it is busy on that
-      opt.pointer = 0;
+      // Not record pointer if there is a selection area because it is busy on that,
+      // unless the delay option is used
+      if (opt.delay == 0) {
+          opt.pointer = 0;
+      }
 
     } else {
       /* else it's a window click */
