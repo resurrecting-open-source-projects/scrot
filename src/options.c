@@ -336,27 +336,24 @@ scrot_parse_option_array(int argc, char **argv)
    }
 
    /* Now the leftovers, which must be files */
-   if (optind < argc)
+   while (optind < argc)
    {
-      while (optind < argc)
+      /* If recursive is NOT set, but the only argument is a directory
+         name, we grab all the files in there, but not subdirs */
+      if (!opt.output_file)
       {
-         /* If recursive is NOT set, but the only argument is a directory
-            name, we grab all the files in there, but not subdirs */
-         if (!opt.output_file)
-         {
-            opt.output_file = argv[optind++];
+         opt.output_file = argv[optind++];
 
-            if ( strlen(opt.output_file) > 256 ) {
-               printf("output filename too long.\n");
-               exit(EXIT_FAILURE);
-            }
-
-            if (opt.thumb)
-               opt.thumb_file = name_thumbnail(opt.output_file);
+         if ( strlen(opt.output_file) > 256 ) {
+            printf("output filename too long.\n");
+            exit(EXIT_FAILURE);
          }
-         else
-            fprintf(stderr, "unrecognised option %s\n", argv[optind++]);
+
+         if (opt.thumb)
+            opt.thumb_file = name_thumbnail(opt.output_file);
       }
+      else
+         fprintf(stderr, "unrecognised option %s\n", argv[optind++]);
    }
 
    /* So that we can safely be called again */
