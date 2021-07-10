@@ -29,7 +29,6 @@ AC_SUBST(IMLIB2_CFLAGS)
 
 AC_CHECK_FUNC(getopt_long,,[LIBOBJS="$LIBOBJS getopt.o getopt1.o"])
 AC_SUBST(LIBOBJS)
-AC_CHECK_FUNCS(strdup)
 
 m4_pattern_forbid([^AX_],[=> GNU autoconf-archive not present. <=])
 
