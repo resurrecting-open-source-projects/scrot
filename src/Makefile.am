@@ -34,7 +34,7 @@ $(X_CFLAGS) -I$(prefix)/include -I$(includedir) -I. \
 LIBOBJS = @LIBOBJS@
 
 bin_PROGRAMS      = scrot
-scrot_SOURCES     = main.c getopt.c getopt1.c getopt.h scrot.h \
+scrot_SOURCES     = main.c scrot.h \
 options.c options.h debug.h imlib.c structs.h note.c note.h \
 scrot_selection.c scrot_selection.h \
 selection_classic.c selection_classic.h \
