@@ -4,3 +4,5 @@ project('scrot', 'c',
   default_options : ['warning_level=3', 'c_std=c99', 'b_lto=true'])
 
 subdir('src')
+
+install_man('man/scrot.1')
