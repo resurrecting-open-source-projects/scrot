@@ -8,16 +8,13 @@ configure_file(output : 'scrot_config.h',
                configuration : conf_data)
 
 executable('scrot',
-           'getopt.c',
            'imlib.c',
            'main.c',
            'note.c',
            'options.c',
-           'utils.c',
            'scrot_selection.c',
            'selection_classic.c',
            'selection_edge.c',
            'slist.c',
-           'getopt1.c',
            install : true,
            dependencies : dep)
