@@ -41,7 +41,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "scrot.h"
 #include "options.h"
-#include "utils.h"
 #include "slist.h"
 #include <assert.h>
 
@@ -340,7 +339,7 @@ scrot_grab_mouse_pointer(const Imlib_Image image,
   pixels = (DATA32*)xcim->pixels;
 #else
   DATA32 data[width * height * 4];
-  
+
   size_t i;
   for (i = 0; i < (width * height); i++)
     ((DATA32*)data)[i] = (DATA32)xcim->pixels[i];

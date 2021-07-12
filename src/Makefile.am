@@ -39,6 +39,5 @@ options.c options.h debug.h imlib.c structs.h note.c note.h \
 scrot_selection.c scrot_selection.h \
 selection_classic.c selection_classic.h \
 selection_edge.c selection_edge.h \
-utils.c utils.h \
 slist.c slict.h
 scrot_LDADD         = -lX11 -lXfixes -lXext -lXcomposite @IMLIB2_LIBS@

@@ -27,7 +27,9 @@ IMLIB2_CFLAGS=`imlib2-config --cflags`
 AC_SUBST(IMLIB2_LIBS)
 AC_SUBST(IMLIB2_CFLAGS)
 
-AC_CHECK_FUNCS(strdup)
+AC_CHECK_FUNCS([strdup getopt_long],,
+	AC_MSG_ERROR([Required functions are not present.]))
+
 
 m4_pattern_forbid([^AX_],[=> GNU autoconf-archive not present. <=])
 
