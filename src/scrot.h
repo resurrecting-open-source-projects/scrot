@@ -62,10 +62,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <sys/wait.h>
 #include <Imlib2.h>
 #include <stdbool.h>
+#include <getopt.h>
 
 #include "scrot_config.h"
 #include "structs.h"
-#include "getopt.h"
 #include "debug.h"
 #include "note.h"
 #include "scrot_selection.h"
