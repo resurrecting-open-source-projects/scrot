@@ -27,10 +27,10 @@ IMLIB2_CFLAGS=`imlib2-config --cflags`
 AC_SUBST(IMLIB2_LIBS)
 AC_SUBST(IMLIB2_CFLAGS)
 
-AC_CHECK_LIB([X11], [XOpenDisplay])
-AC_CHECK_LIB([Xcomposite], [XCompositeRedirectSubwindows])
-AC_CHECK_LIB([Xext], [XShapeCombineRectangles])
-AC_CHECK_LIB([Xfixes], [XFixesGetCursorImage])
+AC_CHECK_LIB([X11], [XOpenDisplay],,AC_MSG_ERROR([required library are not present.]))
+AC_CHECK_LIB([Xcomposite], [XCompositeRedirectSubwindows],,AC_MSG_ERROR([required library are not present.]))
+AC_CHECK_LIB([Xext], [XShapeCombineRectangles],,AC_MSG_ERROR([required library are not present.]))
+AC_CHECK_LIB([Xfixes], [XFixesGetCursorImage],,AC_MSG_ERROR([required library are not present.]))
 
 # Checks for header files.
 AC_PATH_X
@@ -46,7 +46,7 @@ AC_CHECK_TYPES([ptrdiff_t])
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([getopt_long getsubopt atexit gethostname memset select strchr strdup strerror strpbrk strrchr strtol],,
-	AC_MSG_ERROR([Required functions are not present.]))
+	AC_MSG_ERROR([required functions are not present.]))
 
 
 m4_pattern_forbid([^AX_],[=> GNU autoconf-archive not present. <=])
