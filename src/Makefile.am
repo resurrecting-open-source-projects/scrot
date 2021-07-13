@@ -29,11 +29,14 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 # Substitution variables
-ALL_LIBS = @LIBS@ @IMLIB2_LIBS@
 
 bin_PROGRAMS  = scrot
 
-scrot_LDADD   = ${ALL_LIBS}
+
+scrot_CPPFLAGS = @X11_CFLAGS@ @IMLIB2_CFLAGS@ @XCOMPOSITE_CFLAGS@ \
+								 @XEXT_CFLAGS@ @XFIXES_CFLAGS@
+scrot_LDADD = @X11_LIBS@ @IMLIB2_LIBS@ @XCOMPOSITE_LIBS@ \
+							@XEXT_LIBS@ @XFIXES_LIBS@
 
 scrot_SOURCES = main.c scrot.h \
 options.c options.h debug.h imlib.c structs.h note.c note.h \

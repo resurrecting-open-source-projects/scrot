@@ -15,22 +15,11 @@ AC_PROG_MAKE_SET
 AM_MAINTAINER_MODE
 
 # Checks for libraries.
-AC_PATH_GENERIC(Imlib2, , [
-  AC_SUBST(IMLIB2_LIBS)
-  AC_SUBST(IMLIB2_CFLAGS) ],
-  AC_MSG_ERROR(Cannot find Imlib2: Is imlib2-config in the path?) )
-
-
-LIBS="$LIBS -lm"
-IMLIB2_LIBS=`imlib2-config --libs`
-IMLIB2_CFLAGS=`imlib2-config --cflags`
-AC_SUBST(IMLIB2_LIBS)
-AC_SUBST(IMLIB2_CFLAGS)
-
-AC_CHECK_LIB([X11], [XOpenDisplay],,AC_MSG_ERROR([required library are not present.]))
-AC_CHECK_LIB([Xcomposite], [XCompositeRedirectSubwindows],,AC_MSG_ERROR([required library are not present.]))
-AC_CHECK_LIB([Xext], [XShapeCombineRectangles],,AC_MSG_ERROR([required library are not present.]))
-AC_CHECK_LIB([Xfixes], [XFixesGetCursorImage],,AC_MSG_ERROR([required library are not present.]))
+PKG_CHECK_MODULES([X11], [x11])
+PKG_CHECK_MODULES([XCOMPOSITE], [xcomposite])
+PKG_CHECK_MODULES([XEXT], [xext])
+PKG_CHECK_MODULES([XFIXES], [xfixes])
+PKG_CHECK_MODULES([IMLIB2], [imlib2])
 
 # Checks for header files.
 AC_PATH_X
