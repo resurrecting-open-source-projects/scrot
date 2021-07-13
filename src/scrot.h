@@ -66,7 +66,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "scrot_config.h"
 #include "structs.h"
-#include "debug.h"
 #include "note.h"
 #include "scrot_selection.h"
 #include "slist.h"
