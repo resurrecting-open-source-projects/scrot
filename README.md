@@ -43,7 +43,7 @@ scrot requires a few projects and libraries:
 - libXext [(can be found in X.Org)](https://gitlab.freedesktop.org/xorg/lib/libxext)
 - libxfixes [(can be found in X.Org)](https://gitlab.freedesktop.org/xorg/lib/libxfixes)
 
-From a unix command line, building is simple:
+From a Unix command line, building is simple:
 ```
 $ ./autogen.sh
 $ ./configure
@@ -55,8 +55,7 @@ Cleaning up the build is also simple:
 $ make distclean
 ```
 
-You can return to a pristine source tree after running `make distclean`, or
-before running `./configure`:
+You can return to a pristine source tree before running `./configure`:
 ```
 $ ./autogen.sh clean
 ```
@@ -68,7 +67,7 @@ If you've built scrot from source, scrot needs to be installed from a root shell
 # make install
 ```
 
-Most users will want to look for the scrot package in their operating system:
+Debian users can install scrot from their package manager:
 ```
 $ sudo apt install scrot
 ```
@@ -78,4 +77,4 @@ $ sudo apt install scrot
 scrot was originally developed by Tom Gilbert.
 
 Currently, source code is maintained by volunteers. Newer versions are
-available at https://github.com/resurrecting-open-source-projects/scrot.
+available at https://github.com/resurrecting-open-source-projects/scrot
