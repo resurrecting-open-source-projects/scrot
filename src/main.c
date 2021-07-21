@@ -329,18 +329,18 @@ scrot_grab_mouse_pointer(const Imlib_Image image,
 {
   XFixesCursorImage *xcim = XFixesGetCursorImage(disp);
 
-  const int width       = xcim->width;
-  const int height      = xcim->height;
-  const int x           = (xcim->x - xcim->xhot) - ix_off;
-  const int y           = (xcim->y - xcim->yhot) - iy_off;
-  DATA32 *pixels        = NULL;
+  const unsigned short width       = xcim->width;
+  const unsigned short height      = xcim->height;
+  const int x                      = (xcim->x - xcim->xhot) - ix_off;
+  const int y                      = (xcim->y - xcim->yhot) - iy_off;
+  DATA32 *pixels                   = NULL;
 
 #ifdef __i386__
   pixels = (DATA32*)xcim->pixels;
 #else
   DATA32 data[width * height * 4];
 
-  size_t i;
+  unsigned int i;
   for (i = 0; i < (width * height); i++)
     ((DATA32*)data)[i] = (DATA32)xcim->pixels[i];
 
@@ -623,6 +623,7 @@ scrot_nice_clip(int *rx,
 
 static Bool scrot_xevent_visibility(Display *dpy, XEvent *ev, XPointer arg)
 {
+    (void) dpy; // unused
     Window *win = (Window*)arg;
     return (ev->xvisibility.window == *win);
 }
@@ -914,6 +915,8 @@ scrot_grab_stack_windows(void)
     Imlib_Image im          = NULL;
     XImage *ximage          = NULL;
     XWindowAttributes attr;
+    unsigned long i = 0;
+
 
 #define EWMH_CLIENT_LIST "_NET_CLIENT_LIST" // spec EWMH
 
@@ -931,7 +934,6 @@ scrot_grab_stack_windows(void)
 
     XCompositeRedirectSubwindows(disp, root, CompositeRedirectAutomatic);
 
-    int i;
     for (i = 0; i < nitems_return; i++) {
 
         Window win = *((Window*)prop_return + i);

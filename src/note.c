@@ -157,10 +157,10 @@ malformed:
            }
 
            switch(++nclrs) {
-           case 1 : note.color.r = color;
-           case 2 : note.color.g = color;
-           case 3 : note.color.b = color;
-           case 4 : note.color.a = color;
+           case 1 : note.color.r = color; break;
+           case 2 : note.color.g = color; break;
+           case 3 : note.color.b = color; break;
+           case 4 : note.color.a = color; break;
            }
 
            c = strtok_r(NULL, ",", &saveptr);

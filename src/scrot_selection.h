@@ -64,6 +64,6 @@ void scrot_selection_create(void);
 void scrot_selection_destroy(void);
 void scrot_selection_draw(void);
 void scrot_selection_motion_draw(int x0, int y0, int x1, int y1);
-struct selection_rect_t* const scrot_selection_get_rect(void);
+struct selection_rect_t* scrot_selection_get_rect(void);
 
 #endif
