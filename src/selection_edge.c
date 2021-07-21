@@ -41,6 +41,7 @@ struct selection_edge_t {
 
 static Bool xevent_unmap(Display *dpy, XEvent *ev, XPointer arg)
 {
+    (void) dpy; //unused
     Window *win = (Window*)arg;
     return (ev->xunmap.window == *win);
 }
