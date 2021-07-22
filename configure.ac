@@ -33,11 +33,13 @@ AC_C_CONST
 AC_TYPE_SIZE_T
 AC_CHECK_TYPES([ptrdiff_t])
 
-# Checks for library functions.
+# Required: Checks for library functions.
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([getopt_long getsubopt atexit gethostname memset select strchr strdup strerror strpbrk strrchr strtol],,
 	AC_MSG_ERROR([required functions are not present.]))
 
+# Optional: Checks for library functions.
+AC_CHECK_FUNCS([strndup])
 
 m4_pattern_forbid([^AX_],[=> GNU autoconf-archive not present. <=])
 

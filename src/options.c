@@ -427,6 +427,9 @@ options_parse_autoselect(char *optarg)
 void
 options_parse_display(char *optarg)
 {
+#if SCROT_HAVE_STRNDUP
+    opt.display = strndup(optarg, 256);
+#else
    size_t length = 0;
    char *new_display;
 
@@ -441,6 +444,7 @@ options_parse_display(char *optarg)
    }
    strncpy(new_display, optarg, length);
    opt.display=new_display;
+#endif
 }
 
 void
