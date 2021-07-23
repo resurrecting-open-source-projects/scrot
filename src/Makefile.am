@@ -4,6 +4,8 @@
 # Copyright 2016      Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 # Copyright 2020      Jeroen Roovers <jer@gentoo.org>
 # Copyright 2020      spycapitan <spycapitan@protonmail.com>
+# Copyright 2021      daltomi <daltomi@disroot.org>
+# Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to
@@ -27,17 +29,21 @@
 
 MAINTAINERCLEANFILES = Makefile.in
 
-AM_LDFLAGS        = -L/usr/X11R6/lib
-AM_CPPFLAGS       = -Wall -I/usr/X11R6/include \
-$(X_CFLAGS) -I$(prefix)/include -I$(includedir) -I. \
--DPREFIX=\""$(prefix)"\" @IMLIB2_CFLAGS@
-LIBOBJS = @LIBOBJS@
+# Substitution variables
 
-bin_PROGRAMS      = scrot
+
+bin_PROGRAMS  = scrot
+
+
+scrot_CPPFLAGS = @X11_CFLAGS@ @IMLIB2_CFLAGS@ @XCOMPOSITE_CFLAGS@ \
+								 @XEXT_CFLAGS@ @XFIXES_CFLAGS@
+scrot_LDADD = @X11_LIBS@ @IMLIB2_LIBS@ @XCOMPOSITE_LIBS@ \
+							@XEXT_LIBS@ @XFIXES_LIBS@
+
+
 scrot_SOURCES     = main.c scrot.h \
 options.c options.h imlib.c structs.h note.c note.h \
 scrot_selection.c scrot_selection.h \
 selection_classic.c selection_classic.h \
 selection_edge.c selection_edge.h \
 slist.c slist.h
-scrot_LDADD         = -lX11 -lXfixes -lXext -lXcomposite @IMLIB2_LIBS@

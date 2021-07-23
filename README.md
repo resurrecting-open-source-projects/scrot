@@ -37,6 +37,7 @@ scrot requires a few projects and libraries:
 
 - [autoconf](https://www.gnu.org/software/autoconf/autoconf.html) (build time only)
 - [autoconf-archive](https://www.gnu.org/software/autoconf-archive/) (build time only)
+- [pkg-config](https://www.freedesktop.org/wiki/Software/pkg-config/) (build time only)
 - [imlib2](https://sourceforge.net/projects/enlightenment/files/imlib2-src/)
 - X [(e.g. X.Org)](https://www.x.org/wiki/)
 - libXcomposite [(can be found in X.Org)](https://gitlab.freedesktop.org/xorg/lib/libxcomposite)

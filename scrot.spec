@@ -3,7 +3,7 @@ Name:		@PACKAGE@
 Version:	@VERSION@
 Release:	@RELEASE@
 License:	MIT
-URL:		https://github.com/resurrecting-open-source-projects/scrot
+URL:		@PACKAGE_URL@
 
 %description
 scrot (SCReenshOT) is a simple command line screen capture
