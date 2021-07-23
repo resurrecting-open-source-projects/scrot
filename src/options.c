@@ -9,10 +9,12 @@ Copyright 2009      James Cameron <quozl@us.netrek.org>
 Copyright 2010      Ibragimov Rinat <ibragimovrinat@mail.ru>
 Copyright 2017      Stoney Sauce <stoneysauce@gmail.com>
 Copyright 2019      Daniel Lublin <daniel@lublin.se>
-Copyright 2019-2021 Daniel T. Borelli <daltomi@disroot.org>
+Copyright 2019      Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2019      Jade Auer <jade@trashwitch.dev>
+Copyright 2020      daltomi <daltomi@disroot.org>-
 Copyright 2020      Sean Brennan <zettix1@gmail.com>
-Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
+Copyright 2020      spycapitan <spycapitan@protonmail.com>
+Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -426,24 +428,11 @@ options_parse_autoselect(char *optarg)
 void
 options_parse_display(char *optarg)
 {
-#if SCROT_HAVE_STRNDUP
-    opt.display = strndup(optarg, 256);
-#else
-   size_t length = 0;
-   char *new_display;
-
-   length = strlen(optarg) + 1;
-   if (length > 256) {
-     length = 256;
-   }
-   new_display = malloc(length);
-   if (! new_display) {
+   opt.display = strndup(optarg, 256);
+   if (!opt.display) {
      fprintf(stderr, "Unable to allocate display: %s", strerror(errno));
      exit(EXIT_FAILURE);
    }
-   strncpy(new_display, optarg, length);
-   opt.display=new_display;
-#endif
 }
 
 void
