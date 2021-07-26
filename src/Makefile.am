@@ -2,9 +2,8 @@
 #                                   gilbertt@linuxbrit.co.uk,
 #                                   scrot_sucks@linuxbrit.co.uk>
 # Copyright 2016      Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
+# Copyright 2020-2021 Daniel T. Borelli <daltomi@disroot.org>
 # Copyright 2020      Jeroen Roovers <jer@gentoo.org>
-# Copyright 2020      spycapitan <spycapitan@protonmail.com>
-# Copyright 2021      daltomi <daltomi@disroot.org>
 # Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy

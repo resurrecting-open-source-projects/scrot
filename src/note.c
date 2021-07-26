@@ -1,7 +1,6 @@
 /* note.c
 
-Copyright 2019 Daniel T. Borelli <danieltborelli@gmail.com>
-Copyright 2020 spycapitan <spycapitan@protonmail.com>
+Copyright 2019-2020 Daniel T. Borelli <daltomi@disroot.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
