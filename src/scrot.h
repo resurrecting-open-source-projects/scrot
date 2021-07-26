@@ -70,10 +70,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "scrot_selection.h"
 #include "slist.h"
 
-#ifndef __GNUC__
-# define __attribute__(x)
-#endif
-
 typedef void (*sighandler_t) (int);
 
 void show_usage(void);
