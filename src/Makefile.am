@@ -34,14 +34,9 @@ MAINTAINERCLEANFILES = Makefile.in
 
 bin_PROGRAMS  = scrot
 
-
-scrot_CPPFLAGS = @X11_CFLAGS@ @IMLIB2_CFLAGS@ @XCOMPOSITE_CFLAGS@ \
-								 @XEXT_CFLAGS@ @XFIXES_CFLAGS@
-scrot_LDADD = @X11_LIBS@ @IMLIB2_LIBS@ @XCOMPOSITE_LIBS@ \
-							@XEXT_LIBS@ @XFIXES_LIBS@
-
-
-scrot_SOURCES     = main.c scrot.h \
+scrot_CPPFLAGS = @CPPFLAGS@
+scrot_LDADD    = @LIBS@
+scrot_SOURCES  = main.c scrot.h \
 options.c options.h imlib.c structs.h note.c note.h \
 scrot_selection.c scrot_selection.h \
 selection_classic.c selection_classic.h \

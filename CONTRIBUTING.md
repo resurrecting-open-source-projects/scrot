@@ -10,7 +10,9 @@ the following steps:
 
    [1] https://help.github.com/articles/about-pull-requests
 
-2. Ask for join to the scrot project in GitHub, if you want to work
+2. Send a patch performing one of the tasks listed at [TODO.md](TODO.md)
+
+3. Ask for join to the scrot project in GitHub, if you want to work
    officially. Note that this second step is not compulsory. However,
    to accept you in project, is needed a minimum previous collaboration.
 

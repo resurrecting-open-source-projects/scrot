@@ -68,7 +68,7 @@ main(int argc,
 {
   Imlib_Image image;
   Imlib_Image thumbnail;
-  Imlib_Load_Error err;
+  Imlib_Load_Error im_err;
   char *filename_im = NULL, *filename_thumb = NULL;
 
   char *have_extension = NULL;
@@ -131,8 +131,8 @@ main(int argc,
 
   apply_filter_if_required();
 
-  imlib_save_image_with_error_return(filename_im, &err);
-  if (err) {
+  imlib_save_image_with_error_return(filename_im, &im_err);
+  if (im_err) {
     fprintf(stderr, "Saving to file %s failed: %s\n", filename_im, strerror(errno));
     exit(EXIT_FAILURE);
   }
@@ -174,10 +174,8 @@ main(int argc,
       imlib_create_cropped_scaled_image(0, 0, cwidth, cheight,
                                             twidth, theight);
     if (thumbnail == NULL) {
-      fprintf(stderr, "Unable to create scaled Image: %s\n", strerror(errno));
-      exit(EXIT_FAILURE);
-    }
-    else
+        err(EXIT_FAILURE, "imlib_create_cropped_scaled_image");
+    } else
     {
       if (opt.note != NULL)
         scrot_note_draw(image);
@@ -194,8 +192,8 @@ main(int argc,
 
       apply_filter_if_required();
 
-      imlib_save_image_with_error_return(filename_thumb, &err);
-      if (err) {
+      imlib_save_image_with_error_return(filename_thumb, &im_err);
+      if (im_err) {
         fprintf(stderr, "Saving thumbnail %s failed: %s\n", filename_thumb, strerror(errno));
 	exit(EXIT_FAILURE);
       }
@@ -276,7 +274,7 @@ void scrot_check_if_overwrite_file(char **filename)
     snprintf(fmt, 5, "_%03zu", counter++);
 
     if (!ext) {
-      strncpy(newname + slen, fmt, 5);
+      strlcpy(newname + slen, fmt, 5);
     } else {
         strncpy((newname + slen) - ext_len, fmt, 5);
         strncat(newname, ext, ext_len);
@@ -757,7 +755,7 @@ im_printf(char *str, struct tm *tm,
       switch (*c) {
         case 'a':
           gethostname(buf, sizeof(buf));
-          strcat(ret, buf);
+          strlcat(ret, buf, sizeof(ret));
           break;
         case 'f':
           if (filename_im)
