@@ -2,128 +2,135 @@ NAME
   scrot - command line screen capture utility
 
 SYNOPSIS
-  scrot [options] [file]
+  scrot [-bcfhkmopsuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY] [-d SEC] [-e CMD]
+        [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] [-t NUM | GEOM] [FILE]
 
 DESCRIPTION
-  scrot (SCReenshOT) is a simple command line screen capture
-  utility that uses imlib2 to grab and save images. Multiple
-  image formats are supported through imlib2's dynamic saver
-  modules.
+  scrot (SCReenshOT) is a simple command line screen capture utility, it uses
+  imlib2 to grab and save images.
 
-  Some features of the scrot:
-    - support to multiple image formats (JPG, PNG, GIF, etc.).
-    - optimization of the screen shots image quality.
-    - capture a specific window or a rectangular area on the
-      screen with the help of switch.
+  scrot has many useful features:
+    - Support for multiple image formats: JPG, PNG, GIF, and others.
+    - The screenshot's quality is configurable.
+    - It is possible to capture a specific window or a rectangular area on the
+      screen.
 
-  scrot also can be used to monitor a desktop PC in admin absent
-  and register unwanted activities.
+  Because scrot is a command line utility, it can easily be scripted and put to
+  novel uses. For instance, scrot can be used to monitor an X server in absence.
+
+  scrot is free software under the MIT-advertising license.
 
 OPTIONS
-  -h, --help         Display help output and exit.
-  -v, --version      Output version information and exit.
-  -D, --display      Specify the display to use; see X(7).
-  -a, --autoselect   Non-interactively choose a rectangle of x,y,w,h.
-  -b, --border       When selecting a window, grab wm border too.
-                     Use with --select to raise the focus of the window.
-  -c, --count        Display a countdown when used with delay.
-  -d, --delay NUM    Wait NUM seconds before taking a shot.
-  -e, --exec APP     Exec APP on the saved image.
-  -q, --quality NUM  Image  quality (1-100) high value means high size, low
-                     compression. Default: 75. (Effect differs depending on
-                     file format chosen).
-  -m, --multidisp    For multiple heads, grab shot from each and join them
-                     together.
-  -s, --select       Interactively select a window or rectangle
-                     with the mouse (use the arrow keys to resize).
-                     See -l and -f options.
-  -l, --line         Indicates the style of the line when the -s option is used.
-                     See SELECTION STYLE.
-  -f, --freeze       Freeze the screen when the -s option is used.
-  -u, --focused      Use the currently focused window.
-  -t, --thumb NUM|GEOM  Generate thumbnail too. NUM is the percentage of the
-                        original size for the thumbnail to be. Alternatively,
-                        a GEOMetry can be specified, example: 300x200.
-  -z, --silent       Prevent beeping.
-  -p, --pointer      Capture the mouse pointer.
-
-  -o, --overwrite    By default scrot does not overwrite the files, use this option to allow it.
-  -n, --note         Draw a text note. See NOTE FORMAT.
-  -k, --stack        Capture stack/overlapped windows and join them together.
-                     A running Composite Manager is needed.
-  -C, --class NAME   Window class name. Associative with options: -k.
-  -S, --script CMD   Imlib2 script commands.
+  -a, --autoselect X,Y,W,H  Non-interactively choose a rectangle starting at
+                            position X,Y and of W by H resolution.
+  -b, --border              When selecting a window, grab the WM's border too.
+                            Use with -s to raise the focus of the window.
+  -C, --class NAME          NAME is a window class name. Associative with -k.
+  -c, --count               Display a countdown when used with -d.
+  -D, --display DISPLAY     DISPLAY is the display to use; see X(7).
+  -d, --delay SEC           Wait SEC seconds before taking a shot.
+  -e, --exec CMD            Execute CMD on the saved image.
+  -f, --freeze              Freeze the screen when -s is used.
+  -h, --help                Display help and exit.
+  -k, --stack               Capture stack/overlapped windows and join them. A
+                            running Composite Manager is needed.
+  -l, --line STYLE          STYLE indicates the style of the line when the -s
+                            option is used; see SELECTION STYLE.
+  -m, --multidisp           For multiple heads, screenshot all of them in order.
+  -n, --note OPTS           OPTS is a collection of options which specify notes
+                            to bake into the image. See NOTE FORMAT.
+  -o, --overwrite           By default scrot does not overwrite the output
+                            FILE, use this option to enable it.
+  -p, --pointer             Capture the mouse pointer.
+  -q, --quality NUM         NUM must be between 1 and 100. For lossless output
+                            formats, a higher value represents better but slower
+                            compression. For lossy output formats, a higher
+                            value represents higher quality and larger
+                            file size. Default: 75.
+  -S, --script CMD          CMD is an imlib2 script.
+  -s, --select              Interactively select a window or rectangle with the
+                            mouse, use the arrow keys to resize. See the -l and
+                            -f options.
+  -t, --thumb NUM | GEOM    Also generate a thumbnail. The argument is the
+                            resolution of the thumbnail, it may be a percentage
+                            NUM or a resolution GEOM. Examples: 10, 25, 320x240,
+                            500x200.
+  -u, --focused             Use the currently focused window.
+  -v, --version             Output version information and exit.
+  -z, --silent              Prevent beeping.
 
 SPECIAL STRINGS
-  Both the --exec and filename parameters can take format specifiers that are
-  expanded by scrot when encountered. There are two types of format specifier.
-  Characters preceded by a '%' are interpreted by strftime(2). See man strftime
-  for examples. These options may be used to refer to the current date and
-  time. The second kind are internal to scrot and are prefixed by '$' The
-  following specifiers are recognised:
+  Both the -e and FILE parameters can take format specifiers that are expanded
+  by scrot when encountered. There are two types of format specifier:
+  Characters preceded by a '%' are interpreted by strftime(2). The second kind
+  are internal to scrot and are prefixed by '$'. The following specifiers are
+  recognised by scrot:
 
-    $a  hostname
-    $f  image path/filename (ignored when used in the filename)
-    $m  thumb image path/filename (ignored when used in the filename)
-    $n  image name (ignored when used in the filename)
-    $s  image size (bytes) (ignored when used in the filename)
-    $p  image pixel size
-    $w  image width
-    $h  image height
-    $t  image format (ignored when used in the filename)
-    $$  print a literal '$'
-    \\n  print a newline (ignored when used in the filename)
+    $$   A literal '$'.
+    $a   The system's hostname.
+    $f   The image's full path (ignored when used in the filename).
+    $h   The image's height.
+    $m   The thumbnail's full path (ignored when used in the filename).
+    $n   The image's basename (ignored when used in the filename).
+    $p   The image's pixel size.
+    $s   The image's size in bytes (ignored when used in the filename).
+    $t   The image's file format (ignored when used in the filename).
+    $w   The image's width.
+    \\n   A literal newline (ignored when used in the filename).
 
   Example:
 
-    $ scrot '%Y-%m-%d_$wx$h.png' -e 'mv $f ~/shots/'
+    $ scrot '%Y-%m-%d_$wx$h.png' -e 'optipng $f'
 
-  This would create a file called something like 2000-10-30_2560x1024.png
-  and move it to your shots directory.
+  This would create a PNG file with a name similar to 2000-10-30_2560x1024.png
+  and optimize it with optipng(1).
 
 SELECTION STYLE
-  When using --select you can indicate the style of the line with --line.
+  When using -s, you can indicate the style of the line with -l.
 
-  The following specifiers are recognised:
+  -l takes a comma-separated list of specifiers as argument:
 
-    style=(solid,dash),width=(range 1 to 8),color="value",
-    opacity=(range 10 to 100),mode=(edge,classic)
+    style=STYLE     STYLE is either "solid" or "dash" without quotes.
+    width=NUM       NUM is a pixel count between 1 and 8 inclusive.
+    color="COLOR"   Color is a hexadecimal HTML color code or the name of
+                    a color. HTML color codes are composed of a pound
+                    sign '#' followed by a sequence of 3 2-digit
+                    hexadecimal numbers which represent red, green, and
+                    blue respectively. Examples: #FF0000 (red), #E0FFFF
+                    (light cyan), #000000 (black).
+    opacity=NUM     NUM is a percentage between 10 and 100 inclusive. 100
+                    means 100% opaque, 10 means 10% opaque. This is only
+                    effective if a Composite Manager is running.
+    mode=MODE       MODE is either "edge" or "classic" without quotes.
+                    edge is the new selection, classic uses the old one.
+                    "edge" ignores the style specifier and the -f flag,
+                    "classic" ignores the opacity specifier.
 
-  The default style is:
+  Without the -l option, a default style is used:
 
     mode=classic,style=solid,width=1,opacity=100
 
-  Mode 'edge' ignore: style, --freeze
-
-  Mode 'classic' ignore: opacity
-
-  The 'opacity' specifier is only effective if a Composite Manager is running.
-
-  For the color you can use a name or a hexadecimal value.
-
-    color="red" or color="#ff0000"
-
   Example:
 
-    $ scrot --line style=dash,width=3,color="red" --select
+    $ scrot -l style=dash,width=3,color="red" -s
 
 NOTE FORMAT
-  The following specifiers are recognised for the option --note:
+  The -n option's argument is more arguments:
 
-    -f 'FontName/size'
-    -t 'text'
-    -x position (optional)
-    -y position (optional)
-    -c color(RGBA) (optional)
-    -a angle (optional)
+    -f  'FontName/size'
+    -t  'text'
+    -x  position (optional)
+    -y  position (optional)
+    -c  color(RGBA) (optional)
+    -a  angle (optional)
 
   Example:
 
-    $ scrot --note "-f '/usr/share/fonts/TTF/DroidSans-Bold/40' -x 10 -y 20 -c 255,0,0,255 -t 'Hi'"
+    $ scrot --note "-f '/usr/share/fonts/TTF/DroidSans-Bold/40' -x 10 \\
+    >   -y 20 -c 255,0,0,255 -t 'Hi'"
 
 AUTHOR
-  scrot was originally developed by Tom Gilbert under MIT-advertising license
-  and is maintained by some people.
+  scrot was originally developed by Tom Gilbert.
 
-  Currently, source code and newer versions are available at
-  https://github.com/resurrecting-open-source-projects/scrot
+  Currently, source code is maintained by volunteers. Newer versions
+  are available at https://github.com/resurrecting-open-source-projects/scrot
