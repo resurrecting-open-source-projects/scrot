@@ -1,3 +1,39 @@
+Sun Jul 25 23:30:00 -03:00 2021  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
+Version 1.6
+
+  [ Christopher R. Nelson ] alias @languidnights
+
+  * Removed dependence on giblib library.
+
+  [ Daniel T. Borelli ] alias @daltomi
+
+  * Fixed the capture when a window is hidden behind another.
+  * Fixed the capture of the edge of the focused window.
+  * Avoid capturing the selection box when drag and drop quickly.
+  * Fixed issue when selection reaches the end of screen.
+  * New feature: resize the selection with the arrow keys.
+  * New feature: support script Imlib2 commands.
+  * New feature: added WM_CLASS to exclude selection mode edge from some
+    composite window managers.
+  * Improvement: selection option, capture the mouse cursor when the delay
+    option is used.
+  * Removed forced compiler options: -g -O3
+
+  [ Guilherme Janczak ] alias @guijan
+
+  * Removed the local implementation function: strdup.
+  * Removed the local implementation function: getopt_long.
+  * Removed unused file debug.h.
+
+  [ Martin C ] alias @Cationiz3r
+
+  * New feature: change the cursor pointer according to the movement of the
+    selection.
+
+  [ Shawn Webb ] alias @lattera
+
+  * Fixed Control Flow Integrity complain in HardenedBSD.
+
 Thu Feb 04 22:35:00 -03:00 2021  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 Version 1.5
 
