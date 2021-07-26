@@ -1,8 +1,7 @@
 /* scrot_selection.h
 
-Copyright 2020  daltomi <daltomi@disroot.org>
-Copyright 2020  Daniel T. Borelli <daltomi@disroot.org>
-Copyright 2021  Cationiz3r
+Copyright 2020-2021 Daniel T. Borelli <daltomi@disroot.org>
+Copyright 2021      Martin C <martincation@protonmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
