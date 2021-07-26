@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to create configure.
 
-AC_INIT([scrot], [1.5], [https://github.com/resurrecting-open-source-projects/scrot/issues],
+AC_INIT([scrot], [1.6], [https://github.com/resurrecting-open-source-projects/scrot/issues],
 		[],[https://github.com/resurrecting-open-source-projects/scrot])
 AC_CONFIG_SRCDIR([src/main.c])
 AM_INIT_AUTOMAKE(dist-bzip2)
