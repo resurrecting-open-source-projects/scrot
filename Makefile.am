@@ -40,8 +40,7 @@ man_MANS = man/scrot.1
 docs_DATA = README.md AUTHORS ChangeLog doc/scrot.png
 docsdir = $(prefix)/share/doc/scrot
 
-EXTRA_DIST = \
-scrot.spec man/scrot.1 $(docs_DATA)
+EXTRA_DIST = man/scrot.1 $(docs_DATA)
 
 SUBDIRS = src
 
