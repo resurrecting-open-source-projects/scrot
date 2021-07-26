@@ -1,6 +1,7 @@
 /* note.c
 
 Copyright 2019-2020 Daniel T. Borelli <daltomi@disroot.org>
+Copyright 2021 Guilherme Janczak <guilherme.janczak@yandex.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -37,8 +38,6 @@ static Imlib_Font imfont = NULL;
 static void load_font(void);
 
 static char *parse_text(char **tok, char *const end);
-
-static char *new_text(const char *src, const size_t len);
 
 static inline void pfree(char **ptr)
 {
@@ -245,20 +244,5 @@ char *parse_text(char **tok, char *const end)
 
    if (len == 0) return NULL;
 
-   return new_text(begin, len);
-}
-
-char *new_text(const char *src, const size_t len)
-{
-   assert(NULL != src);
-
-   char *text = malloc(len + 1);
-
-   assert(NULL != text);
-
-   strncpy(text, src, len);
-
-   text[len] = '\0';
-
-   return text;
+   return strndup(begin, len);
 }
