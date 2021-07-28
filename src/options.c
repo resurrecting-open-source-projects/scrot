@@ -218,35 +218,35 @@ static void options_parse_window_class_name(const char* window_class_name)
 static void
 scrot_parse_option_array(int argc, char **argv)
 {
-   static char stropts[] = "a:ofpbcd:e:hmq:st:uv+:zn:l:D:kC:S:";
+   static char stropts[] = "a:ofpbcd:e:hmq:st:uvzn:l:D:kC:S:";
 
    static struct option lopts[] = {
       /* actions */
-      {"help", 0, 0, 'h'},                  /* okay */
-      {"version", 0, 0, 'v'},               /* okay */
-      {"count", 0, 0, 'c'},
-      {"select", 0, 0, 's'},
-      {"focused", 0, 0, 'u'},
-      {"focussed", 0, 0, 'u'},	/* macquarie dictionary has both spellings */
-      {"border", 0, 0, 'b'},
-      {"multidisp", 0, 0, 'm'},
-      {"silent", 0, 0, 'z'},
-      {"pointer", 0, 0, 'p'},
-      {"freeze", 0, 0, 'f'},
-      {"overwrite", 0, 0, 'o'},
-      {"stack", 0, 0,'k'},
+      {"help"         , no_argument, 0, 'h'},
+      {"version"      , no_argument, 0, 'v'},
+      {"count"        , no_argument, 0, 'c'},
+      {"select"       , no_argument, 0, 's'},
+      {"focused"      , no_argument, 0, 'u'},
+      {"focussed"     , no_argument, 0, 'u'},/* macquarie dictionary has both spellings */
+      {"border"       , no_argument, 0, 'b'},
+      {"multidisp"    , no_argument, 0, 'm'},
+      {"silent"       , no_argument, 0, 'z'},
+      {"pointer"      , no_argument, 0, 'p'},
+      {"freeze"       , no_argument, 0, 'f'},
+      {"overwrite"    , no_argument, 0, 'o'},
+      {"stack"        , no_argument, 0, 'k'},
       /* toggles */
-      {"thumb", 1, 0, 't'},
-      {"delay", 1, 0, 'd'},
-      {"quality", 1, 0, 'q'},
-      {"exec", 1, 0, 'e'},
-      {"autoselect", required_argument, 0, 'a'},
-      {"display", required_argument, 0, 'D'},
-      {"note", required_argument, 0, 'n'},
-      {"line", required_argument, 0, 'l'},
-      {"class", required_argument, 0, 'C'},
-      {"script", required_argument, 0, 'S'},
-      {0, 0, 0, 0}
+      {"thumb"        , required_argument, 0, 't'},
+      {"delay"        , required_argument, 0, 'd'},
+      {"quality"      , required_argument, 0, 'q'},
+      {"exec"         , required_argument, 0, 'e'},
+      {"autoselect"   , required_argument, 0, 'a'},
+      {"display"      , required_argument, 0, 'D'},
+      {"note"         , required_argument, 0, 'n'},
+      {"line"         , required_argument, 0, 'l'},
+      {"class"        , required_argument, 0, 'C'},
+      {"script"       , required_argument, 0, 'S'},
+      {0              , 0, 0, 0}
    };
    int optch = 0, cmdx = 0;
 
