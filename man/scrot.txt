@@ -126,8 +126,8 @@ NOTE FORMAT
 
   Example:
 
-    $ scrot --note "-f '/usr/share/fonts/TTF/DroidSans-Bold/40' -x 10 \\
-    >   -y 20 -c 255,0,0,255 -t 'Hi'"
+    $ scrot -n "-f '/usr/share/fonts/TTF/DroidSans-Bold/40' -x 10
+            -y 20 -c 255,0,0,255 -t 'Hi'"
 
 AUTHOR
   scrot was originally developed by Tom Gilbert.
