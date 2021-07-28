@@ -214,7 +214,6 @@ static void options_parse_window_class_name(const char* window_class_name)
     }
 }
 
-
 static void
 scrot_parse_option_array(int argc, char **argv)
 {
@@ -492,7 +491,6 @@ int options_cmp_window_class_name(const char* target_class_name)
     return !!(!strncmp(target_class_name, opt.window_class_name, MAX_LEN_WINDOW_CLASS_NAME - 1));
 }
 
-
 void
 show_version(void)
 {
@@ -501,105 +499,13 @@ show_version(void)
 }
 
 void
-show_mini_usage(void)
-{
-   printf("Usage : " SCROT_PACKAGE " [OPTIONS]... FILE\nUse " SCROT_PACKAGE
-          " --help for detailed usage information\n");
-   exit(0);
-}
-
-
-void
 show_usage(void)
 {
-   fprintf(stdout,
-           "Usage : " SCROT_PACKAGE " [OPTIONS]... [FILE]\n"
-           "  Where FILE is the target file for the screenshot.\n"
-           "  If FILE is not specified, a date-stamped file will be dropped in the\n"
-           "  current directory.\n" "  See man " SCROT_PACKAGE " for more details\n"
-           "  -h, --help                display this help and exit\n"
-           "  -v, --version             output version information and exit\n"
-           "  -D, --display             Set DISPLAY target other than current\n"
-           "  -a, --autoselect          non-interactively choose a rectangle of x,y,w,h\n"
-           "  -b, --border              When selecting a window, grab wm border too\n"
-           "                            Use with --select to raise the focus of the window.\n"
-           "  -c, --count               show a countdown before taking the shot\n"
-           "  -d, --delay NUM           wait NUM seconds before taking a shot\n"
-           "  -e, --exec APP            run APP on the resulting screenshot\n"
-           "  -q, --quality NUM         Image quality (1-100) high value means\n"
-           "                            high size, low compression. Default: 75.\n"
-           "                            For lossless compression formats, like png,\n"
-           "                            low quality means high compression.\n"
-           "  -m, --multidisp           For multiple heads, grab shot from each\n"
-           "                            and join them together.\n"
-           "  -s, --select              interactively choose a window or rectangle\n"
-           "                            with the mouse (use the arrow keys to resize)\n"
-           "  -u, --focused             use the currently focused window\n"
-           "  -t, --thumb NUM           generate thumbnail too. NUM is the percentage\n"
-           "                            of the original size for the thumbnail to be,\n"
-           "                            or the geometry in percent, e.g. 50x60 or 80x20.\n"
-           "  -z, --silent              Prevent beeping\n"
-           "  -p, --pointer             Capture the mouse pointer.\n"
-           "  -f, --freeze              Freeze the screen when the selection is used: --select\n"
-           "  -o, --overwrite           By default " SCROT_PACKAGE " does not overwrite the files, use this option to allow it.\n"
-           "  -l, --line                Indicates the style of the line when the selection is used: --select\n"
-           "                            See SELECTION STYLE\n"
-           "  -n, --note                Draw a text note.\n"
-           "                            See NOTE FORMAT\n"
-           "  -k, --stack               Capture stack/overlapped windows and join them together.\n"
-           "                            A running Composite Manager is needed.\n"
-           "  -C,  --class NAME         Window class name. Associative with options: -k\n"
-           "  -S,  --script CMD         Imlib2 script commands\n"
-           "\n" "  SPECIAL STRINGS\n"
-           "  Both the --exec and filename parameters can take format specifiers\n"
-           "  that are expanded by " SCROT_PACKAGE " when encountered.\n"
-           "  There are two types of format specifier. Characters preceded by a '%%'\n"
-           "  are interpreted by strftime(2). See man strftime for examples.\n"
-           "  These options may be used to refer to the current date and time.\n"
-           "  The second kind are internal to " SCROT_PACKAGE
-           "  and are prefixed by '$'\n"
-           "  The following specifiers are recognised:\n"
-           "                  $a hostname\n"
-           "                  $f image path/filename (ignored when used in the filename)\n"
-           "                  $m thumbnail path/filename\n"
-           "                  $n image name (ignored when used in the filename)\n"
-           "                  $s image size (bytes) (ignored when used in the filename)\n"
-           "                  $p image pixel size\n"
-           "                  $w image width\n"
-           "                  $h image height\n"
-           "                  $t image format (ignored when used in the filename)\n"
-           "                  $$  prints a literal '$'\n"
-           "                  \\n prints a newline (ignored when used in the filename)\n"
-           "  Example:\n" "          " SCROT_PACKAGE
-           " '%%Y-%%m-%%d_$wx$h_scrot.png' -e 'mv $f ~/images/shots/'\n"
-           "          Creates a file called something like 2000-10-30_2560x1024_scrot.png\n"
-           "          and moves it to your images directory.\n" "\n"
-           "\n" "  SELECTION STYLE\n"
-           "  When using --select you can indicate the style of the line with --line.\n"
-           "  The following specifiers are recognised:\n"
-           "                  style=(solid,dash),width=(range 1 to 8),color=\"value\",\n"
-           "                  opacity=(range 10 to 100),mode=(edge,classic)\n"
-           "  The default style is:\n"
-           "                  mode=classic,style=solid,width=1,opacity=100\n"
-           "  Mode 'edge' ignore    : style, --freeze\n"
-           "  Mode 'classic' ignore : opacity\n\n"
-           "  The 'opacity' specifier is only effective if a Composite Manager is running.\n\n"
-           "  For the color you can use a name or a hexadecimal value.\n"
-           "                  color=\"red\" or color=\"#ff0000\"\n"
-           "  Example:\n" "          " SCROT_PACKAGE
-           " --line style=dash,width=3,color=\"red\" --select\n\n"
-           "\n" "  NOTE FORMAT\n"
-           "  The following specifiers are recognised for the option --note\n"
-           "                  -f 'FontName/size'\n"
-           "                  -t 'text'\n"
-           "                  -x position (optional)\n"
-           "                  -y position (optional)\n"
-           "                  -c color(RGBA) (optional)\n"
-           "                  -a angle (optional)\n"
-           "  Example:\n" "          " SCROT_PACKAGE
-           " --note \"-f '/usr/share/fonts/TTF/DroidSans-Bold/40' -x 10 -y 20 -c 255,0,0,255 -t 'Hi'\"\n\n"
-           "This program is free software see the file COPYING for licensing info.\n"
-           "Copyright Tom Gilbert 2000\n"
-           "Email bugs to <scrot_sucks@linuxbrit.co.uk>\n");
+   fputs( /* Check that everything lines up after any changes. */
+   "usage:  "SCROT_PACKAGE" [-bcfhkmopsuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY]"
+   "\n"
+   "              [-d SEC] [-e CMD] [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] \n"
+   "              [-t NUM | GEOM] [FILE]\n",
+   stdout);
    exit(0);
 }
