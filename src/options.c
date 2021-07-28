@@ -240,7 +240,6 @@ scrot_parse_option_array(int argc, char **argv)
       {"delay", 1, 0, 'd'},
       {"quality", 1, 0, 'q'},
       {"exec", 1, 0, 'e'},
-      {"debug-level", 1, 0, '+'},
       {"autoselect", required_argument, 0, 'a'},
       {"display", required_argument, 0, 'D'},
       {"note", required_argument, 0, 'n'},
@@ -285,9 +284,6 @@ scrot_parse_option_array(int argc, char **argv)
            break;
         case 'u':
            opt.focused = 1;
-           break;
-        case '+':
-           opt.debug_level = options_parse_required_number(optarg);
            break;
         case 'c':
            opt.countdown = 1;
