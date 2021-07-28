@@ -25,12 +25,10 @@ PKG_CHECK_MODULES([IMLIB2], [imlib2])
 AC_ARG_WITH([libbsd],
     AS_HELP_STRING([--without-libbsd], [Error when BSD functions are not found]))
 AC_CHECK_FUNCS([strlcpy strlcat err errx],, [LIBBSD_NEEDED=yes])
-AS_IF([test "x$with_libbsd" = "xno"], [
-    AS_IF([test "x$LIBBSD_NEEDED" = "xyes"], [
+AS_IF([test "x$LIBBSD_NEEDED" = "xyes"], [
+    AS_IF([test "x$with_libbsd" = "xno"], [
         AC_MSG_ERROR([BSD functions not found and --without-libbsd was used])
     ])
-])
-AS_IF([test "x$LIBBSD_NEEDED" = "xyes"], [
     PKG_CHECK_MODULES([LIBBSD], [libbsd-overlay],,
         AC_MSG_ERROR([BSD functions not found, libbsd is required]))
 ])
