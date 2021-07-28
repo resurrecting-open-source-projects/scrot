@@ -218,7 +218,7 @@ static void options_parse_window_class_name(const char* window_class_name)
 static void
 scrot_parse_option_array(int argc, char **argv)
 {
-   static char stropts[] = "a:ofpbcd:e:hmq:st:uv+:zn:l:D:kC:S:";
+   static char stropts[] = "a:ofpbcd:e:hmq:st:uvzn:l:D:kC:S:";
 
    static struct option lopts[] = {
       /* actions */
