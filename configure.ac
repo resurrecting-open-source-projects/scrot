@@ -22,6 +22,22 @@ PKG_CHECK_MODULES([XEXT], [xext])
 PKG_CHECK_MODULES([XFIXES], [xfixes])
 PKG_CHECK_MODULES([IMLIB2], [imlib2])
 
+AC_ARG_WITH([libbsd],
+    AS_HELP_STRING([--without-libbsd], [Error when BSD functions are not found]))
+AC_CHECK_FUNCS([strlcpy strlcat err errx],, [LIBBSD_NEEDED=yes])
+AS_IF([test "x$LIBBSD_NEEDED" = "xyes"], [
+    AS_IF([test "x$with_libbsd" = "xno"], [
+        AC_MSG_ERROR([BSD functions not found and --without-libbsd was used])
+    ])
+    PKG_CHECK_MODULES([LIBBSD], [libbsd-overlay],,
+        [AC_MSG_ERROR([BSD functions not found, libbsd is required])])
+])
+
+AC_SUBST([LIBS], ["$X11_LIBS $XCOMPOSITE_LIBS $XEXT_LIBS $XFIXES_LIBS \
+    $IMLIB2_LIBS $LIBBSD_LIBS $LIBS"])
+AC_SUBST([CPPFLAGS], ["$X11_CFLAGS $XCOMPOSITE_CFLAGS $XEXT_CFLAGS \
+    $XFIXES_CFLAGS $IMLIB2_CFLAGS $LIBBSD_CFLAGS $CPPFLAGS"])
+
 # Checks for header files.
 AC_PATH_X
 AC_CHECK_HEADERS([stdint.h sys/time.h unistd.h])

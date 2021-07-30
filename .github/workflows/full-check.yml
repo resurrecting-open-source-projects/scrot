@@ -1,6 +1,7 @@
 # Copyright 2020 Daniel T. Borelli <daltomi@disroot.org>
 # Copyright 2020 Jeroen Roovers <jer@gentoo.org>
 # Copyright 2020 Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
+# Copyright 2021 Guilherme Janczak <guilherme.janczak@yandex.com>
 
 name: full-check
 
@@ -14,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: install_dependencies
-      run: sudo apt install autoconf-archive giblib-dev libimlib2-dev libtool libxcomposite-dev libxfixes-dev
+      run: sudo apt install autoconf-archive libimlib2-dev libxcomposite-dev libxfixes-dev libbsd-dev
     - name: first_build
       run: |
            ./autogen.sh
@@ -22,7 +23,7 @@ jobs:
            make
            sudo make install
            sudo make uninstall
-           make distclean 
+           make distclean
     - name: second_build
       run: |
            ./autogen.sh

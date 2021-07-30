@@ -79,7 +79,7 @@ task:
     - apt-get update
     - apt-get install -y autoconf autoconf-archive make pkg-config clang gcc
                          libx11-dev libxcomposite-dev libxext-dev libxfixes-dev
-                         libimlib2-dev
+                         libimlib2-dev libbsd-dev
   << : *common_script
 
 task:
