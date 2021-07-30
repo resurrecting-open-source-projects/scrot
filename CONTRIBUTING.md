@@ -1,30 +1,40 @@
-## HOW TO CONTRIBUTE TO SCROT DEVELOPMENT
+# CONTRIBUTING TO SCROT DEVELOPMENT
 
-scrot is available at https://github.com/resurrecting-open-source-projects/scrot
+#### Changes are to be sent as [pull requests on GitHub](https://github.com/resurrecting-open-source-projects/scrot/pulls).
 
-If you are interested in contribute to scrot development, please, follow
-the following steps:
+## Setting up the development machine
 
-1. Send a patch that fix an issue or that implement a new feature.
-   Alternatively, you can do a 'pull request'[1] in GitHub.
+scrot aims to build with no modifications on all the free unix systems. The
+master branch is also kept in working order at all times.  Our builds are tested
+all the way back to [Debian oldstable](https://wiki.debian.org/DebianOldStable),
+so a scrot developer shouldn't need to build the latest git versions of the
+dependencies to start hacking.
 
-   [1] https://help.github.com/articles/about-pull-requests
+You will want to install the dependencies listed in the `Building` section of
+[README.md](README.md). Look for the text `install_script` in the
+[.cirrus.yml](.cirrus.yml) CI definitions for example package manager
+invocations on many operating systems.
 
-2. Send a patch performing one of the tasks listed at [TODO.md](TODO.md)
+## Style
 
-3. Ask for join to the scrot project in GitHub, if you want to work
-   officially. Note that this second step is not compulsory. However,
-   to accept you in project, is needed a minimum previous collaboration.
+scrot is primarily written in C99 with
+[POSIX 2008](https://pubs.opengroup.org/onlinepubs/9699919799.2008edition/)
+extensions. You're also free to make use of any documented function from our
+libraries. Make sure to use
+[libbsd functions](https://manpages.debian.org/unstable/libbsd-dev/libbsd.7.en.html)
+where they're safer, cleaner or more convenient.
 
+scrot follows
+[WebKit's code style guidelines](https://webkit.org/code-style-guidelines/)
+with additional restrictions:
+- No explicit casts.
+- Use the identifier and not the type as the argument to the `sizeof` operator.
 
-To find issues and bugs to fix, you can check these addresses:
+When in doubt, make use of the `clang-format` source code formatter-it comes
+with the WebKit style by default.
 
-   - https://github.com/resurrecting-open-source-projects/scrot
-   - https://bugs.debian.org/cgi-bin/pkgreport.cgi?dist=unstable;package=scrot
-   - https://bugs.launchpad.net/ubuntu/+source/scrot/+bugs
-   - https://apps.fedoraproject.org/packages/scrot/bugs
-   - https://bugs.gentoo.org/buglist.cgi?quicksearch=scrot
+## Low-hanging fruit
 
-If you want to join, please make a contact.
+Ongoing tasks will be written to [TODO.md](TODO.md).
 
-  -- Eriberto, Tue, 12 Feb 2019 22:50:53 -0200.
+Regular contributors can ask to join the scrot project on GitHub.
