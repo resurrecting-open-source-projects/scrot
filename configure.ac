@@ -51,7 +51,7 @@ AC_CHECK_TYPES([ptrdiff_t])
 
 # Required: Checks for library functions.
 AC_FUNC_MALLOC
-AC_CHECK_FUNCS([getopt_long getsubopt atexit gethostname memset select strchr strdup strerror strndup strpbrk strrchr strtol],,
+AC_CHECK_FUNCS([getopt_long getsubopt gethostname select strdup strerror strndup strtol],,
 	AC_MSG_ERROR([required functions are not present.]))
 
 m4_pattern_forbid([^AX_],[=> GNU autoconf-archive not present. <=])
