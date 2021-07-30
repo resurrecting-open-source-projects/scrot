@@ -86,6 +86,11 @@ options_parse_required_number(char *str)
    return ret;
 }
 
+static int non_negative_number(int num)
+{
+    return (num < 0) ? 0 : num;
+}
+
 static void
 options_parse_line(char *optarg)
 {
@@ -267,7 +272,7 @@ scrot_parse_option_array(int argc, char **argv)
            opt.border = 1;
            break;
         case 'd':
-           opt.delay = options_parse_required_number(optarg);
+           opt.delay = non_negative_number(options_parse_required_number(optarg));
            break;
         case 'e':
            opt.exec = strdup(optarg);
