@@ -63,6 +63,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <Imlib2.h>
 #include <stdbool.h>
 #include <getopt.h>
+#include <limits.h>
 
 #include "scrot_config.h"
 #include "structs.h"
