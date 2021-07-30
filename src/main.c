@@ -174,7 +174,7 @@ main(int argc,
       imlib_create_cropped_scaled_image(0, 0, cwidth, cheight,
                                             twidth, theight);
     if (thumbnail == NULL) {
-        err(EXIT_FAILURE, "imlib_create_cropped_scaled_image");
+        err(EXIT_FAILURE, "unable to create thumbnail");
     } else
     {
       if (opt.note != NULL)
