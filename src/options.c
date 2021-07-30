@@ -65,12 +65,16 @@ init_parse_options(int argc, char **argv)
 int
 options_parse_required_number(char *str)
 {
+   assert(NULL != str); // fix yout caller function,
+                       //  the user does not impose this behavior
    char *end = NULL;
-   int ret = 0;
+   long ret = 0L;
    errno = 0;
 
-   if (str != NULL) {
-      ret = strtol(str, &end, 10);
+   ret = strtol(str, &end, 10);
+
+   if (errno) {
+      goto range_error;
    }
 
    if (str == end) {
@@ -78,12 +82,16 @@ options_parse_required_number(char *str)
       exit(EXIT_FAILURE);
    }
 
-   if (errno) {
-      perror("strtol");
-      exit(EXIT_FAILURE);
+   if (ret > INT_MAX || ret < INT_MIN) {
+      errno = ERANGE;
+      goto range_error;
    }
 
    return ret;
+
+range_error:
+      perror("strtol");
+      exit(EXIT_FAILURE);
 }
 
 static void
