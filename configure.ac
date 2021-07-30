@@ -30,7 +30,7 @@ AS_IF([test "x$LIBBSD_NEEDED" = "xyes"], [
         AC_MSG_ERROR([BSD functions not found and --without-libbsd was used])
     ])
     PKG_CHECK_MODULES([LIBBSD], [libbsd-overlay],,
-        AC_MSG_ERROR([BSD functions not found, libbsd is required]))
+        [AC_MSG_ERROR([BSD functions not found, libbsd is required])])
 ])
 
 AC_SUBST([LIBS], ["$X11_LIBS $XCOMPOSITE_LIBS $XEXT_LIBS $XFIXES_LIBS \
