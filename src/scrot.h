@@ -51,6 +51,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <err.h>
 #include <errno.h>
 #include <getopt.h>
+#include <limits.h>
 #include <signal.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -63,7 +64,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <time.h>
-#include <unistd.h>
+#include <unistd.h>     
+
 
 #include "scrot_config.h"
 #include "structs.h"
@@ -75,7 +77,6 @@ typedef void (*sighandler_t) (int);
 
 void show_usage(void);
 void show_version(void);
-void show_mini_usage(void);
 void init_x_and_imlib(char *dispstr, int screen_num);
 char *chop_file_from_full_path(char *str);
 Imlib_Image scrot_grab_shot(void);
