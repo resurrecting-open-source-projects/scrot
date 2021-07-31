@@ -35,20 +35,20 @@ The following libbsd integration efforts are in progress:
 We're currently in the process of complying with the new obligatory C style
 described in [CONTRIBUTING.md](CONTRIBUTING.md).
 
-The following files are yet to be converted:
-- src/imlib.c
+The following are to be converted:
 - src/main.c
 - src/note.c
-- src/options.c
-- src/scrot_selection.c
-- src/selection_classic.c
-- src/selection_edge.c
-- src/slist.c
 - src/note.h
+- src/options.c
 - src/options.h
 - src/scrot.h
+- src/scrot_selection.c
 - src/scrot_selection.h
+- src/selection_classic.c
 - src/selection_classic.h
+- src/selection_edge.c
 - src/selection_edge.h
+- src/slist.c
 - src/slist.h
 - src/structs.h
+- ~~src/imlib.c~~

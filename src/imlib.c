@@ -27,43 +27,41 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#include "scrot.h"
 #include "options.h"
+#include "scrot.h"
 
-Display *disp = NULL;
-Visual *vis = NULL;
-Screen *scr = NULL;
+Display *disp;
+Visual *vis;
+Screen *scr;
 Colormap cm;
 int depth;
-Window root = 0;
+Window root;
 
-
-void
-init_x_and_imlib(char *dispstr, int screen_num)
+void init_x_and_imlib(char *dispstr, int screen_num)
 {
-   disp = XOpenDisplay(dispstr);
-   if (!disp) {
-      fprintf(stderr, "Can't open X display. It *is* running, yeah? [");
-      fprintf(stderr, "%s", dispstr ? dispstr :
-              (getenv("DISPLAY") ? getenv("DISPLAY") : "NULL"));
-      fprintf(stderr, "]\n");
-      exit(EXIT_FAILURE);
-   }
+    const char *badstr;
 
-   if (screen_num)
-      scr = ScreenOfDisplay(disp, screen_num);
-   else
-      scr = ScreenOfDisplay(disp, DefaultScreen(disp));
+    disp = XOpenDisplay(dispstr);
+    if (!disp) {
+	    if ((badstr = dispstr) == NULL)
+            if ((badstr = getenv("DISPLAY")) == NULL)
+                badstr = "(null)";
+        errx(EXIT_FAILURE, "can't open X display %s", badstr);
+    }
 
-   vis = DefaultVisual(disp, XScreenNumberOfScreen(scr));
-   depth = DefaultDepth(disp, XScreenNumberOfScreen(scr));
-   cm = DefaultColormap(disp, XScreenNumberOfScreen(scr));
-   root = RootWindow(disp, XScreenNumberOfScreen(scr));
+    if (!screen_num)
+        screen_num = DefaultScreen(disp);
+    scr = ScreenOfDisplay(disp, screen_num);
 
-   imlib_context_set_drawable(root);
-   imlib_context_set_display(disp);
-   imlib_context_set_visual(vis);
-   imlib_context_set_colormap(cm);
-   imlib_context_set_color_modifier(NULL);
-   imlib_context_set_operation(IMLIB_OP_COPY);
+    vis = DefaultVisual(disp, XScreenNumberOfScreen(scr));
+    depth = DefaultDepth(disp, XScreenNumberOfScreen(scr));
+    cm = DefaultColormap(disp, XScreenNumberOfScreen(scr));
+    root = RootWindow(disp, XScreenNumberOfScreen(scr));
+
+    imlib_context_set_drawable(root);
+    imlib_context_set_display(disp);
+    imlib_context_set_visual(vis);
+    imlib_context_set_colormap(cm);
+    imlib_context_set_color_modifier(NULL);
+    imlib_context_set_operation(IMLIB_OP_COPY);
 }
