@@ -40,27 +40,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "options.h"
 #include <assert.h>
 
-#define MAX_LEN_WINDOW_CLASS_NAME  80
+enum {MAX_LEN_WINDOW_CLASS_NAME = 80};
 
-static void scrot_parse_option_array(int argc, char **argv);
-scrotoptions opt;
-
-void
-init_parse_options(int argc, char **argv)
-{
-   /* Set default options */
-   memset(&opt, 0, sizeof(scrotoptions));
-
-   opt.quality = 75;
-   opt.overwrite = 0;
-   opt.line_style = LineSolid;
-   opt.line_width = 1;
-   opt.line_opacity = 100;
-   opt.line_mode = LINE_MODE_CLASSIC;
-
-   /* Parse the cmdline args */
-   scrot_parse_option_array(argc, argv);
-}
+scrotoptions opt = {
+    .quality = 75,
+    .line_style = LineSolid,
+    .line_width = 1,
+    .line_opacity = 100,
+    .line_mode = LINE_MODE_CLASSIC,
+};
 
 int
 options_parse_required_number(char *str)
@@ -227,8 +215,7 @@ static void options_parse_window_class_name(const char* window_class_name)
     }
 }
 
-static void
-scrot_parse_option_array(int argc, char **argv)
+void options_parse(int argc, char **argv)
 {
    static char stropts[] = "a:ofpbcd:e:hmq:st:uvzn:l:D:kC:S:";
 
@@ -428,8 +415,6 @@ options_parse_autoselect(char *optarg)
        fprintf(stderr, "invalid format for option -- 'autoselect'\n");
        exit(EXIT_FAILURE);
    }
-
-
 }
 
 void

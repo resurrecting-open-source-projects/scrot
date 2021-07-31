@@ -76,7 +76,7 @@ main(int argc,
   time_t t;
   struct tm *tm;
 
-  init_parse_options(argc, argv);
+  options_parse(argc, argv);
 
   init_x_and_imlib(opt.display, 0);
 
