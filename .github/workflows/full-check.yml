@@ -15,7 +15,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: install_dependencies
-      run: sudo apt install autoconf-archive libimlib2-dev libxcomposite-dev libxfixes-dev libbsd-dev
+      run: sudo apt-get install autoconf-archive libimlib2-dev libxcomposite-dev libxfixes-dev libbsd-dev
     - name: first_build
       run: |
            ./autogen.sh
