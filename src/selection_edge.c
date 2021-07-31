@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 extern void selection_calculate_rect(int x0, int y0, int x1, int y1);
 extern struct selection_t** selection_get(void);
+extern void selection_set_line_width(struct selection_t* const sel);
 
 struct selection_edge_t {
     Window wndDraw;
@@ -148,11 +149,6 @@ void selection_edge_motion_draw(int x0, int y0, int x1, int y1)
     struct selection_t *const sel = *selection_get();
 
     selection_calculate_rect(x0, y0, x1, y1);
-
-    sel->rect.x -= opt.line_width;
-    sel->rect.y -= opt.line_width;
-    sel->rect.w += opt.line_width;
-    sel->rect.h += opt.line_width;
-
+    selection_set_line_width(sel);
     selection_edge_draw();
 }
