@@ -27,8 +27,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#include "options.h"
 #include "scrot.h"
+#include "options.h"
 
 Display *disp;
 Visual *vis;
