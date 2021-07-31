@@ -67,6 +67,7 @@ struct __scrotoptions
    int autoselect_y;
    int autoselect_h;
    int autoselect_w;
+   int monitor;
 };
 
 void init_parse_options(int argc, char **argv);

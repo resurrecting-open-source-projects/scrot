@@ -57,6 +57,7 @@ init_parse_options(int argc, char **argv)
    opt.line_width = 1;
    opt.line_opacity = 100;
    opt.line_mode = LINE_MODE_CLASSIC;
+   opt.monitor = -1;
 
    /* Parse the cmdline args */
    scrot_parse_option_array(argc, argv);
@@ -230,7 +231,7 @@ static void options_parse_window_class_name(const char* window_class_name)
 static void
 scrot_parse_option_array(int argc, char **argv)
 {
-   static char stropts[] = "a:ofpbcd:e:hmq:st:uvzn:l:D:kC:S:";
+   static char stropts[] = "a:ofpbcd:e:hmq:st:uvzn:l:D:kC:S:M:";
 
    static struct option lopts[] = {
       /* actions */
@@ -258,6 +259,7 @@ scrot_parse_option_array(int argc, char **argv)
       {"line"         , required_argument, 0, 'l'},
       {"class"        , required_argument, 0, 'C'},
       {"script"       , required_argument, 0, 'S'},
+      {"monitor"      , required_argument, 0, 'M'},
       {0              , 0, 0, 0}
    };
    int optch = 0, cmdx = 0;
@@ -336,6 +338,9 @@ scrot_parse_option_array(int argc, char **argv)
         case 'S':
            opt.script = strdup(optarg);
         break;
+        case 'M':
+           opt.monitor = non_negative_number(options_parse_required_number(optarg));
+           break;
         case '?':
            exit(EXIT_FAILURE);
         default:
