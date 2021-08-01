@@ -1042,7 +1042,7 @@ Imlib_Image scrot_grab_shot_monitor(void)
         }
 
         XRRCrtcInfo* crtcInfo = XRRGetCrtcInfo(disp, screenResources,
-                                                   outputInfo->crtcs[i]);
+                                                   outputInfo->crtcs[0]);
         if (opt.monitor == i) {
            opt.autoselect_x = crtcInfo->x;
            opt.autoselect_y = crtcInfo->y;
