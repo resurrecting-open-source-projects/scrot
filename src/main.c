@@ -1009,74 +1009,64 @@ scrot_grab_shot_multi(void)
 /* option --monitor */
 Imlib_Image scrot_grab_shot_monitor(void)
 {
-    int crtc_id = -1;
     int event, base; /*dummy*/
     Imlib_Image image = NULL;
 
     if (!XRRQueryExtension(disp, &event, &base))
         err(EXIT_FAILURE, "required Xrandr extension");
 
-    XRRScreenResources* screen_res = NULL;
-
-    screen_res = XRRGetScreenResources (disp, DefaultRootWindow(disp));
-
-    if (!screen_res) {
+    XRRScreenResources* screenResources = XRRGetScreenResources(disp,
+                                                DefaultRootWindow(disp));
+    if (!screenResources) {
         // This is the second and last Xrandr function we checked,
         // the others should be safe at this point.
-        errx(EXIT_FAILURE, "option --monitor: a Xrandr function failed: XRRGetScreenResources");
+        errx(EXIT_FAILURE, "option --monitor: a Xrandr function failed:"
+                " XRRGetScreenResources");
     }
 
 #ifdef DEBUG
-    fprintf(stderr, "DEBUG: screen_res->noutput:%d\n", screen_res->noutput);
+    fprintf(stderr, "DEBUG: FOUND %d OUTPUTS, %d CRTCS\n", screenResources->noutput, screenResources->ncrtc);
 #endif
 
-    int screen_id = screen_res->noutput - 1;
-
-    while (screen_id >= 0) {
-
-        XRROutputInfo* output_info = NULL;
-
-        output_info = XRRGetOutputInfo (disp, screen_res, screen_res->outputs[screen_id]);
-        crtc_id = output_info->ncrtc - 1;
+    for (int i = 0; i < screenResources->noutput; i++) {
+        XRROutputInfo* outputInfo = XRRGetOutputInfo(disp, screenResources,
+                                                     screenResources->outputs[i]);
 
 #ifdef DEBUG
-       fprintf(stderr, "DEBUG: output_info->ncrtc:%d\n", output_info->ncrtc);
+        fprintf(stderr, "%d %s:%s\n", i, outputInfo->name,
+                (outputInfo->connection == RR_Disconnected) ? "disconnected" : "connected");
 #endif
-       if (output_info->connection == RR_Connected
-           && opt.monitor == crtc_id) {
-
-           XRRCrtcInfo* crtc_info = NULL;
-
-           crtc_info = XRRGetCrtcInfo (disp, screen_res, output_info->crtc);
-#ifdef DEBUG
-           fprintf(stderr, "DEBUG: crtc_id:%d %dx%d+%dx%d\n",
-                   crtc_id,
-                   crtc_info->x,
-                   crtc_info->y,
-                   crtc_info->width,
-                   crtc_info->height);
-#endif
-           opt.autoselect_x = crtc_info->x;
-           opt.autoselect_y = crtc_info->y;
-           opt.autoselect_w = crtc_info->width;
-           opt.autoselect_h = crtc_info->height;
-           image = scrot_grab_autoselect();
-
-           XRRFreeCrtcInfo(crtc_info);
-           XRRFreeOutputInfo(output_info);
-           break;
-       }
-       XRRFreeOutputInfo(output_info);
-       --screen_id;
-    } //while
-
-    XRRFreeScreenResources(screen_res);
-
-    if (opt.monitor != crtc_id) {
-        if (image) {
-            imlib_context_set_image(image);
-            imlib_free_image_and_decache();
+        if (outputInfo->connection == RR_Disconnected) {
+             XRRFreeOutputInfo(outputInfo);
+             continue;
         }
+
+        for (int n = 0; n < screenResources->ncrtc; n++) {
+            XRRCrtcInfo* crtcInfo = XRRGetCrtcInfo(disp, screenResources,
+                                                   outputInfo->crtcs[n]);
+            if (opt.monitor == i) {
+               opt.autoselect_x = crtcInfo->x;
+               opt.autoselect_y = crtcInfo->y;
+               opt.autoselect_w = crtcInfo->width;
+               opt.autoselect_h = crtcInfo->height;
+               image = scrot_grab_autoselect();
+               XRRFreeCrtcInfo(crtcInfo);
+#ifdef DEBUG
+               fprintf(stderr, "DEBUG: crtc id:%d %dx%d+%dx%d\n",
+                       i,
+                       opt.autoselect_x,
+                       opt.autoselect_y,
+                       opt.autoselect_w,
+                       opt.autoselect_h);
+#endif
+               break;
+           }
+       }
+       XRRFreeOutputInfo(outputInfo);
+    }
+    XRRFreeScreenResources(screenResources);
+
+    if (image == NULL) {
         errx(EXIT_FAILURE, "monitor id:%d, not found", opt.monitor);
     }
 
