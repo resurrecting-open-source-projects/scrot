@@ -1041,28 +1041,26 @@ Imlib_Image scrot_grab_shot_monitor(void)
              continue;
         }
 
-        for (int n = 0; n < screenResources->ncrtc; n++) {
-            XRRCrtcInfo* crtcInfo = XRRGetCrtcInfo(disp, screenResources,
-                                                   outputInfo->crtcs[n]);
-            if (opt.monitor == i) {
-               opt.autoselect_x = crtcInfo->x;
-               opt.autoselect_y = crtcInfo->y;
-               opt.autoselect_w = crtcInfo->width;
-               opt.autoselect_h = crtcInfo->height;
-               image = scrot_grab_autoselect();
-               XRRFreeCrtcInfo(crtcInfo);
+        XRRCrtcInfo* crtcInfo = XRRGetCrtcInfo(disp, screenResources,
+                                                   outputInfo->crtcs[i]);
+        if (opt.monitor == i) {
+           opt.autoselect_x = crtcInfo->x;
+           opt.autoselect_y = crtcInfo->y;
+           opt.autoselect_w = crtcInfo->width;
+           opt.autoselect_h = crtcInfo->height;
+           image = scrot_grab_autoselect();
+           XRRFreeCrtcInfo(crtcInfo);
 #ifdef DEBUG
-               fprintf(stderr, "DEBUG: crtc id:%d %dx%d+%dx%d\n",
-                       i,
-                       opt.autoselect_x,
-                       opt.autoselect_y,
-                       opt.autoselect_w,
-                       opt.autoselect_h);
+           fprintf(stderr, "DEBUG: monitor id:%d %dx%d+%dx%d\n",
+                   i,
+                   opt.autoselect_x,
+                   opt.autoselect_y,
+                   opt.autoselect_w,
+                   opt.autoselect_h);
 #endif
-               break;
-           }
-       }
-       XRRFreeOutputInfo(outputInfo);
+           break;
+        }
+        XRRFreeOutputInfo(outputInfo);
     }
     XRRFreeScreenResources(screenResources);
 
