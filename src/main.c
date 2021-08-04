@@ -1014,7 +1014,6 @@ Imlib_Image scrot_grab_shot_monitor(void)
     if (!XineramaQueryExtension(disp, &event, &base))
         err(EXIT_FAILURE, "require Xinerama extension");
 
-    Imlib_Image image = NULL;
     XineramaScreenInfo* info = NULL;
     int heads = 0;
 
@@ -1026,9 +1025,11 @@ Imlib_Image scrot_grab_shot_monitor(void)
     if (heads == 0)
         err(EXIT_FAILURE, "Xinerama is active but did not find any output device");
 
+    Imlib_Image image = NULL;
+
     for (int i = 0; i < heads; i++) {
 #ifdef DEBUG
-            fprintf(stderr, "DEBUG: head n:%d scr n:%d %dx%d+%dx%d\n",
+            fprintf(stderr, "DEBUG: head:%d scr:%d %dx%d+%dx%d\n",
                     i,
                     info[i].screen_number,
                     info[i].x_org,
@@ -1048,7 +1049,7 @@ Imlib_Image scrot_grab_shot_monitor(void)
     XFree(info);
 
     if (image == NULL)
-        errx(EXIT_FAILURE, "monitor id:%d, not found", opt.monitor);
+        errx(EXIT_FAILURE, "monitor:%d, not found", opt.monitor);
 
     return image;
 }
