@@ -44,7 +44,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <X11/extensions/Xfixes.h>
 #include <X11/extensions/Xcomposite.h>
 #include <X11/extensions/shape.h>
-#include <X11/extensions/Xrandr.h>
+#include <X11/extensions/Xinerama.h>
 
 #include <Imlib2.h>
 #include <ctype.h>

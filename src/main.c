@@ -1010,63 +1010,45 @@ scrot_grab_shot_multi(void)
 Imlib_Image scrot_grab_shot_monitor(void)
 {
     int event, base; /*dummy*/
+
+    if (!XineramaQueryExtension(disp, &event, &base))
+        err(EXIT_FAILURE, "require Xinerama extension");
+
     Imlib_Image image = NULL;
+    XineramaScreenInfo* info = NULL;
+    int heads = 0;
 
-    if (!XRRQueryExtension(disp, &event, &base))
-        err(EXIT_FAILURE, "required Xrandr extension");
+    info = XineramaQueryScreens(disp, &heads);
 
-    XRRScreenResources* screenResources = XRRGetScreenResources(disp,
-                                                DefaultRootWindow(disp));
-    if (!screenResources) {
-        // This is the second and last Xrandr function we checked,
-        // the others should be safe at this point.
-        errx(EXIT_FAILURE, "option --monitor: a Xrandr function failed:"
-                " XRRGetScreenResources");
-    }
+    if (info == NULL && heads == 0)
+        err(EXIT_FAILURE, "Xinerama is not active in your screen");
 
+    if (heads == 0)
+        err(EXIT_FAILURE, "Xinerama is active but did not find any output device");
+
+    for (int i = 0; i < heads; i++) {
 #ifdef DEBUG
-    fprintf(stderr, "DEBUG: FOUND %d OUTPUTS, %d CRTCS\n", screenResources->noutput, screenResources->ncrtc);
+            fprintf(stderr, "DEBUG: head n:%d scr n:%d %dx%d+%dx%d\n",
+                    i,
+                    info[i].screen_number,
+                    info[i].x_org,
+                    info[i].y_org,
+                    info[i].width,
+                    info[i].height);
 #endif
-
-    for (int i = 0; i < screenResources->noutput; i++) {
-        XRROutputInfo* outputInfo = XRRGetOutputInfo(disp, screenResources,
-                                                     screenResources->outputs[i]);
-
-#ifdef DEBUG
-        fprintf(stderr, "%d %s:%s\n", i, outputInfo->name,
-                (outputInfo->connection == RR_Disconnected) ? "disconnected" : "connected");
-#endif
-        if (outputInfo->connection == RR_Disconnected) {
-             XRRFreeOutputInfo(outputInfo);
-             continue;
+        if (i == opt.monitor) {
+            opt.autoselect_x = info[i].x_org;
+            opt.autoselect_y = info[i].y_org;
+            opt.autoselect_w = info[i].width;
+            opt.autoselect_h = info[i].height;
+            image = scrot_grab_autoselect();
+            break;
         }
-
-        XRRCrtcInfo* crtcInfo = XRRGetCrtcInfo(disp, screenResources,
-                                                   outputInfo->crtcs[0]);
-        if (opt.monitor == i) {
-           opt.autoselect_x = crtcInfo->x;
-           opt.autoselect_y = crtcInfo->y;
-           opt.autoselect_w = crtcInfo->width;
-           opt.autoselect_h = crtcInfo->height;
-           image = scrot_grab_autoselect();
-           XRRFreeCrtcInfo(crtcInfo);
-#ifdef DEBUG
-           fprintf(stderr, "DEBUG: monitor id:%d %dx%d+%dx%d\n",
-                   i,
-                   opt.autoselect_x,
-                   opt.autoselect_y,
-                   opt.autoselect_w,
-                   opt.autoselect_h);
-#endif
-           break;
-        }
-        XRRFreeOutputInfo(outputInfo);
     }
-    XRRFreeScreenResources(screenResources);
+    XFree(info);
 
-    if (image == NULL) {
+    if (image == NULL)
         errx(EXIT_FAILURE, "monitor id:%d, not found", opt.monitor);
-    }
 
     return image;
 }
