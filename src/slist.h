@@ -23,20 +23,17 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#ifndef SCROT_SLIST_H
-#define SCROT_SLIST_H
+#pragma once
 
 #include <Imlib2.h>
 #include <stdbool.h>
 
-typedef struct Scrot_Imlib_List {
-	Imlib_Image * data;
-	
-	struct Scrot_Imlib_List * next;
-} Scrot_Imlib_List;
+typedef struct ScrotImlibList {
+    Imlib_Image* data;
 
-Scrot_Imlib_List * append_to_scrot_imlib(Scrot_Imlib_List *head, Imlib_Image *data);
-Scrot_Imlib_List * walk_to_end_of_scrot_imlib_list(Scrot_Imlib_List *list);
-int is_scrot_imlib_list_empty(Scrot_Imlib_List *list);
+    struct ScrotImlibList* next;
+} ScrotImlibList;
 
-#endif
+ScrotImlibList* appendToScrotImlib(ScrotImlibList*, Imlib_Image*);
+ScrotImlibList* walkToEndOfScrotImlibList(ScrotImlibList*);
+int isScrotImlibListEmpty(ScrotImlibList*);

@@ -23,10 +23,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#ifndef STRUCTS_H
-#define STRUCTS_H
+#pragma once
 
-typedef struct __scrotoptions scrotoptions;
-typedef struct __scrotnote scrotnote;
-
-#endif
+typedef struct __ScrotOptions ScrotOptions;
+typedef struct __ScrotNote ScrotNote;

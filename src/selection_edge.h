@@ -27,14 +27,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     This file is part of the scrot project.
     Part of the code comes from the main.c file and maintains its authorship.
 */
-#ifndef SELECTION_EDGE_H
-#define SELECTION_EDGE_H
+
+#pragma once
 
 #include "scrot.h"
 
-void selection_edge_create(void);
-void selection_edge_destroy(void);
-void selection_edge_draw(void);
-void selection_edge_motion_draw(int x0, int y0, int x1, int y1);
-
-#endif
+void selectionEdgeCreate(void);
+void selectionEdgeDestroy(void);
+void selectionEdgeDraw(void);
+void selectionEdgeMotionDraw(int, int, int, int);
