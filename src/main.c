@@ -1027,7 +1027,7 @@ stalk_image_concat(Scrot_Imlib_List * images)
   }
   ret = imlib_create_image(tot_w, max_h);
   imlib_context_set_image(ret);
-  imlib_context_set_color(255, 0, 0, 0);
+  imlib_context_set_color(0, 0, 0, 255);
   imlib_image_fill_rectangle(0, 0, tot_w, max_h);
   l = images;
   while (l) {
