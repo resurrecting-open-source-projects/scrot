@@ -1,6 +1,7 @@
 When updating, change the following files (if needed):
 
-- ChangeLog
+- Update rights
+- Update changeLog
 - Check for spelling errors in ChangeLog, manpage and README.
 - Check final manpage with man command.
 - man/create-man.sh (DATE, version)
