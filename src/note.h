@@ -55,8 +55,7 @@ struct __ScrotNote {
     int y; /* position screen (optional)  */
     double angle; /* angle text (optional)       */
 
-    struct color /*                 (optional)  */
-    {
+    struct color { /*                 (optional)  */
         enum ecolor status;
         int r, /* red             */
             g, /* green           */
