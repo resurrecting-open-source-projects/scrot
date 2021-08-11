@@ -40,7 +40,7 @@ struct SelectionEdge {
 static Bool xeventUnmap(Display* dpy, XEvent* ev, XPointer arg)
 {
     (void)dpy; // unused
-    Window* win = arg;
+    Window* win = (Window*)arg;
     return (ev->xunmap.window == *win);
 }
 
@@ -92,7 +92,7 @@ void selectionEdgeCreate(void)
     pe->wndDraw = XCreateWindow(disp, root, 0, 0, WidthOfScreen(scr), HeightOfScreen(scr), 0,
         CopyFromParent, InputOutput, CopyFromParent, CWOverrideRedirect | CWBackPixel, &attr);
 
-    unsigned long opacity = opt.lineOpacity * (-1 / 100);
+    unsigned long opacity = opt.lineOpacity * ((unsigned)-1 / 100);
 
     XChangeProperty(disp, pe->wndDraw, XInternAtom(disp, "_NET_WM_WINDOW_OPACITY", False),
         XA_CARDINAL, 32, PropModeReplace,
