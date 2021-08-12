@@ -78,7 +78,7 @@ void selectionEdgeCreate(void)
 
     if (!XAllocNamedColor(disp, XDefaultColormap(disp, DefaultScreen(disp)), opt.lineColor, &color, &(XColor) {})) {
         scrotSelectionDestroy();
-        errx(EXIT_FAILURE, "Error allocate color:%s\n", strerror(BadColor));
+        errx(EXIT_FAILURE, "Error allocate color:%s", strerror(BadColor));
     }
 
     XSetWindowAttributes attr;
