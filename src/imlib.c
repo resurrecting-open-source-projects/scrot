@@ -5,6 +5,7 @@ Copyright 2020      Daniel T. Borelli <daltomi@disroot.org>
 Copyright 2020      ideal <idealities@gmail.com>
 Copyright 2020      Sean Brennan <zettix1@gmail.com>
 Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
+Copyright 2021      Peter Wu <peterwu@hotmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -27,31 +28,32 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#include "scrot.h"
 #include "options.h"
+#include "scrot.h"
 
-Display *disp;
-Visual *vis;
-Screen *scr;
+Display* disp = NULL;
+Visual* vis = NULL;
+Screen* scr = NULL;
 Colormap cm;
 int depth;
 Window root;
 
-void init_x_and_imlib(char *dispstr, int screen_num)
+void initXAndImlib(char* dispStr, int screenNumber)
 {
-    const char *badstr;
+    const char *badStr;
 
-    disp = XOpenDisplay(dispstr);
+    disp = XOpenDisplay(dispStr);
     if (!disp) {
-	    if ((badstr = dispstr) == NULL)
-            if ((badstr = getenv("DISPLAY")) == NULL)
-                badstr = "(null)";
-        errx(EXIT_FAILURE, "can't open X display %s", badstr);
+        if ((badStr = dispStr) == NULL)
+            if ((badStr = getenv("DISPLAY")) == NULL)
+                badStr = "(null)";
+        errx(EXIT_FAILURE, "can't open X display %s", badStr);
     }
 
-    if (!screen_num)
-        screen_num = DefaultScreen(disp);
-    scr = ScreenOfDisplay(disp, screen_num);
+    if (screenNumber)
+        scr = ScreenOfDisplay(disp, screenNumber);
+    else
+        scr = ScreenOfDisplay(disp, DefaultScreen(disp));
 
     vis = DefaultVisual(disp, XScreenNumberOfScreen(scr));
     depth = DefaultDepth(disp, XScreenNumberOfScreen(scr));

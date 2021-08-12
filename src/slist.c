@@ -1,6 +1,7 @@
 /* slist.c
 
 Copyright 2021      Christopher Nelson <christopher.nelson@languidnights.com>
+Copyright 2021      Peter Wu <peterwu@hotmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -23,40 +24,42 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#include <stdlib.h>
-#include <Imlib2.h>
 #include "slist.h"
+#include <Imlib2.h>
+#include <stdlib.h>
 
-Scrot_Imlib_List * append_to_scrot_imlib(Scrot_Imlib_List *head, Imlib_Image *data) {
-  
-  Scrot_Imlib_List *tail = walk_to_end_of_scrot_imlib_list(head);
-  Scrot_Imlib_List *appended = (Scrot_Imlib_List *) malloc(sizeof(Scrot_Imlib_List));
-  appended->data = data;
-  appended->next = NULL;
+ScrotImlibList* appendToScrotImlib(ScrotImlibList* head, Imlib_Image* data)
+{
+    ScrotImlibList* tail = walkToEndOfScrotImlibList(head);
+    ScrotImlibList* appended;
+    appended = malloc(sizeof(*appended));
+    appended->data = data;
+    appended->next = NULL;
 
-  if (head == NULL) {
-    return appended;
-  } else {
+    if (!head)
+        return appended;
+
     tail->next = appended;
-  }
-
-  return head;
+    return head;
 }
 
-Scrot_Imlib_List * walk_to_end_of_scrot_imlib_list(Scrot_Imlib_List *list) {
-  if (list == NULL) return NULL;
-  if (list->next == NULL) return list;
+ScrotImlibList* walkToEndOfScrotImlibList(ScrotImlibList* list)
+{
+    if (!list)
+        return NULL;
+    if (!list->next)
+        return list;
 
-  while(list->next) {
-    list = list->next;
-  }
+    while (list->next)
+        list = list->next;
 
-  return list;
+    return list;
 }
 
-int is_scrot_imlib_list_empty(Scrot_Imlib_List *list) {
-  if (list == NULL)
-    return 1;
-  else 
-    return 0;
+int isScrotImlibListEmpty(ScrotImlibList* list)
+{
+    if (!list)
+        return 1;
+    else
+        return 0;
 }
