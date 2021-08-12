@@ -378,8 +378,7 @@ void optionsParseAutoselect(char* optarg)
     int dimensions[4];
     int i = 0;
 
-    if (strchr(optarg, ',')) /* geometry dimensions must be in format x,y,w,h   */
-    {
+    if (strchr(optarg, ',')) { /* geometry dimensions must be in format x,y,w,h   */
         dimensions[i++] = optionsParseRequiredNumber(strtok(optarg, tokenDelimiter));
         while ((token = strtok(NULL, tokenDelimiter)))
             dimensions[i++] = optionsParseRequiredNumber(token);
@@ -412,8 +411,7 @@ void optionsParseThumbnail(char* optarg)
 {
     char* token;
 
-    if (strchr(optarg, 'x')) /* We want to specify the geometry */
-    {
+    if (strchr(optarg, 'x')) { /* We want to specify the geometry */
         token = strtok(optarg, "x");
         opt.thumbWidth = optionsParseRequiredNumber(token);
         token = strtok(NULL, "x");
