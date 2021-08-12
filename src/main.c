@@ -310,13 +310,13 @@ void scrotGrabMousePointer(const Imlib_Image image,
     DATA32* pixels = NULL;
 
 #ifdef __i386__
-    pixels = xcim->pixels;
+    pixels = (DATA32*)xcim->pixels;
 #else
     DATA32 data[width * height * 4];
 
     unsigned int i;
     for (i = 0; i < (width * height); i++)
-        data[i] = xcim->pixels[i];
+        data[i] = (DATA32)xcim->pixels[i];
 
     pixels = data;
 #endif
@@ -590,7 +590,7 @@ void scrotNiceClip(int* rx, int* ry, int* rw, int* rh)
 static Bool scrotXEventVisibility(Display* dpy, XEvent* ev, XPointer arg)
 {
     (void)dpy; // unused
-    Window* win = arg;
+    Window* win = (Window*)arg;
     return (ev->xvisibility.window == *win);
 }
 
