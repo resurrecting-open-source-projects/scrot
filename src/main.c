@@ -905,7 +905,8 @@ Imlib_Image scrotGrabShotMulti(void)
 {
     int screens;
     int i;
-    char *dispStr, *subDisp;
+    char* dispStr;
+    char* subDisp;
     char newDisp[255];
     ScrotImlibList* images = NULL;
     Imlib_Image ret = NULL;
@@ -940,7 +941,8 @@ Imlib_Image stalkImageConcat(ScrotImlibList* images)
 {
     int totalWidth = 0, maxHeight = 0, w, h;
     int x = 0;
-    ScrotImlibList *l, *item;
+    ScrotImlibList* l;
+    ScrotImlibList* item;
     Imlib_Image ret, im;
 
     if (isScrotImlibListEmpty(images))
