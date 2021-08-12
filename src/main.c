@@ -347,7 +347,7 @@ Imlib_Image scrotGrabShot(void)
 
     im = imlib_create_image_from_drawable(0, 0, 0, scr->width,
         scr->height, 1);
-    if (opt.pointer == 1)
+    if (opt.pointer)
         scrotGrabMousePointer(im, 0, 0);
 
     return im;
@@ -386,7 +386,7 @@ Imlib_Image scrotGrabFocused(void)
         return NULL;
     scrotNiceClip(&rx, &ry, &rw, &rh);
     im = imlib_create_image_from_drawable(0, rx, ry, rw, rh, 1);
-    if (opt.pointer == 1)
+    if (opt.pointer)
         scrotGrabMousePointer(im, rx, ry);
     return im;
 }
@@ -551,7 +551,7 @@ Imlib_Image scrotSelAndGrabImage(void)
             XBell(disp, 0);
         im = imlib_create_image_from_drawable(0, rx, ry, rw, rh, 1);
 
-        if (opt.pointer == 1)
+        if (opt.pointer)
             scrotGrabMousePointer(im, rx, ry);
     }
     return im;
@@ -565,7 +565,7 @@ Imlib_Image scrotGrabAutoselect(void)
     scrotDoDelay();
     scrotNiceClip(&rx, &ry, &rw, &rh);
     im = imlib_create_image_from_drawable(0, rx, ry, rw, rh, 1);
-    if (opt.pointer == 1)
+    if (opt.pointer)
         scrotGrabMousePointer(im, rx, ry);
     return im;
 }
