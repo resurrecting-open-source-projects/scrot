@@ -42,10 +42,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * */
 
-enum ecolor {
-    COLOR_ERROR = -1, /* error parser                        */
-    COLOR_OPTIONAL = 0, /* the user did not indicate the color */
-    COLOR_OK = 1, /* the user indicate the color         */
+enum EColor {
+    ColorError = -1, /* error parser                        */
+    ColorOptional = 0, /* the user did not indicate the color */
+    ColorOK = 1, /* the user indicate the color         */
 };
 
 struct __ScrotNote {
@@ -55,8 +55,8 @@ struct __ScrotNote {
     int y; /* position screen (optional)  */
     double angle; /* angle text (optional)       */
 
-    struct color { /*                 (optional)  */
-        enum ecolor status;
+    struct Color { /*                 (optional)  */
+        enum EColor status;
         int r, /* red             */
             g, /* green           */
             b, /* blue            */

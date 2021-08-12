@@ -60,7 +60,7 @@ void scrotNoteNew(char* format)
     scrotNoteFree();
 
     note = (ScrotNote) { NULL, NULL, 0, 0, 0.0,
-        { COLOR_OPTIONAL, 0, 0, 0, 0 } };
+        { ColorOptional, 0, 0, 0, 0 } };
 
     char* const end = format + strlen(format);
 
@@ -135,7 +135,7 @@ void scrotNoteNew(char* format)
 
             int numberColors = 0;
 
-            note.color.status = COLOR_OK;
+            note.color.status = ColorOK;
 
             while (c) {
                 token = c;
@@ -144,7 +144,7 @@ void scrotNoteNew(char* format)
 
                 if ((color < 0) || color > 255) {
                     fprintf(stderr, "Error --note option : color '%d' out of range 0..255\n", color);
-                    note.color.status = COLOR_ERROR;
+                    note.color.status = ColorError;
                     break;
                 }
 
@@ -168,7 +168,7 @@ void scrotNoteNew(char* format)
 
             if (numberColors != 4) {
                 fprintf(stderr, "Error --note option : Malformed syntax for -c\n");
-                note.color.status = COLOR_ERROR;
+                note.color.status = ColorError;
             }
             break;
         default:
@@ -209,7 +209,7 @@ void scrotNoteDraw(Imlib_Image im)
     imlib_context_set_direction(IMLIB_TEXT_TO_ANGLE);
     imlib_context_set_angle(note.angle);
 
-    if (note.color.status == COLOR_OK)
+    if (note.color.status == ColorOK)
         imlib_context_set_color(note.color.r,
             note.color.g,
             note.color.b,
