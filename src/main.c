@@ -64,7 +64,8 @@ int main(int argc, char** argv)
     Imlib_Image image;
     Imlib_Image thumbnail;
     Imlib_Load_Error imErr;
-    char *filenameIM = NULL, *filenameThumb = NULL;
+    char* filenameIM = NULL;
+    char* filenameThumb = NULL;
 
     char* haveExtension = NULL;
 
@@ -220,7 +221,7 @@ void scrotCheckIfOverwriteFile(char** filename)
 {
     char* curFile = *filename;
 
-    if (opt.overwrite == 1)
+    if (opt.overwrite)
         return;
 
     if (access(curFile, F_OK) == -1)
@@ -536,10 +537,8 @@ Imlib_Image scrotSelAndGrabImage(void)
 
             // Not record pointer if there is a selection area because it is busy on that,
             // unless the delay option is used
-            if (opt.delay == 0) {
+            if (opt.delay == 0)
                 opt.pointer = 0;
-            }
-
         } else {
             /* else it's a window click */
             if (!scrotGetGeometry(target, &rx, &ry, &rw, &rh))
