@@ -96,11 +96,11 @@ void selectionEdgeCreate(void)
 
     XChangeProperty(disp, pe->wndDraw, XInternAtom(disp, "_NET_WM_WINDOW_OPACITY", False),
         XA_CARDINAL, 32, PropModeReplace,
-        &opacity, 1L);
+        (unsigned char*) &opacity, 1L);
 
     XChangeProperty(disp, pe->wndDraw, XInternAtom(disp, "_NET_WM_WINDOW_TYPE", False),
         XA_ATOM, 32, PropModeReplace,
-        &(Atom) { XInternAtom(disp, "_NET_WM_WINDOW_TYPE_DOCK", False) },
+        (unsigned char*) &(Atom) { XInternAtom(disp, "_NET_WM_WINDOW_TYPE_DOCK", False) },
         1L);
 
     XSetClassHint(disp, pe->wndDraw, pe->classHint);
