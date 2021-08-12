@@ -71,8 +71,7 @@ void scrotNoteNew(char* format)
     malformed:
 
         pfree(&format);
-        fprintf(stderr, "Error --note option : Malformed syntax.\n");
-        exit(EXIT_FAILURE);
+        errx(EXIT_FAILURE, "Error --note option : Malformed syntax.");
     }
 
     while (token) {
@@ -86,50 +85,38 @@ void scrotNoteNew(char* format)
         case 'f':
             note.font = parseText(&token, end);
 
-            if (!note.font) {
-                fprintf(stderr, "Error --note option : Malformed syntax for -f\n");
-                exit(EXIT_FAILURE);
-            }
+            if (!note.font)
+                errx(EXIT_FAILURE, "Error --note option : Malformed syntax for -f");
 
             char* number = strrchr(note.font, '/');
 
-            if (!number) {
-                fprintf(stderr, "Error --note option : Malformed syntax for -f, required number.\n");
-                exit(EXIT_FAILURE);
-            }
+            if (!number)
+                errx(EXIT_FAILURE, "Error --note option : Malformed syntax for -f, required number.");
 
             int fontSize = optionsParseRequiredNumber(++number);
 
             if (fontSize < 6)
-                fprintf(stderr, "Warning: --note option: font size < 6\n");
+                warnx("Warning: --note option: font size < 6");
             break;
         case 'x':
-            if ((1 != sscanf(token, "%d", &note.x) || (note.x < 0))) {
-                fprintf(stderr, "Error --note option : Malformed syntax for -x\n");
-                exit(EXIT_FAILURE);
-            }
+            if ((1 != sscanf(token, "%d", &note.x) || (note.x < 0)))
+                errx(EXIT_FAILURE, "Error --note option : Malformed syntax for -x");
             nextNotSpace(&token);
             break;
         case 'y':
-            if ((1 != sscanf(token, "%d", &note.y)) || (note.y < 0)) {
-                fprintf(stderr, "Error --note option : Malformed syntax for -y\n");
-                exit(EXIT_FAILURE);
-            }
+            if ((1 != sscanf(token, "%d", &note.y)) || (note.y < 0))
+                errx(EXIT_FAILURE, "Error --note option : Malformed syntax for -y");
             nextNotSpace(&token);
             break;
         case 'a':
-            if ((1 != sscanf(token, "%lf", &note.angle))) {
-                fprintf(stderr, "Error --note option : Malformed syntax for -a\n");
-                exit(EXIT_FAILURE);
-            }
+            if ((1 != sscanf(token, "%lf", &note.angle)))
+                errx(EXIT_FAILURE, "Error --note option : Malformed syntax for -a");
             nextNotSpace(&token);
             break;
         case 't':
             note.text = parseText(&token, end);
-            if (!note.text) {
-                fprintf(stderr, "Error --note option : Malformed syntax for -t\n");
-                exit(EXIT_FAILURE);
-            }
+            if (!note.text)
+                errx(EXIT_FAILURE, "Error --note option : Malformed syntax for -t");
             break;
         case 'c':
             c = strtok_r(token, ",", &savePtr);
@@ -144,7 +131,7 @@ void scrotNoteNew(char* format)
                 int color = optionsParseRequiredNumber(c);
 
                 if ((color < 0) || color > 255) {
-                    fprintf(stderr, "Error --note option : color '%d' out of range 0..255\n", color);
+                    warnx("Error --note option : color '%d' out of range 0..255", color);
                     note.color.status = ColorError;
                     break;
                 }
@@ -168,13 +155,12 @@ void scrotNoteNew(char* format)
             }
 
             if (numberColors != 4) {
-                fprintf(stderr, "Error --note option : Malformed syntax for -c\n");
+                warnx("Error --note option : Malformed syntax for -c");
                 note.color.status = ColorError;
             }
             break;
         default:
-            fprintf(stderr, "Error --note option : unknown option: '-%c'\n", type);
-            exit(EXIT_FAILURE);
+            errx(EXIT_FAILURE, "Error --note option : unknown option: '-%c'", type);
         }
 
         token = strpbrk(token, "-");
@@ -224,7 +210,7 @@ void loadFont(void)
     imFont = imlib_load_font(note.font);
 
     if (!imFont) {
-        fprintf(stderr, "Error --note option : Failed to load fontname: %s\n", note.font);
+        warnx("Error --note option : Failed to load fontname: %s", note.font);
         scrotNoteFree();
         exit(EXIT_FAILURE);
     }

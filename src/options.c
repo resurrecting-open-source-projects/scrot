@@ -41,7 +41,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "scrot.h"
 #include <assert.h>
 
-enum { MAX_LEN_WINDOW_CLASS_NAME = 80 };
+enum {
+    MAX_LEN_WINDOW_CLASS_NAME = 80, //characters
+    MAX_OUTPUT_FILENAME = 256, // characters
+    MAX_DISPLAY_NAME = 256, // characters
+};
 
 ScrotOptions opt = {
     .quality = 75,
@@ -64,10 +68,8 @@ int optionsParseRequiredNumber(char* str)
     if (errno)
         goto range_error;
 
-    if (str == end) {
-        fprintf(stderr, "the option is not a number: %s\n", end);
-        exit(EXIT_FAILURE);
-    }
+    if (str == end)
+        errx(EXIT_FAILURE, "the option is not a number: %s", end);
 
     if (ret > INT_MAX || ret < INT_MIN) {
         errno = ERANGE;
@@ -77,8 +79,7 @@ int optionsParseRequiredNumber(char* str)
     return ret;
 
 range_error:
-    perror("strtol");
-    exit(EXIT_FAILURE);
+    err(EXIT_FAILURE, "error strtol");
 }
 
 static int nonNegativeNumber(int number)
@@ -111,92 +112,64 @@ static void optionsParseLine(char* optarg)
     while (*subopts != '\0') {
         switch (getsubopt(&subopts, token, &value)) {
         case Style:
-            if (!value || *value == '\0') {
-                fprintf(stderr, "Missing value for "
-                                "suboption '%s'\n",
+            if (!value || *value == '\0')
+                errx(EXIT_FAILURE, "Missing value for suboption '%s'",
                     token[Style]);
-                exit(EXIT_FAILURE);
-            }
 
             if (!strncmp(value, "dash", 4))
                 opt.lineStyle = LineOnOffDash;
             else if (!strncmp(value, "solid", 5))
                 opt.lineStyle = LineSolid;
-            else {
-                fprintf(stderr, "Unknown value for "
-                                "suboption '%s': %s\n",
+            else
+                errx(EXIT_FAILURE, "Unknown value for suboption '%s': %s",
                     token[Style], value);
-                exit(EXIT_FAILURE);
-            }
             break;
         case Width:
-            if (!value) {
-                fprintf(stderr, "Missing value for "
-                                "suboption '%s'\n",
+            if (!value)
+                errx(EXIT_FAILURE, "Missing value for suboption '%s'",
                     token[Width]);
-                exit(EXIT_FAILURE);
-            }
 
             opt.lineWidth = optionsParseRequiredNumber(value);
 
-            if (opt.lineWidth <= 0 || opt.lineWidth > 8) {
-                fprintf(stderr, "Value of the range (1..8) for "
-                                "suboption '%s': %d\n",
-                    token[Width], opt.lineWidth);
-                exit(EXIT_FAILURE);
-            }
+            if (opt.lineWidth <= 0 || opt.lineWidth > 8)
+                errx(EXIT_FAILURE, "Value of the range (1..8) for "
+                    "suboption '%s': %d", token[Width], opt.lineWidth);
             break;
         case Color:
-            if (!value || *value == '\0') {
-                fprintf(stderr, "Missing value for "
-                                "suboption '%s'\n",
+            if (!value || *value == '\0')
+                errx(EXIT_FAILURE, "Missing value for suboption '%s'",
                     token[Color]);
-                exit(EXIT_FAILURE);
-            }
 
             opt.lineColor = strdup(value);
             break;
         case Mode:
-            if (!value || *value == '\0') {
-                fprintf(stderr, "Missing value for "
-                                "suboption '%s'\n",
+            if (!value || *value == '\0')
+                errx(EXIT_FAILURE, "Missing value for suboption '%s'",
                     token[Mode]);
-                exit(EXIT_FAILURE);
-            }
 
             bool isValidMode = !strncmp(value, LINE_MODE_CLASSIC, LINE_MODE_CLASSIC_LEN);
 
             isValidMode = isValidMode || !strncmp(value, LINE_MODE_EDGE, LINE_MODE_EDGE_LEN);
 
-            if (!isValidMode) {
-                fprintf(stderr, "Unknown value for "
-                                "suboption '%s': %s\n",
+            if (!isValidMode)
+                errx(EXIT_FAILURE, "Unknown value for suboption '%s': %s",
                     token[Mode], value);
-                exit(EXIT_FAILURE);
-            }
 
             opt.lineMode = strdup(value);
             break;
         case Opacity:
-            if (!value) {
-                fprintf(stderr, "Missing value for "
-                                "suboption '%s'\n",
+            if (!value)
+                errx(EXIT_FAILURE, "Missing value for suboption '%s'",
                     token[Opacity]);
-                exit(EXIT_FAILURE);
-            }
 
             opt.lineOpacity = optionsParseRequiredNumber(value);
 
-            if (opt.lineOpacity < 10 || opt.lineOpacity > 100) {
-                fprintf(stderr, "Value of the range (10..100) for "
-                                "suboption '%s': %d\n",
-                    token[Opacity], opt.lineOpacity);
-                exit(EXIT_FAILURE);
-            }
+            if (opt.lineOpacity < 10 || opt.lineOpacity > 100)
+                errx(EXIT_FAILURE, "Value of the range (10..100) for "
+                    "suboption '%s': %d", token[Opacity], opt.lineOpacity);
             break;
         default:
-            fprintf(stderr, "No match found for token: '%s'\n", value);
-            exit(EXIT_FAILURE);
+            errx(EXIT_FAILURE, "No match found for token: '%s'", value);
             break;
         }
     } /* while */
@@ -329,15 +302,14 @@ void optionsParse(int argc, char** argv)
         if (!opt.outputFile) {
             opt.outputFile = argv[optind++];
 
-            if (strlen(opt.outputFile) > 256) {
-                printf("output filename too long.\n");
-                exit(EXIT_FAILURE);
-            }
+            if (strlen(opt.outputFile) > MAX_OUTPUT_FILENAME)
+               errx(EXIT_FAILURE,"output filename too long, must be "
+                    "less than %d characters", MAX_OUTPUT_FILENAME);
 
             if (opt.thumb)
                 opt.thumbFile = nameThumbnail(opt.outputFile);
         } else
-            fprintf(stderr, "unrecognised option %s\n", argv[optind++]);
+            warnx("unrecognised option %s\n", argv[optind++]);
     }
 
     /* So that we can safely be called again */
@@ -353,10 +325,9 @@ char* nameThumbnail(char* name)
 
     length = strlen(name) + 7;
     newTitle = malloc(length);
-    if (!newTitle) {
-        fprintf(stderr, "Unable to allocate thumbnail: %s", strerror(errno));
-        exit(EXIT_FAILURE);
-    }
+
+    if (!newTitle)
+        err(EXIT_FAILURE, "Unable to allocate thumbnail");
 
     dotPos = strrchr(name, '.');
     if (dotPos) {
@@ -388,23 +359,17 @@ void optionsParseAutoselect(char* optarg)
         opt.autoselectW = dimensions[2];
         opt.autoselectH = dimensions[3];
 
-        if (i != 4) {
-            fprintf(stderr, "option 'autoselect' require 4 arguments\n");
-            exit(EXIT_FAILURE);
-        }
-    } else {
-        fprintf(stderr, "invalid format for option -- 'autoselect'\n");
-        exit(EXIT_FAILURE);
-    }
+        if (i != 4)
+            errx(EXIT_FAILURE, "option 'autoselect' require 4 arguments");
+    } else
+        errx(EXIT_FAILURE, "invalid format for option -- 'autoselect'");
 }
 
 void optionsParseDisplay(char* optarg)
 {
-    opt.display = strndup(optarg, 256);
-    if (!opt.display) {
-        fprintf(stderr, "Unable to allocate display: %s", strerror(errno));
-        exit(EXIT_FAILURE);
-    }
+    opt.display = strndup(optarg, MAX_DISPLAY_NAME);
+    if (!opt.display)
+        err(EXIT_FAILURE, "Unable to allocate display");
 }
 
 void optionsParseThumbnail(char* optarg)
@@ -445,10 +410,8 @@ void optionsParseNote(char* optarg)
     if (!opt.note)
         return;
 
-    if (opt.note[0] == '\0') {
-        fprintf(stderr, "Required arguments for --note.");
-        exit(EXIT_FAILURE);
-    }
+    if (opt.note[0] == '\0')
+        errx(EXIT_FAILURE, "Required arguments for --note.");
 
     scrotNoteNew(opt.note);
 }

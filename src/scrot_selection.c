@@ -137,9 +137,8 @@ void scrotSelectionCreate(void)
     if ((XGrabPointer(disp, root, False, EVENT_MASK, GrabModeAsync,
              GrabModeAsync, root, sel->curCross, CurrentTime)
             != GrabSuccess)) {
-        fprintf(stderr, "couldn't grab pointer\n");
         scrotSelectionDestroy();
-        exit(EXIT_FAILURE);
+        errx(EXIT_FAILURE, "couldn't grab pointer");
     }
 }
 

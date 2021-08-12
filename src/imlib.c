@@ -42,10 +42,16 @@ void initXAndImlib(char* dispStr, int screenNumber)
 {
     disp = XOpenDisplay(dispStr);
     if (!disp) {
-        fprintf(stderr, "Can't open X display. It *is* running, yeah? [");
-        fprintf(stderr, "%s", dispStr ? dispStr : (getenv("DISPLAY") ? getenv("DISPLAY") : "NULL"));
-        fprintf(stderr, "]\n");
-        exit(EXIT_FAILURE);
+
+        char const* const format = "Can't open X display. It *is* running, "
+            "yeah? [%s]";
+
+        char const* env = NULL;
+
+        char const* const value = dispStr ? dispStr :
+            (env = getenv("DISPLAY")) ? env : "NULL";
+
+        errx(EXIT_FAILURE, format, value);
     }
 
     if (screenNumber)
