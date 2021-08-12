@@ -309,7 +309,7 @@ void optionsParse(int argc, char** argv)
             if (opt.thumb)
                 opt.thumbFile = nameThumbnail(opt.outputFile);
         } else
-            warnx("unrecognised option %s\n", argv[optind++]);
+            warnx("unrecognised option %s", argv[optind++]);
     }
 
     /* So that we can safely be called again */
