@@ -206,8 +206,8 @@ static void optionsParseWindowClassName(const char* windowClassName)
 {
     assert(windowClassName != NULL);
 
-    if (windowClassName[0] != '\0' && strlen(windowClassName) < MAX_LEN_WINDOW_CLASS_NAME)
-        opt.windowClassName = strdup(windowClassName);
+    if (windowClassName[0] != '\0')
+        opt.windowClassName = strndup(windowClassName, MAX_LEN_WINDOW_CLASS_NAME);
 }
 
 void optionsParse(int argc, char** argv)
