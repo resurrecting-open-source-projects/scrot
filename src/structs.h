@@ -1,6 +1,7 @@
 /* structs.h
 
 Copyright (C) 1999,2000 Tom Gilbert.
+Copyright (C) 2021      Peter Wu <peterwu@hotmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -23,10 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#ifndef STRUCTS_H
-#define STRUCTS_H
+#pragma once
 
-typedef struct __scrotoptions scrotoptions;
-typedef struct __scrotnote scrotnote;
-
-#endif
+typedef struct __ScrotOptions ScrotOptions;
+typedef struct __ScrotNote ScrotNote;

@@ -5,6 +5,7 @@ Copyright 2020      Daniel T. Borelli <daltomi@disroot.org>
 Copyright 2020      ideal <idealities@gmail.com>
 Copyright 2020      Sean Brennan <zettix1@gmail.com>
 Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
+Copyright 2021      Peter Wu <peterwu@hotmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -27,43 +28,40 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#include "scrot.h"
 #include "options.h"
+#include "scrot.h"
 
-Display *disp = NULL;
-Visual *vis = NULL;
-Screen *scr = NULL;
+Display* disp = NULL;
+Visual* vis = NULL;
+Screen* scr = NULL;
 Colormap cm;
 int depth;
 Window root = 0;
 
-
-void
-init_x_and_imlib(char *dispstr, int screen_num)
+void initXAndImlib(char* dispStr, int screenNumber)
 {
-   disp = XOpenDisplay(dispstr);
-   if (!disp) {
-      fprintf(stderr, "Can't open X display. It *is* running, yeah? [");
-      fprintf(stderr, "%s", dispstr ? dispstr :
-              (getenv("DISPLAY") ? getenv("DISPLAY") : "NULL"));
-      fprintf(stderr, "]\n");
-      exit(EXIT_FAILURE);
-   }
+    disp = XOpenDisplay(dispStr);
+    if (!disp) {
+        fprintf(stderr, "Can't open X display. It *is* running, yeah? [");
+        fprintf(stderr, "%s", dispStr ? dispStr : (getenv("DISPLAY") ? getenv("DISPLAY") : "NULL"));
+        fprintf(stderr, "]\n");
+        exit(EXIT_FAILURE);
+    }
 
-   if (screen_num)
-      scr = ScreenOfDisplay(disp, screen_num);
-   else
-      scr = ScreenOfDisplay(disp, DefaultScreen(disp));
+    if (screenNumber)
+        scr = ScreenOfDisplay(disp, screenNumber);
+    else
+        scr = ScreenOfDisplay(disp, DefaultScreen(disp));
 
-   vis = DefaultVisual(disp, XScreenNumberOfScreen(scr));
-   depth = DefaultDepth(disp, XScreenNumberOfScreen(scr));
-   cm = DefaultColormap(disp, XScreenNumberOfScreen(scr));
-   root = RootWindow(disp, XScreenNumberOfScreen(scr));
+    vis = DefaultVisual(disp, XScreenNumberOfScreen(scr));
+    depth = DefaultDepth(disp, XScreenNumberOfScreen(scr));
+    cm = DefaultColormap(disp, XScreenNumberOfScreen(scr));
+    root = RootWindow(disp, XScreenNumberOfScreen(scr));
 
-   imlib_context_set_drawable(root);
-   imlib_context_set_display(disp);
-   imlib_context_set_visual(vis);
-   imlib_context_set_colormap(cm);
-   imlib_context_set_color_modifier(NULL);
-   imlib_context_set_operation(IMLIB_OP_COPY);
+    imlib_context_set_drawable(root);
+    imlib_context_set_display(disp);
+    imlib_context_set_visual(vis);
+    imlib_context_set_colormap(cm);
+    imlib_context_set_color_modifier(NULL);
+    imlib_context_set_operation(IMLIB_OP_COPY);
 }
