@@ -87,7 +87,9 @@ int main(int argc, char** argv)
 
     if (opt.focused)
         image = scrotGrabFocused();
-    else if (opt.select)
+    else if (opt.select == SELECTION_MODE_CAPTURE
+        || opt.select == SELECTION_MODE_HIDE)
+
         image = scrotSelAndGrabImage();
     else if (opt.autoselect)
         image = scrotGrabAutoselect();
@@ -524,10 +526,14 @@ Imlib_Image scrotSelAndGrabImage(void)
             }
 
             // Not record pointer if there is a selection area because it is busy on that,
-            // unless the delay option is used
-            if (opt.delay == 0)
+            // unless the delay option is used.
+            // In hidden selection mode it is always allowed.
+            if (opt.delay == 0 && opt.select == SELECTION_MODE_CAPTURE)
                 opt.pointer = 0;
         } else {
+            if (opt.select == SELECTION_MODE_HIDE)
+                errx(EXIT_FAILURE, "option --select=hide: You must select an area");
+
             /* else it's a window click */
             if (!scrotGetGeometry(target, &rx, &ry, &rw, &rh))
                 return NULL;
@@ -536,10 +542,22 @@ Imlib_Image scrotSelAndGrabImage(void)
 
         if (!opt.silent)
             XBell(disp, 0);
-        im = imlib_create_image_from_drawable(0, rx, ry, rw, rh, 1);
+
+        int pointerXOffset = rx, pointerYOffset = ry;
+
+        if (opt.select == SELECTION_MODE_CAPTURE)
+            im = imlib_create_image_from_drawable(0, rx, ry, rw, rh, 1);
+        else {
+            im = imlib_create_image_from_drawable(0, 0, 0, scr->width, scr->height, 1);
+            imlib_context_set_image(im);
+            imlib_context_set_color(0, 0, 0, 255);
+            imlib_image_fill_rectangle(rx, ry, rw, rh);
+            pointerXOffset = 0;
+            pointerYOffset = 0;
+        }
 
         if (opt.pointer)
-            scrotGrabMousePointer(im, rx, ry);
+            scrotGrabMousePointer(im, pointerXOffset, pointerYOffset);
     }
     return im;
 }

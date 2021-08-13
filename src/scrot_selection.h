@@ -39,6 +39,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #define LINE_MODE_EDGE "edge"
 #define LINE_MODE_EDGE_LEN 4
 
+enum {
+    SELECTION_MODE_CAPTURE = 0,
+    SELECTION_MODE_HIDE = 1
+};
+
 struct SelectionRect {
     int x, y, w, h;
 };

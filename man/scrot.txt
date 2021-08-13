@@ -48,9 +48,9 @@ OPTIONS
                             value represents higher quality and larger
                             file size. Default: 75.
   -S, --script CMD          CMD is an imlib2 script.
-  -s, --select              Interactively select a window or rectangle with the
+  -s, --select OPT          Interactively select a window or rectangle with the
                             mouse, use the arrow keys to resize. See the -l and
-                            -f options.
+                            -f options. OPT it's optional; see SELECTION ACTION
   -t, --thumb NUM | GEOM    Also generate a thumbnail. The argument is the
                             resolution of the thumbnail, it may be a percentage
                             NUM or a resolution GEOM. Examples: 10, 25, 320x240,
@@ -84,6 +84,16 @@ SPECIAL STRINGS
 
   This would create a PNG file with a name similar to 2000-10-30_2560x1024.png
   and optimize it with optipng(1).
+
+SELECTION ACTION
+  When using -s, optionally you can indicate the action to perform with the selection area.
+    capture         Capture the selection area, this action is by default.
+    hide            Hide the selection area by drawing a black area over it.
+
+  Example:
+
+    $ scrot --select=hide
+    $ scrot -shide
 
 SELECTION STYLE
   When using -s, you can indicate the style of the line with -l.

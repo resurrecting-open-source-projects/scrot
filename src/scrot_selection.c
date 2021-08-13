@@ -59,7 +59,10 @@ static void createCursors(void)
 
     assert(sel != NULL);
 
-    sel->curCross = XCreateFontCursor(disp, XC_cross);
+    if (opt.select == SELECTION_MODE_HIDE)
+        sel->curCross = XCreateFontCursor(disp, XC_target);
+    else
+        sel->curCross = XCreateFontCursor(disp, XC_cross);
     sel->curAngleNE = XCreateFontCursor(disp, XC_ur_angle);
     sel->curAngleNW = XCreateFontCursor(disp, XC_ul_angle);
     sel->curAngleSE = XCreateFontCursor(disp, XC_lr_angle);
