@@ -104,10 +104,8 @@ int main(int argc, char** argv)
     if (opt.note)
         scrotNoteDraw(image);
 
-    if (!image) {
-        fprintf(stderr, "no image grabbed: %s", strerror(errno));
-        exit(EXIT_FAILURE);
-    }
+    if (!image)
+        err(EXIT_FAILURE, "no image grabbed");
 
     time(&t); /* Get the time directly after the screenshot */
     tm = localtime(&t);
@@ -124,10 +122,9 @@ int main(int argc, char** argv)
     applyFilterIfRequired();
 
     imlib_save_image_with_error_return(filenameIM, &imErr);
-    if (imErr) {
-        fprintf(stderr, "Saving to file %s failed: %s\n", filenameIM, strerror(errno));
-        exit(EXIT_FAILURE);
-    }
+    if (imErr)
+        err(EXIT_FAILURE, "Saving to file %s failed", filenameIM);
+
     if (opt.thumb) {
         int cwidth, cheight;
         int twidth, theight;
@@ -174,10 +171,8 @@ int main(int argc, char** argv)
             applyFilterIfRequired();
 
             imlib_save_image_with_error_return(filenameThumb, &imErr);
-            if (imErr) {
-                fprintf(stderr, "Saving thumbnail %s failed: %s\n", filenameThumb, strerror(errno));
-                exit(EXIT_FAILURE);
-            }
+            if (imErr)
+                err(EXIT_FAILURE, "Saving thumbnail %s failed", filenameThumb);
         }
     }
     if (opt.exec)
@@ -265,13 +260,9 @@ void scrotCheckIfOverwriteFile(char** filename)
     free(*filename);
     *filename = newName;
 
-    if (counter == maxCounter) {
-        fprintf(stderr, "scrot can no longer generate new file names.\n"
-                        "The last attempt is %s\n",
-            newName);
-        free(newName);
-        exit(EXIT_FAILURE);
-    }
+    if (counter == maxCounter)
+        errx(EXIT_FAILURE, "scrot can no longer generate new file names.\n"
+            "The last attempt is %s", newName);
 }
 
 int scrotMatchWindowClassName(Window target)
@@ -325,10 +316,8 @@ void scrotGrabMousePointer(const Imlib_Image image,
 
     XFree(xcim);
 
-    if (!imcursor) {
-        fprintf(stderr, "scrotGrabMousePointer: Failed create image using data.\n");
-        exit(EXIT_FAILURE);
-    }
+    if (!imcursor)
+        errx(EXIT_FAILURE, "scrotGrabMousePointer: Failed create image using data.");
 
     imlib_context_set_image(imcursor);
     imlib_image_set_has_alpha(1);
@@ -366,9 +355,9 @@ void scrotExecApp(Imlib_Image image, struct tm* tm,
     ret = system(execStr);
 
     if (ret == -1)
-        fprintf(stderr, "The child process could not be created: %s\n", strerror(errno));
+        warn("The child process could not be created");
     else if (WEXITSTATUS(ret) == 127)
-        fprintf(stderr, "scrot could not execute the command: %s.\n", execStr);
+        warnx("scrot could not execute the command: %s", execStr);
 
     exit(0);
 }
@@ -418,9 +407,8 @@ Imlib_Image scrotSelAndGrabImage(void)
         } while (--attempts > 0 && ret == AlreadyGrabbed);
     }
     if (ret != GrabSuccess) {
-        fprintf(stderr, "failed to grab keyboard\n");
         scrotSelectionDestroy();
-        exit(EXIT_FAILURE);
+        errx(EXIT_FAILURE, "failed to grab keyboard");
     }
 
     while (1) {
@@ -446,7 +434,7 @@ Imlib_Image scrotSelAndGrabImage(void)
             case KeyPress:
                 if (!isButtonPressed) {
                 key_abort_shot:
-                    fprintf(stderr, "Key was pressed, aborting shot\n");
+                    warnx("Key was pressed, aborting shot");
                     done = 2;
                     break;
                 }
@@ -499,9 +487,8 @@ Imlib_Image scrotSelAndGrabImage(void)
         count = select(fdSize, &fdSet, NULL, NULL, NULL);
         if ((count < 0)
             && ((errno == ENOMEM) || (errno == EINVAL) || (errno == EBADF))) {
-            fprintf(stderr, "Connection to X display lost\n");
             scrotSelectionDestroy();
-            exit(EXIT_FAILURE);
+            errx(EXIT_FAILURE, "Connection to X display lost");
         }
     }
     scrotSelectionDraw();
@@ -693,10 +680,8 @@ char* imPrintf(char* str, struct tm* tm, char* filenameIM, char* filenameThumb, 
 
     ret[0] = '\0';
 
-    if (strftime(strf, 4095, str, tm) == 0) {
-        fprintf(stderr, "strftime returned 0\n");
-        exit(EXIT_FAILURE);
-    }
+    if (strftime(strf, 4095, str, tm) == 0)
+        errx(EXIT_FAILURE, "strftime returned 0");
 
     imlib_context_set_image(im);
     for (c = strf; *c != '\0'; c++) {
@@ -834,10 +819,8 @@ Window scrotFindWindowByProperty(Display* display, const Window window, const At
 
 Imlib_Image scrotGrabStackWindows(void)
 {
-    if (XGetSelectionOwner(disp, XInternAtom(disp, "_NET_WM_CM_S0", False)) == None) {
-        fprintf(stderr, "Composite Manager is not running, required to use this option.\n");
-        exit(EXIT_FAILURE);
-    }
+    if (XGetSelectionOwner(disp, XInternAtom(disp, "_NET_WM_CM_S0", False)) == None)
+        errx(EXIT_FAILURE, "option --stack: Composite Manager is not running, required to use this option.");
 
     unsigned long numberItemsReturn;
     unsigned long bytesAfterReturn;
@@ -862,20 +845,16 @@ Imlib_Image scrotGrabStackWindows(void)
         delete, atomType, &actualTypeReturn, &actualFormatReturn,
         &numberItemsReturn, &bytesAfterReturn, &propReturn);
 
-    if (result != Success || numberItemsReturn == 0) {
-        fprintf(stderr, "Failed XGetWindowProperty: " EWMH_CLIENT_LIST "\n");
-        exit(EXIT_FAILURE);
-    }
+    if (result != Success || numberItemsReturn == 0)
+        errx(EXIT_FAILURE, "option --stack: Failed XGetWindowProperty: " EWMH_CLIENT_LIST);
 
     XCompositeRedirectSubwindows(disp, root, CompositeRedirectAutomatic);
 
     for (i = 0; i < numberItemsReturn; i++) {
         Window win = *((Window*)propReturn + i);
 
-        if (!XGetWindowAttributes(disp, win, &attr)) {
-            fprintf(stderr, "Failed XGetWindowAttributes\n");
-            exit(EXIT_FAILURE);
-        }
+        if (!XGetWindowAttributes(disp, win, &attr))
+            errx(EXIT_FAILURE, "option --stack: Failed XGetWindowAttributes");
 
         /* Only visible windows */
         if (attr.map_state != IsViewable)
@@ -886,10 +865,8 @@ Imlib_Image scrotGrabStackWindows(void)
 
         ximage = XGetImage(disp, win, 0, 0, attr.width, attr.height, AllPlanes, ZPixmap);
 
-        if (!ximage) {
-            fprintf(stderr, "Failed XGetImage: Window id 0x%lx.\n", win);
-            exit(EXIT_FAILURE);
-        }
+        if (!ximage)
+            errx(EXIT_FAILURE, "option --stack: Failed XGetImage: Window id 0x%lx", win);
 
         im = imlib_create_image_from_ximage(ximage, NULL, attr.x, attr.y, attr.width, attr.height, 1);
 

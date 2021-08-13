@@ -61,9 +61,8 @@ void selectionClassicCreate(void)
 
         if (!ret) {
             free(opt.lineColor);
-            fprintf(stderr, "Error allocate color:%s\n", strerror(BadColor));
             scrotSelectionDestroy();
-            exit(EXIT_FAILURE);
+            errx(EXIT_FAILURE, "Error allocate color:%s", strerror(BadColor));
         }
 
         pc->gcValues.foreground = clrExact.pixel;
