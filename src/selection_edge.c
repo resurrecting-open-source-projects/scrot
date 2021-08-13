@@ -72,14 +72,9 @@ void selectionEdgeCreate(void)
 
     // It is ok that in the "classic" mode it is to NULL, but it is not "edge" mode
     if (!opt.lineColor)
-        opt.lineColor = "gray";
+        opt.lineColor = strdup("gray");
 
-    XColor color;
-
-    if (!XAllocNamedColor(disp, XDefaultColormap(disp, DefaultScreen(disp)), opt.lineColor, &color, &(XColor) {})) {
-        scrotSelectionDestroy();
-        errx(EXIT_FAILURE, "Error allocate color:%s", strerror(BadColor));
-    }
+    XColor const color = scrotSelectionLineColor();
 
     XSetWindowAttributes attr;
     attr.background_pixel = color.pixel;
@@ -111,9 +106,12 @@ void selectionEdgeDestroy(void)
     struct Selection const* const sel = *selectionGet();
     struct SelectionEdge* pe = sel->edge;
 
-    waitUnmapWindowNotify();
-    XFree(pe->classHint);
-    XDestroyWindow(disp, pe->wndDraw);
+    if (pe->wndDraw != 0) {
+        waitUnmapWindowNotify();
+        XFree(pe->classHint);
+        XDestroyWindow(disp, pe->wndDraw);
+    }
+
     free(pe);
 }
 

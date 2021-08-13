@@ -53,22 +53,8 @@ void selectionClassicCreate(void)
     pc->gcValues.subwindow_mode = IncludeInferiors;
 
     if (opt.lineColor) {
-        XColor clrExact, clrClosest;
-        Status ret;
-
-        ret = XAllocNamedColor(disp, XDefaultColormap(disp, DefaultScreen(disp)),
-            opt.lineColor, &clrExact, &clrClosest);
-
-        if (!ret) {
-            free(opt.lineColor);
-            scrotSelectionDestroy();
-            errx(EXIT_FAILURE, "Error allocate color:%s", strerror(BadColor));
-        }
-
-        pc->gcValues.foreground = clrExact.pixel;
-
-        free(opt.lineColor);
-        opt.lineColor = NULL;
+        XColor const color = scrotSelectionLineColor();
+        pc->gcValues.foreground = color.pixel;
     }
 
     pc->gc = XCreateGC(disp, root,

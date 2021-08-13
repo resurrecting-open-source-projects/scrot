@@ -150,6 +150,9 @@ void scrotSelectionDestroy(void)
     XSync(disp, True);
     sel->destroy();
     selectionDeallocate();
+
+    if (opt.lineColor)
+        free(opt.lineColor);
 }
 
 void scrotSelectionDraw(void)
@@ -179,4 +182,20 @@ void scrotSelectionMotionDraw(int x0, int y0, int x1, int y1)
 struct SelectionRect* scrotSelectionGetRect(void)
 {
     return &(*selectionGet())->rect;
+}
+
+XColor scrotSelectionLineColor(void)
+{
+    XColor color;
+    Status ret;
+
+    ret = XAllocNamedColor(disp, XDefaultColormap(disp, DefaultScreen(disp)),
+        opt.lineColor, &color, &(XColor) {});
+
+    if (!ret) {
+        scrotSelectionDestroy();
+        errx(EXIT_FAILURE, "Error allocate color:%s", strerror(BadColor));
+    }
+
+    return color;
 }

@@ -64,3 +64,4 @@ void scrotSelectionDestroy(void);
 void scrotSelectionDraw(void);
 void scrotSelectionMotionDraw(int, int, int, int);
 struct SelectionRect* scrotSelectionGetRect(void);
+XColor scrotSelectionLineColor(void);
