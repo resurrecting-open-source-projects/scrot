@@ -52,11 +52,10 @@ void selectionClassicCreate(void)
     pc->gcValues.plane_mask = pc->gcValues.background ^ pc->gcValues.foreground;
     pc->gcValues.subwindow_mode = IncludeInferiors;
 
-    if (opt.lineColor) {
-        XColor const color = scrotSelectionLineColor();
-        pc->gcValues.foreground = color.pixel;
-    }
+    XColor color;
+    scrotSelectionGetLineColor(&color);
 
+    pc->gcValues.foreground = color.pixel;
     pc->gc = XCreateGC(disp, root,
         GCFunction | GCForeground | GCBackground | GCSubwindowMode,
         &pc->gcValues);
