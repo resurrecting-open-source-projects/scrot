@@ -90,7 +90,7 @@ static int nonNegativeNumber(int number)
 static void optionsParseSelection(char* optarg)
 {
     // the suboption it's optional
-    if (optarg == NULL) {
+    if (!optarg) {
         opt.select = SELECTION_MODE_CAPTURE;
         return;
     }
