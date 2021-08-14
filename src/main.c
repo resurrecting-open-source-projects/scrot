@@ -294,6 +294,11 @@ void scrotGrabMousePointer(const Imlib_Image image,
 {
     XFixesCursorImage* xcim = XFixesGetCursorImage(disp);
 
+    if (!xcim) {
+        warnx("Failed to get mouse cursor image.");
+        return;
+    }
+
     const unsigned short width = xcim->width;
     const unsigned short height = xcim->height;
     const int x = (xcim->x - xcim->xhot) - xOffset;
