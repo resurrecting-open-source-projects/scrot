@@ -88,7 +88,8 @@ SPECIAL STRINGS
 SELECTION ACTION
   When using -s, optionally you can indicate the action to perform with the selection area.
     capture         Capture the selection area, this action is by default.
-    hide            Hide the selection area by drawing a black area over it.
+    hide            Hide the selection area by drawing an area of color over it.
+                    The color is the same as the selection line, see SELECTION STYLE
 
   Example:
 
