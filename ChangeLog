@@ -233,13 +233,13 @@ Wed Mar 12 13:20:11 GMT 2003  Tom Gilbert <tom@linuxbrit.co.uk>
   "First, specifying -t would break the $f param to -exec.
    Second, the thumbnail and the screenshot got different timestamps.
    Third, one weren't able to specify geometry with -t.
-  
+
    I fixed those and added, $m ( mini, instead of $t as it was taken ) so
    that one can do.
-  
+
    $ scrot -t 91x0 -e 'echo $f,$m'
    2003-03-08-104735_800x600_scrot.png,2003-03-08-104735_91x68_scrot-thumb.png`
-  
+
    About the geometry, having either the width or height set to 0 makes it
    fill in the other pertaining the aspect ratio.
   "
@@ -315,7 +315,7 @@ Mon Oct 30 18:54:05 2000  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
         scrot '%Y-%m-%d_&wx&h.png' -e 'mv &f ~/shots/'
         This  would  create   a   file   called   something   like
         2000-10-30_2560x1024.png  and move it to your shots directory.
-	
+
 
 Sun Oct 29 01:02:16 2000  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
 
@@ -343,4 +343,3 @@ Thu Oct 26 15:22:22 2000  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
 Thu Oct 26 14:09:52 2000  Tom Gilbert  <gilbertt@linuxbrit.co.uk>
 
 	* Created scrot.
-
