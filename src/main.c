@@ -549,11 +549,12 @@ Imlib_Image scrotSelAndGrabImage(void)
             im = imlib_create_image_from_drawable(0, rx, ry, rw, rh, 1);
         else {
             assert(opt.lineColor != NULL);
+
             XColor color;
+            scrotSelectionGetLineColor(&color);
 
             im = imlib_create_image_from_drawable(0, 0, 0, scr->width, scr->height, 1);
             imlib_context_set_image(im);
-            scrotSelectionGetLineColor(&color);
             imlib_context_set_color(color.red, color.green, color.blue, 255);
             imlib_image_fill_rectangle(rx, ry, rw, rh);
             pointerXOffset = 0;
