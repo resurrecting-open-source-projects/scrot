@@ -4,7 +4,7 @@ Copyright 1999-2000 Tom Gilbert <tom@linuxbrit.co.uk,
                                   gilbertt@linuxbrit.co.uk,
                                   scrot_sucks@linuxbrit.co.uk>
 Copyright 2009      James Cameron <quozl@us.netrek.org>
-Copyright 2019-2020 Daniel T. Borelli <daltomi@disroot.org>
+Copyright 2019-2021 Daniel T. Borelli <daltomi@disroot.org>
 Copyright 2020      Jeroen Roovers <jer@gentoo.org>
 Copyright 2020      Hinigatsu <hinigatsu@protonmail.com>
 Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
@@ -94,7 +94,7 @@ Window scrotFindWindowByProperty(Display*, const Window, const Atom);
 char* imPrintf(char*, struct tm*, char*, char*, Imlib_Image);
 Imlib_Image scrotGrabShotMulti(void);
 Imlib_Image scrotGrabStackWindows(void);
-Imlib_Image stalkImageConcat(ScrotImlibList*);
+Imlib_Image stalkImageConcat(ScrotList*);
 
 void scrotGrabMousePointer(const Imlib_Image, const int, const int);
 

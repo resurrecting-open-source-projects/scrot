@@ -41,7 +41,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "options.h"
 #include "scrot.h"
-#include "slist.h"
 #include <assert.h>
 
 /* atexit register func. */
@@ -835,7 +834,6 @@ Imlib_Image scrotGrabStackWindows(void)
     Bool delete = False;
     int actualFormatReturn;
     Atom actualTypeReturn;
-    ScrotImlibList* listImages = NULL;
     Imlib_Image im = NULL;
     XImage* ximage = NULL;
     XWindowAttributes attr;
@@ -852,6 +850,8 @@ Imlib_Image scrotGrabStackWindows(void)
 
     if (result != Success || numberItemsReturn == 0)
         errx(EXIT_FAILURE, "option --stack: Failed XGetWindowProperty: " EWMH_CLIENT_LIST);
+
+    initializeScrotList(images);
 
     XCompositeRedirectSubwindows(disp, root, CompositeRedirectAutomatic);
 
@@ -877,25 +877,25 @@ Imlib_Image scrotGrabStackWindows(void)
 
         XFree(ximage);
 
-        listImages = appendToScrotImlib(listImages, im);
+        appendToScrotList(images, im);
     }
 
-    return stalkImageConcat(listImages);
+    return stalkImageConcat(&images);
 }
 
 Imlib_Image scrotGrabShotMulti(void)
 {
-    int screens;
+    int screens= ScreenCount(disp);
+    if (screens < 2)
+        return scrotGrabShot();
+
     int i;
     char* dispStr;
     char* subDisp;
     char newDisp[255];
-    ScrotImlibList* images = NULL;
     Imlib_Image ret = NULL;
 
-    screens = ScreenCount(disp);
-    if (screens < 2)
-        return scrotGrabShot();
+    initializeScrotList(images);
 
     subDisp = strdup(DisplayString(disp));
 
@@ -910,46 +910,40 @@ Imlib_Image scrotGrabShotMulti(void)
         initXAndImlib(newDisp, i);
         ret = imlib_create_image_from_drawable(0, 0, 0, scr->width,
             scr->height, 1);
-        images = appendToScrotImlib(images, ret);
+
+        appendToScrotList(images, ret);
     }
     free(subDisp);
 
-    ret = stalkImageConcat(images);
-
-    return ret;
+    return stalkImageConcat(&images);
 }
 
-Imlib_Image stalkImageConcat(ScrotImlibList* images)
+Imlib_Image stalkImageConcat(ScrotList* images)
 {
-    int totalWidth = 0, maxHeight = 0, w, h;
-    int x = 0;
-    ScrotImlibList* l;
-    ScrotImlibList* item;
-    Imlib_Image ret, im;
-
-    if (isScrotImlibListEmpty(images))
+    if (isEmptyScrotList(images))
         return NULL;
 
-    l = images;
-    while (l) {
-        im = l->data;
+    int totalWidth = 0, maxHeight = 0, w, h;
+    int x = 0;
+    Imlib_Image ret, im;
+    ScrotListNode* image = NULL;
+
+    forEachScrotList(images, image) {
+        im = (Imlib_Image) image->data;
         imlib_context_set_image(im);
         h = imlib_image_get_height();
         w = imlib_image_get_width();
         if (h > maxHeight)
             maxHeight = h;
         totalWidth += w;
-        l = l->next;
     }
     ret = imlib_create_image(totalWidth, maxHeight);
     imlib_context_set_image(ret);
     imlib_context_set_color(0, 0, 0, 255);
     imlib_image_fill_rectangle(0, 0, totalWidth, maxHeight);
-    l = images;
-    while (l) {
-        im = l->data;
-        item = l;
-        l = l->next;
+    image = firstScrotList(images);
+    while (image) {
+        im = (Imlib_Image) image->data;
         imlib_context_set_image(im);
         h = imlib_image_get_height();
         w = imlib_image_get_width();
@@ -962,7 +956,7 @@ Imlib_Image stalkImageConcat(ScrotImlibList* images)
         x += w;
         imlib_context_set_image(im);
         imlib_free_image_and_decache();
-        free(item);
+        nextAndFreeScrotList(image);
     }
     return ret;
 }
