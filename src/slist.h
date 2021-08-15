@@ -1,7 +1,8 @@
 /* slist.h
 
-Copyright 2021      Christopher Nelson <christopher.nelson@languidnights.com>
-Copyright 2021      Peter Wu <peterwu@hotmail.com>
+Copyright 2021 Christopher Nelson <christopher.nelson@languidnights.com>
+Copyright 2021 Peter Wu <peterwu@hotmail.com>
+Copyright 2021 Daniel T. Borelli <daltomi@disroot.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -26,15 +27,40 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #pragma once
 
-#include <Imlib2.h>
-#include <stdbool.h>
+#include <sys/queue.h>
 
-typedef struct ScrotImlibList {
-    Imlib_Image* data;
+typedef struct ScrotListNode {
+    void* data;
+    STAILQ_ENTRY(ScrotListNode) nodes;
+} ScrotListNode;
 
-    struct ScrotImlibList* next;
-} ScrotImlibList;
+typedef STAILQ_HEAD(ScrotLists, ScrotListNode) ScrotList;
 
-ScrotImlibList* appendToScrotImlib(ScrotImlibList*, Imlib_Image*);
-ScrotImlibList* walkToEndOfScrotImlibList(ScrotImlibList*);
-int isScrotImlibListEmpty(ScrotImlibList*);
+#define initializeScrotList(name)                   \
+    ScrotList name = STAILQ_HEAD_INITIALIZER(name); \
+    STAILQ_INIT(&name);
+
+#define appendToScrotList(name, newData) do {       \
+    ScrotListNode* node = calloc(1, sizeof(*node)); \
+    node->data = (void*)newData;                    \
+    STAILQ_INSERT_TAIL(&name, node, nodes);         \
+} while(0)
+
+#define isEmptyScrotList(name) \
+    STAILQ_EMPTY(name)
+
+#define forEachScrotList(name, node) \
+    STAILQ_FOREACH(node, name, nodes)
+
+#define firstScrotList(name) \
+    STAILQ_FIRST(name)
+
+#define nextScrotList(name) \
+    STAILQ_NEXT(name, nodes);
+
+#define nextAndFreeScrotList(name) do {         \
+    ScrotListNode* next = nextScrotList(name);  \
+    free(name);                                 \
+    name = next;                                \
+} while(0)
+
