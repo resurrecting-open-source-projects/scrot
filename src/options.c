@@ -87,6 +87,29 @@ static int nonNegativeNumber(int number)
     return (number < 0) ? 0 : number;
 }
 
+static void optionsParseSelection(char const* optarg)
+{
+    // the suboption it's optional
+    if (!optarg) {
+        opt.select = SELECTION_MODE_CAPTURE;
+        return;
+    }
+
+    char const* value = strchr(optarg, '=');
+
+    if (value)
+        ++value;
+    else
+        value = optarg;
+
+    if (!strncmp(value, "capture", 7))
+        opt.select = SELECTION_MODE_CAPTURE;
+    else if (!strncmp(value, "hide", 4))
+        opt.select = SELECTION_MODE_HIDE;
+    else
+        errx(EXIT_FAILURE, "option --select: Unknown value for suboption '%s'", value);
+}
+
 static void optionsParseLine(char* optarg)
 {
     enum {
@@ -185,14 +208,13 @@ static void optionsParseWindowClassName(const char* windowClassName)
 
 void optionsParse(int argc, char** argv)
 {
-    static char stropts[] = "a:ofpbcd:e:hmq:st:uvzn:l:D:kC:S:";
+    static char stropts[] = "a:ofpbcd:e:hmq:s::t:uvzn:l:D:kC:S:";
 
     static struct option lopts[] = {
         /* actions */
         { "help", no_argument, 0, 'h' },
         { "version", no_argument, 0, 'v' },
         { "count", no_argument, 0, 'c' },
-        { "select", no_argument, 0, 's' },
         { "focused", no_argument, 0, 'u' },
         { "focussed", no_argument, 0, 'u' }, /* macquarie dictionary has both spellings */
         { "border", no_argument, 0, 'b' },
@@ -203,6 +225,7 @@ void optionsParse(int argc, char** argv)
         { "overwrite", no_argument, 0, 'o' },
         { "stack", no_argument, 0, 'k' },
         /* toggles */
+        { "select", optional_argument, 0, 's' },
         { "thumb", required_argument, 0, 't' },
         { "delay", required_argument, 0, 'd' },
         { "quality", required_argument, 0, 'q' },
@@ -244,7 +267,7 @@ void optionsParse(int argc, char** argv)
             opt.quality = optionsParseRequiredNumber(optarg);
             break;
         case 's':
-            opt.select = 1;
+            optionsParseSelection(optarg);
             break;
         case 'u':
             opt.focused = 1;

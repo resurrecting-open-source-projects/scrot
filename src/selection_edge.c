@@ -70,11 +70,8 @@ void selectionEdgeCreate(void)
 
     struct SelectionEdge* const pe = sel->edge;
 
-    // It is ok that in the "classic" mode it is to NULL, but it is not "edge" mode
-    if (!opt.lineColor)
-        opt.lineColor = strdup("gray");
-
-    XColor const color = scrotSelectionLineColor();
+    XColor color;
+    scrotSelectionGetLineColor(&color);
 
     XSetWindowAttributes attr;
     attr.background_pixel = color.pixel;

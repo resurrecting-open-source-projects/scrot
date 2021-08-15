@@ -59,7 +59,10 @@ static void createCursors(void)
 
     assert(sel != NULL);
 
-    sel->curCross = XCreateFontCursor(disp, XC_cross);
+    if (opt.select == SELECTION_MODE_HIDE)
+        sel->curCross = XCreateFontCursor(disp, XC_spraycan);
+    else
+        sel->curCross = XCreateFontCursor(disp, XC_cross);
     sel->curAngleNE = XCreateFontCursor(disp, XC_ur_angle);
     sel->curAngleNW = XCreateFontCursor(disp, XC_ul_angle);
     sel->curAngleSE = XCreateFontCursor(disp, XC_lr_angle);
@@ -150,9 +153,6 @@ void scrotSelectionDestroy(void)
     XSync(disp, True);
     sel->destroy();
     selectionDeallocate();
-
-    if (opt.lineColor)
-        free(opt.lineColor);
 }
 
 void scrotSelectionDraw(void)
@@ -184,18 +184,29 @@ struct SelectionRect* scrotSelectionGetRect(void)
     return &(*selectionGet())->rect;
 }
 
-XColor scrotSelectionLineColor(void)
+Status scrotSelectionCreateNamedColor(char const* nameColor, XColor* color)
 {
-    XColor color;
-    Status ret;
+    assert(nameColor != NULL);
+    assert(color != NULL);
 
-    ret = XAllocNamedColor(disp, XDefaultColormap(disp, DefaultScreen(disp)),
-        opt.lineColor, &color, &(XColor) {});
+    return XAllocNamedColor(disp, XDefaultColormap(disp, DefaultScreen(disp)),
+        nameColor, color, &(XColor) {});
+}
+
+void scrotSelectionGetLineColor(XColor* color)
+{
+    scrotSelectionSetDefaultColorLine();
+
+    Status const ret = scrotSelectionCreateNamedColor(opt.lineColor, color);
 
     if (!ret) {
         scrotSelectionDestroy();
         errx(EXIT_FAILURE, "Error allocate color:%s", strerror(BadColor));
     }
+}
 
-    return color;
+void scrotSelectionSetDefaultColorLine(void)
+{
+    if (!opt.lineColor)
+        opt.lineColor = "gray";
 }
