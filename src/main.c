@@ -801,9 +801,9 @@ Window scrotFindWindowByProperty(Display* display, const Window window, const At
     unsigned char* data;
     unsigned int i, numberChildren;
     unsigned long after, numberItems;
-    Window child = None, *children, parent, root;
+    Window child = None, *children, parent, rootReturn;
 
-    status = XQueryTree(display, window, &root, &parent, &children, &numberChildren);
+    status = XQueryTree(display, window, &rootReturn, &parent, &children, &numberChildren);
     if (!status)
         return None;
     for (i = 0; (i < numberChildren) && (child == None); i++) {
