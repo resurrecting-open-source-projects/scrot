@@ -9,7 +9,6 @@ AX_PREFIX_CONFIG_H([src/scrot_config.h])
 
 # Checks for programs.
 AC_PROG_CC
-AC_PROG_CC_C99
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
