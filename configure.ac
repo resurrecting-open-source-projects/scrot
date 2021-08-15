@@ -4,12 +4,11 @@ AC_INIT([scrot], [1.6], [https://github.com/resurrecting-open-source-projects/sc
 		[],[https://github.com/resurrecting-open-source-projects/scrot])
 AC_CONFIG_SRCDIR([src/main.c])
 AM_INIT_AUTOMAKE(dist-bzip2)
-AC_CONFIG_HEADER([src/config.h])
+AC_CONFIG_HEADERS([src/config.h])
 AX_PREFIX_CONFIG_H([src/scrot_config.h])
 
 # Checks for programs.
 AC_PROG_CC
-AM_PROG_CC_STDC
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
