@@ -184,7 +184,7 @@ struct SelectionRect* scrotSelectionGetRect(void)
     return &(*selectionGet())->rect;
 }
 
-Status scrotSelectionCreateNamedColor(char* nameColor, XColor* color)
+Status scrotSelectionCreateNamedColor(char const* nameColor, XColor* color)
 {
     assert(nameColor != NULL);
     assert(color != NULL);

@@ -70,5 +70,5 @@ void scrotSelectionDraw(void);
 void scrotSelectionMotionDraw(int, int, int, int);
 struct SelectionRect* scrotSelectionGetRect(void);
 void scrotSelectionGetLineColor(XColor*);
-Status scrotSelectionCreateNamedColor(char*, XColor*);
+Status scrotSelectionCreateNamedColor(char const*, XColor*);
 void scrotSelectionSetDefaultColorLine(void);

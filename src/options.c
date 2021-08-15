@@ -87,7 +87,7 @@ static int nonNegativeNumber(int number)
     return (number < 0) ? 0 : number;
 }
 
-static void optionsParseSelection(char* optarg)
+static void optionsParseSelection(char const* optarg)
 {
     // the suboption it's optional
     if (!optarg) {
