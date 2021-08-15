@@ -1,6 +1,7 @@
 /* scrot_selection_classic.c
 
 Copyright 2020-2021 Daniel T. Borelli <daltomi@disroot.org>
+Copyright 2021      Peter Wu <peterwu@hotmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -29,95 +30,73 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #include "selection_classic.h"
 
-extern void selection_calculate_rect(int x0, int y0, int x1, int y1);
-extern struct selection_t** selection_get(void);
+extern void selectionCalculateRect(int, int, int, int);
+extern struct Selection** selectionGet(void);
 
-struct selection_classic_t {
-    XGCValues gcval;
+struct SelectionClassic {
+    XGCValues gcValues;
     GC gc;
 };
 
-void selection_classic_create(void)
+void selectionClassicCreate(void)
 {
-    struct selection_t *const sel = *selection_get();
+    struct Selection* const sel = *selectionGet();
 
-    sel->classic = calloc(1, sizeof(struct selection_classic_t));
+    sel->classic = calloc(1, sizeof(*sel->classic));
 
-    struct selection_classic_t* pc = sel->classic;
+    struct SelectionClassic* pc = sel->classic;
 
-    pc->gcval.function = GXxor;
-    pc->gcval.foreground = XWhitePixel(disp, 0);
-    pc->gcval.background = XBlackPixel(disp, 0);
-    pc->gcval.plane_mask = pc->gcval.background ^ pc->gcval.foreground;
-    pc->gcval.subwindow_mode = IncludeInferiors;
+    pc->gcValues.function = GXxor;
+    pc->gcValues.foreground = XWhitePixel(disp, 0);
+    pc->gcValues.background = XBlackPixel(disp, 0);
+    pc->gcValues.plane_mask = pc->gcValues.background ^ pc->gcValues.foreground;
+    pc->gcValues.subwindow_mode = IncludeInferiors;
 
-    if (opt.line_color != NULL) {
-        XColor clr_exact, clr_closest;
-        Status ret;
-
-        ret = XAllocNamedColor(disp, XDefaultColormap(disp, DefaultScreen(disp)),
-                opt.line_color, &clr_exact, &clr_closest);
-
-        if (ret == 0) {
-           free(opt.line_color);
-           fprintf(stderr, "Error allocate color:%s\n", strerror(BadColor));
-           scrot_selection_destroy();
-           exit(EXIT_FAILURE);
-        }
-
-        pc->gcval.foreground = clr_exact.pixel;
-
-        free(opt.line_color);
-        opt.line_color = NULL;
+    if (opt.lineColor) {
+        XColor const color = scrotSelectionLineColor();
+        pc->gcValues.foreground = color.pixel;
     }
 
     pc->gc = XCreateGC(disp, root,
-            GCFunction | GCForeground | GCBackground | GCSubwindowMode,
-            &pc->gcval);
+        GCFunction | GCForeground | GCBackground | GCSubwindowMode,
+        &pc->gcValues);
 
     assert(pc->gc != NULL);
 
-    XSetLineAttributes(disp, pc->gc, opt.line_width, opt.line_style, CapRound, JoinRound);
+    XSetLineAttributes(disp, pc->gc, opt.lineWidth, opt.lineStyle, CapRound, JoinRound);
 
-    if (opt.freeze == 1) {
+    if (opt.freeze)
         XGrabServer(disp);
-    }
 }
 
-
-void selection_classic_destroy(void)
+void selectionClassicDestroy(void)
 {
-    struct selection_t const *const sel = *selection_get();
-    struct selection_classic_t* pc = sel->classic;
-  
-    if (opt.freeze == 1) {
-        XUngrabServer(disp);
-    }
+    struct Selection const* const sel = *selectionGet();
+    struct SelectionClassic* pc = sel->classic;
 
-    if (pc->gc) {
+    if (opt.freeze)
+        XUngrabServer(disp);
+
+    if (pc->gc)
         XFreeGC(disp, pc->gc);
-    }
 
     free(pc);
 }
 
-
-void selection_classic_draw(void)
+void selectionClassicDraw(void)
 {
-    struct selection_t const *const sel = *selection_get();
-    struct selection_classic_t const *const pc = sel->classic;
+    struct Selection const* const sel = *selectionGet();
+    struct SelectionClassic const* const pc = sel->classic;
     XDrawRectangle(disp, root, pc->gc, sel->rect.x, sel->rect.y, sel->rect.w, sel->rect.h);
     XFlush(disp);
 }
 
-
-void selection_classic_motion_draw(int x0, int y0, int x1, int y1)
+void selectionClassicMotionDraw(int x0, int y0, int x1, int y1)
 {
-    struct selection_t const *const sel = *selection_get();
+    struct Selection const* const sel = *selectionGet();
 
-    if (sel->rect.w) {
-        selection_classic_draw();
-    }
-    selection_calculate_rect(x0, y0, x1, y1);
-    selection_classic_draw();
+    if (sel->rect.w)
+        selectionClassicDraw();
+    selectionCalculateRect(x0, y0, x1, y1);
+    selectionClassicDraw();
 }

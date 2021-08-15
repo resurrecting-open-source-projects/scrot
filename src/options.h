@@ -8,6 +8,7 @@ Copyright 2010      Ibragimov Rinat <ibragimovrinat@mail.ru>
 Copyright 2017      Stoney Sauce <stoneysauce@gmail.com>
 Copyright 2019-2021 Daniel T. Borelli <daltomi@disroot.org>
 Copyright 2020      Sean Brennan <zettix1@gmail.com>
+Copyright 2021      Peter Wu <peterwu@hotmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -30,53 +31,51 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#ifndef OPTIONS_H
-#define OPTIONS_H
+#include "structs.h"
 
-struct __scrotoptions
-{
-   int delay;
-   int countdown;
-   int select;
-   int focused;
-   int quality;
-   int border;
-   int silent;
-   int multidisp;
-   int thumb;
-   int thumb_width;
-   int thumb_height;
-   int pointer;
-   int freeze;
-   int overwrite;
-   int line_style;
-   int line_width;
-   int line_opacity;
-   int stack;
-   char *line_color;
-   char *line_mode;
-   char *output_file;
-   char *thumb_file;
-   char *exec;
-   char *display;
-   char *note;
-   char *window_class_name;
-   char *script;
-   int autoselect;
-   int autoselect_x;
-   int autoselect_y;
-   int autoselect_h;
-   int autoselect_w;
+#pragma once
+
+struct __ScrotOptions {
+    int delay;
+    int countdown;
+    int select;
+    int focused;
+    int quality;
+    int border;
+    int silent;
+    int multidisp;
+    int thumb;
+    int thumbWidth;
+    int thumbHeight;
+    int pointer;
+    int freeze;
+    int overwrite;
+    int lineStyle;
+    int lineWidth;
+    int lineOpacity;
+    int stack;
+    char* lineColor;
+    char* lineMode;
+    char* outputFile;
+    char* thumbFile;
+    char* exec;
+    char* display;
+    char* note;
+    char* windowClassName;
+    char* script;
+    int autoselect;
+    int autoselectX;
+    int autoselectY;
+    int autoselectH;
+    int autoselectW;
 };
 
-void init_parse_options(int argc, char **argv);
-char *name_thumbnail(char *name);
-void options_parse_thumbnail(char *optarg);
-void options_parse_autoselect(char *optarg);
-void options_parse_display(char *optarg);
-void options_parse_note(char *optarg);
-int  options_parse_required_number(char *str);
-int  options_cmp_window_class_name(const char* target_class_name);
-extern scrotoptions opt;
-
-#endif
+void optionsParse(int, char**);
+char* nameThumbnail(char*);
+void optionsParseThumbnail(char*);
+void optionsParseAutoselect(char*);
+void optionsParseDisplay(char*);
+void optionsParseNote(char*);
+int optionsParseRequiredNumber(char*);
+int optionsCompareWindowClassName(const char*);
+extern ScrotOptions opt;

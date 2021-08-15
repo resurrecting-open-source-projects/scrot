@@ -14,6 +14,7 @@ Copyright 2019      Jade Auer <jade@trashwitch.dev>
 Copyright 2020      Sean Brennan <zettix1@gmail.com>
 Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
 Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2021      Peter Wu <peterwu@hotmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -36,460 +37,383 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#include "scrot.h"
 #include "options.h"
+#include "scrot.h"
 #include <assert.h>
 
-#define MAX_LEN_WINDOW_CLASS_NAME  80
+enum {
+    MAX_LEN_WINDOW_CLASS_NAME = 80, //characters
+    MAX_OUTPUT_FILENAME = 256, // characters
+    MAX_DISPLAY_NAME = 256, // characters
+};
 
-static void scrot_parse_option_array(int argc, char **argv);
-scrotoptions opt;
+ScrotOptions opt = {
+    .quality = 75,
+    .lineStyle = LineSolid,
+    .lineWidth = 1,
+    .lineOpacity = 100,
+    .lineMode = LINE_MODE_CLASSIC,
+};
 
-void
-init_parse_options(int argc, char **argv)
+int optionsParseRequiredNumber(char* str)
 {
-   /* Set default options */
-   memset(&opt, 0, sizeof(scrotoptions));
+    assert(NULL != str); // fix yout caller function,
+                         //  the user does not impose this behavior
+    char* end = NULL;
+    long ret = 0L;
+    errno = 0;
 
-   opt.quality = 75;
-   opt.overwrite = 0;
-   opt.line_style = LineSolid;
-   opt.line_width = 1;
-   opt.line_opacity = 100;
-   opt.line_mode = LINE_MODE_CLASSIC;
+    ret = strtol(str, &end, 10);
 
-   /* Parse the cmdline args */
-   scrot_parse_option_array(argc, argv);
-}
+    if (errno)
+        goto range_error;
 
-int
-options_parse_required_number(char *str)
-{
-   assert(NULL != str); // fix yout caller function,
-                       //  the user does not impose this behavior
-   char *end = NULL;
-   long ret = 0L;
-   errno = 0;
+    if (str == end)
+        errx(EXIT_FAILURE, "the option is not a number: %s", end);
 
-   ret = strtol(str, &end, 10);
+    if (ret > INT_MAX || ret < INT_MIN) {
+        errno = ERANGE;
+        goto range_error;
+    }
 
-   if (errno) {
-      goto range_error;
-   }
-
-   if (str == end) {
-      fprintf(stderr, "the option is not a number: %s\n", end);
-      exit(EXIT_FAILURE);
-   }
-
-   if (ret > INT_MAX || ret < INT_MIN) {
-      errno = ERANGE;
-      goto range_error;
-   }
-
-   return ret;
+    return ret;
 
 range_error:
-      perror("strtol");
-      exit(EXIT_FAILURE);
+    err(EXIT_FAILURE, "error strtol");
 }
 
-static int non_negative_number(int num)
+static int nonNegativeNumber(int number)
 {
-    return (num < 0) ? 0 : num;
+    return (number < 0) ? 0 : number;
 }
 
-static void
-options_parse_line(char *optarg)
+static void optionsParseLine(char* optarg)
 {
-   enum {STYLE = 0, WIDTH, COLOR, OPACITY, MODE};
+    enum {
+        Style = 0,
+        Width,
+        Color,
+        Opacity,
+        Mode
+    };
 
-   char *const token[] = {
-      [STYLE]   = "style",
-      [WIDTH]   = "width",
-      [COLOR]   = "color",
-      [OPACITY] = "opacity",
-      [MODE]    = "mode",
-      NULL
-   };
+    char* const token[] = {
+        [Style] = "style",
+        [Width] = "width",
+        [Color] = "color",
+        [Opacity] = "opacity",
+        [Mode] = "mode",
+        NULL
+    };
 
-   char *subopts = optarg;
-   char *value = NULL;
+    char* subopts = optarg;
+    char* value = NULL;
 
-   while (*subopts != '\0') {
-      switch(getsubopt(&subopts, token, &value)) {
-
-         case STYLE:
-
-            if (value == NULL || *value == '\0') {
-               fprintf(stderr, "Missing value for "
-                     "suboption '%s'\n", token[STYLE]);
-               exit(EXIT_FAILURE);
-            }
+    while (*subopts != '\0') {
+        switch (getsubopt(&subopts, token, &value)) {
+        case Style:
+            if (!value || *value == '\0')
+                errx(EXIT_FAILURE, "Missing value for suboption '%s'",
+                    token[Style]);
 
             if (!strncmp(value, "dash", 4))
-               opt.line_style = LineOnOffDash;
+                opt.lineStyle = LineOnOffDash;
             else if (!strncmp(value, "solid", 5))
-               opt.line_style = LineSolid;
-            else {
-               fprintf(stderr, "Unknown value for "
-                     "suboption '%s': %s\n", token[STYLE], value);
-               exit(EXIT_FAILURE);
-            }
+                opt.lineStyle = LineSolid;
+            else
+                errx(EXIT_FAILURE, "Unknown value for suboption '%s': %s",
+                    token[Style], value);
             break;
+        case Width:
+            if (!value)
+                errx(EXIT_FAILURE, "Missing value for suboption '%s'",
+                    token[Width]);
 
-         case WIDTH:
+            opt.lineWidth = optionsParseRequiredNumber(value);
 
-            if (value == NULL) {
-               fprintf(stderr, "Missing value for "
-                     "suboption '%s'\n", token[WIDTH]);
-               exit(EXIT_FAILURE);
-            }
-
-            opt.line_width = options_parse_required_number(value);
-
-            if (opt.line_width <= 0 || opt.line_width > 8){
-               fprintf(stderr, "Value of the range (1..8) for "
-                     "suboption '%s': %d\n", token[WIDTH], opt.line_width);
-               exit(EXIT_FAILURE);
-            }
+            if (opt.lineWidth <= 0 || opt.lineWidth > 8)
+                errx(EXIT_FAILURE, "Value of the range (1..8) for "
+                    "suboption '%s': %d", token[Width], opt.lineWidth);
             break;
+        case Color:
+            if (!value || *value == '\0')
+                errx(EXIT_FAILURE, "Missing value for suboption '%s'",
+                    token[Color]);
 
-         case COLOR:
-
-            if (value == NULL || *value == '\0') {
-               fprintf(stderr, "Missing value for "
-                     "suboption '%s'\n", token[COLOR]);
-               exit(EXIT_FAILURE);
-            }
-
-            opt.line_color = strdup(value);
-
+            opt.lineColor = strdup(value);
             break;
+        case Mode:
+            if (!value || *value == '\0')
+                errx(EXIT_FAILURE, "Missing value for suboption '%s'",
+                    token[Mode]);
 
-         case MODE:
+            bool isValidMode = !strncmp(value, LINE_MODE_CLASSIC, LINE_MODE_CLASSIC_LEN);
 
-            if (value == NULL || *value == '\0') {
-               fprintf(stderr, "Missing value for "
-                     "suboption '%s'\n", token[MODE]);
-               exit(EXIT_FAILURE);
-            }
+            isValidMode = isValidMode || !strncmp(value, LINE_MODE_EDGE, LINE_MODE_EDGE_LEN);
 
-            bool isValidMode = (bool)(0 == strncmp(value, LINE_MODE_CLASSIC, LINE_MODE_CLASSIC_LEN) );
+            if (!isValidMode)
+                errx(EXIT_FAILURE, "Unknown value for suboption '%s': %s",
+                    token[Mode], value);
 
-            isValidMode = isValidMode || (bool)(0 == strncmp(value, LINE_MODE_EDGE, LINE_MODE_EDGE_LEN));
-
-            if(isValidMode == false) {
-               fprintf(stderr, "Unknown value for "
-                     "suboption '%s': %s\n", token[MODE], value);
-               exit(EXIT_FAILURE);
-            }
-
-            opt.line_mode = strdup(value);
-
+            opt.lineMode = strdup(value);
             break;
+        case Opacity:
+            if (!value)
+                errx(EXIT_FAILURE, "Missing value for suboption '%s'",
+                    token[Opacity]);
 
-         case OPACITY:
+            opt.lineOpacity = optionsParseRequiredNumber(value);
 
-            if (value == NULL) {
-               fprintf(stderr, "Missing value for "
-                    "suboption '%s'\n", token[OPACITY]);
-               exit(EXIT_FAILURE);
-            }
-
-            opt.line_opacity = options_parse_required_number(value);
-
-            if (opt.line_opacity < 10 || opt.line_opacity > 100){
-               fprintf(stderr, "Value of the range (10..100) for "
-                     "suboption '%s': %d\n", token[OPACITY], opt.line_opacity);
-               exit(EXIT_FAILURE);
-             }
-
+            if (opt.lineOpacity < 10 || opt.lineOpacity > 100)
+                errx(EXIT_FAILURE, "Value of the range (10..100) for "
+                    "suboption '%s': %d", token[Opacity], opt.lineOpacity);
             break;
-
-         default:
-            fprintf(stderr, "No match found for token: '%s'\n", value);
-            exit(EXIT_FAILURE);
+        default:
+            errx(EXIT_FAILURE, "No match found for token: '%s'", value);
             break;
-      }
-
-   } /* while */
+        }
+    } /* while */
 }
 
-static void options_parse_window_class_name(const char* window_class_name)
+static void optionsParseWindowClassName(const char* windowClassName)
 {
-    assert(window_class_name != NULL);
+    assert(windowClassName != NULL);
 
-    if (window_class_name[0] != '\0' &&
-        strlen(window_class_name) < MAX_LEN_WINDOW_CLASS_NAME)
-    {
-        opt.window_class_name = strdup(window_class_name);
+    if (windowClassName[0] != '\0')
+        opt.windowClassName = strndup(windowClassName, MAX_LEN_WINDOW_CLASS_NAME);
+}
+
+void optionsParse(int argc, char** argv)
+{
+    static char stropts[] = "a:ofpbcd:e:hmq:st:uvzn:l:D:kC:S:";
+
+    static struct option lopts[] = {
+        /* actions */
+        { "help", no_argument, 0, 'h' },
+        { "version", no_argument, 0, 'v' },
+        { "count", no_argument, 0, 'c' },
+        { "select", no_argument, 0, 's' },
+        { "focused", no_argument, 0, 'u' },
+        { "focussed", no_argument, 0, 'u' }, /* macquarie dictionary has both spellings */
+        { "border", no_argument, 0, 'b' },
+        { "multidisp", no_argument, 0, 'm' },
+        { "silent", no_argument, 0, 'z' },
+        { "pointer", no_argument, 0, 'p' },
+        { "freeze", no_argument, 0, 'f' },
+        { "overwrite", no_argument, 0, 'o' },
+        { "stack", no_argument, 0, 'k' },
+        /* toggles */
+        { "thumb", required_argument, 0, 't' },
+        { "delay", required_argument, 0, 'd' },
+        { "quality", required_argument, 0, 'q' },
+        { "exec", required_argument, 0, 'e' },
+        { "autoselect", required_argument, 0, 'a' },
+        { "display", required_argument, 0, 'D' },
+        { "note", required_argument, 0, 'n' },
+        { "line", required_argument, 0, 'l' },
+        { "class", required_argument, 0, 'C' },
+        { "script", required_argument, 0, 'S' },
+        { 0, 0, 0, 0 }
+    };
+    int optch = 0, cmdx = 0;
+
+    /* Now to pass some optionarinos */
+    while ((optch = getopt_long(argc, argv, stropts, lopts, &cmdx)) != EOF) {
+        switch (optch) {
+        case 0:
+            break;
+        case 'h':
+            showUsage();
+            break;
+        case 'v':
+            showVersion();
+            break;
+        case 'b':
+            opt.border = 1;
+            break;
+        case 'd':
+            opt.delay = nonNegativeNumber(optionsParseRequiredNumber(optarg));
+            break;
+        case 'e':
+            opt.exec = strdup(optarg);
+            break;
+        case 'm':
+            opt.multidisp = 1;
+            break;
+        case 'q':
+            opt.quality = optionsParseRequiredNumber(optarg);
+            break;
+        case 's':
+            opt.select = 1;
+            break;
+        case 'u':
+            opt.focused = 1;
+            break;
+        case 'c':
+            opt.countdown = 1;
+            break;
+        case 't':
+            optionsParseThumbnail(optarg);
+            break;
+        case 'z':
+            opt.silent = 1;
+            break;
+        case 'p':
+            opt.pointer = 1;
+            break;
+        case 'f':
+            opt.freeze = 1;
+            break;
+        case 'o':
+            opt.overwrite = 1;
+            break;
+        case 'a':
+            optionsParseAutoselect(optarg);
+            break;
+        case 'D':
+            optionsParseDisplay(optarg);
+            break;
+        case 'n':
+            optionsParseNote(optarg);
+            break;
+        case 'l':
+            optionsParseLine(optarg);
+            break;
+        case 'k':
+            opt.stack = 1;
+            break;
+        case 'C':
+            optionsParseWindowClassName(optarg);
+            break;
+        case 'S':
+            opt.script = strdup(optarg);
+            break;
+        case '?':
+            exit(EXIT_FAILURE);
+        default:
+            break;
+        }
+    }
+
+    /* Now the leftovers, which must be files */
+    while (optind < argc) {
+        /* If recursive is NOT set, but the only argument is a directory
+           name, we grab all the files in there, but not subdirs */
+        if (!opt.outputFile) {
+            opt.outputFile = argv[optind++];
+
+            if (strlen(opt.outputFile) > MAX_OUTPUT_FILENAME)
+               errx(EXIT_FAILURE,"output filename too long, must be "
+                    "less than %d characters", MAX_OUTPUT_FILENAME);
+
+            if (opt.thumb)
+                opt.thumbFile = nameThumbnail(opt.outputFile);
+        } else
+            warnx("unrecognised option %s", argv[optind++]);
+    }
+
+    /* So that we can safely be called again */
+    optind = 1;
+}
+
+char* nameThumbnail(char* name)
+{
+    size_t length = 0;
+    char* newTitle;
+    char* dotPos;
+    size_t diff = 0;
+
+    length = strlen(name) + 7;
+    newTitle = malloc(length);
+
+    if (!newTitle)
+        err(EXIT_FAILURE, "Unable to allocate thumbnail");
+
+    dotPos = strrchr(name, '.');
+    if (dotPos) {
+        diff = (dotPos - name) / sizeof(char);
+
+        strncpy(newTitle, name, diff);
+        strcat(newTitle, "-thumb");
+        strcat(newTitle, dotPos);
+    } else
+        snprintf(newTitle, length, "%s-thumb", name);
+
+    return newTitle;
+}
+
+void optionsParseAutoselect(char* optarg)
+{
+    char* token;
+    const char tokenDelimiter[2] = ",";
+    int dimensions[4];
+    int i = 0;
+
+    if (strchr(optarg, ',')) { /* geometry dimensions must be in format x,y,w,h   */
+        dimensions[i++] = optionsParseRequiredNumber(strtok(optarg, tokenDelimiter));
+        while ((token = strtok(NULL, tokenDelimiter)))
+            dimensions[i++] = optionsParseRequiredNumber(token);
+        opt.autoselect = 1;
+        opt.autoselectX = dimensions[0];
+        opt.autoselectY = dimensions[1];
+        opt.autoselectW = dimensions[2];
+        opt.autoselectH = dimensions[3];
+
+        if (i != 4)
+            errx(EXIT_FAILURE, "option 'autoselect' require 4 arguments");
+    } else
+        errx(EXIT_FAILURE, "invalid format for option -- 'autoselect'");
+}
+
+void optionsParseDisplay(char* optarg)
+{
+    opt.display = strndup(optarg, MAX_DISPLAY_NAME);
+    if (!opt.display)
+        err(EXIT_FAILURE, "Unable to allocate display");
+}
+
+void optionsParseThumbnail(char* optarg)
+{
+    char* token;
+
+    if (strchr(optarg, 'x')) { /* We want to specify the geometry */
+        token = strtok(optarg, "x");
+        opt.thumbWidth = optionsParseRequiredNumber(token);
+        token = strtok(NULL, "x");
+        if (token) {
+            opt.thumbWidth = optionsParseRequiredNumber(optarg);
+            opt.thumbHeight = optionsParseRequiredNumber(token);
+
+            if (opt.thumbWidth < 0)
+                opt.thumbWidth = 1;
+            if (opt.thumbHeight < 0)
+                opt.thumbHeight = 1;
+
+            if (!opt.thumbWidth && !opt.thumbHeight)
+                opt.thumb = 0;
+            else
+                opt.thumb = 1;
+        }
+    } else {
+        opt.thumb = optionsParseRequiredNumber(optarg);
+        if (opt.thumb < 1)
+            opt.thumb = 1;
+        else if (opt.thumb > 100)
+            opt.thumb = 100;
     }
 }
 
-static void
-scrot_parse_option_array(int argc, char **argv)
+void optionsParseNote(char* optarg)
 {
-   static char stropts[] = "a:ofpbcd:e:hmq:st:uvzn:l:D:kC:S:";
+    opt.note = strdup(optarg);
 
-   static struct option lopts[] = {
-      /* actions */
-      {"help"         , no_argument, 0, 'h'},
-      {"version"      , no_argument, 0, 'v'},
-      {"count"        , no_argument, 0, 'c'},
-      {"select"       , no_argument, 0, 's'},
-      {"focused"      , no_argument, 0, 'u'},
-      {"focussed"     , no_argument, 0, 'u'},/* macquarie dictionary has both spellings */
-      {"border"       , no_argument, 0, 'b'},
-      {"multidisp"    , no_argument, 0, 'm'},
-      {"silent"       , no_argument, 0, 'z'},
-      {"pointer"      , no_argument, 0, 'p'},
-      {"freeze"       , no_argument, 0, 'f'},
-      {"overwrite"    , no_argument, 0, 'o'},
-      {"stack"        , no_argument, 0, 'k'},
-      /* toggles */
-      {"thumb"        , required_argument, 0, 't'},
-      {"delay"        , required_argument, 0, 'd'},
-      {"quality"      , required_argument, 0, 'q'},
-      {"exec"         , required_argument, 0, 'e'},
-      {"autoselect"   , required_argument, 0, 'a'},
-      {"display"      , required_argument, 0, 'D'},
-      {"note"         , required_argument, 0, 'n'},
-      {"line"         , required_argument, 0, 'l'},
-      {"class"        , required_argument, 0, 'C'},
-      {"script"       , required_argument, 0, 'S'},
-      {0              , 0, 0, 0}
-   };
-   int optch = 0, cmdx = 0;
+    if (!opt.note)
+        return;
 
-   /* Now to pass some optionarinos */
-   while ((optch = getopt_long(argc, argv, stropts, lopts, &cmdx)) !=
-          EOF)
-   {
-      switch (optch)
-      {
-        case 0:
-           break;
-        case 'h':
-           show_usage();
-           break;
-        case 'v':
-           show_version();
-           break;
-        case 'b':
-           opt.border = 1;
-           break;
-        case 'd':
-           opt.delay = non_negative_number(options_parse_required_number(optarg));
-           break;
-        case 'e':
-           opt.exec = strdup(optarg);
-           break;
-        case 'm':
-           opt.multidisp = 1;
-           break;
-        case 'q':
-           opt.quality = options_parse_required_number(optarg);
-           break;
-        case 's':
-           opt.select = 1;
-           break;
-        case 'u':
-           opt.focused = 1;
-           break;
-        case 'c':
-           opt.countdown = 1;
-           break;
-        case 't':
-           options_parse_thumbnail(optarg);
-           break;
-        case 'z':
-           opt.silent = 1;
-           break;
-        case 'p':
-           opt.pointer = 1;
-           break;
-        case 'f':
-           opt.freeze = 1;
-           break;
-        case 'o':
-           opt.overwrite = 1;
-           break;
-        case 'a':
-           options_parse_autoselect(optarg);
-           break;
-        case 'D':
-           options_parse_display(optarg);
-           break;
-        case 'n':
-           options_parse_note(optarg);
-           break;
-        case 'l':
-           options_parse_line(optarg);
-           break;
-        case 'k':
-           opt.stack = 1;
-        break;
-        case 'C':
-            options_parse_window_class_name(optarg);
-        break;
-        case 'S':
-           opt.script = strdup(optarg);
-        break;
-        case '?':
-           exit(EXIT_FAILURE);
-        default:
-           break;
-      }
-   }
+    if (opt.note[0] == '\0')
+        errx(EXIT_FAILURE, "Required arguments for --note.");
 
-   /* Now the leftovers, which must be files */
-   while (optind < argc)
-   {
-      /* If recursive is NOT set, but the only argument is a directory
-         name, we grab all the files in there, but not subdirs */
-      if (!opt.output_file)
-      {
-         opt.output_file = argv[optind++];
-
-         if ( strlen(opt.output_file) > 256 ) {
-            printf("output filename too long.\n");
-            exit(EXIT_FAILURE);
-         }
-
-         if (opt.thumb)
-            opt.thumb_file = name_thumbnail(opt.output_file);
-      }
-      else
-         fprintf(stderr, "unrecognised option %s\n", argv[optind++]);
-   }
-
-   /* So that we can safely be called again */
-   optind = 1;
-}
-
-char *
-name_thumbnail(char *name)
-{
-   size_t length = 0;
-   char *new_title;
-   char *dot_pos;
-   size_t diff = 0;
-
-   length = strlen(name) + 7;
-   new_title = malloc(length);
-   if (! new_title) {
-     fprintf(stderr, "Unable to allocate thumbnail: %s", strerror(errno));
-     exit(EXIT_FAILURE);
-   }
-
-   dot_pos = strrchr(name, '.');
-   if (dot_pos)
-   {
-      diff = (dot_pos - name) / sizeof(char);
-
-      strncpy(new_title, name, diff);
-      strcat(new_title, "-thumb");
-      strcat(new_title, dot_pos);
-   }
-   else {
-      snprintf(new_title, length, "%s-thumb", name);
-   }
-
-   return new_title;
-}
-
-void
-options_parse_autoselect(char *optarg)
-{
-   char *tok;
-   const char tokdelim[2] = ",";
-   int dimensions[4];
-   int i=0;
-
-   if (strchr(optarg, ',')) /* geometry dimensions must be in format x,y,w,h   */
-   {
-     dimensions[i++] = options_parse_required_number(strtok(optarg, tokdelim));
-     while ((tok = strtok(NULL, tokdelim)) )
-        dimensions[i++] = options_parse_required_number(tok);
-     opt.autoselect=1;
-     opt.autoselect_x=dimensions[0];
-     opt.autoselect_y=dimensions[1];
-     opt.autoselect_w=dimensions[2];
-     opt.autoselect_h=dimensions[3];
-
-     if (i != 4)
-     {
-       fprintf(stderr, "option 'autoselect' require 4 arguments\n");
-       exit(EXIT_FAILURE);
-     }
-   }
-   else {
-       fprintf(stderr, "invalid format for option -- 'autoselect'\n");
-       exit(EXIT_FAILURE);
-   }
-
-
-}
-
-void
-options_parse_display(char *optarg)
-{
-   opt.display = strndup(optarg, 256);
-   if (!opt.display) {
-     fprintf(stderr, "Unable to allocate display: %s", strerror(errno));
-     exit(EXIT_FAILURE);
-   }
-}
-
-void
-options_parse_thumbnail(char *optarg)
-{
-   char *tok;
-
-   if (strchr(optarg, 'x')) /* We want to specify the geometry */
-   {
-     tok = strtok(optarg, "x");
-     opt.thumb_width = options_parse_required_number(tok);
-     tok = strtok(NULL, "x");
-     if (tok)
-     {
-       opt.thumb_width = options_parse_required_number(optarg);
-       opt.thumb_height = options_parse_required_number(tok);
-
-       if (opt.thumb_width < 0)
-         opt.thumb_width = 1;
-       if (opt.thumb_height < 0)
-         opt.thumb_height = 1;
-
-       if (!opt.thumb_width && !opt.thumb_height)
-         opt.thumb = 0;
-       else
-         opt.thumb = 1;
-     }
-   }
-   else
-   {
-     opt.thumb = options_parse_required_number(optarg);
-     if (opt.thumb < 1)
-       opt.thumb = 1;
-     else if (opt.thumb > 100)
-       opt.thumb = 100;
-   }
-}
-
-void options_parse_note(char *optarg)
-{
-   opt.note = strdup(optarg);
-
-   if (opt.note == NULL) return;
-
-   if (opt.note[0] == '\0') {
-      fprintf(stderr, "Required arguments for --note.");
-      exit(EXIT_FAILURE);
-   }
-
-   scrot_note_new(opt.note);
+    scrotNoteNew(opt.note);
 }
 
 /*
@@ -497,28 +421,26 @@ Return:
     0 : It does not match
     1 : If it matches
 */
-int options_cmp_window_class_name(const char* target_class_name)
-    {
-    assert(target_class_name != NULL);
-    assert(opt.window_class_name != NULL);
-    return !!(!strncmp(target_class_name, opt.window_class_name, MAX_LEN_WINDOW_CLASS_NAME - 1));
+int optionsCompareWindowClassName(const char* targetClassName)
+{
+    assert(targetClassName != NULL);
+    assert(opt.windowClassName != NULL);
+    return !!(!strncmp(targetClassName, opt.windowClassName, MAX_LEN_WINDOW_CLASS_NAME - 1));
 }
 
-void
-show_version(void)
+void showVersion(void)
 {
-   printf(SCROT_PACKAGE " version " SCROT_VERSION "\n");
-   exit(0);
+    printf(SCROT_PACKAGE " version " SCROT_VERSION "\n");
+    exit(0);
 }
 
-void
-show_usage(void)
+void showUsage(void)
 {
-   fputs( /* Check that everything lines up after any changes. */
-   "usage:  "SCROT_PACKAGE" [-bcfhkmopsuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY]"
-   "\n"
-   "              [-d SEC] [-e CMD] [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] \n"
-   "              [-t NUM | GEOM] [FILE]\n",
-   stdout);
-   exit(0);
+    fputs(/* Check that everything lines up after any changes. */
+        "usage:  " SCROT_PACKAGE " [-bcfhkmopsuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY]"
+        "\n"
+        "              [-d SEC] [-e CMD] [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] \n"
+        "              [-t NUM | GEOM] [FILE]\n",
+        stdout);
+    exit(0);
 }

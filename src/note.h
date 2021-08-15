@@ -2,6 +2,7 @@
 
 Copyright 2019 Daniel T. Borelli <daltomi@disroot.org>
 Copyright 2021 Christopher R. Nelson <christopher.nelson@languidnights.com>
+Copyright 2021 Peter Wu <peterwu@hotmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -25,12 +26,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 /* This file is part of the scrot project. */
- 
-#ifndef NOTE_H
-#define NOTE_H
 
-#include <Imlib2.h>
+#pragma once
+
 #include "options.h"
+#include <Imlib2.h>
 
 /*
  * Format: -f 'NAME/SIZE' -x NUM -y NUM -t 'TEXT' -c NUM,NUM,NUM,NUM
@@ -43,36 +43,32 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * */
 
-enum ecolor {
-   COLOR_ERROR    = -1, /* error parser                        */
-   COLOR_OPTIONAL = 0,  /* the user did not indicate the color */
-   COLOR_OK       = 1,  /* the user indicate the color         */
+enum EColor {
+    ColorError = -1, /* error parser                        */
+    ColorOptional = 0, /* the user did not indicate the color */
+    ColorOK = 1, /* the user indicate the color         */
 };
 
-struct __scrotnote
-{
-   char *font;    /* font name                   */
-   char *text;    /* text of the note            */
-   int x;         /* position screen (optional)  */
-   int y;         /* position screen (optional)  */
-   double angle;  /* angle text (optional)       */
+struct __ScrotNote {
+    char* font; /* font name                   */
+    char* text; /* text of the note            */
+    int x; /* position screen (optional)  */
+    int y; /* position screen (optional)  */
+    double angle; /* angle text (optional)       */
 
-   struct color   /*                 (optional)  */
-   {
-      enum ecolor status;
-      int r,                  /* red             */
-          g,                  /* green           */
-          b,                  /* blue            */
-          a;                  /* alpha           */
-   } color;
+    struct Color { /*                 (optional)  */
+        enum EColor status;
+        int r, /* red             */
+            g, /* green           */
+            b, /* blue            */
+            a; /* alpha           */
+    } color;
 };
 
-extern scrotnote note;
+extern ScrotNote note;
 
-void scrot_note_new(char *format);
+void scrotNoteNew(char*);
 
-void scrot_note_free(void);
+void scrotNoteFree(void);
 
-void scrot_note_draw(Imlib_Image im);
-
-#endif
+void scrotNoteDraw(Imlib_Image);

@@ -2,6 +2,7 @@
 
 Copyright 2020-2021 Daniel T. Borelli <daltomi@disroot.org>
 Copyright 2021      Martin C <martincation@protonmail.com>
+Copyright 2021      Peter Wu <peterwu@hotmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -29,40 +30,38 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     Part of the code comes from the main.c file and maintains its authorship.
 */
 
-#ifndef SCROT_SELECTION_H
-#define SCROT_SELECTION_H
+#pragma once
 
 #include <assert.h>
 
-#define LINE_MODE_CLASSIC       "classic"
-#define LINE_MODE_CLASSIC_LEN   7
-#define LINE_MODE_EDGE          "edge"
-#define LINE_MODE_EDGE_LEN      4
+#define LINE_MODE_CLASSIC "classic"
+#define LINE_MODE_CLASSIC_LEN 7
+#define LINE_MODE_EDGE "edge"
+#define LINE_MODE_EDGE_LEN 4
 
-struct selection_rect_t {
+struct SelectionRect {
     int x, y, w, h;
 };
 
-struct selection_classic_t;
-struct selection_edge_t;
+struct SelectionClassic;
+struct SelectionEdge;
 
-struct selection_t {
-    Cursor cur_cross, cur_angle_nw, cur_angle_ne, cur_angle_sw, cur_angle_se;
+struct Selection {
+    Cursor curCross, curAngleNW, curAngleNE, curAngleSW, curAngleSE;
 
-    struct selection_rect_t rect;
-    struct selection_classic_t* classic;
-    struct selection_edge_t* edge;
+    struct SelectionRect rect;
+    struct SelectionClassic* classic;
+    struct SelectionEdge* edge;
 
     void (*create)(void);
     void (*destroy)(void);
     void (*draw)(void);
-    void (*motion_draw)(int x0, int y0, int x1, int y1);
+    void (*motionDraw)(int, int, int, int);
 };
 
-void scrot_selection_create(void);
-void scrot_selection_destroy(void);
-void scrot_selection_draw(void);
-void scrot_selection_motion_draw(int x0, int y0, int x1, int y1);
-struct selection_rect_t* scrot_selection_get_rect(void);
-
-#endif
+void scrotSelectionCreate(void);
+void scrotSelectionDestroy(void);
+void scrotSelectionDraw(void);
+void scrotSelectionMotionDraw(int, int, int, int);
+struct SelectionRect* scrotSelectionGetRect(void);
+XColor scrotSelectionLineColor(void);
