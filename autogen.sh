@@ -31,7 +31,7 @@
 
 
 # Use clean option
-if [ "$1" = "clean" -a ! -e Makefile ]
+if [ "$1" = "clean" ] && [ ! -e Makefile ]
 then
     echo "Vanishing the code"
     rm -rf aclocal.m4 autom4te.cache/ compile configure depcomp install-sh \
@@ -40,7 +40,7 @@ then
 fi
 
 # Do not use clean option
-if [ "$1" = "clean" -a -e Makefile ]
+if [ "$1" = "clean" ] && [ -e Makefile ]
 then
     echo "I can not clean. Use '$ make distclean'."
     exit 0
