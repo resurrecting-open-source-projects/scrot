@@ -36,7 +36,7 @@ typedef struct ScrotListNode {
 
 typedef STAILQ_HEAD(ScrotLists, ScrotListNode) ScrotList;
 
-#define initializeScrotList(name)                       \
+#define initializeScrotList(name)                   \
     ScrotList name = STAILQ_HEAD_INITIALIZER(name); \
     STAILQ_INIT(&name);
 
