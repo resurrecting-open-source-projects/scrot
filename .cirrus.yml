@@ -48,7 +48,7 @@ task:
   install_script:
     - apk add autoconf autoconf-archive automake make pkgconfig clang gcc
               xorg-server-dev libxcomposite-dev libxext-dev libxfixes-dev
-              imlib2-dev musl-dev
+              imlib2-dev musl-dev bsd-compat-headers
   << : *common_script
 
 task:
