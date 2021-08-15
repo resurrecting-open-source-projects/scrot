@@ -4,12 +4,11 @@ AC_INIT([scrot], [1.6], [https://github.com/resurrecting-open-source-projects/sc
 		[],[https://github.com/resurrecting-open-source-projects/scrot])
 AC_CONFIG_SRCDIR([src/main.c])
 AM_INIT_AUTOMAKE(dist-bzip2)
-AC_CONFIG_HEADER([src/config.h])
+AC_CONFIG_HEADERS([src/config.h])
 AX_PREFIX_CONFIG_H([src/scrot_config.h])
 
 # Checks for programs.
 AC_PROG_CC
-AM_PROG_CC_STDC
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
@@ -39,18 +38,9 @@ AC_SUBST([CPPFLAGS], ["$X11_CFLAGS $XCOMPOSITE_CFLAGS $XEXT_CFLAGS \
     $XFIXES_CFLAGS $IMLIB2_CFLAGS $LIBBSD_CFLAGS $CPPFLAGS"])
 
 # Checks for header files.
-AC_PATH_X
 AC_CHECK_HEADERS([stdint.h sys/time.h unistd.h])
 
-# Checks for typedefs, structures, and compiler characteristics.
-AC_CHECK_HEADER_STDBOOL
-AC_C_INLINE
-AC_C_CONST
-AC_TYPE_SIZE_T
-AC_CHECK_TYPES([ptrdiff_t])
-
 # Required: Checks for library functions.
-AC_FUNC_MALLOC
 AC_CHECK_FUNCS([getopt_long getsubopt gethostname select strdup strerror strndup strtol],,
 	AC_MSG_ERROR([required functions are not present.]))
 

@@ -3,6 +3,7 @@
 #                                   scrot_sucks@linuxbrit.co.uk>
 # Copyright 2015-2019 Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 # Copyright 2019-2020 Daniel T. Borelli <daltomi@disroot.org>
+# Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to
@@ -26,14 +27,10 @@
 
 ## Process this file with automake to produce Makefile.in
 
-AUTOMAKE_OPTIONS = 1.4 foreign
+AUTOMAKE_OPTIONS = 1.10 foreign
 
 # A list of all the files in the current directory which can be regenerated
 MAINTAINERCLEANFILES = Makefile.in
-
-AM_LDFLAGS        = -L/usr/X11R6/lib -L/usr/lib -L/usr/local/lib
-AM_CPPFLAGS       = -I/usr/X11R6/include \
-$(X_CFLAGS) -I$(prefix)/include -I$(includedir) -I.
 
 man_MANS = man/scrot.1
 
