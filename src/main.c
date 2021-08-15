@@ -885,7 +885,7 @@ Imlib_Image scrotGrabStackWindows(void)
 
 Imlib_Image scrotGrabShotMulti(void)
 {
-    int screens= ScreenCount(disp);
+    int screens = ScreenCount(disp);
     if (screens < 2)
         return scrotGrabShot();
 
