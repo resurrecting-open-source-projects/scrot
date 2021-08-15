@@ -1028,7 +1028,7 @@ Imlib_Image scrot_grab_shot_monitor(void)
     Imlib_Image image = NULL;
 
     for (int i = 0; i < heads; i++) {
-#ifdef DEBUG
+//#ifdef DEBUG
             fprintf(stderr, "DEBUG: head:%d scr:%d %dx%d+%dx%d\n",
                     i,
                     info[i].screen_number,
@@ -1036,7 +1036,7 @@ Imlib_Image scrot_grab_shot_monitor(void)
                     info[i].y_org,
                     info[i].width,
                     info[i].height);
-#endif
+//#endif
         if (i == opt.monitor) {
             opt.autoselect_x = info[i].x_org;
             opt.autoselect_y = info[i].y_org;
