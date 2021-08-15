@@ -54,14 +54,6 @@ task:
 task:
   matrix:
     - container:
-        image: debian:oldstable
-      env:
-        OS: debian-oldstable
-    - container:
-        image: debian:stable
-      env:
-        OS: debian-stable
-    - container:
         image: debian:testing
       env:
         OS: debian-testing
