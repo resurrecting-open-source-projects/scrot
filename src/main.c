@@ -238,7 +238,7 @@ void scrotCheckIfOverwriteFile(char** filename)
     if (ext)
         nalloc += extLength; // .ext
 
-    newName = calloc(nalloc, sizeof(char));
+    newName = calloc(nalloc, sizeof(*newName));
 
     if (ext) {
         // Exclude ext
