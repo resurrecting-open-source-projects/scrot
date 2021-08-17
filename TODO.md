@@ -25,8 +25,8 @@ the web at [manpages.debian.org](https://manpages.debian.org/unstable/libbsd-dev
 BSD systems provide manuals for these functions in the default install.
 
 The following libbsd integration efforts are in progress:
-- Replace strncpy() and strcpy() calls with strlcpy().
-- Replace strcat() and strncat() calls with strlcat().
+- Replace strncpy() calls with strlcpy().
+- Replace strncat() calls with strlcat().
 - ~~Replace error exits with the err() family of functions.~~
 - ~~Replace local implementations of data structures with the sys/queue.h API.~~
 - Find places where other BSD functions can serve scrot well.

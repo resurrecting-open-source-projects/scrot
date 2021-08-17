@@ -721,28 +721,28 @@ char* imPrintf(char* str, struct tm* tm, char* filenameIM, char* filenameThumb, 
                 break;
             case 'f':
                 if (filenameIM)
-                    strcat(ret, filenameIM);
+                    strlcat(ret, filenameIM, sizeof(ret));
                 break;
             case 'm': /* t was already taken, so m as in mini */
                 if (filenameThumb)
-                    strcat(ret, filenameThumb);
+                    strlcat(ret, filenameThumb, sizeof(ret));
                 break;
             case 'n':
                 if (filenameIM) {
                     tmp = strrchr(filenameIM, '/');
                     if (tmp)
-                        strcat(ret, tmp + 1);
+                        strlcat(ret, tmp + 1, sizeof(ret));
                     else
-                        strcat(ret, filenameIM);
+                        strlcat(ret, filenameIM, sizeof(ret));
                 }
                 break;
             case 'w':
                 snprintf(buf, sizeof(buf), "%d", imlib_image_get_width());
-                strcat(ret, buf);
+                strlcat(ret, buf, sizeof(ret));
                 break;
             case 'h':
                 snprintf(buf, sizeof(buf), "%d", imlib_image_get_height());
-                strcat(ret, buf);
+                strlcat(ret, buf, sizeof(ret));
                 break;
             case 's':
                 if (filenameIM) {
@@ -751,26 +751,27 @@ char* imPrintf(char* str, struct tm* tm, char* filenameIM, char* filenameThumb, 
 
                         size = st.st_size;
                         snprintf(buf, sizeof(buf), "%d", size);
-                        strcat(ret, buf);
+                        strlcat(ret, buf, sizeof(ret));
                     } else
-                        strcat(ret, "[err]");
+                        strlcat(ret, "[err]", sizeof(ret));
                 }
                 break;
             case 'p':
                 snprintf(buf, sizeof(buf), "%d",
                     imlib_image_get_width() * imlib_image_get_height());
-                strcat(ret, buf);
+                strlcat(ret, buf, sizeof(ret));
                 break;
             case 't':
                 tmp = imlib_image_format();
                 if (tmp)
-                    strcat(ret, tmp);
+                    strlcat(ret, tmp, sizeof(ret));
                 break;
             case '$':
-                strcat(ret, "$");
+                strlcat(ret, "$", sizeof(ret));
                 break;
             default:
-                strncat(ret, c, 1);
+                snprintf(buf, sizeof(buf), "%.1s", c);
+                strlcat(ret, buf, sizeof(ret));
                 break;
             }
         } else if (*c == '\\') {
@@ -778,10 +779,11 @@ char* imPrintf(char* str, struct tm* tm, char* filenameIM, char* filenameThumb, 
             switch (*c) {
             case 'n':
                 if (filenameIM)
-                    strcat(ret, "\n");
+                    strlcat(ret, "\n", sizeof(ret));
                 break;
             default:
-                strncat(ret, c, 1);
+                snprintf(buf, sizeof(buf), "%.1s", c);
+                strlcat(ret, buf, sizeof(ret));
                 break;
             }
         } else {

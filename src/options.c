@@ -347,7 +347,7 @@ char* nameThumbnail(char* name)
     size_t diff = 0;
 
     length = strlen(name) + 7;
-    newTitle = malloc(length);
+    newTitle = calloc(length, sizeof(*newTitle));
 
     if (!newTitle)
         err(EXIT_FAILURE, "Unable to allocate thumbnail");
@@ -357,8 +357,8 @@ char* nameThumbnail(char* name)
         diff = (dotPos - name) / sizeof(char);
 
         strncpy(newTitle, name, diff);
-        strcat(newTitle, "-thumb");
-        strcat(newTitle, dotPos);
+        strlcat(newTitle, "-thumb", length);
+        strlcat(newTitle, dotPos, length);
     } else
         snprintf(newTitle, length, "%s-thumb", name);
 
