@@ -46,16 +46,21 @@ void selectionClassicCreate(void)
 
     struct SelectionClassic* pc = sel->classic;
 
+    unsigned long const whiteColor = XWhitePixel(disp, 0);
+    unsigned long const blackColor = XBlackPixel(disp, 0);
+
     pc->gcValues.function = GXxor;
-    pc->gcValues.foreground = XWhitePixel(disp, 0);
-    pc->gcValues.background = XBlackPixel(disp, 0);
+    pc->gcValues.foreground = whiteColor;
+    pc->gcValues.background = blackColor;
     pc->gcValues.plane_mask = pc->gcValues.background ^ pc->gcValues.foreground;
     pc->gcValues.subwindow_mode = IncludeInferiors;
 
     XColor color;
     scrotSelectionGetLineColor(&color);
 
-    pc->gcValues.foreground = color.pixel;
+    if (color.pixel != blackColor)
+        pc->gcValues.foreground = color.pixel;
+
     pc->gc = XCreateGC(disp, root,
         GCFunction | GCForeground | GCBackground | GCSubwindowMode,
         &pc->gcValues);
