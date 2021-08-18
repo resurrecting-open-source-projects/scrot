@@ -77,7 +77,6 @@ typedef void (*signalHandler)(int);
 void showUsage(void);
 void showVersion(void);
 void initXAndImlib(char*, int);
-char* chopFileFromFullPath(char*);
 Imlib_Image scrotGrabShot(void);
 void scrotExecApp(Imlib_Image, struct tm*, char*, char*);
 void scrotDoDelay(void);
