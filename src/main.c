@@ -87,7 +87,8 @@ int main(int argc, char** argv)
     if (opt.focused)
         image = scrotGrabFocused();
     else if (opt.select == SELECTION_MODE_CAPTURE
-        || opt.select == SELECTION_MODE_HIDE)
+        || opt.select == SELECTION_MODE_HIDE
+        || opt.select == SELECTION_MODE_HOLE)
 
         image = scrotSelAndGrabImage();
     else if (opt.autoselect)
@@ -531,7 +532,7 @@ Imlib_Image scrotSelAndGrabImage(void)
 
             // Not record pointer if there is a selection area because it is busy on that,
             // unless the delay option is used.
-            // In hidden selection mode it is always allowed.
+            // In hidden/hole selection mode it is always allowed.
             if (opt.delay == 0 && opt.select == SELECTION_MODE_CAPTURE)
                 opt.pointer = 0;
         } else {
@@ -551,7 +552,9 @@ Imlib_Image scrotSelAndGrabImage(void)
 
         if (opt.select == SELECTION_MODE_CAPTURE)
             im = imlib_create_image_from_drawable(0, rx, ry, rw, rh, 1);
-        else {
+        else if(opt.select == SELECTION_MODE_HIDE
+                || opt.select == SELECTION_MODE_HOLE) {
+
             assert(opt.lineColor != NULL);
 
             XColor color;
@@ -559,8 +562,21 @@ Imlib_Image scrotSelAndGrabImage(void)
 
             im = imlib_create_image_from_drawable(0, 0, 0, scr->width, scr->height, 1);
             imlib_context_set_image(im);
-            imlib_context_set_color(color.red, color.green, color.blue, 255);
-            imlib_image_fill_rectangle(rx, ry, rw, rh);
+
+            if (opt.select == SELECTION_MODE_HIDE) {
+                imlib_context_set_color(color.red, color.green, color.blue, 255);
+                imlib_image_fill_rectangle(rx, ry, rw, rh);
+            } else {
+                imlib_context_set_color(color.red, color.green, color.blue, 200);
+                imlib_image_fill_rectangle(0, 0, scr->width, scr->height);
+            }
+
+            if (opt.select == SELECTION_MODE_HOLE) {
+                Imlib_Image hole = imlib_create_image_from_drawable(0, rx, ry, rw, rh, 1);
+                imlib_blend_image_onto_image(hole, 0, 0, 0, rw, rh, rx, ry, rw, rh);
+                imlib_context_set_image(hole);
+                imlib_free_image_and_decache();
+            }
             pointerXOffset = 0;
             pointerYOffset = 0;
         }

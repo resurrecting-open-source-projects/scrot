@@ -88,13 +88,15 @@ SPECIAL STRINGS
 SELECTION ACTION
   When using -s, optionally you can indicate the action to perform with the selection area.
     capture         Capture the selection area, this action is by default.
+    hole            Highlight the selected area overshadowing the rest of the capture.
+                    The shadow color is the same as the line color, see SELECTION STYLE
     hide            Hide the selection area by drawing an area of color over it.
                     The color is the same as the selection line, see SELECTION STYLE
 
   Example:
 
     $ scrot --select=hide
-    $ scrot -shide
+    $ scrot -shole
 
 SELECTION STYLE
   When using -s, you can indicate the style of the line with -l.
