@@ -25,7 +25,7 @@ project, this is your opportunity.
 
 The original scrot went unmaintained; the source of the last version, 0.8, was
 [imported from Debian](https://snapshot.debian.org/package/scrot/). After,
-patches from Debian and elsewhere were applied to create the 0.9 release-the
+patches from Debian and elsewhere were applied to create the 0.9 release. The
 details of our releases are registered in the [ChangeLog](ChangeLog) file.
 Now, scrot is maintained by volunteers under [Resurrecting Open Source Projects](https://github.com/resurrecting-open-source-projects).
 
