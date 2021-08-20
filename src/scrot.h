@@ -66,6 +66,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <time.h>
 #include <unistd.h>
 
+#include "options.h"
 #include "note.h"
 #include "scrot_config.h"
 #include "scrot_selection.h"

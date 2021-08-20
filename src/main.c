@@ -39,7 +39,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#include "options.h"
 #include "scrot.h"
 #include <assert.h>
 
@@ -536,9 +535,6 @@ Imlib_Image scrotSelAndGrabImage(void)
             if (opt.delay == 0 && opt.select == SELECTION_MODE_CAPTURE)
                 opt.pointer = 0;
         } else {
-            if (opt.select == SELECTION_MODE_HIDE)
-                errx(EXIT_FAILURE, "option --select=hide: You must select an area");
-
             /* else it's a window click */
             if (!scrotGetGeometry(target, &rx, &ry, &rw, &rh))
                 return NULL;
@@ -563,13 +559,14 @@ Imlib_Image scrotSelAndGrabImage(void)
             im = imlib_create_image_from_drawable(0, 0, 0, scr->width, scr->height, 1);
             imlib_context_set_image(im);
 
-            if (opt.select == SELECTION_MODE_HIDE) {
-                imlib_context_set_color(color.red, color.green, color.blue, 255);
+            int const alpha = optionsParseRequireRange(opt.lineOpacity, 0, 255);
+
+            imlib_context_set_color(color.red, color.green, color.blue, alpha);
+
+            if (opt.select == SELECTION_MODE_HIDE)
                 imlib_image_fill_rectangle(rx, ry, rw, rh);
-            } else {
-                imlib_context_set_color(color.red, color.green, color.blue, 200);
+            else
                 imlib_image_fill_rectangle(0, 0, scr->width, scr->height);
-            }
 
             if (opt.select == SELECTION_MODE_HOLE) {
                 Imlib_Image hole = imlib_create_image_from_drawable(0, rx, ry, rw, rh, 1);
