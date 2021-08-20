@@ -553,10 +553,18 @@ Imlib_Image scrotSelAndGrabImage(void)
 
             assert(opt.lineColor != NULL);
 
+            Imlib_Image hole = NULL;
             XColor color;
             scrotSelectionGetLineColor(&color);
 
             im = imlib_create_image_from_drawable(0, 0, 0, scr->width, scr->height, 1);
+
+            if (opt.select == SELECTION_MODE_HOLE) {
+                hole = imlib_create_image(rw, rh);
+                imlib_context_set_image(hole);
+                imlib_blend_image_onto_image(im, 0, rx, ry, rw, rh, 0, 0, rw, rh);
+            }
+
             imlib_context_set_image(im);
 
             int const alpha = optionsParseRequireRange(opt.lineOpacity, 0, 255);
@@ -569,7 +577,6 @@ Imlib_Image scrotSelAndGrabImage(void)
                 imlib_image_fill_rectangle(0, 0, scr->width, scr->height);
 
             if (opt.select == SELECTION_MODE_HOLE) {
-                Imlib_Image hole = imlib_create_image_from_drawable(0, rx, ry, rw, rh, 1);
                 imlib_blend_image_onto_image(hole, 0, 0, 0, rw, rh, rx, ry, rw, rh);
                 imlib_context_set_image(hole);
                 imlib_free_image_and_decache();
