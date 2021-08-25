@@ -41,12 +41,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 enum {
     SELECTION_MODE_CAPTURE = 1,
-    SELECTION_MODE_HIDE = 2
+    SELECTION_MODE_HIDE = 2,
+    SELECTION_MODE_HOLE = 3
 };
 
 struct SelectionRect {
     int x, y, w, h;
 };
+
 
 struct SelectionClassic;
 struct SelectionEdge;
@@ -72,3 +74,5 @@ struct SelectionRect* scrotSelectionGetRect(void);
 void scrotSelectionGetLineColor(XColor*);
 Status scrotSelectionCreateNamedColor(char const*, XColor*);
 void scrotSelectionSetDefaultColorLine(void);
+bool scrotSelectionGetUserSel(struct SelectionRect*);
+Imlib_Image scrotSelectionSelectMode(void);

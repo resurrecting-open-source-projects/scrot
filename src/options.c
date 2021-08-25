@@ -87,6 +87,16 @@ static int nonNegativeNumber(int number)
     return (number < 0) ? 0 : number;
 }
 
+int optionsParseRequireRange(int n, int lo, int hi)
+{
+   return (n < lo ? lo : n > hi ? hi : n);
+}
+
+bool optionsParseIsString(char const* const str)
+{
+    return (str && (str[0] != '\0'));
+}
+
 static void optionsParseSelection(char const* optarg)
 {
     // the suboption it's optional
@@ -106,6 +116,8 @@ static void optionsParseSelection(char const* optarg)
         opt.select = SELECTION_MODE_CAPTURE;
     else if (!strncmp(value, "hide", 4))
         opt.select = SELECTION_MODE_HIDE;
+    else if (!strncmp(value, "hole", 4))
+        opt.select = SELECTION_MODE_HOLE;
     else
         errx(EXIT_FAILURE, "option --select: Unknown value for suboption '%s'", value);
 }
@@ -135,7 +147,7 @@ static void optionsParseLine(char* optarg)
     while (*subopts != '\0') {
         switch (getsubopt(&subopts, token, &value)) {
         case Style:
-            if (!value || *value == '\0')
+            if (!optionsParseIsString(value))
                 errx(EXIT_FAILURE, "Missing value for suboption '%s'",
                     token[Style]);
 
@@ -148,7 +160,7 @@ static void optionsParseLine(char* optarg)
                     token[Style], value);
             break;
         case Width:
-            if (!value)
+            if (!optionsParseIsString(value))
                 errx(EXIT_FAILURE, "Missing value for suboption '%s'",
                     token[Width]);
 
@@ -159,14 +171,14 @@ static void optionsParseLine(char* optarg)
                     "suboption '%s': %d", token[Width], opt.lineWidth);
             break;
         case Color:
-            if (!value || *value == '\0')
+            if (!optionsParseIsString(value))
                 errx(EXIT_FAILURE, "Missing value for suboption '%s'",
                     token[Color]);
 
             opt.lineColor = strdup(value);
             break;
         case Mode:
-            if (!value || *value == '\0')
+            if (!optionsParseIsString(value))
                 errx(EXIT_FAILURE, "Missing value for suboption '%s'",
                     token[Mode]);
 
@@ -181,15 +193,10 @@ static void optionsParseLine(char* optarg)
             opt.lineMode = strdup(value);
             break;
         case Opacity:
-            if (!value)
+            if (!optionsParseIsString(value))
                 errx(EXIT_FAILURE, "Missing value for suboption '%s'",
                     token[Opacity]);
-
             opt.lineOpacity = optionsParseRequiredNumber(value);
-
-            if (opt.lineOpacity < 10 || opt.lineOpacity > 100)
-                errx(EXIT_FAILURE, "Value of the range (10..100) for "
-                    "suboption '%s': %d", token[Opacity], opt.lineOpacity);
             break;
         default:
             errx(EXIT_FAILURE, "No match found for token: '%s'", value);

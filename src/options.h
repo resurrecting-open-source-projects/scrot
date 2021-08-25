@@ -78,4 +78,5 @@ void optionsParseDisplay(char*);
 void optionsParseNote(char*);
 int optionsParseRequiredNumber(char*);
 int optionsCompareWindowClassName(const char*);
+int optionsParseRequireRange(int, int, int);
 extern ScrotOptions opt;

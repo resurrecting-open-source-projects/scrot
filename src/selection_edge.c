@@ -58,7 +58,7 @@ static void waitUnmapWindowNotify(void)
     for (short i = 0; i < 30; ++i) {
         if (XCheckIfEvent(disp, &ev, &xeventUnmap, (XPointer) & (pe->wndDraw)))
             break;
-        usleep(8000);
+        usleep(40000);
     }
 }
 
@@ -84,7 +84,9 @@ void selectionEdgeCreate(void)
     pe->wndDraw = XCreateWindow(disp, root, 0, 0, WidthOfScreen(scr), HeightOfScreen(scr), 0,
         CopyFromParent, InputOutput, CopyFromParent, CWOverrideRedirect | CWBackPixel, &attr);
 
-    unsigned long opacity = opt.lineOpacity * ((unsigned)-1 / 100);
+    int const lineOpacity = optionsParseRequireRange(opt.lineOpacity, 10, 100);
+
+    unsigned long opacity = lineOpacity * ((unsigned)-1 / 100);
 
     XChangeProperty(disp, pe->wndDraw, XInternAtom(disp, "_NET_WM_WINDOW_OPACITY", False),
         XA_CARDINAL, 32, PropModeReplace,

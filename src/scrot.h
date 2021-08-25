@@ -66,6 +66,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <time.h>
 #include <unistd.h>
 
+#include "options.h"
 #include "note.h"
 #include "scrot_config.h"
 #include "scrot_selection.h"
@@ -80,7 +81,6 @@ void initXAndImlib(char*, int);
 Imlib_Image scrotGrabShot(void);
 void scrotExecApp(Imlib_Image, struct tm*, char*, char*);
 void scrotDoDelay(void);
-Imlib_Image scrotSelAndGrabImage(void);
 Imlib_Image scrotGrabFocused(void);
 Imlib_Image scrotGrabAutoselect(void);
 void scrotSelArea(int*, int*, int*, int*);
