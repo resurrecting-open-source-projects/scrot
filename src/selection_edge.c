@@ -58,7 +58,7 @@ static void waitUnmapWindowNotify(void)
     for (short i = 0; i < 30; ++i) {
         if (XCheckIfEvent(disp, &ev, &xeventUnmap, (XPointer) & (pe->wndDraw)))
             break;
-        usleep(8000);
+        usleep(40000);
     }
 }
 
