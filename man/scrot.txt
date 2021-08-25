@@ -50,7 +50,7 @@ OPTIONS
   -S, --script CMD          CMD is an imlib2 script.
   -s, --select OPT          Interactively select a window or rectangle with the
                             mouse, use the arrow keys to resize. See the -l and
-                            -f options. OPT it's optional; see SELECTION ACTION
+                            -f options. OPT it's optional; see SELECTION MODE
   -t, --thumb NUM | GEOM    Also generate a thumbnail. The argument is the
                             resolution of the thumbnail, it may be a percentage
                             NUM or a resolution GEOM. Examples: 10, 25, 320x240,
@@ -85,18 +85,19 @@ SPECIAL STRINGS
   This would create a PNG file with a name similar to 2000-10-30_2560x1024.png
   and optimize it with optipng(1).
 
-SELECTION ACTION
+SELECTION MODE
   When using -s, optionally you can indicate the action to perform with the selection area.
     capture         Capture the selection area, this action is by default.
     hole            Highlight the selected area overshadowing the rest of the capture.
-                    The shadow color is the same as the line color, see SELECTION STYLE
     hide            Hide the selection area by drawing an area of color over it.
-                    The color is the same as the selection line, see SELECTION STYLE
+
+  In both modes(hole/hide) the opacity and the color of the area is indicated by
+  the "opacity" and "color" property of the line style, SELECTION STYLE
 
   Example:
 
     $ scrot --select=hide
-    $ scrot -shole
+    $ scrot -shole --line color="Dark Salmon",opacity=200
 
 SELECTION STYLE
   When using -s, you can indicate the style of the line with -l.
@@ -111,9 +112,10 @@ SELECTION STYLE
                     hexadecimal numbers which represent red, green, and
                     blue respectively. Examples: #FF0000 (red), #E0FFFF
                     (light cyan), #000000 (black).
-    opacity=NUM     NUM is a percentage between 10 and 100 inclusive. 100
-                    means 100% opaque, 10 means 10% opaque. This is only
-                    effective if a Composite Manager is running.
+    opacity=NUM     NUM is between 0 and 255 inclusive. 255 means
+                    100% opaque, 0 means 100% transparent. For the
+                    opacity of the line this is only effective if a
+                    Composite Manager is running.
     mode=MODE       MODE is either "edge" or "classic" without quotes.
                     edge is the new selection, classic uses the old one.
                     "edge" ignores the style specifier and the -f flag,
