@@ -81,7 +81,6 @@ void initXAndImlib(char*, int);
 Imlib_Image scrotGrabShot(void);
 void scrotExecApp(Imlib_Image, struct tm*, char*, char*);
 void scrotDoDelay(void);
-Imlib_Image scrotSelAndGrabImage(void);
 Imlib_Image scrotGrabFocused(void);
 Imlib_Image scrotGrabAutoselect(void);
 void scrotSelArea(int*, int*, int*, int*);

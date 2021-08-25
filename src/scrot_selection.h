@@ -49,6 +49,7 @@ struct SelectionRect {
     int x, y, w, h;
 };
 
+
 struct SelectionClassic;
 struct SelectionEdge;
 
@@ -73,3 +74,5 @@ struct SelectionRect* scrotSelectionGetRect(void);
 void scrotSelectionGetLineColor(XColor*);
 Status scrotSelectionCreateNamedColor(char const*, XColor*);
 void scrotSelectionSetDefaultColorLine(void);
+bool scrotSelectionGetUserSel(struct SelectionRect*);
+Imlib_Image scrotSelectionSelectMode(void);
