@@ -136,7 +136,7 @@ NOTE FORMAT
     -t  'text'
     -x  position (optional)
     -y  position (optional)
-    -c  color(RGBA) (optional)
+    -c  color(RGBA, range 0..255) (optional)
     -a  angle (optional)
 
   Example:
