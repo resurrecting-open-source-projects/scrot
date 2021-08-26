@@ -1,6 +1,6 @@
 /* note.c
 
-Copyright 2019-2020 Daniel T. Borelli <daltomi@disroot.org>
+Copyright 2019-2021 Daniel T. Borelli <daltomi@disroot.org>
 Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 
@@ -32,6 +32,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "scrot.h"
 
+enum { // default color
+    DEF_COLOR_RED = 0,
+    DEF_COLOR_GREEN = 0,
+    DEF_COLOR_BLUE = 0,
+    DEF_COLOR_ALPHA = 255
+};
+
 ScrotNote note;
 
 static Imlib_Font imFont = NULL;
@@ -60,8 +67,11 @@ void scrotNoteNew(char* format)
 {
     scrotNoteFree();
 
-    note = (ScrotNote) { NULL, NULL, 0, 0, 0.0,
-        { ColorOptional, 0, 0, 0, 0 } };
+    note = (ScrotNote) {
+        NULL, NULL, 0, 0, 0.0,
+        { DEF_COLOR_RED, DEF_COLOR_GREEN,
+          DEF_COLOR_BLUE, DEF_COLOR_ALPHA }
+    };
 
     char* const end = format + strlen(format);
 
@@ -123,18 +133,11 @@ void scrotNoteNew(char* format)
 
             int numberColors = 0;
 
-            note.color.status = ColorOK;
-
             while (c) {
                 token = c;
 
-                int color = optionsParseRequiredNumber(c);
-
-                if ((color < 0) || color > 255) {
-                    warnx("Error --note option : color '%d' out of range 0..255", color);
-                    note.color.status = ColorError;
-                    break;
-                }
+                int const color = optionsParseRequireRange(
+                        optionsParseRequiredNumber(c), 0 ,255);
 
                 switch (++numberColors) {
                 case 1:
@@ -154,10 +157,8 @@ void scrotNoteNew(char* format)
                 c = strtok_r(NULL, ",", &savePtr);
             }
 
-            if (numberColors != 4) {
-                warnx("Error --note option : Malformed syntax for -c");
-                note.color.status = ColorError;
-            }
+            if (numberColors > 4)
+                 warnx("Warning --note option : Malformed syntax for -c");
             break;
         default:
             errx(EXIT_FAILURE, "Error --note option : unknown option: '-%c'", type);
@@ -196,11 +197,10 @@ void scrotNoteDraw(Imlib_Image im)
     imlib_context_set_direction(IMLIB_TEXT_TO_ANGLE);
     imlib_context_set_angle(note.angle);
 
-    if (note.color.status == ColorOK)
-        imlib_context_set_color(note.color.r,
-            note.color.g,
-            note.color.b,
-            note.color.a);
+    imlib_context_set_color(note.color.r,
+        note.color.g,
+        note.color.b,
+        note.color.a);
 
     imlib_text_draw(note.x, note.y, note.text);
 }
