@@ -101,11 +101,11 @@ int main(int argc, char** argv)
             image = scrotGrabShot();
     }
 
-    if (opt.note)
-        scrotNoteDraw(image);
-
     if (!image)
         err(EXIT_FAILURE, "no image grabbed");
+
+    if (opt.note)
+        scrotNoteDraw(image);
 
     time(&t); /* Get the time directly after the screenshot */
     tm = localtime(&t);
@@ -155,9 +155,6 @@ int main(int argc, char** argv)
         if (!thumbnail)
             err(EXIT_FAILURE, "unable to create thumbnail");
         else {
-            if (opt.note)
-                scrotNoteDraw(image);
-
             scrotHaveFileExtension(opt.thumbFile, &haveExtension);
             imlib_context_set_image(thumbnail);
             if (!haveExtension)
@@ -165,9 +162,6 @@ int main(int argc, char** argv)
 
             filenameThumb = imPrintf(opt.thumbFile, tm, NULL, NULL, thumbnail);
             scrotCheckIfOverwriteFile(&filenameThumb);
-
-            applyFilterIfRequired();
-
             imlib_save_image_with_error_return(filenameThumb, &imErr);
             imlib_free_image_and_decache();
 
