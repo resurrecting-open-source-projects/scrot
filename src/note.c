@@ -177,6 +177,7 @@ void scrotNoteFree(void)
 {
     if (note.text)
         pfree(&note.text);
+
     if (note.font)
         pfree(&note.font);
 

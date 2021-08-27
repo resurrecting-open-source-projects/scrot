@@ -45,6 +45,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 /* atexit register func. */
 static void uninitXAndImlib(void)
 {
+    if (opt.note)
+        scrotNoteFree();
+
     if (disp) {
         XCloseDisplay(disp);
         disp = NULL;
