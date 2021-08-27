@@ -213,6 +213,31 @@ static void optionsParseWindowClassName(const char* windowClassName)
         opt.windowClassName = strndup(windowClassName, MAX_LEN_WINDOW_CLASS_NAME);
 }
 
+static char* getPathOfStdout(void)
+{
+    // Linux system
+    char const* const path = "/dev/stdout";
+    errno = 0;
+
+    if (-1 == access(path, W_OK)) {
+        warn("access to stdout failed: %s", path);
+        // Others system
+        char path[12];
+        size_t const len = sizeof(path);
+
+        snprintf(path, len, "/dev/fd/%d", STDOUT_FILENO);
+        path[len - 1] = '\0';
+
+        errno = 0;
+        if (-1 == access(path, W_OK)) {
+            // We quit because imlib2 will fail later anyway.
+            err(EXIT_FAILURE, "access to stdout failed: %s", path);
+        }
+        return strndup(path, len);
+    }
+    return strdup(path);
+}
+
 void optionsParse(int argc, char** argv)
 {
     static char stropts[] = "a:ofpbcd:e:hmq:s::t:uvzn:l:D:kC:S:";
@@ -331,6 +356,14 @@ void optionsParse(int argc, char** argv)
            name, we grab all the files in there, but not subdirs */
         if (!opt.outputFile) {
             opt.outputFile = argv[optind++];
+
+            bool const redirectChar = ( opt.outputFile[0] == '-'
+                                        && opt.outputFile[1] == '\0');
+            if (redirectChar) {
+                opt.outputFile = getPathOfStdout();
+                opt.overwrite = 1;
+                opt.thumb = 0;
+            }
 
             if (strlen(opt.outputFile) > MAX_OUTPUT_FILENAME)
                errx(EXIT_FAILURE,"output filename too long, must be "
