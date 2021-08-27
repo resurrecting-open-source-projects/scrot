@@ -159,11 +159,9 @@ int main(int argc, char** argv)
                 scrotNoteDraw(image);
 
             scrotHaveFileExtension(opt.thumbFile, &haveExtension);
-
-            if (!haveExtension) {
-                imlib_context_set_image(thumbnail);
+            imlib_context_set_image(thumbnail);
+            if (!haveExtension)
                 imlib_image_set_format("png");
-            }
 
             filenameThumb = imPrintf(opt.thumbFile, tm, NULL, NULL, thumbnail);
             scrotCheckIfOverwriteFile(&filenameThumb);
@@ -171,12 +169,16 @@ int main(int argc, char** argv)
             applyFilterIfRequired();
 
             imlib_save_image_with_error_return(filenameThumb, &imErr);
+            imlib_free_image_and_decache();
+
             if (imErr)
                 err(EXIT_FAILURE, "Saving thumbnail %s failed", filenameThumb);
         }
     }
     if (opt.exec)
         scrotExecApp(image, tm, filenameIM, filenameThumb);
+
+    imlib_context_set_image(image);
     imlib_free_image_and_decache();
 
     return 0;
