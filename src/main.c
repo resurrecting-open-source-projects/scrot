@@ -164,9 +164,6 @@ int main(int argc, char** argv)
 
             filenameThumb = imPrintf(opt.thumbFile, tm, NULL, NULL, thumbnail);
             scrotCheckIfOverwriteFile(&filenameThumb);
-
-            applyFilterIfRequired();
-
             imlib_save_image_with_error_return(filenameThumb, &imErr);
             if (imErr)
                 err(EXIT_FAILURE, "Saving thumbnail %s failed", filenameThumb);
