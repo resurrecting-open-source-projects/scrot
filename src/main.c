@@ -458,10 +458,13 @@ int scrotGetGeometry(Window target, int* rx, int* ry, int* rw, int* rh)
                Some windows never send the event, a time limit is placed.
             */
             XSelectInput(disp, target, FocusChangeMask);
+
+            struct timespec delay = {0, 10000000L}; // 10ms
+
             for (short i = 0; i < 30; ++i) {
                 if (XCheckIfEvent(disp, &ev, &scrotXEventVisibility, (XPointer)&target))
                     break;
-                usleep(2000);
+                nanosleep(&delay, NULL);
             }
         }
     }
