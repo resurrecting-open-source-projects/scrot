@@ -55,7 +55,7 @@ static void waitUnmapWindowNotify(void)
 
     XUnmapWindow(disp, pe->wndDraw);
 
-    struct timespec delay = {0, 50000000L}; // 50ms
+    struct timespec delay = {0, 80000000L}; // 80ms
 
     for (short i = 0; i < 30; ++i) {
         if (XCheckIfEvent(disp, &ev, &xeventUnmap, (XPointer) & (pe->wndDraw)))
