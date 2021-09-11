@@ -213,29 +213,28 @@ static void optionsParseWindowClassName(const char* windowClassName)
         opt.windowClassName = strndup(windowClassName, MAX_LEN_WINDOW_CLASS_NAME);
 }
 
+static bool accessFileOk(char* pathName)
+{
+    errno = 0;
+    return (0 == access(pathName, W_OK));
+}
+
 static char* getPathOfStdout(void)
 {
     // Linux system
-    char const* const path = "/dev/stdout";
-    errno = 0;
+    char path[12] = {"/dev/stdout"};
+    size_t const len = sizeof(path);
 
-    if (-1 == access(path, W_OK)) {
-        warn("access to stdout failed: %s", path);
+    if (!accessFileOk(path)) {
         // Others system
-        char path[12];
-        size_t const len = sizeof(path);
-
         snprintf(path, len, "/dev/fd/%d", STDOUT_FILENO);
-        path[len - 1] = '\0';
 
-        errno = 0;
-        if (-1 == access(path, W_OK)) {
+        if (!accessFileOk(path)) {
             // We quit because imlib2 will fail later anyway.
             err(EXIT_FAILURE, "access to stdout failed: %s", path);
         }
-        return strndup(path, len);
     }
-    return strdup(path);
+    return strndup(path, len);
 }
 
 void optionsParse(int argc, char** argv)
