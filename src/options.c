@@ -213,19 +213,6 @@ static void optionsParseWindowClassName(const char* windowClassName)
         opt.windowClassName = strndup(windowClassName, MAX_LEN_WINDOW_CLASS_NAME);
 }
 
-void optionsParseFileName(char* fileName)
-{
-    warnx("fileName is: %s", fileName);
-    opt.outputFile = fileName;
-
-    if (strlen(opt.outputFile) > MAX_OUTPUT_FILENAME)
-        errx(EXIT_FAILURE,"output filename too long, must be "
-            "less than %d characters", MAX_OUTPUT_FILENAME);
-
-    if (opt.thumb)
-        opt.thumbFile = nameThumbnail(opt.outputFile);
-}
-
 void optionsParse(int argc, char** argv)
 {
     static char stropts[] = "a:ofpbcd:e:hmq:s::t:uvzn:l:D:kC:S:F:";
@@ -379,6 +366,19 @@ char* nameThumbnail(char* name)
         snprintf(newTitle, length, "%s-thumb", name);
 
     return newTitle;
+}
+
+void optionsParseFileName(char* fileName)
+{
+    warnx("fileName is: %s", fileName);
+    opt.outputFile = fileName;
+
+    if (strlen(opt.outputFile) > MAX_OUTPUT_FILENAME)
+        errx(EXIT_FAILURE,"output filename too long, must be "
+            "less than %d characters", MAX_OUTPUT_FILENAME);
+
+    if (opt.thumb)
+        opt.thumbFile = nameThumbnail(opt.outputFile);
 }
 
 void optionsParseAutoselect(char* optarg)
