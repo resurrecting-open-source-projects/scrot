@@ -244,7 +244,7 @@ void optionsParse(int argc, char** argv)
         { "line", required_argument, 0, 'l' },
         { "class", required_argument, 0, 'C' },
         { "script", required_argument, 0, 'S' },
-        { "file", required_argument, 0, 'F', },
+        { "file", required_argument, 0, 'F' },
         { 0, 0, 0, 0 }
     };
     int optch = 0, cmdx = 0;
