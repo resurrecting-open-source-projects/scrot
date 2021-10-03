@@ -339,6 +339,9 @@ void optionsParse(int argc, char** argv)
             warnx("unrecognised option %s", argv[optind++]);
     }
 
+    if (opt.thumb)
+        opt.thumbFile = nameThumbnail(opt.outputFile);
+
     /* So that we can safely be called again */
     optind = 1;
 }
@@ -438,9 +441,6 @@ void optionsParseFileName(char* fileName)
     if (strlen(opt.outputFile) > MAX_OUTPUT_FILENAME)
         errx(EXIT_FAILURE,"output filename too long, must be "
             "less than %d characters", MAX_OUTPUT_FILENAME);
-
-    if (opt.thumb)
-        opt.thumbFile = nameThumbnail(opt.outputFile);
 }
 
 void optionsParseNote(char* optarg)
@@ -479,7 +479,7 @@ void showUsage(void)
     fputs(/* Check that everything lines up after any changes. */
         "usage:  " SCROT_PACKAGE " [-bcfhkmopsuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY]"
         "\n"
-        "              [-f FILE] [-d SEC] [-e CMD] [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] \n"
+        "              [-F FILE] [-d SEC] [-e CMD] [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] \n"
         "              [-t NUM | GEOM] [FILE]\n",
         stdout);
     exit(0);

@@ -3,7 +3,7 @@ NAME
 
 SYNOPSIS
   scrot [-bcfhkmopsuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY] [-d SEC] [-e CMD]
-        [-f FILE] [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] [-t NUM | GEOM] [FILE]
+        [-F FILE] [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] [-t NUM | GEOM] [FILE]
 
 DESCRIPTION
   scrot (SCReenshOT) is a simple command line screen capture utility, it uses
