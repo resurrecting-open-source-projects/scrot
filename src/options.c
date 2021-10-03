@@ -213,8 +213,9 @@ static void optionsParseWindowClassName(const char* windowClassName)
         opt.windowClassName = strndup(windowClassName, MAX_LEN_WINDOW_CLASS_NAME);
 }
 
-static void optionsParseFileName(char* fileName)
+void optionsParseFileName(char* fileName)
 {
+    warnx("fileName is: %s", fileName);
     opt.outputFile = fileName;
 
     if (strlen(opt.outputFile) > MAX_OUTPUT_FILENAME)
