@@ -215,7 +215,7 @@ static void optionsParseWindowClassName(const char* windowClassName)
 
 static void optionsParseFileName(char* fileName)
 {
-    opt.outputFile = strdup(fileName);
+    opt.outputFile = fileName;
 
     if (strlen(opt.outputFile) > MAX_OUTPUT_FILENAME)
         errx(EXIT_FAILURE,"output filename too long, must be "
