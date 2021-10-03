@@ -369,17 +369,6 @@ char* nameThumbnail(char* name)
     return newTitle;
 }
 
-void optionsParseFileName(char* fileName)
-{
-    opt.outputFile = fileName;
-
-    if (strlen(opt.outputFile) > MAX_OUTPUT_FILENAME)
-        errx(EXIT_FAILURE,"output filename too long, must be "
-            "less than %d characters", MAX_OUTPUT_FILENAME);
-
-    if (opt.thumb)
-        opt.thumbFile = nameThumbnail(opt.outputFile);
-}
 
 void optionsParseAutoselect(char* optarg)
 {
@@ -440,6 +429,18 @@ void optionsParseThumbnail(char* optarg)
         else if (opt.thumb > 100)
             opt.thumb = 100;
     }
+}
+
+void optionsParseFileName(char* fileName)
+{
+    opt.outputFile = fileName;
+
+    if (strlen(opt.outputFile) > MAX_OUTPUT_FILENAME)
+        errx(EXIT_FAILURE,"output filename too long, must be "
+            "less than %d characters", MAX_OUTPUT_FILENAME);
+
+    if (opt.thumb)
+        opt.thumbFile = nameThumbnail(opt.outputFile);
 }
 
 void optionsParseNote(char* optarg)
