@@ -15,6 +15,7 @@ Copyright 2020      Sean Brennan <zettix1@gmail.com>
 Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
 Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
+Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -215,7 +216,7 @@ static void optionsParseWindowClassName(const char* windowClassName)
 
 void optionsParse(int argc, char** argv)
 {
-    static char stropts[] = "a:ofpbcd:e:hmq:s::t:uvzn:l:D:kC:S:";
+    static char stropts[] = "a:ofpbcd:e:hmq:s::t:uvzn:l:D:kC:S:F:";
 
     static struct option lopts[] = {
         /* actions */
@@ -243,6 +244,7 @@ void optionsParse(int argc, char** argv)
         { "line", required_argument, 0, 'l' },
         { "class", required_argument, 0, 'C' },
         { "script", required_argument, 0, 'S' },
+        { "file", required_argument, 0, 'F' },
         { 0, 0, 0, 0 }
     };
     int optch = 0, cmdx = 0;
@@ -318,6 +320,9 @@ void optionsParse(int argc, char** argv)
         case 'S':
             opt.script = strdup(optarg);
             break;
+        case 'F':
+            optionsParseFileName(optarg);
+            break;
         case '?':
             exit(EXIT_FAILURE);
         default:
@@ -330,17 +335,13 @@ void optionsParse(int argc, char** argv)
         /* If recursive is NOT set, but the only argument is a directory
            name, we grab all the files in there, but not subdirs */
         if (!opt.outputFile) {
-            opt.outputFile = argv[optind++];
-
-            if (strlen(opt.outputFile) > MAX_OUTPUT_FILENAME)
-               errx(EXIT_FAILURE,"output filename too long, must be "
-                    "less than %d characters", MAX_OUTPUT_FILENAME);
-
-            if (opt.thumb)
-                opt.thumbFile = nameThumbnail(opt.outputFile);
+            optionsParseFileName(argv[optind++]);
         } else
             warnx("unrecognised option %s", argv[optind++]);
     }
+
+    if (opt.thumb && opt.outputFile)
+        opt.thumbFile = nameThumbnail(opt.outputFile);
 
     /* So that we can safely be called again */
     optind = 1;
@@ -371,6 +372,7 @@ char* nameThumbnail(char* name)
 
     return newTitle;
 }
+
 
 void optionsParseAutoselect(char* optarg)
 {
@@ -433,6 +435,15 @@ void optionsParseThumbnail(char* optarg)
     }
 }
 
+void optionsParseFileName(char* fileName)
+{
+    opt.outputFile = fileName;
+
+    if (strlen(opt.outputFile) > MAX_OUTPUT_FILENAME)
+        errx(EXIT_FAILURE,"output filename too long, must be "
+            "less than %d characters", MAX_OUTPUT_FILENAME);
+}
+
 void optionsParseNote(char* optarg)
 {
     opt.note = strdup(optarg);
@@ -469,7 +480,7 @@ void showUsage(void)
     fputs(/* Check that everything lines up after any changes. */
         "usage:  " SCROT_PACKAGE " [-bcfhkmopsuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY]"
         "\n"
-        "              [-d SEC] [-e CMD] [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] \n"
+        "              [-F FILE] [-d SEC] [-e CMD] [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] \n"
         "              [-t NUM | GEOM] [FILE]\n",
         stdout);
     exit(0);
