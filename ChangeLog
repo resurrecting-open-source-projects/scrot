@@ -1,3 +1,10 @@
+Sun Oct 03 01:50:00 -03:00 2021  IFo Hancroft <contact@ifohancroft.com>
+Version 1.6.1
+
+  [ IFo Hancroft ] alias @ifohancroft
+
+  * New option --file (-F): Ability to pass the filename as an option.
+
 Sun Jul 25 23:30:00 -03:00 2021  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 Version 1.6
 

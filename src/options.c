@@ -479,7 +479,7 @@ void showUsage(void)
     fputs(/* Check that everything lines up after any changes. */
         "usage:  " SCROT_PACKAGE " [-bcfhkmopsuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY]"
         "\n"
-        "              [-d SEC] [-e CMD] [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] \n"
+        "              [-f FILE] [-d SEC] [-e CMD] [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] \n"
         "              [-t NUM | GEOM] [FILE]\n",
         stdout);
     exit(0);

@@ -3,7 +3,7 @@ NAME
 
 SYNOPSIS
   scrot [-bcfhkmopsuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY] [-d SEC] [-e CMD]
-        [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] [-t NUM | GEOM] [FILE]
+        [-f FILE] [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] [-t NUM | GEOM] [FILE]
 
 DESCRIPTION
   scrot (SCReenshOT) is a simple command line screen capture utility, it uses
@@ -31,6 +31,7 @@ OPTIONS
   -d, --delay SEC           Wait SEC seconds before taking a shot.
   -e, --exec CMD            Execute CMD on the saved image.
   -f, --freeze              Freeze the screen when -s is used.
+  -F, --file                File name. See SPECIAL STRINGS.
   -h, --help                Display help and exit.
   -k, --stack               Capture stack/overlapped windows and join them. A
                             running Composite Manager is needed.
@@ -60,7 +61,7 @@ OPTIONS
   -z, --silent              Prevent beeping.
 
 SPECIAL STRINGS
-  Both the -e and FILE parameters can take format specifiers that are expanded
+  -e, -F and FILE parameters can take format specifiers that are expanded
   by scrot when encountered. There are two types of format specifier:
   Characters preceded by a '%' are interpreted by strftime(2). The second kind
   are internal to scrot and are prefixed by '$'. The following specifiers are
