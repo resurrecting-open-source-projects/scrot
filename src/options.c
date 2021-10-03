@@ -332,7 +332,7 @@ void optionsParse(int argc, char** argv)
             opt.script = strdup(optarg);
             break;
         case 'F':
-            opt.outputFile = optionsParseFileName(optarg);
+            optionsParseFileName(optarg);
         case '?':
             exit(EXIT_FAILURE);
         default:
