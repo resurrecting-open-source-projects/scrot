@@ -341,10 +341,6 @@ void optionsParse(int argc, char** argv)
 
     /* So that we can safely be called again */
     optind = 1;
-
-    warnx("fileName is: %s", opt.outputFile);
-    warnx("thumbnail is: %s", opt.thumb);
-    warnx("thumbnailFile is: %s", opt.thumbFile);
 }
 
 char* nameThumbnail(char* name)
