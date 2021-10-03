@@ -213,9 +213,21 @@ static void optionsParseWindowClassName(const char* windowClassName)
         opt.windowClassName = strndup(windowClassName, MAX_LEN_WINDOW_CLASS_NAME);
 }
 
+static void optionsParseFileName(const char* fileName)
+{
+    opt.outputFile = fileName;
+
+    if (strlen(opt.outputFile) > MAX_OUTPUT_FILENAME)
+        errx(EXIT_FAILURE,"output filename too long, must be "
+            "less than %d characters", MAX_OUTPUT_FILENAME);
+
+    if (opt.thumb)
+        opt.thumbFile = nameThumbnail(opt.outputFile);
+}
+
 void optionsParse(int argc, char** argv)
 {
-    static char stropts[] = "a:ofpbcd:e:hmq:s::t:uvzn:l:D:kC:S:";
+    static char stropts[] = "a:ofpbcd:e:hmq:s::t:uvzn:l:D:kC:S:F:";
 
     static struct option lopts[] = {
         /* actions */
@@ -243,6 +255,7 @@ void optionsParse(int argc, char** argv)
         { "line", required_argument, 0, 'l' },
         { "class", required_argument, 0, 'C' },
         { "script", required_argument, 0, 'S' },
+        { "file", required_argumen, 0, 'F', },
         { 0, 0, 0, 0 }
     };
     int optch = 0, cmdx = 0;
@@ -318,6 +331,8 @@ void optionsParse(int argc, char** argv)
         case 'S':
             opt.script = strdup(optarg);
             break;
+        case 'F':
+            opt.outputFile = optionsParseFileName(optarg);
         case '?':
             exit(EXIT_FAILURE);
         default:
@@ -330,14 +345,7 @@ void optionsParse(int argc, char** argv)
         /* If recursive is NOT set, but the only argument is a directory
            name, we grab all the files in there, but not subdirs */
         if (!opt.outputFile) {
-            opt.outputFile = argv[optind++];
-
-            if (strlen(opt.outputFile) > MAX_OUTPUT_FILENAME)
-               errx(EXIT_FAILURE,"output filename too long, must be "
-                    "less than %d characters", MAX_OUTPUT_FILENAME);
-
-            if (opt.thumb)
-                opt.thumbFile = nameThumbnail(opt.outputFile);
+            optionsParseFileName(argv[optind++]);
         } else
             warnx("unrecognised option %s", argv[optind++]);
     }
