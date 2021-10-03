@@ -328,6 +328,9 @@ void optionsParse(int argc, char** argv)
         }
     }
 
+    warnx("fileName is: %s", opt.outputFile);
+    warnx("thumbnail is: %s", opt.thumb);
+    warnx("thumbnailFile is: %s", opt.thumbFile);
     /* Now the leftovers, which must be files */
     while (optind < argc) {
         /* If recursive is NOT set, but the only argument is a directory
@@ -370,7 +373,6 @@ char* nameThumbnail(char* name)
 
 void optionsParseFileName(char* fileName)
 {
-    warnx("fileName is: %s", fileName);
     opt.outputFile = fileName;
 
     if (strlen(opt.outputFile) > MAX_OUTPUT_FILENAME)
