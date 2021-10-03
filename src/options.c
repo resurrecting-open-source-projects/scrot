@@ -321,6 +321,7 @@ void optionsParse(int argc, char** argv)
             break;
         case 'F':
             optionsParseFileName(optarg);
+            break;
         case '?':
             exit(EXIT_FAILURE);
         default:
