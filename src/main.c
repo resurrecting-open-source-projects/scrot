@@ -17,6 +17,7 @@ Copyright 2021      c0dev0id <sh+github@codevoid.de>
 Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
 Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
+Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -259,9 +260,10 @@ void scrotCheckIfOverwriteFile(char** filename)
     free(*filename);
     *filename = newName;
 
-    if (counter == maxCounter)
+    if (counter == maxCounter) {
         errx(EXIT_FAILURE, "scrot can no longer generate new file names.\n"
             "The last attempt is %s", newName);
+    }
 }
 
 int scrotMatchWindowClassName(Window target)
