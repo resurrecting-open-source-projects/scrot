@@ -435,13 +435,13 @@ void optionsParseThumbnail(char* optarg)
     }
 }
 
-void optionsParseFileName(char* fileName)
+void optionsParseFileName(char* optarg)
 {
-    opt.outputFile = fileName;
-
-    if (strlen(opt.outputFile) > MAX_OUTPUT_FILENAME)
+    opt.outputFile = strdup(optarg);
+    if (strlen(opt.outputFile) > MAX_OUTPUT_FILENAME) {
         errx(EXIT_FAILURE,"output filename too long, must be "
             "less than %d characters", MAX_OUTPUT_FILENAME);
+    }
 }
 
 void optionsParseNote(char* optarg)
