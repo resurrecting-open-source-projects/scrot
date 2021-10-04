@@ -78,10 +78,10 @@ void scrotNoteNew(char* format)
     char* token = strpbrk(format, "-");
 
     if (!token || (strlen(token) == 1)) {
-    malformed:
+        malformed:
 
-        pfree(&format);
-        errx(EXIT_FAILURE, "Error --note option : Malformed syntax.");
+            pfree(&format);
+            errx(EXIT_FAILURE, "Error --note option : Malformed syntax.");
     }
 
     while (token) {

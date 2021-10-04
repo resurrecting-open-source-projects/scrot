@@ -148,9 +148,10 @@ static void optionsParseLine(char* optarg)
     while (*subopts != '\0') {
         switch (getsubopt(&subopts, token, &value)) {
         case Style:
-            if (!optionsParseIsString(value))
+            if (!optionsParseIsString(value)) {
                 errx(EXIT_FAILURE, "Missing value for suboption '%s'",
                     token[Style]);
+            }
 
             if (!strncmp(value, "dash", 4))
                 opt.lineStyle = LineOnOffDash;
@@ -161,42 +162,48 @@ static void optionsParseLine(char* optarg)
                     token[Style], value);
             break;
         case Width:
-            if (!optionsParseIsString(value))
+            if (!optionsParseIsString(value)) {
                 errx(EXIT_FAILURE, "Missing value for suboption '%s'",
                     token[Width]);
+            }
 
             opt.lineWidth = optionsParseRequiredNumber(value);
 
-            if (opt.lineWidth <= 0 || opt.lineWidth > 8)
+            if (opt.lineWidth <= 0 || opt.lineWidth > 8) {
                 errx(EXIT_FAILURE, "Value of the range (1..8) for "
                     "suboption '%s': %d", token[Width], opt.lineWidth);
+            }
             break;
         case Color:
-            if (!optionsParseIsString(value))
+            if (!optionsParseIsString(value)) {
                 errx(EXIT_FAILURE, "Missing value for suboption '%s'",
                     token[Color]);
+            }
 
             opt.lineColor = strdup(value);
             break;
         case Mode:
-            if (!optionsParseIsString(value))
+            if (!optionsParseIsString(value)) {
                 errx(EXIT_FAILURE, "Missing value for suboption '%s'",
                     token[Mode]);
+            }
 
             bool isValidMode = !strncmp(value, LINE_MODE_CLASSIC, LINE_MODE_CLASSIC_LEN);
 
             isValidMode = isValidMode || !strncmp(value, LINE_MODE_EDGE, LINE_MODE_EDGE_LEN);
 
-            if (!isValidMode)
+            if (!isValidMode) {
                 errx(EXIT_FAILURE, "Unknown value for suboption '%s': %s",
                     token[Mode], value);
+            }
 
             opt.lineMode = strdup(value);
             break;
         case Opacity:
-            if (!optionsParseIsString(value))
+            if (!optionsParseIsString(value)) {
                 errx(EXIT_FAILURE, "Missing value for suboption '%s'",
                     token[Opacity]);
+            }
             opt.lineOpacity = optionsParseRequiredNumber(value);
             break;
         default:
@@ -439,9 +446,10 @@ void optionsParseFileName(char* fileName)
 {
     opt.outputFile = fileName;
 
-    if (strlen(opt.outputFile) > MAX_OUTPUT_FILENAME)
+    if (strlen(opt.outputFile) > MAX_OUTPUT_FILENAME) {
         errx(EXIT_FAILURE,"output filename too long, must be "
             "less than %d characters", MAX_OUTPUT_FILENAME);
+    }
 }
 
 void optionsParseNote(char* optarg)

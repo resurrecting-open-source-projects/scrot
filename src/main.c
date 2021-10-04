@@ -259,9 +259,10 @@ void scrotCheckIfOverwriteFile(char** filename)
     free(*filename);
     *filename = newName;
 
-    if (counter == maxCounter)
+    if (counter == maxCounter) {
         errx(EXIT_FAILURE, "scrot can no longer generate new file names.\n"
             "The last attempt is %s", newName);
+    }
 }
 
 int scrotMatchWindowClassName(Window target)
