@@ -157,9 +157,10 @@ static void optionsParseLine(char* optarg)
                 opt.lineStyle = LineOnOffDash;
             else if (!strncmp(value, "solid", 5))
                 opt.lineStyle = LineSolid;
-            else
+            else {
                 errx(EXIT_FAILURE, "Unknown value for suboption '%s': %s",
                     token[Style], value);
+            }
             break;
         case Width:
             if (!optionsParseIsString(value)) {
