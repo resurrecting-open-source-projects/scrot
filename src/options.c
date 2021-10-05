@@ -442,7 +442,7 @@ void optionsParseThumbnail(char* optarg)
     }
 }
 
-void optionsParseFileName(char* optarg)
+void optionsParseFileName(const char* optarg)
 {
     opt.outputFile = strdup(optarg);
     if (strlen(opt.outputFile) > MAX_OUTPUT_FILENAME) {
