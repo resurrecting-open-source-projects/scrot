@@ -353,30 +353,33 @@ void optionsParse(int argc, char** argv)
 
 char* nameThumbnail(char* name)
 {
-    size_t length = 0;
-    char* newTitle;
-    char* dotPos;
-    size_t diff = 0;
+    char* extension;
+    const char* thumbSuffix = "-thumb";
+    char* newName;
+    size_t nameLength = 0;
+    size_t fullLength = 0;
+    const size_t thumbPrefixLength = 7;
+    size_t newNameLength = 0;
 
-    length = strlen(name) + 7;
-    newTitle = malloc(length);
+    fullLength = strlen(name);
+    newNameLength = fullLength + thumbPrefixLength;
+    newName = malloc(newNameLength);
 
-    if (!newTitle)
+    if (!newName)
         err(EXIT_FAILURE, "Unable to allocate thumbnail");
 
-    dotPos = strrchr(name, '.');
-    if (dotPos) {
-        diff = (dotPos - name) / sizeof(char);
+    extension = strrchr(name, '.');
+    if (extension) {
+        nameLength = (extension - name) / sizeof(char) + 1;
 
-        strncpy(newTitle, name, diff);
-        strcat(newTitle, "-thumb");
-        strcat(newTitle, dotPos);
+        strlcpy(newName, name, nameLength);
+        strlcat(newName, thumbSuffix, newNameLength);
+        strlcat(newName, extension, newNameLength);
     } else
-        snprintf(newTitle, length, "%s-thumb", name);
+        snprintf(newName, newNameLength, "%s%s", name, thumbSuffix);
 
-    return newTitle;
+    return newName;
 }
-
 
 void optionsParseAutoselect(char* optarg)
 {
