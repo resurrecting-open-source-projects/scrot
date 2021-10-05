@@ -356,7 +356,7 @@ char* optionsNameThumbnail(const char* name)
     const char* const thumbSuffix = "-thumb";
     const size_t thumbSuffixLength = 7;
     const size_t newNameLength = strlen(name) + thumbSuffixLength;
-    char const* newName = calloc(1, newNameLength);
+    char* newName = calloc(1, newNameLength);
 
     if (!newName)
         err(EXIT_FAILURE, "Unable to allocate thumbnail");
