@@ -84,8 +84,11 @@ int main(int argc, char** argv)
     if (!opt.outputFile) {
         opt.outputFile = strdup("%Y-%m-%d-%H%M%S_$wx$h_scrot.png");
         opt.thumbFile = strdup("%Y-%m-%d-%H%M%S_$wx$h_scrot-thumb.png");
-    } else
+    } else {
+        if (opt.thumb)
+            opt.thumbFile = optionsNameThumbnail(opt.outputFile);
         scrotHaveFileExtension(opt.outputFile, &haveExtension);
+    }
 
     if (opt.focused)
         image = scrotGrabFocused();

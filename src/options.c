@@ -348,39 +348,33 @@ void optionsParse(int argc, char** argv)
             warnx("unrecognised option %s", argv[optind++]);
     }
 
-    if (opt.thumb && opt.outputFile)
-        opt.thumbFile = nameThumbnail(opt.outputFile);
-
     /* So that we can safely be called again */
     optind = 1;
 }
 
-char* nameThumbnail(char* name)
+char* optionsNameThumbnail(const char* name)
 {
-    size_t length = 0;
-    char* newTitle;
-    char* dotPos;
-    size_t diff = 0;
+    const char* const thumbSuffix = "-thumb";
+    const size_t thumbSuffixLength = 7;
+    const size_t newNameLength = strlen(name) + thumbSuffixLength;
+    char* newName = calloc(1, newNameLength);
 
-    length = strlen(name) + 7;
-    newTitle = malloc(length);
-
-    if (!newTitle)
+    if (!newName)
         err(EXIT_FAILURE, "Unable to allocate thumbnail");
 
-    dotPos = strrchr(name, '.');
-    if (dotPos) {
-        diff = (dotPos - name) / sizeof(char);
+    const char* const extension = strrchr(name, '.');
 
-        strncpy(newTitle, name, diff);
-        strcat(newTitle, "-thumb");
-        strcat(newTitle, dotPos);
+    if (extension) {
+        /* We add one so length includes '\0'*/
+        const ptrdiff_t nameLength = (extension - name) + 1;
+        strlcpy(newName, name, nameLength);
+        strlcat(newName, thumbSuffix, newNameLength);
+        strlcat(newName, extension, newNameLength);
     } else
-        snprintf(newTitle, length, "%s-thumb", name);
+        snprintf(newName, newNameLength, "%s%s", name, thumbSuffix);
 
-    return newTitle;
+    return newName;
 }
-
 
 void optionsParseAutoselect(char* optarg)
 {
@@ -443,14 +437,13 @@ void optionsParseThumbnail(char* optarg)
     }
 }
 
-void optionsParseFileName(char* fileName)
+void optionsParseFileName(const char* optarg)
 {
-    opt.outputFile = fileName;
-
-    if (strlen(opt.outputFile) > MAX_OUTPUT_FILENAME) {
+    if (strlen(optarg) > MAX_OUTPUT_FILENAME) {
         errx(EXIT_FAILURE,"output filename too long, must be "
             "less than %d characters", MAX_OUTPUT_FILENAME);
     }
+    opt.outputFile = strdup(optarg);
 }
 
 void optionsParseNote(char* optarg)
