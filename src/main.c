@@ -85,7 +85,8 @@ int main(int argc, char** argv)
         opt.outputFile = strdup("%Y-%m-%d-%H%M%S_$wx$h_scrot.png");
         opt.thumbFile = strdup("%Y-%m-%d-%H%M%S_$wx$h_scrot-thumb.png");
     } else {
-        opt.thumbFile = nameThumbnail(opt.outputFile);
+        if (opt.thumb)
+            opt.thumbFile = optionsNameThumbnail(opt.outputFile);
         scrotHaveFileExtension(opt.outputFile, &haveExtension);
     }
 

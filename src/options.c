@@ -351,28 +351,21 @@ void optionsParse(int argc, char** argv)
     optind = 1;
 }
 
-char* nameThumbnail(const char* name)
+char* optionsNameThumbnail(const char* name)
 {
-    char* extension;
-    const char* thumbSuffix = "-thumb";
-    char* newName;
-    size_t nameLength = 0;
-    size_t fullLength = 0;
-    const size_t thumbPrefixLength = 7;
-    size_t newNameLength = 0;
-
-    fullLength = strlen(name);
-    newNameLength = fullLength + thumbPrefixLength;
-    newName = malloc(newNameLength);
+    const char* const thumbSuffix = "-thumb";
+    const size_t thumbSuffixLength = 7;
+    const size_t newNameLength = strlen(name) + thumbSuffixLength;
+    char const* newName = calloc(1, newNameLength);
 
     if (!newName)
         err(EXIT_FAILURE, "Unable to allocate thumbnail");
 
-    extension = strrchr(name, '.');
+    const char* const extension = strrchr(name, '.');
+
     if (extension) {
         /* We add one so length includes '\0'*/
-        nameLength = ((extension - name) / sizeof(char) + 1);
-
+        const ptrdiff_t nameLength = (extension - name) + 1;
         strlcpy(newName, name, nameLength);
         strlcat(newName, thumbSuffix, newNameLength);
         strlcat(newName, extension, newNameLength);
@@ -445,11 +438,11 @@ void optionsParseThumbnail(char* optarg)
 
 void optionsParseFileName(const char* optarg)
 {
-    opt.outputFile = strdup(optarg);
-    if (strlen(opt.outputFile) > MAX_OUTPUT_FILENAME) {
+    if (strlen(optarg) > MAX_OUTPUT_FILENAME) {
         errx(EXIT_FAILURE,"output filename too long, must be "
             "less than %d characters", MAX_OUTPUT_FILENAME);
     }
+    opt.outputFile = strdup(optarg);
 }
 
 void optionsParseNote(char* optarg)
