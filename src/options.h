@@ -72,7 +72,7 @@ struct __ScrotOptions {
 };
 
 void optionsParse(int, char**);
-char* nameThumbnail(const char*);
+char* optionsNameThumbnail(const char*);
 void optionsParseFileName(const char*);
 void optionsParseThumbnail(char*);
 void optionsParseAutoselect(char*);
