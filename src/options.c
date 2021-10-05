@@ -370,7 +370,8 @@ char* nameThumbnail(const char* name)
 
     extension = strrchr(name, '.');
     if (extension) {
-        nameLength = (extension - name) / sizeof(char) + 1;
+        /* We add one so length includes '\0'*/
+        nameLength = ((extension - name) / sizeof(char) + 1);
 
         strlcpy(newName, name, nameLength);
         strlcat(newName, thumbSuffix, newNameLength);
