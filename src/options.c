@@ -351,7 +351,7 @@ void optionsParse(int argc, char** argv)
     optind = 1;
 }
 
-char* nameThumbnail(char* name)
+char* nameThumbnail(const char* name)
 {
     char* extension;
     const char* thumbSuffix = "-thumb";
