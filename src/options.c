@@ -16,6 +16,7 @@ Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
 Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
+Copyright 2021      Wilson Smith <01wsmith+gh@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -224,7 +225,7 @@ static void optionsParseWindowClassName(const char* windowClassName)
 
 void optionsParse(int argc, char** argv)
 {
-    static char stropts[] = "a:ofpbcd:e:hmq:s::t:uvzn:l:D:kC:S:F:";
+    static char stropts[] = "a:ofipbcd:e:hmq:s::t:uvzn:l:D:kC:S:F:";
 
     static struct option lopts[] = {
         /* actions */
@@ -237,6 +238,7 @@ void optionsParse(int argc, char** argv)
         { "multidisp", no_argument, 0, 'm' },
         { "silent", no_argument, 0, 'z' },
         { "pointer", no_argument, 0, 'p' },
+        { "ignorekeyboard", no_argument, 0, 'i' },
         { "freeze", no_argument, 0, 'f' },
         { "overwrite", no_argument, 0, 'o' },
         { "stack", no_argument, 0, 'k' },
@@ -300,6 +302,9 @@ void optionsParse(int argc, char** argv)
             break;
         case 'p':
             opt.pointer = 1;
+            break;
+        case 'i':
+            opt.ignoreKeyboard = 1;
             break;
         case 'f':
             opt.freeze = 1;
@@ -480,7 +485,7 @@ void showVersion(void)
 void showUsage(void)
 {
     fputs(/* Check that everything lines up after any changes. */
-        "usage:  " SCROT_PACKAGE " [-bcfhkmopsuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY]"
+        "usage:  " SCROT_PACKAGE " [-bcfhikmopsuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY]"
         "\n"
         "              [-F FILE] [-d SEC] [-e CMD] [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] \n"
         "              [-t NUM | GEOM] [FILE]\n",
