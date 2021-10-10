@@ -3,6 +3,7 @@
 Copyright 2020-2021  Daniel T. Borelli <daltomi@disroot.org>
 Copyright 2021       Martin C <martincation@protonmail.com>
 Copyright 2021       Peter Wu <peterwu@hotmail.com>
+Copyright 2021       Wilson Smith <01wsmith+gh@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -264,13 +265,7 @@ bool scrotSelectionGetUserSel(struct SelectionRect* selectionRect)
                 done = 1;
                 break;
             case KeyPress:
-                if (!isButtonPressed) {
-                key_abort_shot:
-                    warnx("Key was pressed, aborting shot");
-                    done = 2;
-                    break;
-                }
-
+            {
                 KeySym* keysym = NULL;
                 int keycode; /*dummy*/
 
@@ -278,6 +273,16 @@ bool scrotSelectionGetUserSel(struct SelectionRect* selectionRect)
 
                 if (!keysym)
                     break;
+
+                if (!isButtonPressed) {
+                key_abort_shot:
+                    if (!opt.ignoreKeyboard || *keysym == XK_Escape) {
+                        warnx("Key was pressed, aborting shot");
+                        done = 2;
+                    }
+                    XFree(keysym);
+                    break;
+                }
 
                 switch (*keysym) {
                 case XK_Right:
@@ -302,6 +307,7 @@ bool scrotSelectionGetUserSel(struct SelectionRect* selectionRect)
                 XFree(keysym);
                 scrotSelectionMotionDraw(rx, ry, ev.xbutton.x, ev.xbutton.y);
                 break;
+            }
             case KeyRelease:
                 /* ignore */
                 break;

@@ -2,7 +2,7 @@ NAME
   scrot - command line screen capture utility
 
 SYNOPSIS
-  scrot [-bcfhkmopsuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY] [-d SEC] [-e CMD]
+  scrot [-bcfhikmopsuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY] [-d SEC] [-e CMD]
         [-F FILE] [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] [-t NUM | GEOM] [FILE]
 
 DESCRIPTION
@@ -33,6 +33,7 @@ OPTIONS
   -f, --freeze              Freeze the screen when -s is used.
   -F, --file                File name. See SPECIAL STRINGS.
   -h, --help                Display help and exit.
+  -i, --ignorekeyboard      Don't exit for keyboard input. ESC still exits.
   -k, --stack               Capture stack/overlapped windows and join them. A
                             running Composite Manager is needed.
   -l, --line STYLE          STYLE indicates the style of the line when the -s
