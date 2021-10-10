@@ -15,6 +15,8 @@ Copyright 2020      Sean Brennan <zettix1@gmail.com>
 Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
 Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
+Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
+Copyright 2021      Wilson Smith <01wsmith+gh@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -147,55 +149,63 @@ static void optionsParseLine(char* optarg)
     while (*subopts != '\0') {
         switch (getsubopt(&subopts, token, &value)) {
         case Style:
-            if (!optionsParseIsString(value))
+            if (!optionsParseIsString(value)) {
                 errx(EXIT_FAILURE, "Missing value for suboption '%s'",
                     token[Style]);
+            }
 
             if (!strncmp(value, "dash", 4))
                 opt.lineStyle = LineOnOffDash;
             else if (!strncmp(value, "solid", 5))
                 opt.lineStyle = LineSolid;
-            else
+            else {
                 errx(EXIT_FAILURE, "Unknown value for suboption '%s': %s",
                     token[Style], value);
+            }
             break;
         case Width:
-            if (!optionsParseIsString(value))
+            if (!optionsParseIsString(value)) {
                 errx(EXIT_FAILURE, "Missing value for suboption '%s'",
                     token[Width]);
+            }
 
             opt.lineWidth = optionsParseRequiredNumber(value);
 
-            if (opt.lineWidth <= 0 || opt.lineWidth > 8)
+            if (opt.lineWidth <= 0 || opt.lineWidth > 8) {
                 errx(EXIT_FAILURE, "Value of the range (1..8) for "
                     "suboption '%s': %d", token[Width], opt.lineWidth);
+            }
             break;
         case Color:
-            if (!optionsParseIsString(value))
+            if (!optionsParseIsString(value)) {
                 errx(EXIT_FAILURE, "Missing value for suboption '%s'",
                     token[Color]);
+            }
 
             opt.lineColor = strdup(value);
             break;
         case Mode:
-            if (!optionsParseIsString(value))
+            if (!optionsParseIsString(value)) {
                 errx(EXIT_FAILURE, "Missing value for suboption '%s'",
                     token[Mode]);
+            }
 
             bool isValidMode = !strncmp(value, LINE_MODE_CLASSIC, LINE_MODE_CLASSIC_LEN);
 
             isValidMode = isValidMode || !strncmp(value, LINE_MODE_EDGE, LINE_MODE_EDGE_LEN);
 
-            if (!isValidMode)
+            if (!isValidMode) {
                 errx(EXIT_FAILURE, "Unknown value for suboption '%s': %s",
                     token[Mode], value);
+            }
 
             opt.lineMode = strdup(value);
             break;
         case Opacity:
-            if (!optionsParseIsString(value))
+            if (!optionsParseIsString(value)) {
                 errx(EXIT_FAILURE, "Missing value for suboption '%s'",
                     token[Opacity]);
+            }
             opt.lineOpacity = optionsParseRequiredNumber(value);
             break;
         default:
@@ -239,7 +249,7 @@ static char* getPathOfStdout(void)
 
 void optionsParse(int argc, char** argv)
 {
-    static char stropts[] = "a:ofpbcd:e:hmq:s::t:uvzn:l:D:kC:S:";
+    static char stropts[] = "a:ofipbcd:e:hmq:s::t:uvzn:l:D:kC:S:F:";
 
     static struct option lopts[] = {
         /* actions */
@@ -252,6 +262,7 @@ void optionsParse(int argc, char** argv)
         { "multidisp", no_argument, 0, 'm' },
         { "silent", no_argument, 0, 'z' },
         { "pointer", no_argument, 0, 'p' },
+        { "ignorekeyboard", no_argument, 0, 'i' },
         { "freeze", no_argument, 0, 'f' },
         { "overwrite", no_argument, 0, 'o' },
         { "stack", no_argument, 0, 'k' },
@@ -267,6 +278,7 @@ void optionsParse(int argc, char** argv)
         { "line", required_argument, 0, 'l' },
         { "class", required_argument, 0, 'C' },
         { "script", required_argument, 0, 'S' },
+        { "file", required_argument, 0, 'F' },
         { 0, 0, 0, 0 }
     };
     int optch = 0, cmdx = 0;
@@ -315,6 +327,9 @@ void optionsParse(int argc, char** argv)
         case 'p':
             opt.pointer = 1;
             break;
+        case 'i':
+            opt.ignoreKeyboard = 1;
+            break;
         case 'f':
             opt.freeze = 1;
             break;
@@ -342,6 +357,9 @@ void optionsParse(int argc, char** argv)
         case 'S':
             opt.script = strdup(optarg);
             break;
+        case 'F':
+            optionsParseFileName(optarg);
+            break;
         case '?':
             exit(EXIT_FAILURE);
         default:
@@ -354,22 +372,16 @@ void optionsParse(int argc, char** argv)
         /* If recursive is NOT set, but the only argument is a directory
            name, we grab all the files in there, but not subdirs */
         if (!opt.outputFile) {
-            opt.outputFile = argv[optind++];
+            optionsParseFileName(argv[optind++]);
 
             bool const redirectChar = ( opt.outputFile[0] == '-'
                                         && opt.outputFile[1] == '\0');
             if (redirectChar) {
+                free(opt.outputFile);
                 opt.outputFile = getPathOfStdout();
                 opt.overwrite = 1;
                 opt.thumb = 0;
             }
-
-            if (strlen(opt.outputFile) > MAX_OUTPUT_FILENAME)
-               errx(EXIT_FAILURE,"output filename too long, must be "
-                    "less than %d characters", MAX_OUTPUT_FILENAME);
-
-            if (opt.thumb)
-                opt.thumbFile = nameThumbnail(opt.outputFile);
         } else
             warnx("unrecognised option %s", argv[optind++]);
     }
@@ -378,30 +390,28 @@ void optionsParse(int argc, char** argv)
     optind = 1;
 }
 
-char* nameThumbnail(char* name)
+char* optionsNameThumbnail(const char* name)
 {
-    size_t length = 0;
-    char* newTitle;
-    char* dotPos;
-    size_t diff = 0;
+    const char* const thumbSuffix = "-thumb";
+    const size_t thumbSuffixLength = 7;
+    const size_t newNameLength = strlen(name) + thumbSuffixLength;
+    char* newName = calloc(1, newNameLength);
 
-    length = strlen(name) + 7;
-    newTitle = malloc(length);
-
-    if (!newTitle)
+    if (!newName)
         err(EXIT_FAILURE, "Unable to allocate thumbnail");
 
-    dotPos = strrchr(name, '.');
-    if (dotPos) {
-        diff = (dotPos - name) / sizeof(char);
+    const char* const extension = strrchr(name, '.');
 
-        strncpy(newTitle, name, diff);
-        strcat(newTitle, "-thumb");
-        strcat(newTitle, dotPos);
+    if (extension) {
+        /* We add one so length includes '\0'*/
+        const ptrdiff_t nameLength = (extension - name) + 1;
+        strlcpy(newName, name, nameLength);
+        strlcat(newName, thumbSuffix, newNameLength);
+        strlcat(newName, extension, newNameLength);
     } else
-        snprintf(newTitle, length, "%s-thumb", name);
+        snprintf(newName, newNameLength, "%s%s", name, thumbSuffix);
 
-    return newTitle;
+    return newName;
 }
 
 void optionsParseAutoselect(char* optarg)
@@ -465,6 +475,15 @@ void optionsParseThumbnail(char* optarg)
     }
 }
 
+void optionsParseFileName(const char* optarg)
+{
+    if (strlen(optarg) > MAX_OUTPUT_FILENAME) {
+        errx(EXIT_FAILURE,"output filename too long, must be "
+            "less than %d characters", MAX_OUTPUT_FILENAME);
+    }
+    opt.outputFile = strdup(optarg);
+}
+
 void optionsParseNote(char* optarg)
 {
     opt.note = strdup(optarg);
@@ -499,9 +518,9 @@ void showVersion(void)
 void showUsage(void)
 {
     fputs(/* Check that everything lines up after any changes. */
-        "usage:  " SCROT_PACKAGE " [-bcfhkmopsuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY]"
+        "usage:  " SCROT_PACKAGE " [-bcfhikmopsuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY]"
         "\n"
-        "              [-d SEC] [-e CMD] [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] \n"
+        "              [-F FILE] [-d SEC] [-e CMD] [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] \n"
         "              [-t NUM | GEOM] [FILE]\n",
         stdout);
     exit(0);

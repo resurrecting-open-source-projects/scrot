@@ -9,6 +9,8 @@ Copyright 2017      Stoney Sauce <stoneysauce@gmail.com>
 Copyright 2019-2021 Daniel T. Borelli <daltomi@disroot.org>
 Copyright 2020      Sean Brennan <zettix1@gmail.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
+Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
+Copyright 2021      Wilson Smith <01wsmith+gh@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -48,6 +50,7 @@ struct __ScrotOptions {
     int thumbWidth;
     int thumbHeight;
     int pointer;
+    int ignoreKeyboard;
     int freeze;
     int overwrite;
     int lineStyle;
@@ -71,7 +74,8 @@ struct __ScrotOptions {
 };
 
 void optionsParse(int, char**);
-char* nameThumbnail(char*);
+char* optionsNameThumbnail(const char*);
+void optionsParseFileName(const char*);
 void optionsParseThumbnail(char*);
 void optionsParseAutoselect(char*);
 void optionsParseDisplay(char*);

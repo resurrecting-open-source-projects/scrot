@@ -17,6 +17,7 @@ Copyright 2021      c0dev0id <sh+github@codevoid.de>
 Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
 Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
+Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -83,8 +84,11 @@ int main(int argc, char** argv)
     if (!opt.outputFile) {
         opt.outputFile = strdup("%Y-%m-%d-%H%M%S_$wx$h_scrot.png");
         opt.thumbFile = strdup("%Y-%m-%d-%H%M%S_$wx$h_scrot-thumb.png");
-    } else
+    } else {
+        if (opt.thumb)
+            opt.thumbFile = optionsNameThumbnail(opt.outputFile);
         scrotHaveFileExtension(opt.outputFile, &haveExtension);
+    }
 
     if (opt.focused)
         image = scrotGrabFocused();
@@ -259,9 +263,10 @@ void scrotCheckIfOverwriteFile(char** filename)
     free(*filename);
     *filename = newName;
 
-    if (counter == maxCounter)
+    if (counter == maxCounter) {
         errx(EXIT_FAILURE, "scrot can no longer generate new file names.\n"
             "The last attempt is %s", newName);
+    }
 }
 
 int scrotMatchWindowClassName(Window target)
@@ -458,10 +463,13 @@ int scrotGetGeometry(Window target, int* rx, int* ry, int* rw, int* rh)
                Some windows never send the event, a time limit is placed.
             */
             XSelectInput(disp, target, FocusChangeMask);
+
+            struct timespec delay = {0, 10000000L}; // 10ms
+
             for (short i = 0; i < 30; ++i) {
                 if (XCheckIfEvent(disp, &ev, &scrotXEventVisibility, (XPointer)&target))
                     break;
-                usleep(2000);
+                nanosleep(&delay, NULL);
             }
         }
     }
