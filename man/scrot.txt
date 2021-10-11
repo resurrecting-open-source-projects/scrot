@@ -60,6 +60,8 @@ OPTIONS
   -u, --focused             Use the currently focused window.
   -v, --version             Output version information and exit.
   -z, --silent              Prevent beeping.
+  -                         Redirection to standard output. The output image
+                            format is PNG.
 
 SPECIAL STRINGS
   -e, -F and FILE parameters can take format specifiers that are expanded

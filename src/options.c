@@ -223,6 +223,35 @@ static void optionsParseWindowClassName(const char* windowClassName)
         opt.windowClassName = strndup(windowClassName, MAX_LEN_WINDOW_CLASS_NAME);
 }
 
+static bool accessFileOk(const char* const pathName)
+{
+    errno = 0;
+    return (0 == access(pathName, W_OK));
+}
+
+
+static char* getPathOfStdout(void)
+{
+    char path[16] = {"/dev/stdout"};
+    size_t const len = sizeof(path);
+
+    if (!accessFileOk(path)) {
+
+        snprintf(path, len, "/dev/fd/%d", STDOUT_FILENO);
+
+        if (!accessFileOk(path)) {
+
+            snprintf(path, len, "/proc/self/fd/%d", STDOUT_FILENO);
+
+            if (!accessFileOk(path)) {
+                // We quit because imlib2 will fail later anyway.
+                err(EXIT_FAILURE, "access to stdout failed");
+            }
+        }
+    }
+    return strndup(path, len);
+}
+
 void optionsParse(int argc, char** argv)
 {
     static char stropts[] = "a:ofipbcd:e:hmq:s::t:uvzn:l:D:kC:S:F:";
@@ -349,6 +378,15 @@ void optionsParse(int argc, char** argv)
            name, we grab all the files in there, but not subdirs */
         if (!opt.outputFile) {
             optionsParseFileName(argv[optind++]);
+
+            bool const redirectChar = ( opt.outputFile[0] == '-'
+                                        && opt.outputFile[1] == '\0');
+            if (redirectChar) {
+                free(opt.outputFile);
+                opt.outputFile = getPathOfStdout();
+                opt.overwrite = 1;
+                opt.thumb = 0;
+            }
         } else
             warnx("unrecognised option %s", argv[optind++]);
     }
