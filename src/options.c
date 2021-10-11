@@ -223,25 +223,30 @@ static void optionsParseWindowClassName(const char* windowClassName)
         opt.windowClassName = strndup(windowClassName, MAX_LEN_WINDOW_CLASS_NAME);
 }
 
-static bool accessFileOk(char* pathName)
+static bool accessFileOk(const char* const pathName)
 {
     errno = 0;
     return (0 == access(pathName, W_OK));
 }
 
+
 static char* getPathOfStdout(void)
 {
-    // Linux system
-    char path[12] = {"/dev/stdout"};
+    char path[16] = {"/dev/stdout"};
     size_t const len = sizeof(path);
 
     if (!accessFileOk(path)) {
-        // Others system
+
         snprintf(path, len, "/dev/fd/%d", STDOUT_FILENO);
 
         if (!accessFileOk(path)) {
-            // We quit because imlib2 will fail later anyway.
-            err(EXIT_FAILURE, "access to stdout failed: %s", path);
+
+            snprintf(path, len, "/proc/self/fd/%d", STDOUT_FILENO);
+
+            if (!accessFileOk(path)) {
+                // We quit because imlib2 will fail later anyway.
+                err(EXIT_FAILURE, "access to stdout failed");
+            }
         }
     }
     return strndup(path, len);
