@@ -218,47 +218,43 @@ size_t scrotHaveFileExtension(char const* filename, char** ext)
 
 void scrotCheckIfOverwriteFile(char** filename)
 {
-    char* curFile = *filename;
-
     if (opt.overwrite)
         return;
 
-    if (access(curFile, F_OK) == -1)
+    if (access(*filename, F_OK) == -1)
         return;
 
     const size_t maxCounter = 999;
     size_t counter = 0;
     char* ext = NULL;
     size_t extLength = 0;
-    const size_t slen = strlen(curFile);
+    const size_t slen = strlen(*filename);
     size_t nalloc = slen + 4 + 1; // _000 + NUL byte
     char fmt[5];
     char* newName = NULL;
 
-    extLength = scrotHaveFileExtension(curFile, &ext);
+    extLength = scrotHaveFileExtension(*filename, &ext);
 
     if (ext)
         nalloc += extLength; // .ext
 
     newName = calloc(nalloc, sizeof(*newName));
-
-    if (ext) {
-        // Exclude ext
-        memcpy(newName, curFile, slen - extLength);
-    } else
-        memcpy(newName, curFile, slen);
+    memcpy(newName, *filename, slen);
 
     do {
-        snprintf(fmt, 5, "_%03zu", counter++);
+        char* ptr = newName + slen;
 
-        if (!ext)
-            strlcpy(newName + slen, fmt, 5);
-        else {
-            strncpy((newName + slen) - extLength, fmt, 5);
-            strncat(newName, ext, extLength);
-        }
-        curFile = newName;
-    } while ((counter < maxCounter) && !access(curFile, F_OK));
+        snprintf(fmt, sizeof(fmt), "_%03zu", counter++);
+
+        if(ext) {
+            ptr -= extLength;
+            memcpy(ptr, fmt, sizeof(fmt));
+            memcpy(ptr + sizeof(fmt) - 1, ext, extLength);
+        } else
+            memcpy(ptr, fmt, sizeof(fmt));
+    } while ((counter < maxCounter) && !access(newName, F_OK));
+
+    assert(newName[nalloc - 1] == '\0');
 
     free(*filename);
     *filename = newName;
