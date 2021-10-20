@@ -120,6 +120,8 @@ static void optionsParseSelection(char const* optarg)
         opt.select = SELECTION_MODE_HIDE;
     else if (!strncmp(value, "hole", 4))
         opt.select = SELECTION_MODE_HOLE;
+    else if (!strncmp(value, "blur", 4))
+        opt.select = SELECTION_MODE_BLUR;
     else
         errx(EXIT_FAILURE, "option --select: Unknown value for suboption '%s'", value);
 }

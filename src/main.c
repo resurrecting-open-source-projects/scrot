@@ -92,9 +92,7 @@ int main(int argc, char** argv)
 
     if (opt.focused)
         image = scrotGrabFocused();
-    else if (opt.select == SELECTION_MODE_CAPTURE
-        || opt.select == SELECTION_MODE_HIDE
-        || opt.select == SELECTION_MODE_HOLE)
+    else if (opt.select & SELECTION_MODE_ANY)
         image = scrotSelectionSelectMode();
     else if (opt.autoselect)
         image = scrotGrabAutoselect();
