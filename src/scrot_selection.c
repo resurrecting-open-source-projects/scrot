@@ -60,11 +60,11 @@ static void createCursors(void)
 
     assert(sel != NULL);
 
-    if (opt.select == SELECTION_MODE_CAPTURE)
+    if (opt.selection.mode == SELECTION_MODE_CAPTURE)
         sel->curCross = XCreateFontCursor(disp, XC_cross);
-    else if (opt.select == SELECTION_MODE_HIDE)
+    else if (opt.selection.mode == SELECTION_MODE_HIDE)
         sel->curCross = XCreateFontCursor(disp, XC_spraycan);
-    else if (opt.select == SELECTION_MODE_BLUR)
+    else if (opt.selection.mode == SELECTION_MODE_BLUR)
         sel->curCross = XCreateFontCursor(disp, XC_box_spiral);
     else // SELECTION_MODE_HOLE
         sel->curCross = XCreateFontCursor(disp, XC_target);
@@ -123,12 +123,12 @@ void scrotSelectionCreate(void)
 
     createCursors();
 
-    if (!strncmp(opt.lineMode, LINE_MODE_CLASSIC, LINE_MODE_CLASSIC_LEN)) {
+    if (!strncmp(opt.lineMode, LINE_MODE_S_CLASSIC, LINE_MODE_L_CLASSIC)) {
         sel->create = selectionClassicCreate;
         sel->draw = selectionClassicDraw;
         sel->motionDraw = selectionClassicMotionDraw;
         sel->destroy = selectionClassicDestroy;
-    } else if (!strncmp(opt.lineMode, LINE_MODE_EDGE, LINE_MODE_EDGE_LEN)) {
+    } else if (!strncmp(opt.lineMode, LINE_MODE_S_EDGE, LINE_MODE_L_EDGE)) {
         sel->create = selectionEdgeCreate;
         sel->draw = selectionEdgeDraw;
         sel->motionDraw = selectionEdgeMotionDraw;
@@ -388,16 +388,16 @@ Imlib_Image scrotSelectionSelectMode(void)
 {
     struct SelectionRect rect0, rect1;
 
-    int const oldSelect = opt.select;
+    unsigned int const oldMode  = opt.selection.mode;
 
-    opt.select = SELECTION_MODE_CAPTURE;
+    opt.selection.mode = SELECTION_MODE_CAPTURE;
 
     if (!scrotSelectionGetUserSel(&rect0))
         return NULL;
 
-    opt.select = oldSelect;
+    opt.selection.mode = oldMode;
 
-    if (opt.select & SELECTION_MODE_NOT_CAPTURE)
+    if (opt.selection.mode & SELECTION_MODE_NOT_CAPTURE)
         if (!scrotSelectionGetUserSel(&rect1))
             return NULL;
 
@@ -409,31 +409,30 @@ Imlib_Image scrotSelectionSelectMode(void)
     if (opt.pointer)
        scrotGrabMousePointer(capture, rect0.x, rect0.y);
 
-      if (opt.select & SELECTION_MODE_NOT_CAPTURE) {
+      if (opt.selection.mode & SELECTION_MODE_NOT_CAPTURE) {
 
         XColor color;
         scrotSelectionGetLineColor(&color);
 
-        int const alpha = optionsParseRequireRange(opt.lineOpacity, 0, 255);
         int const x = rect1.x - rect0.x;
         int const y = rect1.y - rect0.y;
 
         imlib_context_set_image(capture);
 
-        if (opt.select == SELECTION_MODE_HOLE) {
+        if (opt.selection.mode == SELECTION_MODE_HOLE) {
             Imlib_Image hole = imlib_clone_image();
-            imlib_context_set_color(color.red, color.green, color.blue, alpha);
+            imlib_context_set_color(color.red, color.green, color.blue, opt.selection.paramNum);
             imlib_image_fill_rectangle(0, 0, rect0.w, rect0.h);
             imlib_blend_image_onto_image(hole, 0, x, y, rect1.w, rect1.h, x, y, rect1.w, rect1.h);
             imlib_context_set_image(hole);
             imlib_free_image_and_decache();
-        } else if (opt.select == SELECTION_MODE_HIDE) {
-            imlib_context_set_color(color.red, color.green, color.blue, alpha);
+        } else if (opt.selection.mode == SELECTION_MODE_HIDE) {
+            imlib_context_set_color(color.red, color.green, color.blue, opt.selection.paramNum);
             imlib_image_fill_rectangle(x, y, rect1.w, rect1.h);
         } else { //SELECTION_MODE_BLUR
             Imlib_Image blur = imlib_clone_image();
             imlib_context_set_image(blur);
-            imlib_image_blur(SELECTION_MODE_BLUR_VALUE);
+            imlib_image_blur(opt.selection.paramNum);
             imlib_context_set_image(capture);
             imlib_blend_image_onto_image(blur, 0, x, y, rect1.w, rect1.h, x, y, rect1.w, rect1.h);
             imlib_context_set_image(blur);

@@ -54,10 +54,10 @@ ScrotOptions opt = {
     .lineStyle = LineSolid,
     .lineWidth = 1,
     .lineOpacity = 100,
-    .lineMode = LINE_MODE_CLASSIC,
+    .lineMode = LINE_MODE_S_CLASSIC,
 };
 
-int optionsParseRequiredNumber(char* str)
+int optionsParseRequiredNumber(char const* str)
 {
     assert(NULL != str); // fix yout caller function,
                          //  the user does not impose this behavior
@@ -103,7 +103,7 @@ static void optionsParseSelection(char const* optarg)
 {
     // the suboption it's optional
     if (!optarg) {
-        opt.select = SELECTION_MODE_CAPTURE;
+        opt.selection.mode = SELECTION_MODE_CAPTURE;
         return;
     }
 
@@ -114,16 +114,43 @@ static void optionsParseSelection(char const* optarg)
     else
         value = optarg;
 
-    if (!strncmp(value, "capture", 7))
-        opt.select = SELECTION_MODE_CAPTURE;
-    else if (!strncmp(value, "hide", 4))
-        opt.select = SELECTION_MODE_HIDE;
-    else if (!strncmp(value, "hole", 4))
-        opt.select = SELECTION_MODE_HOLE;
-    else if (!strncmp(value, "blur", 4))
-        opt.select = SELECTION_MODE_BLUR;
+    if (!strncmp(value, SELECTION_MODE_S_CAPTURE, SELECTION_MODE_L_CAPTURE)) {
+        opt.selection.mode = SELECTION_MODE_CAPTURE;
+        return; /* it has no parameter */
+    }
+    else if (!strncmp(value, SELECTION_MODE_S_HIDE, SELECTION_MODE_L_HIDE)) {
+        opt.selection.mode = SELECTION_MODE_HIDE;
+        opt.selection.paramNum = SELECTION_MODE_OPACITY_DEFAULT;
+        value += SELECTION_MODE_L_HIDE;
+    }
+    else if (!strncmp(value, SELECTION_MODE_S_HOLE, SELECTION_MODE_L_HOLE)) {
+        opt.selection.mode = SELECTION_MODE_HOLE;
+        opt.selection.paramNum = SELECTION_MODE_OPACITY_DEFAULT;
+        value += SELECTION_MODE_L_HOLE;
+    }
+    else if (!strncmp(value, SELECTION_MODE_S_BLUR, SELECTION_MODE_L_BLUR)) {
+        opt.selection.mode = SELECTION_MODE_BLUR;
+        opt.selection.paramNum = SELECTION_MODE_BLUR_DEFAULT;
+        value += SELECTION_MODE_L_BLUR;
+    }
     else
         errx(EXIT_FAILURE, "option --select: Unknown value for suboption '%s'", value);
+
+    if (*value != SELECTION_MODE_SEPARATOR)
+        return;
+
+    if (*(++value) == '\0')
+        errx(EXIT_FAILURE, "option --select: Invalid parameter");
+
+    if (opt.selection.mode & SELECTION_MODE_PARAM_NUM) {
+
+        int const num = optionsParseRequiredNumber(value);
+
+        if (opt.selection.mode & SELECTION_MODE_NOT_BLUR)
+            opt.selection.paramNum = optionsParseRequireRange(num, 0, 255);
+        else // SELECTION_MODE_BLUR
+            opt.selection.paramNum = optionsParseRequireRange(num, 1, 30);
+    }
 }
 
 static void optionsParseLine(char* optarg)
@@ -192,9 +219,9 @@ static void optionsParseLine(char* optarg)
                     token[Mode]);
             }
 
-            bool isValidMode = !strncmp(value, LINE_MODE_CLASSIC, LINE_MODE_CLASSIC_LEN);
+            bool isValidMode = !strncmp(value, LINE_MODE_S_CLASSIC, LINE_MODE_L_CLASSIC);
 
-            isValidMode = isValidMode || !strncmp(value, LINE_MODE_EDGE, LINE_MODE_EDGE_LEN);
+            isValidMode = isValidMode || !strncmp(value, LINE_MODE_S_EDGE, LINE_MODE_L_EDGE);
 
             if (!isValidMode) {
                 errx(EXIT_FAILURE, "Unknown value for suboption '%s': %s",

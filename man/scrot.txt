@@ -92,17 +92,23 @@ SPECIAL STRINGS
 SELECTION MODE
   When using -s, optionally you can indicate the action to perform with the selection area.
     capture         Capture the selection area, this action is by default.
-    hole            Highlight the selected area overshadowing the rest of the capture.
-    hide            Hide the selection area by drawing an area of color over it.
-    blur            Blurs the selection area.
+    hole@NUM        Highlight the selected area overshadowing the rest of the capture.
+    hide@NUM        Hide the selection area by drawing an area of color over it.
+    blur@NUM        Blurs the selection area.
 
-  In both modes(hole/hide) the opacity and the color of the area is indicated by
-  the "opacity" and "color" property of the line style, SELECTION STYLE
+  Where parameter @NUM is optional.
+    hole     Opacity, range: 0..255, default: 100
+    hide     Opacity, range: 0..255, default: 100
+    blur     Amount,  range: 1..30,  default: 18
+
+  In modes hole,hide the color of the area is indicated by  "color" property of the
+  line style, SELECTION STYLE
 
   Example:
 
     $ scrot --select=hide
     $ scrot -shole --line color="Dark Salmon",opacity=200
+    $ scrot -sblur@10
 
 SELECTION STYLE
   When using -s, you can indicate the style of the line with -l.
