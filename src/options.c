@@ -144,7 +144,7 @@ static void optionsParseSelection(char const* optarg)
 
     if (opt.selection.mode & SELECTION_MODE_PARAM_NUM) {
 
-        int const num = optionsParseRequiredNumber(value);
+        int const num = nonNegativeNumber(optionsParseRequiredNumber(value));
 
         if (opt.selection.mode & SELECTION_MODE_NOT_BLUR)
             opt.selection.paramNum = optionsParseRequireRange(num, 0, 255);
