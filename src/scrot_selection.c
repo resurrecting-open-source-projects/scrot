@@ -64,6 +64,8 @@ static void createCursors(void)
         sel->curCross = XCreateFontCursor(disp, XC_cross);
     else if (opt.select == SELECTION_MODE_HIDE)
         sel->curCross = XCreateFontCursor(disp, XC_spraycan);
+    else if (opt.select == SELECTION_MODE_BLUR)
+        sel->curCross = XCreateFontCursor(disp, XC_box_spiral);
     else // SELECTION_MODE_HOLE
         sel->curCross = XCreateFontCursor(disp, XC_target);
     sel->curAngleNE = XCreateFontCursor(disp, XC_ur_angle);
@@ -395,8 +397,7 @@ Imlib_Image scrotSelectionSelectMode(void)
 
     opt.select = oldSelect;
 
-    if (opt.select == SELECTION_MODE_HOLE
-        || opt.select == SELECTION_MODE_HIDE)
+    if (opt.select & SELECTION_MODE_NOT_CAPTURE)
         if (!scrotSelectionGetUserSel(&rect1))
             return NULL;
 
@@ -408,8 +409,7 @@ Imlib_Image scrotSelectionSelectMode(void)
     if (opt.pointer)
        scrotGrabMousePointer(capture, rect0.x, rect0.y);
 
-    if (opt.select == SELECTION_MODE_HOLE
-        || opt.select == SELECTION_MODE_HIDE) {
+      if (opt.select & SELECTION_MODE_NOT_CAPTURE) {
 
         XColor color;
         scrotSelectionGetLineColor(&color);
@@ -427,9 +427,17 @@ Imlib_Image scrotSelectionSelectMode(void)
             imlib_blend_image_onto_image(hole, 0, x, y, rect1.w, rect1.h, x, y, rect1.w, rect1.h);
             imlib_context_set_image(hole);
             imlib_free_image_and_decache();
-        } else { //SELECTION_MODE_HIDE
+        } else if (opt.select == SELECTION_MODE_HIDE) {
             imlib_context_set_color(color.red, color.green, color.blue, alpha);
             imlib_image_fill_rectangle(x, y, rect1.w, rect1.h);
+        } else { //SELECTION_MODE_BLUR
+            Imlib_Image blur = imlib_clone_image();
+            imlib_context_set_image(blur);
+            imlib_image_blur(SELECTION_MODE_BLUR_VALUE);
+            imlib_context_set_image(capture);
+            imlib_blend_image_onto_image(blur, 0, x, y, rect1.w, rect1.h, x, y, rect1.w, rect1.h);
+            imlib_context_set_image(blur);
+            imlib_free_image_and_decache();
         }
     }
     return capture;

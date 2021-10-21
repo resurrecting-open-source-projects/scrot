@@ -94,6 +94,7 @@ SELECTION MODE
     capture         Capture the selection area, this action is by default.
     hole            Highlight the selected area overshadowing the rest of the capture.
     hide            Hide the selection area by drawing an area of color over it.
+    blur            Blurs the selection area.
 
   In both modes(hole/hide) the opacity and the color of the area is indicated by
   the "opacity" and "color" property of the line style, SELECTION STYLE
