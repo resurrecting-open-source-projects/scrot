@@ -148,10 +148,14 @@ static void optionsParseSelection(char const* optarg)
 
     int const num = nonNegativeNumber(optionsParseRequiredNumber(value));
 
-    if (opt.selection.mode & SELECTION_MODE_NOT_BLUR)
-        opt.selection.paramNum = optionsParseRequireRange(num, 0, 255);
-    else
-        opt.selection.paramNum = optionsParseRequireRange(num, 1, 30);
+    if (opt.selection.mode & SELECTION_MODE_NOT_BLUR) {
+        opt.selection.paramNum = optionsParseRequireRange(num,
+            SELECTION_MODE_OPACITY_MIN, SELECTION_MODE_OPACITY_MAX);
+    }
+    else {
+        opt.selection.paramNum = optionsParseRequireRange(num,
+            SELECTION_MODE_BLUR_MIN, SELECTION_MODE_BLUR_MAX);
+    }
 
     if (opt.selection.mode == SELECTION_MODE_HIDE) {
         char* img = strchr(value, SELECTION_MODE_SEPARATOR);
