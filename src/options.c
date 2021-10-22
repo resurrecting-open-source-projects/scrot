@@ -133,23 +133,38 @@ static void optionsParseSelection(char const* optarg)
         opt.selection.paramNum = SELECTION_MODE_BLUR_DEFAULT;
         value += SELECTION_MODE_L_BLUR;
     }
-    else
-        errx(EXIT_FAILURE, "option --select: Unknown value for suboption '%s'", value);
+    else {
+        errx(EXIT_FAILURE, "option --select: Unknown value for suboption '%s'",
+             value);
+    }
 
     if (*value != SELECTION_MODE_SEPARATOR)
         return;
 
-    if (*(++value) == '\0')
-        errx(EXIT_FAILURE, "option --select: Invalid parameter");
+    if (*(++value) == '\0') {
+        errx(EXIT_FAILURE, "option --select: Invalid parameter %copacity",
+            SELECTION_MODE_SEPARATOR);
+    }
 
-    if (opt.selection.mode & SELECTION_MODE_PARAM_NUM) {
+    int const num = nonNegativeNumber(optionsParseRequiredNumber(value));
 
-        int const num = nonNegativeNumber(optionsParseRequiredNumber(value));
+    if (opt.selection.mode & SELECTION_MODE_NOT_BLUR)
+        opt.selection.paramNum = optionsParseRequireRange(num, 0, 255);
+    else
+        opt.selection.paramNum = optionsParseRequireRange(num, 1, 30);
 
-        if (opt.selection.mode & SELECTION_MODE_NOT_BLUR)
-            opt.selection.paramNum = optionsParseRequireRange(num, 0, 255);
-        else // SELECTION_MODE_BLUR
-            opt.selection.paramNum = optionsParseRequireRange(num, 1, 30);
+    if (opt.selection.mode == SELECTION_MODE_HIDE) {
+        char* img = strchr(value, SELECTION_MODE_SEPARATOR);
+
+        if (!img)
+            return;
+
+        if (*++img == '\0') {
+            errx(EXIT_FAILURE, "option --select: Invalid parameter %cimage",
+                SELECTION_MODE_SEPARATOR);
+        }
+
+        opt.selection.paramStr = strndup(img, PATH_MAX);
     }
 }
 
