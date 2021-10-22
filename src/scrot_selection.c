@@ -384,10 +384,8 @@ bool scrotSelectionGetUserSel(struct SelectionRect* selectionRect)
     return true;
 }
 
-static Imlib_Image loadImage(void)
+static Imlib_Image loadImage(char const* const fileName)
 {
-    char const* const fileName = opt.selection.paramStr;
-
     Imlib_Image image = imlib_load_image(fileName);
 
     if (!image) {
@@ -405,11 +403,10 @@ static Imlib_Image loadImage(void)
         return image;
     }
 
-    int const alpha = opt.selection.paramNum;
+    int const opacity = opt.selection.paramNum;
 
-    if (alpha == 255) {
-        /* Do not calculate the alpha channel if
-         * it is already completely opaque*/
+    if (opacity == 255) {
+        // Do nothing if a totally opaque image is expected.
         return image;
     }
 
@@ -426,7 +423,7 @@ static Imlib_Image loadImage(void)
     DATA32* end = data + (h * w);
 
     for (DATA32* pixel = data; pixel != end; ++pixel) {
-        DATA8 const a = PIXEL_A(*pixel) * alpha / 255;
+        DATA8 const a = PIXEL_A(*pixel) * opacity / 255;
         DATA8 const r = PIXEL_R(*pixel);
         DATA8 const g = PIXEL_G(*pixel);
         DATA8 const b = PIXEL_B(*pixel);
@@ -474,29 +471,40 @@ Imlib_Image scrotSelectionSelectMode(void)
     imlib_context_set_image(capture);
 
     if (opt.selection.mode == SELECTION_MODE_HOLE) {
-        Imlib_Image hole = imlib_clone_image();
-        imlib_context_set_color(color.red, color.green, color.blue, opt.selection.paramNum);
-        imlib_image_fill_rectangle(0, 0, rect0.w, rect0.h);
-        imlib_blend_image_onto_image(hole, 0, x, y, rect1.w, rect1.h, x, y, rect1.w, rect1.h);
-        imlib_context_set_image(hole);
-        imlib_free_image_and_decache();
+        int const opacity = opt.selection.paramNum;
+
+        if (opacity > 0) {
+            Imlib_Image hole = imlib_clone_image();
+            imlib_context_set_color(color.red, color.green, color.blue, opacity);
+            imlib_image_fill_rectangle(0, 0, rect0.w, rect0.h);
+            imlib_blend_image_onto_image(hole, 0, x, y, rect1.w, rect1.h, x, y, rect1.w, rect1.h);
+            imlib_context_set_image(hole);
+            imlib_free_image_and_decache();
+        }
     } else if (opt.selection.mode == SELECTION_MODE_HIDE) {
-        if (opt.selection.paramStr) {
-            Imlib_Image hide = loadImage();
-            free(opt.selection.paramStr);
-            imlib_context_set_image(hide);
-            int const w = imlib_image_get_width();
-            int const h = imlib_image_get_height();
-            imlib_context_set_image(capture);
-            imlib_blend_image_onto_image(hide, 0, 0, 0, w, h, x, y, rect1.w, rect1.h);
+        char* const fileName = opt.selection.paramStr;
+        int const opacity = opt.selection.paramNum;
+
+        if (fileName) {
+            if (opacity > 0) {
+                Imlib_Image hide = loadImage(fileName);
+                imlib_context_set_image(hide);
+                int const w = imlib_image_get_width();
+                int const h = imlib_image_get_height();
+                imlib_context_set_image(capture);
+                imlib_blend_image_onto_image(hide, 0, 0, 0, w, h, x, y, rect1.w, rect1.h);
+            }
+            free(fileName);
         } else {
-            imlib_context_set_color(color.red, color.green, color.blue, opt.selection.paramNum);
+            int const opacity = opt.selection.paramNum;
+            imlib_context_set_color(color.red, color.green, color.blue, opacity);
             imlib_image_fill_rectangle(x, y, rect1.w, rect1.h);
         }
     } else { // SELECTION_MODE_BLUR)
+        int const amountBlur = opt.selection.paramNum;
         Imlib_Image blur = imlib_clone_image();
         imlib_context_set_image(blur);
-        imlib_image_blur(opt.selection.paramNum);
+        imlib_image_blur(amountBlur);
         imlib_context_set_image(capture);
         imlib_blend_image_onto_image(blur, 0, x, y, rect1.w, rect1.h, x, y, rect1.w, rect1.h);
         imlib_context_set_image(blur);
