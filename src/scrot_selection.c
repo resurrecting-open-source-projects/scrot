@@ -386,14 +386,24 @@ bool scrotSelectionGetUserSel(struct SelectionRect* selectionRect)
 
 static Imlib_Image loadImage(void)
 {
-    Imlib_Image image = imlib_load_image(opt.selection.paramStr);
+    char const* const fileName = opt.selection.paramStr;
+
+    Imlib_Image image = imlib_load_image(fileName);
 
     if (!image) {
         errx(EXIT_FAILURE, "option --select: Failed to load image:%s",
-            opt.selection.paramStr);
+            fileName);
     }
 
     imlib_context_set_image(image);
+
+    char const hasAlpha = imlib_image_has_alpha();
+
+    if (hasAlpha == 0) {
+        warnx("Warning, ignoring the opacity parameter because the image '%s'"
+            " has no alpha channel, it will be drawn fully opaque.", fileName);
+        return image;
+    }
 
     int const alpha = opt.selection.paramNum;
 

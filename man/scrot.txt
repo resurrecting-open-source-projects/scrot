@@ -105,8 +105,10 @@ SELECTION MODE
     blur,AMOUNT         Blurs the selection area.
                         Amount,range: 1..30,  default: 18
 
-  In modes hole and hide the color of the area is indicated by "color" property of the
+  In modes 'hole' and 'hide' the color of the area is indicated by 'color' property of the
   line style, SELECTION STYLE
+  If the 'hide' mode uses an image that does not have an alpha channel, the opacity parameter
+  will be ignored and it will be drawn fully opaque.
 
   Example:
 
