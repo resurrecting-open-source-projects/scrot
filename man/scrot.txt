@@ -91,6 +91,7 @@ SPECIAL STRINGS
 
 SELECTION MODE
   When using -s, optionally you can indicate the action to perform with the selection area.
+
   Note: Parameters OPACITY, AMOUNT and IMAGE are optional.
 
     capture             Capture the selection area, this action is by default.
@@ -107,6 +108,7 @@ SELECTION MODE
 
   In modes 'hole' and 'hide' the color of the area is indicated by 'color' property of the
   line style, SELECTION STYLE
+
   If the 'hide' mode uses an image that does not have an alpha channel, the opacity parameter
   will be ignored and it will be drawn fully opaque.
 
