@@ -43,9 +43,22 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "scrot.h"
 #include <assert.h>
 
+#define STR_LEN_MAX_FILENAME(msg, fileName) do {                \
+    if (strlen((fileName)) > MAX_FILENAME) {                    \
+        errx(EXIT_FAILURE, #msg " filename too long, must be "  \
+            "less than %d characters", MAX_FILENAME);           \
+    }                                                           \
+} while(0)
+
+#define checkMaxOutputFileName(fileName) \
+    STR_LEN_MAX_FILENAME(output, (fileName))
+
+#define checkMaxInputFileName(fileName) \
+    STR_LEN_MAX_FILENAME(input, (fileName))
+
 enum {
     MAX_LEN_WINDOW_CLASS_NAME = 80, //characters
-    MAX_OUTPUT_FILENAME = 256, // characters
+    MAX_FILENAME = 256, // characters
     MAX_DISPLAY_NAME = 256, // characters
 };
 
@@ -168,7 +181,9 @@ static void optionsParseSelection(char const* optarg)
                 SELECTION_MODE_SEPARATOR);
         }
 
-        opt.selection.paramStr = strndup(img, PATH_MAX);
+        checkMaxInputFileName(img);
+
+        opt.selection.paramStr = strdup(img);
     }
 }
 
@@ -530,10 +545,7 @@ void optionsParseThumbnail(char* optarg)
 
 void optionsParseFileName(const char* optarg)
 {
-    if (strlen(optarg) > MAX_OUTPUT_FILENAME) {
-        errx(EXIT_FAILURE,"output filename too long, must be "
-            "less than %d characters", MAX_OUTPUT_FILENAME);
-    }
+    checkMaxOutputFileName(optarg);
     opt.outputFile = strdup(optarg);
 }
 
