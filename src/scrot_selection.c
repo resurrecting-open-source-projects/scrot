@@ -493,6 +493,8 @@ Imlib_Image scrotSelectionSelectMode(void)
                 int const h = imlib_image_get_height();
                 imlib_context_set_image(capture);
                 imlib_blend_image_onto_image(hide, 0, 0, 0, w, h, x, y, rect1.w, rect1.h);
+                imlib_context_set_image(hide);
+                imlib_free_image_and_decache();
             }
             free(fileName);
         } else {
@@ -500,7 +502,7 @@ Imlib_Image scrotSelectionSelectMode(void)
             imlib_context_set_color(color.red, color.green, color.blue, opacity);
             imlib_image_fill_rectangle(x, y, rect1.w, rect1.h);
         }
-    } else { // SELECTION_MODE_BLUR)
+    } else { // SELECTION_MODE_BLUR
         int const amountBlur = opt.selection.paramNum;
         Imlib_Image blur = imlib_clone_image();
         imlib_context_set_image(blur);
