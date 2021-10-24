@@ -165,11 +165,6 @@ static void optionsParseSelection(char const* optarg)
 
     } else { // SELECTION_MODE_HIDE
 
-        if (*value == '\0') {
-            errx(EXIT_FAILURE, "option --select: Invalid parameter %cimage",
-                SELECTION_MODE_SEPARATOR);
-        }
-
         checkMaxInputFileName(value);
 
         opt.selection.paramStr = strdup(value);
