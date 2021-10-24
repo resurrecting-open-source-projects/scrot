@@ -34,13 +34,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 #include "structs.h"
+#include "scrot_selection.h"
 
 #pragma once
 
 struct __ScrotOptions {
     int delay;
     int countdown;
-    int select;
     int focused;
     int quality;
     int border;
@@ -71,6 +71,7 @@ struct __ScrotOptions {
     int autoselectY;
     int autoselectH;
     int autoselectW;
+    SelectionMode selection;
 };
 
 void optionsParse(int, char**);
@@ -80,7 +81,7 @@ void optionsParseThumbnail(char*);
 void optionsParseAutoselect(char*);
 void optionsParseDisplay(char*);
 void optionsParseNote(char*);
-int optionsParseRequiredNumber(char*);
+int optionsParseRequiredNumber(char const *);
 int optionsCompareWindowClassName(const char*);
 int optionsParseRequireRange(int, int, int);
 extern ScrotOptions opt;

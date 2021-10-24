@@ -86,7 +86,8 @@ void selectionEdgeCreate(void)
     pe->wndDraw = XCreateWindow(disp, root, 0, 0, WidthOfScreen(scr), HeightOfScreen(scr), 0,
         CopyFromParent, InputOutput, CopyFromParent, CWOverrideRedirect | CWBackPixel, &attr);
 
-    int const lineOpacity = optionsParseRequireRange(opt.lineOpacity, 10, 100);
+    int const lineOpacity = optionsParseRequireRange(opt.lineOpacity,
+            SELECTION_EDGE_OPACITY_MIN, SELECTION_OPACITY_MAX);
 
     unsigned long opacity = lineOpacity * ((unsigned)-1 / 100);
 

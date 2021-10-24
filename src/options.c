@@ -43,9 +43,22 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "scrot.h"
 #include <assert.h>
 
+#define STR_LEN_MAX_FILENAME(msg, fileName) do {                \
+    if (strlen((fileName)) > MAX_FILENAME) {                    \
+        errx(EXIT_FAILURE, #msg " filename too long, must be "  \
+            "less than %d characters", MAX_FILENAME);           \
+    }                                                           \
+} while(0)
+
+#define checkMaxOutputFileName(fileName) \
+    STR_LEN_MAX_FILENAME(output, (fileName))
+
+#define checkMaxInputFileName(fileName) \
+    STR_LEN_MAX_FILENAME(input, (fileName))
+
 enum {
     MAX_LEN_WINDOW_CLASS_NAME = 80, //characters
-    MAX_OUTPUT_FILENAME = 256, // characters
+    MAX_FILENAME = 256, // characters
     MAX_DISPLAY_NAME = 256, // characters
 };
 
@@ -53,11 +66,11 @@ ScrotOptions opt = {
     .quality = 75,
     .lineStyle = LineSolid,
     .lineWidth = 1,
-    .lineOpacity = 100,
-    .lineMode = LINE_MODE_CLASSIC,
+    .lineOpacity = SELECTION_OPACITY_DEFAULT,
+    .lineMode = LINE_MODE_S_CLASSIC,
 };
 
-int optionsParseRequiredNumber(char* str)
+int optionsParseRequiredNumber(char const* str)
 {
     assert(NULL != str); // fix yout caller function,
                          //  the user does not impose this behavior
@@ -103,7 +116,7 @@ static void optionsParseSelection(char const* optarg)
 {
     // the suboption it's optional
     if (!optarg) {
-        opt.select = SELECTION_MODE_CAPTURE;
+        opt.selection.mode = SELECTION_MODE_CAPTURE;
         return;
     }
 
@@ -114,16 +127,48 @@ static void optionsParseSelection(char const* optarg)
     else
         value = optarg;
 
-    if (!strncmp(value, "capture", 7))
-        opt.select = SELECTION_MODE_CAPTURE;
-    else if (!strncmp(value, "hide", 4))
-        opt.select = SELECTION_MODE_HIDE;
-    else if (!strncmp(value, "hole", 4))
-        opt.select = SELECTION_MODE_HOLE;
-    else if (!strncmp(value, "blur", 4))
-        opt.select = SELECTION_MODE_BLUR;
-    else
-        errx(EXIT_FAILURE, "option --select: Unknown value for suboption '%s'", value);
+    if (!strncmp(value, SELECTION_MODE_S_CAPTURE, SELECTION_MODE_L_CAPTURE)) {
+        opt.selection.mode = SELECTION_MODE_CAPTURE;
+        return; /* it has no parameter */
+    }
+    else if (!strncmp(value, SELECTION_MODE_S_HIDE, SELECTION_MODE_L_HIDE)) {
+        opt.selection.mode = SELECTION_MODE_HIDE;
+        value += SELECTION_MODE_L_HIDE;
+    }
+    else if (!strncmp(value, SELECTION_MODE_S_HOLE, SELECTION_MODE_L_HOLE)) {
+        opt.selection.mode = SELECTION_MODE_HOLE;
+    }
+    else if (!strncmp(value, SELECTION_MODE_S_BLUR, SELECTION_MODE_L_BLUR)) {
+        opt.selection.mode = SELECTION_MODE_BLUR;
+        opt.selection.paramNum = SELECTION_MODE_BLUR_DEFAULT;
+        value += SELECTION_MODE_L_BLUR;
+    }
+    else {
+        errx(EXIT_FAILURE, "option --select: Unknown value for suboption '%s'",
+             value);
+    }
+
+    if (opt.selection.mode & SELECTION_MODE_NOT_NEED_PARAM)
+        return;
+
+    if (*value != SELECTION_MODE_SEPARATOR)
+        return;
+
+    if (*(++value) == '\0')
+        errx(EXIT_FAILURE, "option --select: Invalid parameter.");
+
+    if (opt.selection.mode == SELECTION_MODE_BLUR) {
+        int const num = nonNegativeNumber(optionsParseRequiredNumber(value));
+
+        opt.selection.paramNum = optionsParseRequireRange(num,
+            SELECTION_MODE_BLUR_MIN, SELECTION_MODE_BLUR_MAX);
+
+    } else { // SELECTION_MODE_HIDE
+
+        checkMaxInputFileName(value);
+
+        opt.selection.paramStr = strdup(value);
+    }
 }
 
 static void optionsParseLine(char* optarg)
@@ -192,9 +237,9 @@ static void optionsParseLine(char* optarg)
                     token[Mode]);
             }
 
-            bool isValidMode = !strncmp(value, LINE_MODE_CLASSIC, LINE_MODE_CLASSIC_LEN);
+            bool isValidMode = !strncmp(value, LINE_MODE_S_CLASSIC, LINE_MODE_L_CLASSIC);
 
-            isValidMode = isValidMode || !strncmp(value, LINE_MODE_EDGE, LINE_MODE_EDGE_LEN);
+            isValidMode = isValidMode || !strncmp(value, LINE_MODE_S_EDGE, LINE_MODE_L_EDGE);
 
             if (!isValidMode) {
                 errx(EXIT_FAILURE, "Unknown value for suboption '%s': %s",
@@ -484,10 +529,7 @@ void optionsParseThumbnail(char* optarg)
 
 void optionsParseFileName(const char* optarg)
 {
-    if (strlen(optarg) > MAX_OUTPUT_FILENAME) {
-        errx(EXIT_FAILURE,"output filename too long, must be "
-            "less than %d characters", MAX_OUTPUT_FILENAME);
-    }
+    checkMaxOutputFileName(optarg);
     opt.outputFile = strdup(optarg);
 }
 
