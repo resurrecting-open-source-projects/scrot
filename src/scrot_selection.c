@@ -477,7 +477,6 @@ Imlib_Image scrotSelectionSelectMode(void)
 
     switch(opt.selection.mode) {
     case SELECTION_MODE_HOLE:
-
         if (opacity > 0) {
             Imlib_Image hole = imlib_clone_image();
             imlib_context_set_color(color.red, color.green, color.blue, opacity);
@@ -488,6 +487,7 @@ Imlib_Image scrotSelectionSelectMode(void)
         }
         break;
     case SELECTION_MODE_HIDE:
+    {
         char* const fileName = opt.selection.paramStr;
 
         if (fileName) {
@@ -507,8 +507,9 @@ Imlib_Image scrotSelectionSelectMode(void)
             imlib_image_fill_rectangle(x, y, rect1.w, rect1.h);
         }
         break;
-
+    }
     case SELECTION_MODE_BLUR:
+    {
         int const amountBlur = opt.selection.paramNum;
         Imlib_Image blur = imlib_clone_image();
         imlib_context_set_image(blur);
@@ -518,6 +519,7 @@ Imlib_Image scrotSelectionSelectMode(void)
         imlib_context_set_image(blur);
         imlib_free_image_and_decache();
         break;
+    }
     default:
         assert(0);
     }
