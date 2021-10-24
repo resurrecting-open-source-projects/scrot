@@ -91,18 +91,33 @@ SPECIAL STRINGS
 
 SELECTION MODE
   When using -s, optionally you can indicate the action to perform with the selection area.
-    capture         Capture the selection area, this action is by default.
-    hole            Highlight the selected area overshadowing the rest of the capture.
-    hide            Hide the selection area by drawing an area of color over it.
-    blur            Blurs the selection area.
+  Some actions allow optional parameters too.
 
-  In both modes(hole/hide) the opacity and the color of the area is indicated by
-  the "opacity" and "color" property of the line style, SELECTION STYLE
+    capture             Capture the selection area, this action is by default and
+                        does not need to be specified.
+
+    hole                Highlight the selected area overshadowing the rest of the capture.
+
+    hide,IMAGE          Hide the selection area by drawing an area of color (or image) over it.
+                        Optionally indicate name of the image to use as cover.
+                        Image has priority over color.
+
+    blur,AMOUNT         Blurs the selection area.
+                        Optionally you can specify the amount of blur.
+                        Amount,range: 1..30,  default: 18
+
+  In modes 'hole' and 'hide' the color of the area is indicated by 'color' property of the
+  line style and the opacity of the color (or image) is indicated by property 'opacity', SELECTION STYLE
+
+  If the 'hide' mode uses an image that does not have an alpha channel, the opacity parameter
+  will be ignored and it will be drawn fully opaque.
 
   Example:
 
     $ scrot --select=hide
     $ scrot -shole --line color="Dark Salmon",opacity=200
+    $ scrot -sblur,10
+    $ scrot -shide,stamp.png --line opacity=120
 
 SELECTION STYLE
   When using -s, you can indicate the style of the line with -l.
@@ -110,17 +125,21 @@ SELECTION STYLE
   -l takes a comma-separated list of specifiers as argument:
 
     style=STYLE     STYLE is either "solid" or "dash" without quotes.
+
     width=NUM       NUM is a pixel count between 1 and 8 inclusive.
+
     color="COLOR"   Color is a hexadecimal HTML color code or the name of
                     a color. HTML color codes are composed of a pound
                     sign '#' followed by a sequence of 3 2-digit
                     hexadecimal numbers which represent red, green, and
                     blue respectively. Examples: #FF0000 (red), #E0FFFF
                     (light cyan), #000000 (black).
+
     opacity=NUM     NUM is between 0 and 255 inclusive. 255 means
                     100% opaque, 0 means 100% transparent. For the
                     opacity of the line this is only effective if a
                     Composite Manager is running.
+
     mode=MODE       MODE is either "edge" or "classic" without quotes.
                     edge is the new selection, classic uses the old one.
                     "edge" ignores the style specifier and the -f flag,

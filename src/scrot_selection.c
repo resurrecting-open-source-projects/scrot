@@ -60,11 +60,11 @@ static void createCursors(void)
 
     assert(sel != NULL);
 
-    if (opt.select == SELECTION_MODE_CAPTURE)
+    if (opt.selection.mode == SELECTION_MODE_CAPTURE)
         sel->curCross = XCreateFontCursor(disp, XC_cross);
-    else if (opt.select == SELECTION_MODE_HIDE)
+    else if (opt.selection.mode == SELECTION_MODE_HIDE)
         sel->curCross = XCreateFontCursor(disp, XC_spraycan);
-    else if (opt.select == SELECTION_MODE_BLUR)
+    else if (opt.selection.mode == SELECTION_MODE_BLUR)
         sel->curCross = XCreateFontCursor(disp, XC_box_spiral);
     else // SELECTION_MODE_HOLE
         sel->curCross = XCreateFontCursor(disp, XC_target);
@@ -123,12 +123,12 @@ void scrotSelectionCreate(void)
 
     createCursors();
 
-    if (!strncmp(opt.lineMode, LINE_MODE_CLASSIC, LINE_MODE_CLASSIC_LEN)) {
+    if (!strncmp(opt.lineMode, LINE_MODE_S_CLASSIC, LINE_MODE_L_CLASSIC)) {
         sel->create = selectionClassicCreate;
         sel->draw = selectionClassicDraw;
         sel->motionDraw = selectionClassicMotionDraw;
         sel->destroy = selectionClassicDestroy;
-    } else if (!strncmp(opt.lineMode, LINE_MODE_EDGE, LINE_MODE_EDGE_LEN)) {
+    } else if (!strncmp(opt.lineMode, LINE_MODE_S_EDGE, LINE_MODE_L_EDGE)) {
         sel->create = selectionEdgeCreate;
         sel->draw = selectionEdgeDraw;
         sel->motionDraw = selectionEdgeMotionDraw;
@@ -384,20 +384,73 @@ bool scrotSelectionGetUserSel(struct SelectionRect* selectionRect)
     return true;
 }
 
+static void changeImageOpacity(Imlib_Image image, int const opacity)
+{
+#define PIXEL_ARGB(a, r, g, b)  ((a) << 24) | ((r) << 16) | ((g) << 8) | (b)
+#define PIXEL_A(argb)  (((argb) >> 24) & 0xff)
+#define PIXEL_R(argb)  (((argb) >> 16) & 0xff)
+#define PIXEL_G(argb)  (((argb) >>  8) & 0xff)
+#define PIXEL_B(argb)  (((argb)      ) & 0xff)
+
+    imlib_context_set_image(image);
+    int const w = imlib_image_get_width();
+    int const h = imlib_image_get_height();
+
+    DATA32* data = imlib_image_get_data();
+    DATA32* end = data + (h * w);
+
+    for (DATA32* pixel = data; pixel != end; ++pixel) {
+        DATA8 const a = PIXEL_A(*pixel) * opacity / 255;
+        DATA8 const r = PIXEL_R(*pixel);
+        DATA8 const g = PIXEL_G(*pixel);
+        DATA8 const b = PIXEL_B(*pixel);
+       *pixel = (DATA32)PIXEL_ARGB(a, r, g, b);
+    }
+
+    imlib_image_put_back_data(data);
+}
+
+static Imlib_Image loadImage(char const* const fileName, int const opacity)
+{
+    Imlib_Image image = imlib_load_image(fileName);
+
+    if (!image) {
+        errx(EXIT_FAILURE, "option --select: Failed to load image:%s",
+            fileName);
+    }
+
+    imlib_context_set_image(image);
+
+    if (imlib_image_has_alpha() == 0) {
+        warnx("Warning, ignoring the opacity parameter because the image '%s'"
+            " has no alpha channel, it will be drawn fully opaque.", fileName);
+        return image;
+    }
+
+    if (opacity == 255) {
+        // Do nothing if a totally opaque image is expected.
+        return image;
+    }
+
+    changeImageOpacity(image, opacity);
+
+    return image;
+}
+
 Imlib_Image scrotSelectionSelectMode(void)
 {
     struct SelectionRect rect0, rect1;
 
-    int const oldSelect = opt.select;
+    unsigned int const oldMode = opt.selection.mode;
 
-    opt.select = SELECTION_MODE_CAPTURE;
+    opt.selection.mode = SELECTION_MODE_CAPTURE;
 
     if (!scrotSelectionGetUserSel(&rect0))
         return NULL;
 
-    opt.select = oldSelect;
+    opt.selection.mode = oldMode;
 
-    if (opt.select & SELECTION_MODE_NOT_CAPTURE)
+    if (opt.selection.mode & SELECTION_MODE_NOT_CAPTURE)
         if (!scrotSelectionGetUserSel(&rect1))
             return NULL;
 
@@ -409,36 +462,65 @@ Imlib_Image scrotSelectionSelectMode(void)
     if (opt.pointer)
        scrotGrabMousePointer(capture, rect0.x, rect0.y);
 
-      if (opt.select & SELECTION_MODE_NOT_CAPTURE) {
+    if (opt.selection.mode == SELECTION_MODE_CAPTURE)
+        return capture;
 
-        XColor color;
-        scrotSelectionGetLineColor(&color);
+    XColor color;
+    scrotSelectionGetLineColor(&color);
 
-        int const alpha = optionsParseRequireRange(opt.lineOpacity, 0, 255);
-        int const x = rect1.x - rect0.x;
-        int const y = rect1.y - rect0.y;
+    int const x = rect1.x - rect0.x;
+    int const y = rect1.y - rect0.y;
+    int const opacity = optionsParseRequireRange(opt.lineOpacity,
+            SELECTION_OPACITY_MIN, SELECTION_OPACITY_MAX);
 
-        imlib_context_set_image(capture);
+    imlib_context_set_image(capture);
 
-        if (opt.select == SELECTION_MODE_HOLE) {
+    switch(opt.selection.mode) {
+    case SELECTION_MODE_HOLE:
+
+        if (opacity > 0) {
             Imlib_Image hole = imlib_clone_image();
-            imlib_context_set_color(color.red, color.green, color.blue, alpha);
+            imlib_context_set_color(color.red, color.green, color.blue, opacity);
             imlib_image_fill_rectangle(0, 0, rect0.w, rect0.h);
             imlib_blend_image_onto_image(hole, 0, x, y, rect1.w, rect1.h, x, y, rect1.w, rect1.h);
             imlib_context_set_image(hole);
             imlib_free_image_and_decache();
-        } else if (opt.select == SELECTION_MODE_HIDE) {
-            imlib_context_set_color(color.red, color.green, color.blue, alpha);
-            imlib_image_fill_rectangle(x, y, rect1.w, rect1.h);
-        } else { //SELECTION_MODE_BLUR
-            Imlib_Image blur = imlib_clone_image();
-            imlib_context_set_image(blur);
-            imlib_image_blur(SELECTION_MODE_BLUR_VALUE);
-            imlib_context_set_image(capture);
-            imlib_blend_image_onto_image(blur, 0, x, y, rect1.w, rect1.h, x, y, rect1.w, rect1.h);
-            imlib_context_set_image(blur);
-            imlib_free_image_and_decache();
         }
+        break;
+    case SELECTION_MODE_HIDE:
+        char* const fileName = opt.selection.paramStr;
+
+        if (fileName) {
+            if (opacity > 0) {
+                Imlib_Image hide = loadImage(fileName, opacity);
+                imlib_context_set_image(hide);
+                int const w = imlib_image_get_width();
+                int const h = imlib_image_get_height();
+                imlib_context_set_image(capture);
+                imlib_blend_image_onto_image(hide, 0, 0, 0, w, h, x, y, rect1.w, rect1.h);
+                imlib_context_set_image(hide);
+                imlib_free_image_and_decache();
+            }
+            free(fileName);
+        } else {
+            imlib_context_set_color(color.red, color.green, color.blue, opacity);
+            imlib_image_fill_rectangle(x, y, rect1.w, rect1.h);
+        }
+        break;
+
+    case SELECTION_MODE_BLUR:
+        int const amountBlur = opt.selection.paramNum;
+        Imlib_Image blur = imlib_clone_image();
+        imlib_context_set_image(blur);
+        imlib_image_blur(amountBlur);
+        imlib_context_set_image(capture);
+        imlib_blend_image_onto_image(blur, 0, x, y, rect1.w, rect1.h, x, y, rect1.w, rect1.h);
+        imlib_context_set_image(blur);
+        imlib_free_image_and_decache();
+        break;
+    default:
+        assert(0);
     }
+
     return capture;
 }

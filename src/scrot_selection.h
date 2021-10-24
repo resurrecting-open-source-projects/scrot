@@ -32,27 +32,58 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #pragma once
 
+#include <X11/Xresource.h>
+#include <X11/extensions/Xfixes.h>
+#include <X11/extensions/shape.h>
+#include <X11/keysym.h>
+#include <X11/cursorfont.h>
+#include <Imlib2.h>
+#include <stdbool.h>
 #include <assert.h>
 
-#define LINE_MODE_CLASSIC "classic"
-#define LINE_MODE_CLASSIC_LEN 7
-#define LINE_MODE_EDGE "edge"
-#define LINE_MODE_EDGE_LEN 4
+/* S: string, L: len */
+#define LINE_MODE_S_CLASSIC "classic"
+#define LINE_MODE_L_CLASSIC 7
+#define LINE_MODE_S_EDGE "edge"
+#define LINE_MODE_L_EDGE 4
+#define SELECTION_MODE_S_CAPTURE "capture"
+#define SELECTION_MODE_L_CAPTURE 7
+#define SELECTION_MODE_S_HIDE "hide"
+#define SELECTION_MODE_L_HIDE 4
+#define SELECTION_MODE_S_HOLE "hole"
+#define SELECTION_MODE_L_HOLE 4
+#define SELECTION_MODE_S_BLUR "blur"
+#define SELECTION_MODE_L_BLUR 4
 
 enum {
-    SELECTION_MODE_CAPTURE = 1,
-    SELECTION_MODE_HIDE = 2,
-    SELECTION_MODE_HOLE = 4,
-    SELECTION_MODE_BLUR = 8,
-    SELECTION_MODE_ANY  = (SELECTION_MODE_CAPTURE | SELECTION_MODE_HIDE | SELECTION_MODE_HOLE | SELECTION_MODE_BLUR),
+    SELECTION_MODE_SEPARATOR = ',',
+    SELECTION_MODE_CAPTURE = (1 << 1),
+    SELECTION_MODE_HIDE = (1 << 2),
+    SELECTION_MODE_HOLE = (1 << 3),
+    SELECTION_MODE_BLUR = (1 << 4),
+    SELECTION_MODE_ANY = (SELECTION_MODE_CAPTURE | SELECTION_MODE_HIDE | SELECTION_MODE_HOLE | SELECTION_MODE_BLUR),
     SELECTION_MODE_NOT_CAPTURE = (SELECTION_MODE_ANY & ~SELECTION_MODE_CAPTURE),
-    SELECTION_MODE_BLUR_VALUE = 18,
+    SELECTION_MODE_NEED_PARAM = (SELECTION_MODE_HIDE | SELECTION_MODE_BLUR),
+    SELECTION_MODE_NOT_NEED_PARAM = (~SELECTION_MODE_NEED_PARAM),
+    SELECTION_MODE_BLUR_MIN= 1,
+    SELECTION_MODE_BLUR_MAX= 30,
+    SELECTION_MODE_BLUR_DEFAULT = 18,
+    SELECTION_OPACITY_MIN = 0,
+    SELECTION_OPACITY_MAX = 255,
+    SELECTION_OPACITY_DEFAULT = 100,
+    SELECTION_EDGE_OPACITY_MIN = 10,
+    SELECTION_EDGE_OPACITY_MAX = 100,
 };
 
 struct SelectionRect {
     int x, y, w, h;
 };
 
+typedef struct SelectionMode {
+    unsigned int mode;
+    int paramNum;
+    char* paramStr;
+} SelectionMode;
 
 struct SelectionClassic;
 struct SelectionEdge;
