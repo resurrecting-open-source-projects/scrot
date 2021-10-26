@@ -57,6 +57,7 @@ struct __ScrotOptions {
     int lineWidth;
     int lineOpacity;
     int stack;
+    int stackDirection;
     char* lineColor;
     char* lineMode;
     char* outputFile;

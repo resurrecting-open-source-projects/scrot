@@ -70,6 +70,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 typedef void (*signalHandler)(int);
 
+// General purpose enum
+enum Direction {
+    // see main.c:stalkImageConcat(...)
+    HORIZONTAL,
+    VERTICAL,
+};
+
 void showUsage(void);
 void showVersion(void);
 void initXAndImlib(char*, int);
@@ -88,7 +95,7 @@ Window scrotFindWindowByProperty(Display*, const Window, const Atom);
 char* imPrintf(char*, struct tm*, char*, char*, Imlib_Image);
 Imlib_Image scrotGrabShotMulti(void);
 Imlib_Image scrotGrabStackWindows(void);
-Imlib_Image stalkImageConcat(ScrotList*);
+Imlib_Image stalkImageConcat(ScrotList*, enum Direction const);
 
 void scrotGrabMousePointer(const Imlib_Image, const int, const int);
 

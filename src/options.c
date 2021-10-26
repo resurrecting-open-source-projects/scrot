@@ -68,6 +68,7 @@ ScrotOptions opt = {
     .lineWidth = 1,
     .lineOpacity = SELECTION_OPACITY_DEFAULT,
     .lineMode = LINE_MODE_S_CLASSIC,
+    .stackDirection = HORIZONTAL,
 };
 
 int optionsParseRequiredNumber(char const* str)
@@ -110,6 +111,30 @@ int optionsParseRequireRange(int n, int lo, int hi)
 bool optionsParseIsString(char const* const str)
 {
     return (str && (str[0] != '\0'));
+}
+
+static void optionsParseStack(char const* optarg)
+{
+    // the suboption it's optional
+    if (!optarg) {
+        opt.stackDirection = HORIZONTAL;
+        return;
+    }
+    char const* value = strchr(optarg, '=');
+
+    if (value)
+        ++value;
+    else
+        value = optarg;
+
+    if (*value == 'v')
+        opt.stackDirection = VERTICAL;
+    else if (*value == 'h')
+        opt.stackDirection = HORIZONTAL;
+    else {
+        errx(EXIT_FAILURE, "option --stack: Unknown value for suboption '%s'",
+             value);
+    }
 }
 
 static void optionsParseSelection(char const* optarg)
@@ -301,7 +326,7 @@ static char* getPathOfStdout(void)
 
 void optionsParse(int argc, char** argv)
 {
-    static char stropts[] = "a:ofipbcd:e:hmq:s::t:uvzn:l:D:kC:S:F:";
+    static char stropts[] = "a:ofipbcd:e:hmq:s::t:uvzn:l:D:k::C:S:F:";
 
     static struct option lopts[] = {
         /* actions */
@@ -317,8 +342,8 @@ void optionsParse(int argc, char** argv)
         { "ignorekeyboard", no_argument, 0, 'i' },
         { "freeze", no_argument, 0, 'f' },
         { "overwrite", no_argument, 0, 'o' },
-        { "stack", no_argument, 0, 'k' },
         /* toggles */
+        { "stack", optional_argument, 0, 'k' },
         { "select", optional_argument, 0, 's' },
         { "thumb", required_argument, 0, 't' },
         { "delay", required_argument, 0, 'd' },
@@ -402,6 +427,7 @@ void optionsParse(int argc, char** argv)
             break;
         case 'k':
             opt.stack = 1;
+            optionsParseStack(optarg);
             break;
         case 'C':
             optionsParseWindowClassName(optarg);

@@ -720,7 +720,7 @@ Imlib_Image scrotGrabStackWindows(void)
         appendToScrotList(images, im);
     }
 
-    return stalkImageConcat(&images);
+    return stalkImageConcat(&images, opt.stackDirection);
 }
 
 Imlib_Image scrotGrabShotMulti(void)
@@ -755,32 +755,49 @@ Imlib_Image scrotGrabShotMulti(void)
     }
     free(subDisp);
 
-    return stalkImageConcat(&images);
+    return stalkImageConcat(&images, HORIZONTAL);
 }
 
-Imlib_Image stalkImageConcat(ScrotList* images)
+Imlib_Image stalkImageConcat(ScrotList* images, enum Direction const dir)
 {
     if (isEmptyScrotList(images))
         return NULL;
 
-    int totalWidth = 0, maxHeight = 0, w, h;
-    int x = 0;
+    int total = 0, max = 0;
+    int x = 0, y = 0, w , h;
     Imlib_Image ret, im;
     ScrotListNode* image = NULL;
+
+    bool vertical = (dir == VERTICAL) ? true : false;
 
     forEachScrotList(images, image) {
         im = (Imlib_Image) image->data;
         imlib_context_set_image(im);
         h = imlib_image_get_height();
         w = imlib_image_get_width();
-        if (h > maxHeight)
-            maxHeight = h;
-        totalWidth += w;
+        if (!vertical) {
+            if (h > max)
+                max = h;
+            total += w;
+        } else {
+            if (w > max)
+                max = w;
+            total += h;
+        }
     }
-    ret = imlib_create_image(totalWidth, maxHeight);
+    if (!vertical) {
+        w = total;
+        h = max;
+    } else {
+        w = max;
+        h = total;
+    }
+    ret = imlib_create_image(w, h);
+
     imlib_context_set_image(ret);
     imlib_context_set_color(0, 0, 0, 255);
-    imlib_image_fill_rectangle(0, 0, totalWidth, maxHeight);
+    imlib_image_fill_rectangle(0, 0, w, h);
+
     image = firstScrotList(images);
     while (image) {
         im = (Imlib_Image) image->data;
@@ -792,8 +809,8 @@ Imlib_Image stalkImageConcat(ScrotList* images)
         imlib_context_set_dither(1);
         imlib_context_set_blend(0);
         imlib_context_set_angle(0);
-        imlib_blend_image_onto_image(im, 0, 0, 0, w, h, x, 0, w, h);
-        x += w;
+        imlib_blend_image_onto_image(im, 0, 0, 0, w, h, x, y, w, h);
+        (!vertical) ? (x += w) : (y += h);
         imlib_context_set_image(im);
         imlib_free_image_and_decache();
         nextAndFreeScrotList(image);
