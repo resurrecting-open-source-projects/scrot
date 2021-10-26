@@ -768,7 +768,7 @@ Imlib_Image stalkImageConcat(ScrotList* images, enum Direction const dir)
     Imlib_Image ret, im;
     ScrotListNode* image = NULL;
 
-    bool vertical = (dir == VERTICAL) ? true : false;
+    bool const vertical = (dir == VERTICAL) ? true : false;
 
     forEachScrotList(images, image) {
         im = (Imlib_Image) image->data;
