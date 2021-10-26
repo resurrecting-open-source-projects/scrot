@@ -70,13 +70,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 typedef void (*signalHandler)(int);
 
-// General purpose enum
-enum Direction {
-    // see main.c:stalkImageConcat(...)
-    HORIZONTAL,
-    VERTICAL,
-};
-
 void showUsage(void);
 void showVersion(void);
 void initXAndImlib(char*, int);

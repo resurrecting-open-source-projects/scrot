@@ -38,6 +38,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #pragma once
 
+// General purpose enum
+enum Direction {
+    // see main.c:stalkImageConcat(...)
+    HORIZONTAL,
+    VERTICAL,
+};
+
 struct __ScrotOptions {
     int delay;
     int countdown;
@@ -57,7 +64,7 @@ struct __ScrotOptions {
     int lineWidth;
     int lineOpacity;
     int stack;
-    int stackDirection;
+    enum Direction stackDirection;
     char* lineColor;
     char* lineMode;
     char* outputFile;
