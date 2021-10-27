@@ -88,7 +88,7 @@ Window scrotFindWindowByProperty(Display*, const Window, const Atom);
 char* imPrintf(char*, struct tm*, char*, char*, Imlib_Image);
 Imlib_Image scrotGrabShotMulti(void);
 Imlib_Image scrotGrabStackWindows(void);
-Imlib_Image stalkImageConcat(ScrotList*);
+Imlib_Image stalkImageConcat(ScrotList*, enum Direction const);
 
 void scrotGrabMousePointer(const Imlib_Image, const int, const int);
 

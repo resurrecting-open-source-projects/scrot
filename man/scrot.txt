@@ -34,8 +34,9 @@ OPTIONS
   -F, --file                File name. See SPECIAL STRINGS.
   -h, --help                Display help and exit.
   -i, --ignorekeyboard      Don't exit for keyboard input. ESC still exits.
-  -k, --stack               Capture stack/overlapped windows and join them. A
-                            running Composite Manager is needed.
+  -k, --stack OPT           Capture stack/overlapped windows and join them. A
+                            running Composite Manager is needed. OPT it's optional
+                            join letter: v/h (vertical/horizontal). Default: h
   -l, --line STYLE          STYLE indicates the style of the line when the -s
                             option is used; see SELECTION STYLE.
   -m, --multidisp           For multiple heads, screenshot all of them in order.
