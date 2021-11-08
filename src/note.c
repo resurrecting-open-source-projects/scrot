@@ -1,6 +1,6 @@
 /* note.c
 
-Copyright 2019-2021 Daniel T. Borelli <daltomi@disroot.org>
+Copyright 2019-2021 Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 Copyright 2021      IFo Hancroft <contact@ifohancroft.com>

@@ -1,6 +1,6 @@
 /* scrot_selection_classic.h
 
-Copyright 2020-2021 Daniel T. Borelli <daltomi@disroot.org>
+Copyright 2020-2021 Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

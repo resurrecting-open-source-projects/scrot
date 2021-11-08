@@ -1,6 +1,6 @@
 /* scrot_selection.c
 
-Copyright 2020-2021  Daniel T. Borelli <daltomi@disroot.org>
+Copyright 2020-2021  Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2021       Martin C <martincation@protonmail.com>
 Copyright 2021       Peter Wu <peterwu@hotmail.com>
 Copyright 2021       Wilson Smith <01wsmith+gh@gmail.com>

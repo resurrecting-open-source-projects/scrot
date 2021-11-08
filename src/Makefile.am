@@ -2,7 +2,7 @@
 #                                   gilbertt@linuxbrit.co.uk,
 #                                   scrot_sucks@linuxbrit.co.uk>
 # Copyright 2016      Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
-# Copyright 2020-2021 Daniel T. Borelli <daltomi@disroot.org>
+# Copyright 2020-2021 Daniel T. Borelli <danieltborelli@gmail.com>
 # Copyright 2020      Jeroen Roovers <jer@gentoo.org>
 # Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
 # Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
