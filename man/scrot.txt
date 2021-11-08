@@ -30,8 +30,8 @@ OPTIONS
   -D, --display DISPLAY     DISPLAY is the display to use; see X(7).
   -d, --delay SEC           Wait SEC seconds before taking a shot.
   -e, --exec CMD            Execute CMD on the saved image.
-  -f, --freeze              Freeze the screen when -s is used.
   -F, --file                File name. See SPECIAL STRINGS.
+  -f, --freeze              Freeze the screen when -s is used.
   -h, --help                Display help and exit.
   -i, --ignorekeyboard      Don't exit for keyboard input. ESC still exits.
   -k, --stack OPT           Capture stack/overlapped windows and join them. A
