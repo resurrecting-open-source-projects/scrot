@@ -1,3 +1,57 @@
+Tue Nov 09 20:41:00 -03:00 2021  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
+Version 1.7
+
+ [ a1346054 ]
+
+ * Fixed: code style, add missing final newline.
+ * Fixed: autogen.sh: fix some shellcheck issues.
+
+ [ c0dev0id ]
+
+ * Replace insecure c-strings functions (following libbsd integration).
+
+ [ Daniel T. Borelli ] alias @daltomi
+
+ * New option: --select=hole (-shole), hole selection area.
+ * New option: --select=hide (-shide), hide selection area, support image.
+ * New option: --select=blur (-sblur), blur selection area.
+ * New option: (-) add redirection to standard output (format PNG).
+ * Improvement option: --stack, add an optional join direction (v/h).
+ * Fixed: free memory image and font resources.
+ * Bug fixed: segfault if mouse cursor image was not obtained.
+ * Use err/warn functions (following libbsd integration).
+ * Others various code improvement.
+
+ [ Guilherme Janczak ] alias @guijan
+
+ * Added new library dependency: libbsd.
+ * Autotools: added option --without-libbsd.
+ * Improvement: Autotools: remove unused files, remove obsolete macros, assume
+   C89 functions exist, delete scrot.spec.
+ * Improvement: remove unused C macro, use strndup function, use designated
+   initializers (C99).
+ * Improvement: Doc: polish the txt2man manual, CONTRIBUTING.md, TODO.md.
+ * Others various code improvement.
+
+ [ IFo Hancroft ] alias @ifohancroft
+
+ * New option: --file (-F), provide the filename as an option.
+ * Fixed: code style guideline violations (WebKit).
+ * Use strlcpy/strlcat (following libbsd integration).
+
+ [ Joao Eriberto Mota Filho ] alias @eribertomota
+
+ * Fixed a mistake in README.md.
+
+ [ Peter Wu ] alias @peterwu
+
+ * Convert all source files to the WebKit style.
+
+ [ Wilson Smith ] alias @0wsmith
+
+ * New option: --ignorekeyboard (-i), Don't exit for keyboard input. ESC still
+   exits.
+
 Sun Jul 25 23:30:00 -03:00 2021  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 Version 1.6
 
