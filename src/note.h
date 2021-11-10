@@ -1,6 +1,6 @@
 /* note.h
 
-Copyright 2019-2021 Daniel T. Borelli <daltomi@disroot.org>
+Copyright 2019-2021 Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 
