@@ -1,12 +1,12 @@
-When updating, change the following files (if needed):
+To release a new version:
 
 - Update rights
 - Update changeLog
-- Check for spelling errors in ChangeLog, manpage and README.
-- Check final manpage with man command.
+- Check for spelling errors in ChangeLog, manpage and README
 - man/create-man.sh (DATE, version)
-- Generate a new manpage.
-- README
-- configure.ac (VERSION)
+- Generate a new manpage
+- Check final manpage with man command
+- Update README
+- Update configure.ac (VERSION)
 - Test in Debian Sid
-- Generate extra tarballs via 'make dist' and upload to GitHub.
+- Generate extra tarballs via 'make dist' and upload to GitHub
