@@ -113,7 +113,7 @@ SELECTION MODE
   If the 'hide' mode uses an image that does not have an alpha channel, the opacity parameter
   will be ignored and it will be drawn fully opaque.
 
-  Example:
+  Examples:
 
     $ scrot --select=hide
     $ scrot -shole --line color="Dark Salmon",opacity=200
