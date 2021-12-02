@@ -40,7 +40,7 @@ enum { // default color
     DEF_COLOR_ALPHA = 255
 };
 
-ScrotNote note;
+struct ScrotNote note;
 
 static Imlib_Font imFont = NULL;
 
@@ -68,7 +68,7 @@ void scrotNoteNew(char* format)
 {
     scrotNoteFree();
 
-    note = (ScrotNote) {
+    note = (struct ScrotNote) {
         NULL, NULL, 0, 0, 0.0,
         { DEF_COLOR_RED, DEF_COLOR_GREEN,
           DEF_COLOR_BLUE, DEF_COLOR_ALPHA }
