@@ -195,7 +195,7 @@ Status scrotSelectionCreateNamedColor(char const* nameColor, XColor* color)
     assert(color != NULL);
 
     return XAllocNamedColor(disp, XDefaultColormap(disp, DefaultScreen(disp)),
-        nameColor, color, &(XColor) {});
+        nameColor, color, &(XColor){0});
 }
 
 void scrotSelectionGetLineColor(XColor* color)
