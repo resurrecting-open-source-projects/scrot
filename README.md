@@ -1,3 +1,5 @@
+![Logo](doc/scrot.png)
+
 # scrot (SCReenshOT)
 
 #### scrot - command line screen capture utility
