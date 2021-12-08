@@ -29,6 +29,6 @@ char *estrdup(const char *str)
 {
     char *p;
     if ((p = strdup(str)) == NULL)
-        err(1, "strdup");
+        err(EXIT_FAILURE, "strdup");
     return p;
 }
