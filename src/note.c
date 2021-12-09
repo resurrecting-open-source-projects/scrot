@@ -26,12 +26,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-/* This file is part of the scrot project. */
-
 #include <assert.h>
-#include <stdint.h>
+#include <err.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include "scrot.h"
+#include <Imlib2.h>
+
+#include "note.h"
+#include "options.h"
 
 enum { // default color
     DEF_COLOR_RED = 0,

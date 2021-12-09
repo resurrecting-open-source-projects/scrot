@@ -36,10 +36,12 @@ bin_PROGRAMS  = scrot
 
 scrot_CPPFLAGS = @CPPFLAGS@
 scrot_LDADD    = @LIBS@
-scrot_SOURCES  = main.c scrot.h \
-options.c options.h imlib.c note.c note.h \
-scrot_selection.c scrot_selection.h \
+scrot_SOURCES  = scrot.c scrot.h        \
+imlib.c imlib.h                         \
+note.c note.h                           \
+options.c options.h                     \
+scrot_selection.c scrot_selection.h     \
 selection_classic.c selection_classic.h \
-selection_edge.c selection_edge.h \
-util.c util.h \
-slist.h
+selection_edge.c selection_edge.h       \
+slist.h                                 \
+util.c util.h

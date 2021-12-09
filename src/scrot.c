@@ -1,4 +1,4 @@
-/* main.c
+/* scrot.c
 
 Copyright 1999-2000 Tom Gilbert <tom@linuxbrit.co.uk,
                                   gilbertt@linuxbrit.co.uk,
@@ -40,8 +40,43 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#include "scrot.h"
+#include <sys/stat.h>
+#include <sys/wait.h>
+
 #include <assert.h>
+#include <err.h>
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
+
+#include <Imlib2.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/extensions/Xcomposite.h>
+#include <X11/extensions/Xfixes.h>
+
+#include "imlib.h"
+#include "note.h"
+#include "options.h"
+#include "scrot.h"
+#include "slist.h"
+#include "util.h"
+
+size_t scrotHaveFileExtension(char const *, char **);
+Imlib_Image scrotGrabFocused(void);
+Imlib_Image scrotGrabAutoselect(void);
+Imlib_Image scrotGrabShotMulti(void);
+Imlib_Image scrotGrabStackWindows(void);
+Imlib_Image scrotGrabShot(void);
+void scrotCheckIfOverwriteFile(char **);
+void scrotExecApp(Imlib_Image, struct tm *, char *, char *);
+char *imPrintf(char *, struct tm *, char *, char *, Imlib_Image);
+Window scrotGetClientWindow(Display *, Window);
+Window scrotFindWindowByProperty(Display *, const Window, const Atom);
+Imlib_Image stalkImageConcat(ScrotList *, enum Direction const);
 
 /* atexit register func. */
 static void uninitXAndImlib(void)
@@ -55,7 +90,7 @@ static void uninitXAndImlib(void)
     }
 }
 
-// It assumes that the local variable 'main.c:Imlib_Image image' is in context
+// It assumes that the local variable 'scrot.c:Imlib_Image image' is in context
 static void applyFilterIfRequired(void)
 {
     if (opt.script)

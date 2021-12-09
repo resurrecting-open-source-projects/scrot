@@ -4,6 +4,7 @@ Copyright 2020-2021  Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2021       Martin C <martincation@protonmail.com>
 Copyright 2021       Peter Wu <peterwu@hotmail.com>
 Copyright 2021       Wilson Smith <01wsmith+gh@gmail.com>
+Copyright 2021       Guilherme Janczak <guilherme.janczak@yandex.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -28,9 +29,25 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 /*
     This file is part of the scrot project.
-    Part of the code comes from the main.c file and maintains its authorship.
+    Part of the code comes from the scrot.c file and maintains its authorship.
 */
 
+#include <sys/select.h>
+
+#include <assert.h>
+#include <err.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+#include <Imlib2.h>
+#include <X11/Xlib.h>
+#include <X11/cursorfont.h>
+#include <X11/keysym.h>
+
+#include "imlib.h"
+#include "options.h"
 #include "scrot.h"
 #include "selection_classic.h"
 #include "selection_edge.h"

@@ -40,7 +40,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // General purpose enum
 enum Direction {
-    // see main.c:stalkImageConcat(...)
+    // see scrot.c:stalkImageConcat(...)
     HORIZONTAL,
     VERTICAL,
 };

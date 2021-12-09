@@ -3,6 +3,7 @@
 Copyright 2020-2021 Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2021      Martin C <martincation@protonmail.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
+Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -27,19 +28,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 /*
     This file is part of the scrot project.
-    Part of the code comes from the main.c file and maintains its authorship.
+    Part of the code comes from the scrot.c file and maintains its authorship.
 */
 
 #pragma once
 
-#include <X11/Xresource.h>
-#include <X11/extensions/Xfixes.h>
-#include <X11/extensions/shape.h>
-#include <X11/keysym.h>
-#include <X11/cursorfont.h>
-#include <Imlib2.h>
 #include <stdbool.h>
-#include <assert.h>
+
+#include <Imlib2.h>
+#include <X11/Xlib.h>
 
 /* S: string, L: len */
 #define LINE_MODE_S_CLASSIC "classic"

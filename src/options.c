@@ -39,9 +39,23 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
+#include <assert.h>
+#include <err.h>
+#include <errno.h>
+#include <getopt.h>
+#include <limits.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+#include "config.h"
+#include "note.h"
 #include "options.h"
 #include "scrot.h"
-#include <assert.h>
+#include "scrot_selection.h"
+#include "util.h"
 
 #define STR_LEN_MAX_FILENAME(msg, fileName) do {                \
     if (strlen((fileName)) > MAX_FILENAME) {                    \
@@ -70,6 +84,9 @@ struct ScrotOptions opt = {
     .lineMode = LINE_MODE_S_CLASSIC,
     .stackDirection = HORIZONTAL,
 };
+
+static void showUsage(void);
+static void showVersion(void);
 
 int optionsParseRequiredNumber(char const* str)
 {
@@ -301,7 +318,6 @@ static bool accessFileOk(const char* const pathName)
     return (0 == access(pathName, W_OK));
 }
 
-
 static char* getPathOfStdout(void)
 {
     char path[16] = {"/dev/stdout"};
@@ -468,6 +484,23 @@ void optionsParse(int argc, char** argv)
     optind = 1;
 }
 
+static void showUsage(void)
+{
+    fputs(/* Check that everything lines up after any changes. */
+        "usage:  " PACKAGE " [-bcfhikmopsuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY]"
+        "\n"
+        "              [-F FILE] [-d SEC] [-e CMD] [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] \n"
+        "              [-t NUM | GEOM] [FILE]\n",
+        stdout);
+    exit(0);
+}
+
+static void showVersion(void)
+{
+    printf(PACKAGE " version " VERSION "\n");
+    exit(0);
+}
+
 char* optionsNameThumbnail(const char* name)
 {
     const char* const thumbSuffix = "-thumb";
@@ -582,21 +615,4 @@ int optionsCompareWindowClassName(const char* targetClassName)
     assert(targetClassName != NULL);
     assert(opt.windowClassName != NULL);
     return !!(!strncmp(targetClassName, opt.windowClassName, MAX_LEN_WINDOW_CLASS_NAME - 1));
-}
-
-void showVersion(void)
-{
-    printf(SCROT_PACKAGE " version " SCROT_VERSION "\n");
-    exit(0);
-}
-
-void showUsage(void)
-{
-    fputs(/* Check that everything lines up after any changes. */
-        "usage:  " SCROT_PACKAGE " [-bcfhikmopsuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY]"
-        "\n"
-        "              [-F FILE] [-d SEC] [-e CMD] [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] \n"
-        "              [-t NUM | GEOM] [FILE]\n",
-        stdout);
-    exit(0);
 }

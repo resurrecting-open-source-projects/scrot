@@ -1,7 +1,5 @@
-/* scrot_selection_edge.h
+/* imlib.h
 
-Copyright 2020-2021 Daniel T. Borelli <danieltborelli@gmail.com>
-Copyright 2021      Peter Wu <peterwu@hotmail.com>
 Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,14 +23,17 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-/*
-    This file is part of the scrot project.
-    Part of the code comes from the scrot.c file and maintains its authorship.
-*/
+/* Part of the code comes from the scrot.c file and maintains its authorship. */
 
 #pragma once
 
-void selectionEdgeCreate(void);
-void selectionEdgeDestroy(void);
-void selectionEdgeDraw(void);
-void selectionEdgeMotionDraw(int, int, int, int);
+#include <X11/Xlib.h>
+
+extern Display* disp;
+extern Visual* vis;
+extern Colormap cm;
+extern int depth;
+extern Window root;
+extern Screen* scr;
+
+void initXAndImlib(char *, int);
