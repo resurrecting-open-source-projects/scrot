@@ -192,7 +192,7 @@ static void optionsParseSelection(char const* optarg)
 
         checkMaxInputFileName(value);
 
-        opt.selection.paramStr = strdup(value);
+        opt.selection.paramStr = estrdup(value);
     }
 }
 
@@ -254,7 +254,7 @@ static void optionsParseLine(char* optarg)
                     token[Color]);
             }
 
-            opt.lineColor = strdup(value);
+            opt.lineColor = estrdup(value);
             break;
         case Mode:
             if (!optionsParseIsString(value)) {
@@ -271,7 +271,7 @@ static void optionsParseLine(char* optarg)
                     token[Mode], value);
             }
 
-            opt.lineMode = strdup(value);
+            opt.lineMode = estrdup(value);
             break;
         case Opacity:
             if (!optionsParseIsString(value)) {
@@ -378,7 +378,7 @@ void optionsParse(int argc, char** argv)
             opt.delay = nonNegativeNumber(optionsParseRequiredNumber(optarg));
             break;
         case 'e':
-            opt.exec = strdup(optarg);
+            opt.exec = estrdup(optarg);
             break;
         case 'm':
             opt.multidisp = 1;
@@ -433,7 +433,7 @@ void optionsParse(int argc, char** argv)
             optionsParseWindowClassName(optarg);
             break;
         case 'S':
-            opt.script = strdup(optarg);
+            opt.script = estrdup(optarg);
             break;
         case 'F':
             optionsParseFileName(optarg);
@@ -556,12 +556,12 @@ void optionsParseThumbnail(char* optarg)
 void optionsParseFileName(const char* optarg)
 {
     checkMaxOutputFileName(optarg);
-    opt.outputFile = strdup(optarg);
+    opt.outputFile = estrdup(optarg);
 }
 
 void optionsParseNote(char* optarg)
 {
-    opt.note = strdup(optarg);
+    opt.note = estrdup(optarg);
 
     if (!opt.note)
         return;

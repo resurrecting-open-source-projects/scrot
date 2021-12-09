@@ -82,8 +82,8 @@ int main(int argc, char** argv)
     atexit(uninitXAndImlib);
 
     if (!opt.outputFile) {
-        opt.outputFile = strdup("%Y-%m-%d-%H%M%S_$wx$h_scrot.png");
-        opt.thumbFile = strdup("%Y-%m-%d-%H%M%S_$wx$h_scrot-thumb.png");
+        opt.outputFile = estrdup("%Y-%m-%d-%H%M%S_$wx$h_scrot.png");
+        opt.thumbFile = estrdup("%Y-%m-%d-%H%M%S_$wx$h_scrot-thumb.png");
     } else {
         if (opt.thumb)
             opt.thumbFile = optionsNameThumbnail(opt.outputFile);
@@ -607,7 +607,7 @@ char* imPrintf(char* str, struct tm* tm, char* filenameIM, char* filenameThumb, 
             ret[length + 1] = '\0';
         }
     }
-    return strdup(ret);
+    return estrdup(ret);
 }
 
 Window scrotGetClientWindow(Display* display, Window target)
@@ -737,7 +737,7 @@ Imlib_Image scrotGrabShotMulti(void)
 
     initializeScrotList(images);
 
-    subDisp = strdup(DisplayString(disp));
+    subDisp = estrdup(DisplayString(disp));
 
     for (i = 0; i < screens; i++) {
         dispStr = strchr(subDisp, ':');

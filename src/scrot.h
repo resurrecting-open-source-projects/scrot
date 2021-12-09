@@ -66,6 +66,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "scrot_config.h"
 #include "scrot_selection.h"
 #include "slist.h"
+#include "util.h"
 
 typedef void (*signalHandler)(int);
 
