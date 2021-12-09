@@ -11,6 +11,7 @@ Copyright 2020      Sean Brennan <zettix1@gmail.com>
 Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 Copyright 2021      Wilson Smith <01wsmith+gh@gmail.com>
+Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -33,10 +34,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#include "structs.h"
-#include "scrot_selection.h"
-
 #pragma once
+
+#include "scrot_selection.h"
 
 // General purpose enum
 enum Direction {
@@ -45,7 +45,7 @@ enum Direction {
     VERTICAL,
 };
 
-struct __ScrotOptions {
+struct ScrotOptions {
     int delay;
     int countdown;
     int focused;
@@ -82,6 +82,8 @@ struct __ScrotOptions {
     SelectionMode selection;
 };
 
+extern struct ScrotOptions opt;
+
 void optionsParse(int, char**);
 char* optionsNameThumbnail(const char*);
 void optionsParseFileName(const char*);
@@ -92,4 +94,3 @@ void optionsParseNote(char*);
 int optionsParseRequiredNumber(char const *);
 int optionsCompareWindowClassName(const char*);
 int optionsParseRequireRange(int, int, int);
-extern ScrotOptions opt;

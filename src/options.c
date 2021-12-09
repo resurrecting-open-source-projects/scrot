@@ -62,7 +62,7 @@ enum {
     MAX_DISPLAY_NAME = 256, // characters
 };
 
-ScrotOptions opt = {
+struct ScrotOptions opt = {
     .quality = 75,
     .lineStyle = LineSolid,
     .lineWidth = 1,
