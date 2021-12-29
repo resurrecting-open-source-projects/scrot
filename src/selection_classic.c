@@ -85,6 +85,7 @@ void selectionClassicDestroy(void)
         XFreeGC(disp, pc->gc);
 
     free(pc);
+    XFlush(disp);
 }
 
 void selectionClassicDraw(void)
