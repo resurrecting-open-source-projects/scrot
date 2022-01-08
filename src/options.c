@@ -92,7 +92,7 @@ int optionsParseRequiredNumber(const char *str)
 {
     assert(NULL != str); // fix yout caller function,
                          //  the user does not impose this behavior
-    char* end = NULL;
+    char *end = NULL;
     long ret = 0L;
     errno = 0;
 
@@ -125,7 +125,7 @@ int optionsParseRequireRange(int n, int lo, int hi)
     return (n < lo ? lo : n > hi ? hi : n);
 }
 
-static bool optionsParseIsString(const char *str)
+static bool optionsParseIsString(const char *const str)
 {
     return (str && (str[0] != '\0'));
 }
