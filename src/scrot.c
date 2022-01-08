@@ -66,7 +66,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "util.h"
 
 static void uninitXAndImlib(void);
-static size_t scrotHaveFileExtension(char const *, char **);
+static size_t scrotHaveFileExtension(const char *, char **);
 static Imlib_Image scrotGrabFocused(void);
 static void applyFilterIfRequired(void);
 static Bool scrotXEventVisibility(Display *, XEvent *, XPointer);
@@ -80,20 +80,20 @@ static char *imPrintf(char *, struct tm *, char *, char *, Imlib_Image);
 static Window scrotGetClientWindow(Display *, Window);
 static Window scrotFindWindowByProperty(Display *, const Window,
                                               const Atom);
-static Imlib_Image  stalkImageConcat(ScrotList *, enum Direction const);
+static Imlib_Image stalkImageConcat(ScrotList *, const enum Direction);
 
 int main(int argc, char *argv[])
 {
     Imlib_Image image;
     Imlib_Image thumbnail;
     Imlib_Load_Error imErr;
-    char* filenameIM = NULL;
-    char* filenameThumb = NULL;
+    char *filenameIM = NULL;
+    char *filenameThumb = NULL;
 
-    char* haveExtension = NULL;
+    char *haveExtension = NULL;
 
     time_t t;
-    struct tm* tm;
+    struct tm *tm;
 
     optionsParse(argc, argv);
 
@@ -214,7 +214,7 @@ static void uninitXAndImlib(void)
     }
 }
 
-static size_t scrotHaveFileExtension(const char *filename, char** ext)
+static size_t scrotHaveFileExtension(const char *filename, char **ext)
 {
     *ext = strrchr(filename, '.');
 
@@ -358,7 +358,7 @@ int scrotGetGeometry(Window target, int *rx, int *ry, int *rw, int *rh)
     return 1;
 }
 
-Window scrotGetWindow(Display* display, Window window, int x, int y)
+Window scrotGetWindow(Display *display, Window window, int x, int y)
 {
     Window source, target;
 
@@ -389,7 +389,7 @@ Window scrotGetWindow(Display* display, Window window, int x, int y)
 void scrotGrabMousePointer(const Imlib_Image image, const int xOffset,
     const int yOffset)
 {
-    XFixesCursorImage* xcim = XFixesGetCursorImage(disp);
+    XFixesCursorImage *xcim = XFixesGetCursorImage(disp);
 
     if (!xcim) {
         warnx("Failed to get mouse cursor image.");
@@ -400,10 +400,10 @@ void scrotGrabMousePointer(const Imlib_Image image, const int xOffset,
     const unsigned short height = xcim->height;
     const int x = (xcim->x - xcim->xhot) - xOffset;
     const int y = (xcim->y - xcim->yhot) - yOffset;
-    DATA32* pixels = NULL;
+    DATA32 *pixels = NULL;
 
 #ifdef __i386__
-    pixels = (DATA32*)xcim->pixels;
+    pixels = (DATA32 *)xcim->pixels;
 #else
     DATA32 data[width * height * 4];
 
@@ -449,12 +449,12 @@ static void scrotCheckIfOverwriteFile(char **filename)
 
     const size_t maxCounter = 999;
     size_t counter = 0;
-    char* ext = NULL;
+    char *ext = NULL;
     size_t extLength = 0;
     const size_t slen = strlen(*filename);
     size_t nalloc = slen + 4 + 1; // _000 + NUL byte
     char fmt[5];
-    char* newName = NULL;
+    char *newName = NULL;
 
     extLength = scrotHaveFileExtension(*filename, &ext);
 
@@ -465,7 +465,7 @@ static void scrotCheckIfOverwriteFile(char **filename)
     memcpy(newName, *filename, slen);
 
     do {
-        char* ptr = newName + slen;
+        char *ptr = newName + slen;
 
         snprintf(fmt, sizeof(fmt), "_%03zu", counter++);
 
@@ -531,7 +531,7 @@ static Imlib_Image scrotGrabShot(void)
 static void scrotExecApp(Imlib_Image image, struct tm *tm, char *filenameIM,
     char *filenameThumb)
 {
-    char* execStr;
+    char *execStr;
     int ret;
 
     execStr = imPrintf(opt.exec, tm, filenameIM, filenameThumb, image);
@@ -551,18 +551,18 @@ static void scrotExecApp(Imlib_Image image, struct tm *tm, char *filenameIM,
 static Bool scrotXEventVisibility(Display *dpy, XEvent *ev, XPointer arg)
 {
     (void)dpy; // unused
-    Window* win = (Window*)arg;
+    Window *win = (Window *)arg;
     return (ev->xvisibility.window == *win);
 }
 
 static char *imPrintf(char *str, struct tm *tm, char *filenameIM,
     char *filenameThumb, Imlib_Image im)
 {
-    char* c;
+    char *c;
     char buf[20];
     char ret[4096];
     char strf[4096];
-    char* tmp;
+    char *tmp;
     struct stat st;
 
     ret[0] = '\0';
@@ -660,7 +660,7 @@ static Window scrotGetClientWindow(Display *display, Window target)
     Atom state;
     Atom type = None;
     int format, status;
-    unsigned char* data;
+    unsigned char *data;
     unsigned long after, items;
     Window client;
 
@@ -683,7 +683,7 @@ static Window scrotFindWindowByProperty(Display *display, const Window window,
 {
     Atom type = None;
     int format, status;
-    unsigned char* data;
+    unsigned char *data;
     unsigned int i, numberChildren;
     unsigned long after, numberItems;
     Window child = None, *children, parent, rootReturn;
@@ -718,14 +718,14 @@ static Imlib_Image scrotGrabStackWindows(void)
 
     unsigned long numberItemsReturn;
     unsigned long bytesAfterReturn;
-    unsigned char* propReturn;
+    unsigned char *propReturn;
     long offset = 0L;
     long length = ~0L;
     Bool delete = False;
     int actualFormatReturn;
     Atom actualTypeReturn;
     Imlib_Image im = NULL;
-    XImage* ximage = NULL;
+    XImage *ximage = NULL;
     XWindowAttributes attr;
     unsigned long i = 0;
 
@@ -786,8 +786,8 @@ static Imlib_Image scrotGrabShotMulti(void)
         return scrotGrabShot();
 
     int i;
-    char* dispStr;
-    char* subDisp;
+    char *dispStr;
+    char *subDisp;
     char newDisp[255];
     Imlib_Image ret = NULL;
 
@@ -814,7 +814,7 @@ static Imlib_Image scrotGrabShotMulti(void)
     return stalkImageConcat(&images, HORIZONTAL);
 }
 
-static Imlib_Image stalkImageConcat(ScrotList *images, enum Direction const dir)
+static Imlib_Image stalkImageConcat(ScrotList *images, const enum Direction dir)
 {
     if (isEmptyScrotList(images))
         return NULL;
@@ -824,7 +824,7 @@ static Imlib_Image stalkImageConcat(ScrotList *images, enum Direction const dir)
     Imlib_Image ret, im;
     ScrotListNode* image = NULL;
 
-    bool const vertical = (dir == VERTICAL) ? true : false;
+    const bool vertical = (dir == VERTICAL) ? true : false;
 
     forEachScrotList(images, image) {
         im = (Imlib_Image) image->data;
