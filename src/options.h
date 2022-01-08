@@ -65,15 +65,15 @@ struct ScrotOptions {
     int lineOpacity;
     int stack;
     enum Direction stackDirection;
-    char* lineColor;
-    char* lineMode;
-    char* outputFile;
-    char* thumbFile;
-    char* exec;
-    char* display;
-    char* note;
-    char* windowClassName;
-    char* script;
+    char *lineColor;
+    char *lineMode;
+    char *outputFile;
+    char *thumbFile;
+    char *exec;
+    char *display;
+    char *note;
+    char *windowClassName;
+    char *script;
     int autoselect;
     int autoselectX;
     int autoselectY;
@@ -84,13 +84,13 @@ struct ScrotOptions {
 
 extern struct ScrotOptions opt;
 
-void optionsParse(int, char**);
-char *optionsNameThumbnail(const char*);
-void optionsParseFileName(const char*);
-void optionsParseThumbnail(char*);
-void optionsParseAutoselect(char*);
-void optionsParseDisplay(char*);
-void optionsParseNote(char*);
-int optionsParseRequiredNumber(char const *);
-int optionsCompareWindowClassName(const char*);
+void optionsParse(int, char **);
+char *optionsNameThumbnail(const char *);
+void optionsParseFileName(const char *);
+void optionsParseThumbnail(char *);
+void optionsParseAutoselect(char *);
+void optionsParseDisplay(char *);
+void optionsParseNote(char *);
+int optionsParseRequiredNumber(const char *);
+int optionsCompareWindowClassName(const char *);
 int optionsParseRequireRange(int, int, int);
