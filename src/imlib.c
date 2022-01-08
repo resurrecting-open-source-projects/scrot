@@ -38,26 +38,26 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "imlib.h"
 
 /* Imlib stuff */
-Display* disp;
-Visual* vis;
+Display *disp;
+Visual *vis;
 Colormap cm;
 int depth;
 
 /* Thumbnail sizes */
 Window root;
-Screen* scr;
+Screen *scr;
 
-void initXAndImlib(char* dispStr, int screenNumber)
+void initXAndImlib(char *dispStr, int screenNumber)
 {
     disp = XOpenDisplay(dispStr);
     if (!disp) {
 
-        char const* const format = "Can't open X display. It *is* running, "
+        const char *const format = "Can't open X display. It *is* running, "
             "yeah? [%s]";
 
-        char const* env = NULL;
+        const char *env = NULL;
 
-        char const* const value = dispStr ? dispStr :
+        const char *const value = dispStr ? dispStr :
             (env = getenv("DISPLAY")) ? env : "NULL";
 
         errx(EXIT_FAILURE, format, value);
