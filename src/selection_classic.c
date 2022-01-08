@@ -2,7 +2,7 @@
 
 Copyright 2020-2021 Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
-Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2021-2022 Guilherme Janczak <guilherme.janczak@yandex.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -40,9 +40,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "scrot.h"
 #include "scrot_selection.h"
 #include "selection_classic.h"
-
-extern void selectionCalculateRect(int, int, int, int);
-extern struct Selection** selectionGet(void);
+#include "selection_edge.h"
 
 struct SelectionClassic {
     XGCValues gcValues;
@@ -78,16 +76,36 @@ void selectionClassicCreate(void)
 
     assert(pc->gc != NULL);
 
-    XSetLineAttributes(disp, pc->gc, opt.lineWidth, opt.lineStyle, CapRound, JoinRound);
+    XSetLineAttributes(disp, pc->gc, opt.lineWidth, opt.lineStyle, CapRound,
+        JoinRound);
 
     if (opt.freeze)
         XGrabServer(disp);
 }
 
+void selectionClassicDraw(void)
+{
+    struct Selection const *const sel = *selectionGet();
+    struct SelectionClassic const *const pc = sel->classic;
+    XDrawRectangle(disp, root, pc->gc, sel->rect.x, sel->rect.y, sel->rect.w,
+        sel->rect.h);
+    XFlush(disp);
+}
+
+void selectionClassicMotionDraw(int x0, int y0, int x1, int y1)
+{
+    struct Selection const *const sel = *selectionGet();
+
+    if (sel->rect.w)
+        selectionClassicDraw();
+    selectionCalculateRect(x0, y0, x1, y1);
+    selectionClassicDraw();
+}
+
 void selectionClassicDestroy(void)
 {
-    struct Selection const* const sel = *selectionGet();
-    struct SelectionClassic* pc = sel->classic;
+    struct Selection const *const sel = *selectionGet();
+    struct SelectionClassic *pc = sel->classic;
 
     if (opt.freeze)
         XUngrabServer(disp);
@@ -97,22 +115,4 @@ void selectionClassicDestroy(void)
 
     free(pc);
     XFlush(disp);
-}
-
-void selectionClassicDraw(void)
-{
-    struct Selection const* const sel = *selectionGet();
-    struct SelectionClassic const* const pc = sel->classic;
-    XDrawRectangle(disp, root, pc->gc, sel->rect.x, sel->rect.y, sel->rect.w, sel->rect.h);
-    XFlush(disp);
-}
-
-void selectionClassicMotionDraw(int x0, int y0, int x1, int y1)
-{
-    struct Selection const* const sel = *selectionGet();
-
-    if (sel->rect.w)
-        selectionClassicDraw();
-    selectionCalculateRect(x0, y0, x1, y1);
-    selectionClassicDraw();
 }

@@ -4,7 +4,7 @@ Copyright 2020-2021  Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2021       Martin C <martincation@protonmail.com>
 Copyright 2021       Peter Wu <peterwu@hotmail.com>
 Copyright 2021       Wilson Smith <01wsmith+gh@gmail.com>
-Copyright 2021       Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2021-2022  Guilherme Janczak <guilherme.janczak@yandex.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -49,10 +49,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "imlib.h"
 #include "options.h"
 #include "scrot.h"
+#include "scrot_selection.h"
 #include "selection_classic.h"
 #include "selection_edge.h"
 
-struct Selection** selectionGet(void)
+struct Selection **selectionGet(void)
 {
     static struct Selection* sel = NULL;
     return &sel;
@@ -201,12 +202,12 @@ void scrotSelectionMotionDraw(int x0, int y0, int x1, int y1)
     sel->motionDraw(x0, y0, x1, y1);
 }
 
-struct SelectionRect* scrotSelectionGetRect(void)
+struct SelectionRect *scrotSelectionGetRect(void)
 {
     return &(*selectionGet())->rect;
 }
 
-Status scrotSelectionCreateNamedColor(char const* nameColor, XColor* color)
+Status scrotSelectionCreateNamedColor(const char *nameColor, XColor *color)
 {
     assert(nameColor != NULL);
     assert(color != NULL);
@@ -215,7 +216,7 @@ Status scrotSelectionCreateNamedColor(char const* nameColor, XColor* color)
         nameColor, color, &(XColor){0});
 }
 
-void scrotSelectionGetLineColor(XColor* color)
+void scrotSelectionGetLineColor(XColor *color)
 {
     scrotSelectionSetDefaultColorLine();
 
@@ -233,7 +234,7 @@ void scrotSelectionSetDefaultColorLine(void)
         opt.lineColor = "gray";
 }
 
-bool scrotSelectionGetUserSel(struct SelectionRect* selectionRect)
+bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
 {
     static int xfd = 0;
     static int fdSize = 0;
@@ -427,7 +428,7 @@ static void changeImageOpacity(Imlib_Image image, int const opacity)
     imlib_image_put_back_data(data);
 }
 
-static Imlib_Image loadImage(char const* const fileName, int const opacity)
+static Imlib_Image loadImage(const char *const fileName, int const opacity)
 {
     Imlib_Image image = imlib_load_image(fileName);
 

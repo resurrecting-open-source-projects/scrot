@@ -33,6 +33,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #pragma once
 
 void selectionEdgeCreate(void);
-void selectionEdgeDestroy(void);
 void selectionEdgeDraw(void);
 void selectionEdgeMotionDraw(int, int, int, int);
+void selectionEdgeDestroy(void);

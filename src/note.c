@@ -1,7 +1,7 @@
 /* note.c
 
 Copyright 2019-2021 Daniel T. Borelli <danieltborelli@gmail.com>
-Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2021-2022 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 
@@ -47,23 +47,21 @@ enum { // default color
 struct ScrotNote note;
 
 static Imlib_Font imFont = NULL;
-
 static void loadFont(void);
-
 static char* parseText(char**, char* const);
 
-static inline void pfree(char** ptr)
+static void pfree(char** ptr)
 {
     free(*ptr);
     *ptr = NULL;
 }
 
-static inline void nextSpace(char** token)
+static void nextSpace(char** token)
 {
     while (*++*token == ' ' && **token != '\0') { }
 }
 
-static inline void nextNotSpace(char** token)
+static void nextNotSpace(char** token)
 {
     while (*++*token != ' ' && **token != '\0') { }
 }
@@ -211,7 +209,7 @@ void scrotNoteDraw(Imlib_Image im)
     imlib_text_draw(note.x, note.y, note.text);
 }
 
-void loadFont(void)
+static void loadFont(void)
 {
     imFont = imlib_load_font(note.font);
 
@@ -222,7 +220,7 @@ void loadFont(void)
     }
 }
 
-char* parseText(char** token, char* const end)
+static char* parseText(char** token, char* const end)
 {
     assert(NULL != *token);
     assert(NULL != end);

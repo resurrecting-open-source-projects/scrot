@@ -3,7 +3,7 @@
 Copyright 2020-2021 Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2021      Martin C <martincation@protonmail.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
-Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2021-2022 Guilherme Janczak <guilherme.janczak@yandex.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -79,7 +79,7 @@ struct SelectionRect {
 typedef struct SelectionMode {
     unsigned int mode;
     int paramNum;
-    char* paramStr;
+    char *paramStr;
 } SelectionMode;
 
 struct SelectionClassic;
@@ -89,8 +89,8 @@ struct Selection {
     Cursor curCross, curAngleNW, curAngleNE, curAngleSW, curAngleSE;
 
     struct SelectionRect rect;
-    struct SelectionClassic* classic;
-    struct SelectionEdge* edge;
+    struct SelectionClassic *classic;
+    struct SelectionEdge *edge;
 
     void (*create)(void);
     void (*destroy)(void);
@@ -98,13 +98,15 @@ struct Selection {
     void (*motionDraw)(int, int, int, int);
 };
 
+struct Selection **selectionGet(void);
+void selectionCalculateRect(int, int, int, int);
 void scrotSelectionCreate(void);
 void scrotSelectionDestroy(void);
 void scrotSelectionDraw(void);
 void scrotSelectionMotionDraw(int, int, int, int);
 struct SelectionRect* scrotSelectionGetRect(void);
-void scrotSelectionGetLineColor(XColor*);
-Status scrotSelectionCreateNamedColor(char const*, XColor*);
+void scrotSelectionGetLineColor(XColor *);
+Status scrotSelectionCreateNamedColor(const char *, XColor *);
 void scrotSelectionSetDefaultColorLine(void);
-bool scrotSelectionGetUserSel(struct SelectionRect*);
+bool scrotSelectionGetUserSel(struct SelectionRect *);
 Imlib_Image scrotSelectionSelectMode(void);

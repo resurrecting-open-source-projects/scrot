@@ -11,7 +11,7 @@ Copyright 2020      Sean Brennan <zettix1@gmail.com>
 Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 Copyright 2021      Wilson Smith <01wsmith+gh@gmail.com>
-Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2021-2022 Guilherme Janczak <guilherme.janczak@yandex.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -85,7 +85,7 @@ struct ScrotOptions {
 extern struct ScrotOptions opt;
 
 void optionsParse(int, char**);
-char* optionsNameThumbnail(const char*);
+char *optionsNameThumbnail(const char*);
 void optionsParseFileName(const char*);
 void optionsParseThumbnail(char*);
 void optionsParseAutoselect(char*);

@@ -13,7 +13,7 @@ Copyright 2019-2021 Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2019      Jade Auer <jade@trashwitch.dev>
 Copyright 2020      Sean Brennan <zettix1@gmail.com>
 Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
-Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2021-2022 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 Copyright 2021      Wilson Smith <01wsmith+gh@gmail.com>
@@ -88,7 +88,7 @@ struct ScrotOptions opt = {
 static void showUsage(void);
 static void showVersion(void);
 
-int optionsParseRequiredNumber(char const* str)
+int optionsParseRequiredNumber(const char *str)
 {
     assert(NULL != str); // fix yout caller function,
                          //  the user does not impose this behavior
@@ -122,15 +122,15 @@ static int nonNegativeNumber(int number)
 
 int optionsParseRequireRange(int n, int lo, int hi)
 {
-   return (n < lo ? lo : n > hi ? hi : n);
+    return (n < lo ? lo : n > hi ? hi : n);
 }
 
-bool optionsParseIsString(char const* const str)
+static bool optionsParseIsString(const char *str)
 {
     return (str && (str[0] != '\0'));
 }
 
-static void optionsParseStack(char const* optarg)
+static void optionsParseStack(const char *optarg)
 {
     // the suboption it's optional
     if (!optarg) {
@@ -154,7 +154,7 @@ static void optionsParseStack(char const* optarg)
     }
 }
 
-static void optionsParseSelection(char const* optarg)
+static void optionsParseSelection(const char *optarg)
 {
     // the suboption it's optional
     if (!optarg) {
@@ -213,7 +213,7 @@ static void optionsParseSelection(char const* optarg)
     }
 }
 
-static void optionsParseLine(char* optarg)
+static void optionsParseLine(char *optarg)
 {
     enum {
         Style = 0,
@@ -304,7 +304,7 @@ static void optionsParseLine(char* optarg)
     } /* while */
 }
 
-static void optionsParseWindowClassName(const char* windowClassName)
+static void optionsParseWindowClassName(const char *windowClassName)
 {
     assert(windowClassName != NULL);
 
@@ -312,7 +312,7 @@ static void optionsParseWindowClassName(const char* windowClassName)
         opt.windowClassName = strndup(windowClassName, MAX_LEN_WINDOW_CLASS_NAME);
 }
 
-static bool accessFileOk(const char* const pathName)
+static bool accessFileOk(const char *const pathName)
 {
     errno = 0;
     return (0 == access(pathName, W_OK));
@@ -340,7 +340,7 @@ static char* getPathOfStdout(void)
     return strndup(path, len);
 }
 
-void optionsParse(int argc, char** argv)
+void optionsParse(int argc, char *argv[])
 {
     static char stropts[] = "a:ofipbcd:e:hmq:s::t:uvzn:l:D:k::C:S:F:";
 
@@ -501,7 +501,7 @@ static void showVersion(void)
     exit(0);
 }
 
-char* optionsNameThumbnail(const char* name)
+char *optionsNameThumbnail(const char *name)
 {
     const char* const thumbSuffix = "-thumb";
     const size_t thumbSuffixLength = 7;
@@ -525,7 +525,7 @@ char* optionsNameThumbnail(const char* name)
     return newName;
 }
 
-void optionsParseAutoselect(char* optarg)
+void optionsParseAutoselect(char *optarg)
 {
     char* token;
     const char tokenDelimiter[2] = ",";
@@ -548,14 +548,14 @@ void optionsParseAutoselect(char* optarg)
         errx(EXIT_FAILURE, "invalid format for option -- 'autoselect'");
 }
 
-void optionsParseDisplay(char* optarg)
+void optionsParseDisplay(char *optarg)
 {
     opt.display = strndup(optarg, MAX_DISPLAY_NAME);
     if (!opt.display)
         err(EXIT_FAILURE, "Unable to allocate display");
 }
 
-void optionsParseThumbnail(char* optarg)
+void optionsParseThumbnail(char *optarg)
 {
     char* token;
 
@@ -586,13 +586,13 @@ void optionsParseThumbnail(char* optarg)
     }
 }
 
-void optionsParseFileName(const char* optarg)
+void optionsParseFileName(const char *optarg)
 {
     checkMaxOutputFileName(optarg);
     opt.outputFile = estrdup(optarg);
 }
 
-void optionsParseNote(char* optarg)
+void optionsParseNote(char *optarg)
 {
     opt.note = estrdup(optarg);
 
@@ -610,7 +610,7 @@ Return:
     0 : It does not match
     1 : If it matches
 */
-int optionsCompareWindowClassName(const char* targetClassName)
+int optionsCompareWindowClassName(const char *targetClassName)
 {
     assert(targetClassName != NULL);
     assert(opt.windowClassName != NULL);
