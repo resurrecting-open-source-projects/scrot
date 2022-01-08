@@ -48,25 +48,25 @@ struct ScrotNote note;
 
 static Imlib_Font imFont = NULL;
 static void loadFont(void);
-static char* parseText(char**, char* const);
+static char *parseText(char **, char *const);
 
-static void pfree(char** ptr)
+static void pfree(char **ptr)
 {
     free(*ptr);
     *ptr = NULL;
 }
 
-static void nextSpace(char** token)
+static void nextSpace(char **token)
 {
     while (*++*token == ' ' && **token != '\0') { }
 }
 
-static void nextNotSpace(char** token)
+static void nextNotSpace(char **token)
 {
     while (*++*token != ' ' && **token != '\0') { }
 }
 
-void scrotNoteNew(char* format)
+void scrotNoteNew(char *format)
 {
     scrotNoteFree();
 
@@ -76,9 +76,9 @@ void scrotNoteNew(char* format)
           DEF_COLOR_BLUE, DEF_COLOR_ALPHA }
     };
 
-    char* const end = format + strlen(format);
+    char *const end = format + strlen(format);
 
-    char* token = strpbrk(format, "-");
+    char *token = strpbrk(format, "-");
 
     if (!token || (strlen(token) == 1)) {
         malformed:
@@ -89,8 +89,8 @@ void scrotNoteNew(char* format)
 
     while (token) {
         const char type = *++token;
-        char* savePtr = NULL;
-        char* c;
+        char *savePtr = NULL;
+        char *c;
 
         nextSpace(&token);
 
@@ -101,7 +101,7 @@ void scrotNoteNew(char* format)
             if (!note.font)
                 errx(EXIT_FAILURE, "Error --note option : Malformed syntax for -f");
 
-            char* number = strrchr(note.font, '/');
+            char *number = strrchr(note.font, '/');
 
             if (!number)
                 errx(EXIT_FAILURE, "Error --note option : Malformed syntax for -f, required number.");
@@ -139,7 +139,7 @@ void scrotNoteNew(char* format)
             while (c) {
                 token = c;
 
-                int const color = optionsParseRequireRange(
+                const int color = optionsParseRequireRange(
                         optionsParseRequiredNumber(c), 0 ,255);
 
                 switch (++numberColors) {
@@ -220,7 +220,7 @@ static void loadFont(void)
     }
 }
 
-static char* parseText(char** token, char* const end)
+static char *parseText(char **token, char *const end)
 {
     assert(NULL != *token);
     assert(NULL != end);
@@ -230,7 +230,7 @@ static char* parseText(char** token, char* const end)
 
     (*token)++;
 
-    char* begin = *token;
+    char *begin = *token;
 
     while ((*token != end) && **token != '\'')
         (*token)++;
