@@ -30,8 +30,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <X11/Xlib.h>
 #include <Imlib2.h>
 
-Window scrotGetWindow(Display*, Window, int, int);
-int scrotGetGeometry(Window, int*, int*, int*, int*);
-void scrotNiceClip(int*, int*, int*, int*);
+Window scrotGetWindow(Display *, Window, int, int);
+int scrotGetGeometry(Window, int *, int *, int *, int *);
+void scrotNiceClip(int *, int *, int *, int *);
 void scrotDoDelay(void);
 void scrotGrabMousePointer(const Imlib_Image, const int, const int);
