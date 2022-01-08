@@ -137,7 +137,7 @@ static void optionsParseStack(const char *optarg)
         opt.stackDirection = HORIZONTAL;
         return;
     }
-    char const* value = strchr(optarg, '=');
+    const char *value = strchr(optarg, '=');
 
     if (value)
         ++value;
@@ -162,7 +162,7 @@ static void optionsParseSelection(const char *optarg)
         return;
     }
 
-    char const* value = strchr(optarg, '=');
+    const char *value = strchr(optarg, '=');
 
     if (value)
         ++value;
@@ -223,7 +223,7 @@ static void optionsParseLine(char *optarg)
         Mode
     };
 
-    char* const token[] = {
+    char *const token[] = {
         [Style] = "style",
         [Width] = "width",
         [Color] = "color",
@@ -232,8 +232,8 @@ static void optionsParseLine(char *optarg)
         NULL
     };
 
-    char* subopts = optarg;
-    char* value = NULL;
+    char *subopts = optarg;
+    char *value = NULL;
 
     while (*subopts != '\0') {
         switch (getsubopt(&subopts, token, &value)) {
@@ -318,10 +318,10 @@ static bool accessFileOk(const char *const pathName)
     return (0 == access(pathName, W_OK));
 }
 
-static char* getPathOfStdout(void)
+static char *getPathOfStdout(void)
 {
     char path[16] = {"/dev/stdout"};
-    size_t const len = sizeof(path);
+    const size_t len = sizeof(path);
 
     if (!accessFileOk(path)) {
 
@@ -468,7 +468,7 @@ void optionsParse(int argc, char *argv[])
         if (!opt.outputFile) {
             optionsParseFileName(argv[optind++]);
 
-            bool const redirectChar = ( opt.outputFile[0] == '-'
+            const bool redirectChar = ( opt.outputFile[0] == '-'
                                         && opt.outputFile[1] == '\0');
             if (redirectChar) {
                 free(opt.outputFile);
@@ -503,15 +503,15 @@ static void showVersion(void)
 
 char *optionsNameThumbnail(const char *name)
 {
-    const char* const thumbSuffix = "-thumb";
+    const char *const thumbSuffix = "-thumb";
     const size_t thumbSuffixLength = 7;
     const size_t newNameLength = strlen(name) + thumbSuffixLength;
-    char* newName = calloc(1, newNameLength);
+    char *newName = calloc(1, newNameLength);
 
     if (!newName)
         err(EXIT_FAILURE, "Unable to allocate thumbnail");
 
-    const char* const extension = strrchr(name, '.');
+    const char *const extension = strrchr(name, '.');
 
     if (extension) {
         /* We add one so length includes '\0'*/
@@ -527,7 +527,7 @@ char *optionsNameThumbnail(const char *name)
 
 void optionsParseAutoselect(char *optarg)
 {
-    char* token;
+    char *token;
     const char tokenDelimiter[2] = ",";
     int dimensions[4];
     int i = 0;
@@ -557,7 +557,7 @@ void optionsParseDisplay(char *optarg)
 
 void optionsParseThumbnail(char *optarg)
 {
-    char* token;
+    char *token;
 
     if (strchr(optarg, 'x')) { /* We want to specify the geometry */
         token = strtok(optarg, "x");
