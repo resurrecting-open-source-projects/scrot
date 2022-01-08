@@ -29,11 +29,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <X11/Xlib.h>
 
-extern Display* disp;
-extern Visual* vis;
+extern Display *disp;
+extern Visual *vis;
 extern Colormap cm;
 extern int depth;
 extern Window root;
-extern Screen* scr;
+extern Screen *scr;
 
 void initXAndImlib(char *, int);
