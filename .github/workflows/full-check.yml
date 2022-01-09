@@ -15,7 +15,7 @@ jobs:
     - name: install_dependencies
       run: |
         sudo apt install libimlib2-dev libxcomposite-dev libxfixes-dev \
-             libbsd-dev
+             autoconf-archive libbsd-dev
     - name: distcheck
       run: |
         ./autogen.sh
@@ -42,7 +42,7 @@ jobs:
     - uses: actions/checkout@v2.4.0
     - uses: cygwin/cygwin-install-action@v1
       with:
-        packages: autoconf automake gcc-core libImlib2-devel \
+        packages: autoconf autoconf-archive automake gcc-core libImlib2-devel \
                   libXcomposite-devel libXext-devel libXfixes-devel make
     - name: distcheck
       run: |
