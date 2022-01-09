@@ -24,7 +24,10 @@ common_template: &common_script
   build_script:
     - ./autogen.sh
     - ./configure
+    - make distcheck
+  test_script:
     - make
+    - src/scrot -v
   on_failure:
     autotools_artifacts:
      path: config.log
@@ -46,7 +49,7 @@ task:
       - CC: clang
       - CC: gcc
   install_script:
-    - apk add autoconf automake make pkgconfig clang gcc xorg-server-dev
+    - apk add autoconf automake gzip make pkgconfig clang gcc xorg-server-dev
               libxcomposite-dev libxext-dev libxfixes-dev imlib2-dev musl-dev
               bsd-compat-headers
   << : *common_script
@@ -91,7 +94,9 @@ task:
 
 task:
   macos_instance:
-    image: big-sur-base
+    # Keep updated with the newest release from
+    # https://cirrus-ci.org/guide/macOS/
+    image: monterey-base
   env:
     OS: macos
     matrix:

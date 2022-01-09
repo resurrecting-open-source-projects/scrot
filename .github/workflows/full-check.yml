@@ -1,35 +1,57 @@
 # Copyright 2020 Daniel T. Borelli <daltomi@disroot.org>
 # Copyright 2020 Jeroen Roovers <jer@gentoo.org>
 # Copyright 2020 Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
-# Copyright 2021 Guilherme Janczak <guilherme.janczak@yandex.com>
+# Copyright 2021-2022 Guilherme Janczak <guilherme.janczak@yandex.com>
 
 name: full-check
 
 on: [push, pull_request]
 
 jobs:
-  build:
-
+  ubuntu:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v2.4.0
     - name: install_dependencies
-      run: sudo apt install libimlib2-dev libxcomposite-dev libxfixes-dev libbsd-dev
-    - name: first_build
       run: |
-           ./autogen.sh
-           ./configure
-           make
-           sudo make install
-           sudo make uninstall
-           make distclean
-    - name: second_build
+        sudo apt install libimlib2-dev libxcomposite-dev libxfixes-dev \
+             libbsd-dev
+    - name: distcheck
       run: |
-           ./autogen.sh
-           ./configure
-           make
-           sudo make install
+        ./autogen.sh
+        ./configure
+        make distcheck
     - name: run_program
       run: |
-           scrot -v
+        make
+        src/scrot -v
+  cygwin:
+    runs-on: windows-latest
+    env:
+      CYGWIN_NOWINPATH: 1 # Removes non-Cygwin dirs from PATH.
+      CHERE_INVOKING: '' # Makes Cygwin's `bash.exe --login` not cd.
+    defaults:
+      run:
+        shell: C:\cygwin\bin\bash.exe --login -o igncr {0}
+    steps:
+    - run: git config --global core.autocrlf input
+      # This is NOT the Cygwin bash, it's the Git for Windows bash from the
+      # default Github Actions Windows VM. This step tells git to translate Unix
+      # newlines to DOS newlines.
+      shell: bash
+    - uses: actions/checkout@v2.4.0
+    - uses: cygwin/cygwin-install-action@v1
+      with:
+        packages: autoconf automake gcc-core libImlib2-devel \
+                  libXcomposite-devel libXext-devel libXfixes-devel make
+    - name: distcheck
+      run: |
+        cd ${GITHUB_WORKSPACE}
+        ./autogen.sh
+        ./configure
+        make distcheck
+    - name: run_program
+      run: |
+        cd ${GITHUB_WORKSPACE}
+        make
+        src/scrot -v
