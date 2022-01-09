@@ -30,7 +30,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <sys/queue.h>
 
 typedef struct ScrotListNode {
-    void* data;
+    void *data;
     STAILQ_ENTRY(ScrotListNode) nodes;
 } ScrotListNode;
 
@@ -41,8 +41,8 @@ typedef STAILQ_HEAD(ScrotLists, ScrotListNode) ScrotList;
     STAILQ_INIT(&name);
 
 #define appendToScrotList(name, newData) do {       \
-    ScrotListNode* node = calloc(1, sizeof(*node)); \
-    node->data = (void*)newData;                    \
+    ScrotListNode *node = calloc(1, sizeof(*node)); \
+    node->data = (void *)newData;                    \
     STAILQ_INSERT_TAIL(&name, node, nodes);         \
 } while(0)
 
@@ -59,7 +59,7 @@ typedef STAILQ_HEAD(ScrotLists, ScrotListNode) ScrotList;
     STAILQ_NEXT(name, nodes);
 
 #define nextAndFreeScrotList(name) do {         \
-    ScrotListNode* next = nextScrotList(name);  \
+    ScrotListNode *next = nextScrotList(name);  \
     free(name);                                 \
     name = next;                                \
 } while(0)
