@@ -1,4 +1,4 @@
-/* scrot.h
+/* imlib.h
 
 Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
 
@@ -28,10 +28,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #pragma once
 
 #include <X11/Xlib.h>
-#include <Imlib2.h>
 
-Window scrotGetWindow(Display *, Window, int, int);
-int scrotGetGeometry(Window, int *, int *, int *, int *);
-void scrotNiceClip(int *, int *, int *, int *);
-void scrotDoDelay(void);
-void scrotGrabMousePointer(const Imlib_Image, const int, const int);
+extern Display *disp;
+extern Visual *vis;
+extern Colormap cm;
+extern int depth;
+extern Window root;
+extern Screen *scr;
+
+void initXAndImlib(char *, int);

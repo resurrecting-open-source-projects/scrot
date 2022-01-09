@@ -4,6 +4,7 @@ Copyright 2020-2021  Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2021       Martin C <martincation@protonmail.com>
 Copyright 2021       Peter Wu <peterwu@hotmail.com>
 Copyright 2021       Wilson Smith <01wsmith+gh@gmail.com>
+Copyright 2021-2022  Guilherme Janczak <guilherme.janczak@yandex.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -28,35 +29,52 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 /*
     This file is part of the scrot project.
-    Part of the code comes from the main.c file and maintains its authorship.
+    Part of the code comes from the scrot.c file and maintains its authorship.
 */
 
+#include <sys/select.h>
+
+#include <assert.h>
+#include <err.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+#include <Imlib2.h>
+#include <X11/Xlib.h>
+#include <X11/cursorfont.h>
+#include <X11/keysym.h>
+
+#include "imlib.h"
+#include "options.h"
 #include "scrot.h"
+#include "scrot_selection.h"
 #include "selection_classic.h"
 #include "selection_edge.h"
 
-struct Selection** selectionGet(void)
+struct Selection **selectionGet(void)
 {
-    static struct Selection* sel = NULL;
+    static struct Selection *sel = NULL;
     return &sel;
 }
 
 static void selectionAllocate(void)
 {
-    struct Selection** sel = selectionGet();
+    struct Selection **sel = selectionGet();
     *sel = calloc(1, sizeof(**sel));
 }
 
 static void selectionDeallocate(void)
 {
-    struct Selection** sel = selectionGet();
+    struct Selection **sel = selectionGet();
     free(*sel);
     *sel = NULL;
 }
 
 static void createCursors(void)
 {
-    struct Selection* const sel = *selectionGet();
+    struct Selection *const sel = *selectionGet();
 
     assert(sel != NULL);
 
@@ -76,7 +94,7 @@ static void createCursors(void)
 
 static void freeCursors(void)
 {
-    struct Selection* const sel = *selectionGet();
+    struct Selection *const sel = *selectionGet();
 
     assert(sel != NULL);
 
@@ -89,7 +107,7 @@ static void freeCursors(void)
 
 void selectionCalculateRect(int x0, int y0, int x1, int y1)
 {
-    struct SelectionRect* const rect = scrotSelectionGetRect();
+    struct SelectionRect *const rect = scrotSelectionGetRect();
 
     rect->x = x0;
     rect->y = y0;
@@ -117,7 +135,7 @@ void scrotSelectionCreate(void)
 {
     selectionAllocate();
 
-    struct Selection* const sel = *selectionGet();
+    struct Selection *const sel = *selectionGet();
 
     assert(sel != NULL);
 
@@ -152,7 +170,7 @@ void scrotSelectionCreate(void)
 
 void scrotSelectionDestroy(void)
 {
-    struct Selection* const sel = *selectionGet();
+    struct Selection *const sel = *selectionGet();
     XUngrabPointer(disp, CurrentTime);
     freeCursors();
     XSync(disp, True);
@@ -162,14 +180,14 @@ void scrotSelectionDestroy(void)
 
 void scrotSelectionDraw(void)
 {
-    struct Selection const* const sel = *selectionGet();
+    const struct Selection *const sel = *selectionGet();
     sel->draw();
 }
 
 void scrotSelectionMotionDraw(int x0, int y0, int x1, int y1)
 {
-    struct Selection const* const sel = *selectionGet();
-    unsigned int const EVENT_MASK = ButtonMotionMask | ButtonReleaseMask;
+    const struct Selection *const sel = *selectionGet();
+    const unsigned int EVENT_MASK = ButtonMotionMask | ButtonReleaseMask;
     Cursor cursor = None;
 
     if (x1 > x0 && y1 > y0)
@@ -184,12 +202,12 @@ void scrotSelectionMotionDraw(int x0, int y0, int x1, int y1)
     sel->motionDraw(x0, y0, x1, y1);
 }
 
-struct SelectionRect* scrotSelectionGetRect(void)
+struct SelectionRect *scrotSelectionGetRect(void)
 {
     return &(*selectionGet())->rect;
 }
 
-Status scrotSelectionCreateNamedColor(char const* nameColor, XColor* color)
+Status scrotSelectionCreateNamedColor(const char *nameColor, XColor *color)
 {
     assert(nameColor != NULL);
     assert(color != NULL);
@@ -198,11 +216,11 @@ Status scrotSelectionCreateNamedColor(char const* nameColor, XColor* color)
         nameColor, color, &(XColor){0});
 }
 
-void scrotSelectionGetLineColor(XColor* color)
+void scrotSelectionGetLineColor(XColor *color)
 {
     scrotSelectionSetDefaultColorLine();
 
-    Status const ret = scrotSelectionCreateNamedColor(opt.lineColor, color);
+    const Status ret = scrotSelectionCreateNamedColor(opt.lineColor, color);
 
     if (!ret) {
         scrotSelectionDestroy();
@@ -216,7 +234,7 @@ void scrotSelectionSetDefaultColorLine(void)
         opt.lineColor = "gray";
 }
 
-bool scrotSelectionGetUserSel(struct SelectionRect* selectionRect)
+bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
 {
     static int xfd = 0;
     static int fdSize = 0;
@@ -268,7 +286,7 @@ bool scrotSelectionGetUserSel(struct SelectionRect* selectionRect)
                 break;
             case KeyPress:
             {
-                KeySym* keysym = NULL;
+                KeySym *keysym = NULL;
                 int keycode; /*dummy*/
 
                 keysym = XGetKeyboardMapping(disp, ev.xkey.keycode, 1, &keycode);
@@ -335,7 +353,7 @@ bool scrotSelectionGetUserSel(struct SelectionRect* selectionRect)
 
     XUngrabKeyboard(disp, CurrentTime);
 
-    bool const isAreaSelect = (scrotSelectionGetRect()->w > 5);
+    const bool isAreaSelect = (scrotSelectionGetRect()->w > 5);
 
     scrotSelectionDestroy();
 
@@ -384,7 +402,7 @@ bool scrotSelectionGetUserSel(struct SelectionRect* selectionRect)
     return true;
 }
 
-static void changeImageOpacity(Imlib_Image image, int const opacity)
+static void changeImageOpacity(Imlib_Image image, const int opacity)
 {
 #define PIXEL_ARGB(a, r, g, b)  ((a) << 24) | ((r) << 16) | ((g) << 8) | (b)
 #define PIXEL_A(argb)  (((argb) >> 24) & 0xff)
@@ -393,24 +411,24 @@ static void changeImageOpacity(Imlib_Image image, int const opacity)
 #define PIXEL_B(argb)  (((argb)      ) & 0xff)
 
     imlib_context_set_image(image);
-    int const w = imlib_image_get_width();
-    int const h = imlib_image_get_height();
+    const int w = imlib_image_get_width();
+    const int h = imlib_image_get_height();
 
-    DATA32* data = imlib_image_get_data();
-    DATA32* end = data + (h * w);
+    DATA32 *data = imlib_image_get_data();
+    DATA32 *end = data + (h * w);
 
-    for (DATA32* pixel = data; pixel != end; ++pixel) {
-        DATA8 const a = PIXEL_A(*pixel) * opacity / 255;
-        DATA8 const r = PIXEL_R(*pixel);
-        DATA8 const g = PIXEL_G(*pixel);
-        DATA8 const b = PIXEL_B(*pixel);
+    for (DATA32 *pixel = data; pixel != end; ++pixel) {
+        const DATA8 a = PIXEL_A(*pixel) * opacity / 255;
+        const DATA8 r = PIXEL_R(*pixel);
+        const DATA8 g = PIXEL_G(*pixel);
+        const DATA8 b = PIXEL_B(*pixel);
        *pixel = (DATA32)PIXEL_ARGB(a, r, g, b);
     }
 
     imlib_image_put_back_data(data);
 }
 
-static Imlib_Image loadImage(char const* const fileName, int const opacity)
+static Imlib_Image loadImage(const char *const fileName, const int opacity)
 {
     Imlib_Image image = imlib_load_image(fileName);
 
@@ -441,7 +459,7 @@ Imlib_Image scrotSelectionSelectMode(void)
 {
     struct SelectionRect rect0, rect1;
 
-    unsigned int const oldMode = opt.selection.mode;
+    const unsigned int oldMode = opt.selection.mode;
 
     opt.selection.mode = SELECTION_MODE_CAPTURE;
 
@@ -468,9 +486,9 @@ Imlib_Image scrotSelectionSelectMode(void)
     XColor color;
     scrotSelectionGetLineColor(&color);
 
-    int const x = rect1.x - rect0.x;
-    int const y = rect1.y - rect0.y;
-    int const opacity = optionsParseRequireRange(opt.lineOpacity,
+    const int x = rect1.x - rect0.x;
+    const int y = rect1.y - rect0.y;
+    const int opacity = optionsParseRequireRange(opt.lineOpacity,
             SELECTION_OPACITY_MIN, SELECTION_OPACITY_MAX);
 
     imlib_context_set_image(capture);
@@ -488,7 +506,7 @@ Imlib_Image scrotSelectionSelectMode(void)
         break;
     case SELECTION_MODE_HIDE:
     {
-        char* const fileName = opt.selection.paramStr;
+        char *const fileName = opt.selection.paramStr;
 
         if (fileName) {
             if (opacity > 0) {
@@ -510,7 +528,7 @@ Imlib_Image scrotSelectionSelectMode(void)
     }
     case SELECTION_MODE_BLUR:
     {
-        int const amountBlur = opt.selection.paramNum;
+        const int amountBlur = opt.selection.paramNum;
         Imlib_Image blur = imlib_clone_image();
         imlib_context_set_image(blur);
         imlib_image_blur(amountBlur);

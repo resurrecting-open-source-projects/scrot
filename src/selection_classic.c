@@ -2,6 +2,7 @@
 
 Copyright 2020-2021 Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
+Copyright 2021-2022 Guilherme Janczak <guilherme.janczak@yandex.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -26,12 +27,20 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 /*
     This file is part of the scrot project.
-    Part of the code comes from the main.c file and maintains its authorship.
+    Part of the code comes from the scrot.c file and maintains its authorship.
 */
-#include "selection_classic.h"
 
-extern void selectionCalculateRect(int, int, int, int);
-extern struct Selection** selectionGet(void);
+#include <assert.h>
+#include <stdlib.h>
+
+#include <X11/Xlib.h>
+
+#include "imlib.h"
+#include "options.h"
+#include "scrot.h"
+#include "scrot_selection.h"
+#include "selection_classic.h"
+#include "selection_edge.h"
 
 struct SelectionClassic {
     XGCValues gcValues;
@@ -40,14 +49,14 @@ struct SelectionClassic {
 
 void selectionClassicCreate(void)
 {
-    struct Selection* const sel = *selectionGet();
+    struct Selection *const sel = *selectionGet();
 
     sel->classic = calloc(1, sizeof(*sel->classic));
 
-    struct SelectionClassic* pc = sel->classic;
+    struct SelectionClassic *pc = sel->classic;
 
-    unsigned long const whiteColor = XWhitePixel(disp, 0);
-    unsigned long const blackColor = XBlackPixel(disp, 0);
+    const unsigned long whiteColor = XWhitePixel(disp, 0);
+    const unsigned long blackColor = XBlackPixel(disp, 0);
 
     pc->gcValues.function = GXxor;
     pc->gcValues.foreground = whiteColor;
@@ -67,16 +76,36 @@ void selectionClassicCreate(void)
 
     assert(pc->gc != NULL);
 
-    XSetLineAttributes(disp, pc->gc, opt.lineWidth, opt.lineStyle, CapRound, JoinRound);
+    XSetLineAttributes(disp, pc->gc, opt.lineWidth, opt.lineStyle, CapRound,
+        JoinRound);
 
     if (opt.freeze)
         XGrabServer(disp);
 }
 
+void selectionClassicDraw(void)
+{
+    const struct Selection *const sel = *selectionGet();
+    const struct SelectionClassic *const pc = sel->classic;
+    XDrawRectangle(disp, root, pc->gc, sel->rect.x, sel->rect.y, sel->rect.w,
+        sel->rect.h);
+    XFlush(disp);
+}
+
+void selectionClassicMotionDraw(int x0, int y0, int x1, int y1)
+{
+    const struct Selection *const sel = *selectionGet();
+
+    if (sel->rect.w)
+        selectionClassicDraw();
+    selectionCalculateRect(x0, y0, x1, y1);
+    selectionClassicDraw();
+}
+
 void selectionClassicDestroy(void)
 {
-    struct Selection const* const sel = *selectionGet();
-    struct SelectionClassic* pc = sel->classic;
+    const struct Selection *const sel = *selectionGet();
+    struct SelectionClassic *pc = sel->classic;
 
     if (opt.freeze)
         XUngrabServer(disp);
@@ -86,22 +115,4 @@ void selectionClassicDestroy(void)
 
     free(pc);
     XFlush(disp);
-}
-
-void selectionClassicDraw(void)
-{
-    struct Selection const* const sel = *selectionGet();
-    struct SelectionClassic const* const pc = sel->classic;
-    XDrawRectangle(disp, root, pc->gc, sel->rect.x, sel->rect.y, sel->rect.w, sel->rect.h);
-    XFlush(disp);
-}
-
-void selectionClassicMotionDraw(int x0, int y0, int x1, int y1)
-{
-    struct Selection const* const sel = *selectionGet();
-
-    if (sel->rect.w)
-        selectionClassicDraw();
-    selectionCalculateRect(x0, y0, x1, y1);
-    selectionClassicDraw();
 }

@@ -13,7 +13,7 @@ Copyright 2019-2021 Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2019      Jade Auer <jade@trashwitch.dev>
 Copyright 2020      Sean Brennan <zettix1@gmail.com>
 Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
-Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2021-2022 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 Copyright 2021      Wilson Smith <01wsmith+gh@gmail.com>
@@ -39,9 +39,23 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
+#include <assert.h>
+#include <err.h>
+#include <errno.h>
+#include <getopt.h>
+#include <limits.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+#include "config.h"
+#include "note.h"
 #include "options.h"
 #include "scrot.h"
-#include <assert.h>
+#include "scrot_selection.h"
+#include "util.h"
 
 #define STR_LEN_MAX_FILENAME(msg, fileName) do {                \
     if (strlen((fileName)) > MAX_FILENAME) {                    \
@@ -71,11 +85,14 @@ struct ScrotOptions opt = {
     .stackDirection = HORIZONTAL,
 };
 
-int optionsParseRequiredNumber(char const* str)
+static void showUsage(void);
+static void showVersion(void);
+
+int optionsParseRequiredNumber(const char *str)
 {
     assert(NULL != str); // fix yout caller function,
                          //  the user does not impose this behavior
-    char* end = NULL;
+    char *end = NULL;
     long ret = 0L;
     errno = 0;
 
@@ -105,22 +122,22 @@ static int nonNegativeNumber(int number)
 
 int optionsParseRequireRange(int n, int lo, int hi)
 {
-   return (n < lo ? lo : n > hi ? hi : n);
+    return (n < lo ? lo : n > hi ? hi : n);
 }
 
-bool optionsParseIsString(char const* const str)
+static bool optionsParseIsString(const char *const str)
 {
     return (str && (str[0] != '\0'));
 }
 
-static void optionsParseStack(char const* optarg)
+static void optionsParseStack(const char *optarg)
 {
     // the suboption it's optional
     if (!optarg) {
         opt.stackDirection = HORIZONTAL;
         return;
     }
-    char const* value = strchr(optarg, '=');
+    const char *value = strchr(optarg, '=');
 
     if (value)
         ++value;
@@ -137,7 +154,7 @@ static void optionsParseStack(char const* optarg)
     }
 }
 
-static void optionsParseSelection(char const* optarg)
+static void optionsParseSelection(const char *optarg)
 {
     // the suboption it's optional
     if (!optarg) {
@@ -145,7 +162,7 @@ static void optionsParseSelection(char const* optarg)
         return;
     }
 
-    char const* value = strchr(optarg, '=');
+    const char *value = strchr(optarg, '=');
 
     if (value)
         ++value;
@@ -196,7 +213,7 @@ static void optionsParseSelection(char const* optarg)
     }
 }
 
-static void optionsParseLine(char* optarg)
+static void optionsParseLine(char *optarg)
 {
     enum {
         Style = 0,
@@ -206,7 +223,7 @@ static void optionsParseLine(char* optarg)
         Mode
     };
 
-    char* const token[] = {
+    char *const token[] = {
         [Style] = "style",
         [Width] = "width",
         [Color] = "color",
@@ -215,8 +232,8 @@ static void optionsParseLine(char* optarg)
         NULL
     };
 
-    char* subopts = optarg;
-    char* value = NULL;
+    char *subopts = optarg;
+    char *value = NULL;
 
     while (*subopts != '\0') {
         switch (getsubopt(&subopts, token, &value)) {
@@ -287,7 +304,7 @@ static void optionsParseLine(char* optarg)
     } /* while */
 }
 
-static void optionsParseWindowClassName(const char* windowClassName)
+static void optionsParseWindowClassName(const char *windowClassName)
 {
     assert(windowClassName != NULL);
 
@@ -295,17 +312,16 @@ static void optionsParseWindowClassName(const char* windowClassName)
         opt.windowClassName = strndup(windowClassName, MAX_LEN_WINDOW_CLASS_NAME);
 }
 
-static bool accessFileOk(const char* const pathName)
+static bool accessFileOk(const char *const pathName)
 {
     errno = 0;
     return (0 == access(pathName, W_OK));
 }
 
-
-static char* getPathOfStdout(void)
+static char *getPathOfStdout(void)
 {
     char path[16] = {"/dev/stdout"};
-    size_t const len = sizeof(path);
+    const size_t len = sizeof(path);
 
     if (!accessFileOk(path)) {
 
@@ -324,7 +340,7 @@ static char* getPathOfStdout(void)
     return strndup(path, len);
 }
 
-void optionsParse(int argc, char** argv)
+void optionsParse(int argc, char *argv[])
 {
     static char stropts[] = "a:ofipbcd:e:hmq:s::t:uvzn:l:D:k::C:S:F:";
 
@@ -452,7 +468,7 @@ void optionsParse(int argc, char** argv)
         if (!opt.outputFile) {
             optionsParseFileName(argv[optind++]);
 
-            bool const redirectChar = ( opt.outputFile[0] == '-'
+            const bool redirectChar = ( opt.outputFile[0] == '-'
                                         && opt.outputFile[1] == '\0');
             if (redirectChar) {
                 free(opt.outputFile);
@@ -468,17 +484,34 @@ void optionsParse(int argc, char** argv)
     optind = 1;
 }
 
-char* optionsNameThumbnail(const char* name)
+static void showUsage(void)
 {
-    const char* const thumbSuffix = "-thumb";
+    fputs(/* Check that everything lines up after any changes. */
+        "usage:  " PACKAGE " [-bcfhikmopsuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY]"
+        "\n"
+        "              [-F FILE] [-d SEC] [-e CMD] [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] \n"
+        "              [-t NUM | GEOM] [FILE]\n",
+        stdout);
+    exit(0);
+}
+
+static void showVersion(void)
+{
+    printf(PACKAGE " version " VERSION "\n");
+    exit(0);
+}
+
+char *optionsNameThumbnail(const char *name)
+{
+    const char *const thumbSuffix = "-thumb";
     const size_t thumbSuffixLength = 7;
     const size_t newNameLength = strlen(name) + thumbSuffixLength;
-    char* newName = calloc(1, newNameLength);
+    char *newName = calloc(1, newNameLength);
 
     if (!newName)
         err(EXIT_FAILURE, "Unable to allocate thumbnail");
 
-    const char* const extension = strrchr(name, '.');
+    const char *const extension = strrchr(name, '.');
 
     if (extension) {
         /* We add one so length includes '\0'*/
@@ -492,9 +525,9 @@ char* optionsNameThumbnail(const char* name)
     return newName;
 }
 
-void optionsParseAutoselect(char* optarg)
+void optionsParseAutoselect(char *optarg)
 {
-    char* token;
+    char *token;
     const char tokenDelimiter[2] = ",";
     int dimensions[4];
     int i = 0;
@@ -515,16 +548,16 @@ void optionsParseAutoselect(char* optarg)
         errx(EXIT_FAILURE, "invalid format for option -- 'autoselect'");
 }
 
-void optionsParseDisplay(char* optarg)
+void optionsParseDisplay(char *optarg)
 {
     opt.display = strndup(optarg, MAX_DISPLAY_NAME);
     if (!opt.display)
         err(EXIT_FAILURE, "Unable to allocate display");
 }
 
-void optionsParseThumbnail(char* optarg)
+void optionsParseThumbnail(char *optarg)
 {
-    char* token;
+    char *token;
 
     if (strchr(optarg, 'x')) { /* We want to specify the geometry */
         token = strtok(optarg, "x");
@@ -553,13 +586,13 @@ void optionsParseThumbnail(char* optarg)
     }
 }
 
-void optionsParseFileName(const char* optarg)
+void optionsParseFileName(const char *optarg)
 {
     checkMaxOutputFileName(optarg);
     opt.outputFile = estrdup(optarg);
 }
 
-void optionsParseNote(char* optarg)
+void optionsParseNote(char *optarg)
 {
     opt.note = estrdup(optarg);
 
@@ -577,26 +610,9 @@ Return:
     0 : It does not match
     1 : If it matches
 */
-int optionsCompareWindowClassName(const char* targetClassName)
+int optionsCompareWindowClassName(const char *targetClassName)
 {
     assert(targetClassName != NULL);
     assert(opt.windowClassName != NULL);
     return !!(!strncmp(targetClassName, opt.windowClassName, MAX_LEN_WINDOW_CLASS_NAME - 1));
-}
-
-void showVersion(void)
-{
-    printf(SCROT_PACKAGE " version " SCROT_VERSION "\n");
-    exit(0);
-}
-
-void showUsage(void)
-{
-    fputs(/* Check that everything lines up after any changes. */
-        "usage:  " SCROT_PACKAGE " [-bcfhikmopsuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY]"
-        "\n"
-        "              [-F FILE] [-d SEC] [-e CMD] [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] \n"
-        "              [-t NUM | GEOM] [FILE]\n",
-        stdout);
-    exit(0);
 }

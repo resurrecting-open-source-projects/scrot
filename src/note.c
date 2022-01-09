@@ -1,7 +1,7 @@
 /* note.c
 
 Copyright 2019-2021 Daniel T. Borelli <danieltborelli@gmail.com>
-Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2021-2022 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 
@@ -26,12 +26,16 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-/* This file is part of the scrot project. */
-
 #include <assert.h>
-#include <stdint.h>
+#include <err.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#include "scrot.h"
+#include <Imlib2.h>
+
+#include "note.h"
+#include "options.h"
 
 enum { // default color
     DEF_COLOR_RED = 0,
@@ -43,28 +47,26 @@ enum { // default color
 struct ScrotNote note;
 
 static Imlib_Font imFont = NULL;
-
 static void loadFont(void);
+static char *parseText(char **, char *const);
 
-static char* parseText(char**, char* const);
-
-static inline void pfree(char** ptr)
+static void pfree(char **ptr)
 {
     free(*ptr);
     *ptr = NULL;
 }
 
-static inline void nextSpace(char** token)
+static void nextSpace(char **token)
 {
     while (*++*token == ' ' && **token != '\0') { }
 }
 
-static inline void nextNotSpace(char** token)
+static void nextNotSpace(char **token)
 {
     while (*++*token != ' ' && **token != '\0') { }
 }
 
-void scrotNoteNew(char* format)
+void scrotNoteNew(char *format)
 {
     scrotNoteFree();
 
@@ -74,9 +76,9 @@ void scrotNoteNew(char* format)
           DEF_COLOR_BLUE, DEF_COLOR_ALPHA }
     };
 
-    char* const end = format + strlen(format);
+    char *const end = format + strlen(format);
 
-    char* token = strpbrk(format, "-");
+    char *token = strpbrk(format, "-");
 
     if (!token || (strlen(token) == 1)) {
         malformed:
@@ -87,8 +89,8 @@ void scrotNoteNew(char* format)
 
     while (token) {
         const char type = *++token;
-        char* savePtr = NULL;
-        char* c;
+        char *savePtr = NULL;
+        char *c;
 
         nextSpace(&token);
 
@@ -99,7 +101,7 @@ void scrotNoteNew(char* format)
             if (!note.font)
                 errx(EXIT_FAILURE, "Error --note option : Malformed syntax for -f");
 
-            char* number = strrchr(note.font, '/');
+            char *number = strrchr(note.font, '/');
 
             if (!number)
                 errx(EXIT_FAILURE, "Error --note option : Malformed syntax for -f, required number.");
@@ -137,7 +139,7 @@ void scrotNoteNew(char* format)
             while (c) {
                 token = c;
 
-                int const color = optionsParseRequireRange(
+                const int color = optionsParseRequireRange(
                         optionsParseRequiredNumber(c), 0 ,255);
 
                 switch (++numberColors) {
@@ -207,7 +209,7 @@ void scrotNoteDraw(Imlib_Image im)
     imlib_text_draw(note.x, note.y, note.text);
 }
 
-void loadFont(void)
+static void loadFont(void)
 {
     imFont = imlib_load_font(note.font);
 
@@ -218,7 +220,7 @@ void loadFont(void)
     }
 }
 
-char* parseText(char** token, char* const end)
+static char *parseText(char **token, char *const end)
 {
     assert(NULL != *token);
     assert(NULL != end);
@@ -228,7 +230,7 @@ char* parseText(char** token, char* const end)
 
     (*token)++;
 
-    char* begin = *token;
+    char *begin = *token;
 
     while ((*token != end) && **token != '\'')
         (*token)++;

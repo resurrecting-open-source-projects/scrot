@@ -1,4 +1,4 @@
-/* main.c
+/* scrot.c
 
 Copyright 1999-2000 Tom Gilbert <tom@linuxbrit.co.uk,
                                   gilbertt@linuxbrit.co.uk,
@@ -15,7 +15,7 @@ Copyright 2020      nothub
 Copyright 2020      Sean Brennan <zettix1@gmail.com>
 Copyright 2021      c0dev0id <sh+github@codevoid.de>
 Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
-Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2021-2022 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 
@@ -40,45 +40,64 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#include "scrot.h"
+#include <sys/stat.h>
+#include <sys/wait.h>
+
 #include <assert.h>
+#include <err.h>
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
 
-/* atexit register func. */
-static void uninitXAndImlib(void)
-{
-    if (opt.note)
-        scrotNoteFree();
+#include <Imlib2.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/extensions/Xcomposite.h>
+#include <X11/extensions/Xfixes.h>
 
-    if (disp) {
-        XCloseDisplay(disp);
-        disp = NULL;
-    }
-}
+#include "imlib.h"
+#include "note.h"
+#include "options.h"
+#include "scrot.h"
+#include "slist.h"
+#include "util.h"
 
-// It assumes that the local variable 'main.c:Imlib_Image image' is in context
-static void applyFilterIfRequired(void)
-{
-    if (opt.script)
-        imlib_apply_filter(opt.script);
-}
+static void uninitXAndImlib(void);
+static size_t scrotHaveFileExtension(const char *, char **);
+static Imlib_Image scrotGrabFocused(void);
+static void applyFilterIfRequired(void);
+static Bool scrotXEventVisibility(Display *, XEvent *, XPointer);
+static Imlib_Image scrotGrabAutoselect(void);
+static Imlib_Image scrotGrabShotMulti(void);
+static Imlib_Image scrotGrabStackWindows(void);
+static Imlib_Image scrotGrabShot(void);
+static void scrotCheckIfOverwriteFile(char **);
+static void scrotExecApp(Imlib_Image, struct tm *, char *, char *);
+static char *imPrintf(char *, struct tm *, char *, char *, Imlib_Image);
+static Window scrotGetClientWindow(Display *, Window);
+static Window scrotFindWindowByProperty(Display *, const Window,
+                                              const Atom);
+static Imlib_Image stalkImageConcat(ScrotList *, const enum Direction);
 
-int main(int argc, char** argv)
+int main(int argc, char *argv[])
 {
     Imlib_Image image;
     Imlib_Image thumbnail;
     Imlib_Load_Error imErr;
-    char* filenameIM = NULL;
-    char* filenameThumb = NULL;
+    char *filenameIM = NULL;
+    char *filenameThumb = NULL;
 
-    char* haveExtension = NULL;
+    char *haveExtension = NULL;
 
     time_t t;
-    struct tm* tm;
+    struct tm *tm;
 
     optionsParse(argc, argv);
 
     initXAndImlib(opt.display, 0);
-
     atexit(uninitXAndImlib);
 
     if (!opt.outputFile) {
@@ -183,6 +202,60 @@ int main(int argc, char** argv)
     return 0;
 }
 
+/* atexit register func. */
+static void uninitXAndImlib(void)
+{
+    if (opt.note)
+        scrotNoteFree();
+
+    if (disp) {
+        XCloseDisplay(disp);
+        disp = NULL;
+    }
+}
+
+static size_t scrotHaveFileExtension(const char *filename, char **ext)
+{
+    *ext = strrchr(filename, '.');
+
+    if (*ext)
+        return strlen(*ext);
+
+    return 0;
+}
+
+static Imlib_Image scrotGrabFocused(void)
+{
+    Imlib_Image im = NULL;
+    int rx = 0, ry = 0, rw = 0, rh = 0;
+    Window target = None;
+    int ignored;
+
+    scrotDoDelay();
+    XGetInputFocus(disp, &target, &ignored);
+    if (!scrotGetGeometry(target, &rx, &ry, &rw, &rh))
+        return NULL;
+    scrotNiceClip(&rx, &ry, &rw, &rh);
+    im = imlib_create_image_from_drawable(0, rx, ry, rw, rh, 1);
+    if (opt.pointer)
+        scrotGrabMousePointer(im, rx, ry);
+    return im;
+}
+
+static Imlib_Image scrotGrabAutoselect(void)
+{
+    Imlib_Image im = NULL;
+    int rx = opt.autoselectX, ry = opt.autoselectY, rw = opt.autoselectW,
+        rh = opt.autoselectH;
+
+    scrotDoDelay();
+    scrotNiceClip(&rx, &ry, &rw, &rh);
+    im = imlib_create_image_from_drawable(0, rx, ry, rw, rh, 1);
+    if (opt.pointer)
+        scrotGrabMousePointer(im, rx, ry);
+    return im;
+}
+
 void scrotDoDelay(void)
 {
     if (opt.delay) {
@@ -204,200 +277,8 @@ void scrotDoDelay(void)
     }
 }
 
-size_t scrotHaveFileExtension(char const* filename, char** ext)
-{
-    *ext = strrchr(filename, '.');
-
-    if (*ext)
-        return strlen(*ext);
-
-    return 0;
-}
-
-void scrotCheckIfOverwriteFile(char** filename)
-{
-    if (opt.overwrite)
-        return;
-
-    if (access(*filename, F_OK) == -1)
-        return;
-
-    const size_t maxCounter = 999;
-    size_t counter = 0;
-    char* ext = NULL;
-    size_t extLength = 0;
-    const size_t slen = strlen(*filename);
-    size_t nalloc = slen + 4 + 1; // _000 + NUL byte
-    char fmt[5];
-    char* newName = NULL;
-
-    extLength = scrotHaveFileExtension(*filename, &ext);
-
-    if (ext)
-        nalloc += extLength; // .ext
-
-    newName = calloc(nalloc, sizeof(*newName));
-    memcpy(newName, *filename, slen);
-
-    do {
-        char* ptr = newName + slen;
-
-        snprintf(fmt, sizeof(fmt), "_%03zu", counter++);
-
-        if(ext) {
-            ptr -= extLength;
-            memcpy(ptr, fmt, sizeof(fmt));
-            memcpy(ptr + sizeof(fmt) - 1, ext, extLength);
-        } else
-            memcpy(ptr, fmt, sizeof(fmt));
-    } while ((counter < maxCounter) && !access(newName, F_OK));
-
-    assert(newName[nalloc - 1] == '\0');
-
-    free(*filename);
-    *filename = newName;
-
-    if (counter == maxCounter) {
-        errx(EXIT_FAILURE, "scrot can no longer generate new file names.\n"
-            "The last attempt is %s", newName);
-    }
-}
-
-int scrotMatchWindowClassName(Window target)
-{
-    assert(disp != NULL);
-
-    const int NOT_MATCH = 0;
-    const int MATCH = 1;
-    /* By default all class names match since windowClassName by default is NULL*/
-    int retval = MATCH;
-
-    if (!opt.windowClassName)
-        return retval;
-
-    XClassHint classHint;
-    retval = NOT_MATCH; // windowClassName != NULL, by default NOT_MATCH
-
-    if (XGetClassHint(disp, target, &classHint) != BadWindow) {
-        retval = optionsCompareWindowClassName(classHint.res_class);
-        XFree(classHint.res_name);
-        XFree(classHint.res_class);
-    }
-
-    return retval;
-}
-
-void scrotGrabMousePointer(const Imlib_Image image,
-    const int xOffset, const int yOffset)
-{
-    XFixesCursorImage* xcim = XFixesGetCursorImage(disp);
-
-    if (!xcim) {
-        warnx("Failed to get mouse cursor image.");
-        return;
-    }
-
-    const unsigned short width = xcim->width;
-    const unsigned short height = xcim->height;
-    const int x = (xcim->x - xcim->xhot) - xOffset;
-    const int y = (xcim->y - xcim->yhot) - yOffset;
-    DATA32* pixels = NULL;
-
-#ifdef __i386__
-    pixels = (DATA32*)xcim->pixels;
-#else
-    DATA32 data[width * height * 4];
-
-    unsigned int i;
-    for (i = 0; i < (width * height); i++)
-        data[i] = (DATA32)xcim->pixels[i];
-
-    pixels = data;
-#endif
-
-    Imlib_Image imcursor = imlib_create_image_using_data(width, height, pixels);
-
-    XFree(xcim);
-
-    if (!imcursor)
-        errx(EXIT_FAILURE, "scrotGrabMousePointer: Failed create image using data.");
-
-    imlib_context_set_image(imcursor);
-    imlib_image_set_has_alpha(1);
-    imlib_context_set_image(image);
-    imlib_blend_image_onto_image(imcursor, 0, 0, 0, width, height, x, y, width, height);
-    imlib_context_set_image(imcursor);
-    imlib_free_image();
-}
-
-Imlib_Image scrotGrabShot(void)
-{
-    Imlib_Image im;
-
-    if (!opt.silent)
-        XBell(disp, 0);
-
-    im = imlib_create_image_from_drawable(0, 0, 0, scr->width,
-        scr->height, 1);
-    if (opt.pointer)
-        scrotGrabMousePointer(im, 0, 0);
-
-    return im;
-}
-
-void scrotExecApp(Imlib_Image image, struct tm* tm,
-    char* filenameIM, char* filenameThumb)
-{
-    char* execStr;
-    int ret;
-
-    execStr = imPrintf(opt.exec, tm, filenameIM, filenameThumb, image);
-
-    errno = 0;
-
-    ret = system(execStr);
-
-    if (ret == -1)
-        warn("The child process could not be created");
-    else if (WEXITSTATUS(ret) == 127)
-        warnx("scrot could not execute the command: %s", execStr);
-
-    exit(0);
-}
-
-Imlib_Image scrotGrabFocused(void)
-{
-    Imlib_Image im = NULL;
-    int rx = 0, ry = 0, rw = 0, rh = 0;
-    Window target = None;
-    int ignored;
-
-    scrotDoDelay();
-    XGetInputFocus(disp, &target, &ignored);
-    if (!scrotGetGeometry(target, &rx, &ry, &rw, &rh))
-        return NULL;
-    scrotNiceClip(&rx, &ry, &rw, &rh);
-    im = imlib_create_image_from_drawable(0, rx, ry, rw, rh, 1);
-    if (opt.pointer)
-        scrotGrabMousePointer(im, rx, ry);
-    return im;
-}
-
-Imlib_Image scrotGrabAutoselect(void)
-{
-    Imlib_Image im = NULL;
-    int rx = opt.autoselectX, ry = opt.autoselectY, rw = opt.autoselectW, rh = opt.autoselectH;
-
-    scrotDoDelay();
-    scrotNiceClip(&rx, &ry, &rw, &rh);
-    im = imlib_create_image_from_drawable(0, rx, ry, rw, rh, 1);
-    if (opt.pointer)
-        scrotGrabMousePointer(im, rx, ry);
-    return im;
-}
-
 /* Clip rectangle nicely */
-void scrotNiceClip(int* rx, int* ry, int* rw, int* rh)
+void scrotNiceClip(int *rx, int *ry, int *rw, int *rh)
 {
     if (*rx < 0) {
         *rw += *rx;
@@ -413,15 +294,8 @@ void scrotNiceClip(int* rx, int* ry, int* rw, int* rh)
         *rh = scr->height - *ry;
 }
 
-static Bool scrotXEventVisibility(Display* dpy, XEvent* ev, XPointer arg)
-{
-    (void)dpy; // unused
-    Window* win = (Window*)arg;
-    return (ev->xvisibility.window == *win);
-}
-
 /* Get geometry of window and use that */
-int scrotGetGeometry(Window target, int* rx, int* ry, int* rw, int* rh)
+int scrotGetGeometry(Window target, int *rx, int *ry, int *rw, int *rh)
 {
     Window child;
     XWindowAttributes attr;
@@ -484,7 +358,7 @@ int scrotGetGeometry(Window target, int* rx, int* ry, int* rw, int* rh)
     return 1;
 }
 
-Window scrotGetWindow(Display* display, Window window, int x, int y)
+Window scrotGetWindow(Display *display, Window window, int x, int y)
 {
     Window source, target;
 
@@ -511,13 +385,184 @@ Window scrotGetWindow(Display* display, Window window, int x, int y)
     return target;
 }
 
-char* imPrintf(char* str, struct tm* tm, char* filenameIM, char* filenameThumb, Imlib_Image im)
+
+void scrotGrabMousePointer(const Imlib_Image image, const int xOffset,
+    const int yOffset)
 {
-    char* c;
+    XFixesCursorImage *xcim = XFixesGetCursorImage(disp);
+
+    if (!xcim) {
+        warnx("Failed to get mouse cursor image.");
+        return;
+    }
+
+    const unsigned short width = xcim->width;
+    const unsigned short height = xcim->height;
+    const int x = (xcim->x - xcim->xhot) - xOffset;
+    const int y = (xcim->y - xcim->yhot) - yOffset;
+    DATA32 *pixels = NULL;
+
+#ifdef __i386__
+    pixels = (DATA32 *)xcim->pixels;
+#else
+    DATA32 data[width * height * 4];
+
+    unsigned int i;
+    for (i = 0; i < (width * height); i++)
+        data[i] = (DATA32)xcim->pixels[i];
+
+    pixels = data;
+#endif
+
+    Imlib_Image imcursor = imlib_create_image_using_data(width, height, pixels);
+
+    XFree(xcim);
+
+    if (!imcursor) {
+        errx(EXIT_FAILURE,
+            "scrotGrabMousePointer: Failed create image using data.");
+    }
+
+    imlib_context_set_image(imcursor);
+    imlib_image_set_has_alpha(1);
+    imlib_context_set_image(image);
+    imlib_blend_image_onto_image(imcursor, 0, 0, 0, width, height, x, y, width,
+        height);
+    imlib_context_set_image(imcursor);
+    imlib_free_image();
+}
+
+// It assumes that the local variable 'scrot.c:Imlib_Image image' is in context
+static void applyFilterIfRequired(void)
+{
+    if (opt.script)
+        imlib_apply_filter(opt.script);
+}
+
+static void scrotCheckIfOverwriteFile(char **filename)
+{
+    if (opt.overwrite)
+        return;
+
+    if (access(*filename, F_OK) == -1)
+        return;
+
+    const size_t maxCounter = 999;
+    size_t counter = 0;
+    char *ext = NULL;
+    size_t extLength = 0;
+    const size_t slen = strlen(*filename);
+    size_t nalloc = slen + 4 + 1; // _000 + NUL byte
+    char fmt[5];
+    char *newName = NULL;
+
+    extLength = scrotHaveFileExtension(*filename, &ext);
+
+    if (ext)
+        nalloc += extLength; // .ext
+
+    newName = calloc(nalloc, sizeof(*newName));
+    memcpy(newName, *filename, slen);
+
+    do {
+        char *ptr = newName + slen;
+
+        snprintf(fmt, sizeof(fmt), "_%03zu", counter++);
+
+        if(ext) {
+            ptr -= extLength;
+            memcpy(ptr, fmt, sizeof(fmt));
+            memcpy(ptr + sizeof(fmt) - 1, ext, extLength);
+        } else
+            memcpy(ptr, fmt, sizeof(fmt));
+    } while ((counter < maxCounter) && !access(newName, F_OK));
+
+    assert(newName[nalloc - 1] == '\0');
+
+    free(*filename);
+    *filename = newName;
+
+    if (counter == maxCounter) {
+        errx(EXIT_FAILURE, "scrot can no longer generate new file names.\n"
+            "The last attempt is %s", newName);
+    }
+}
+
+static int scrotMatchWindowClassName(Window target)
+{
+    assert(disp != NULL);
+
+    const int NOT_MATCH = 0;
+    const int MATCH = 1;
+    /* By default all class names match since windowClassName by default is NULL
+     */
+    int retval = MATCH;
+
+    if (!opt.windowClassName)
+        return retval;
+
+    XClassHint classHint;
+    retval = NOT_MATCH; // windowClassName != NULL, by default NOT_MATCH
+
+    if (XGetClassHint(disp, target, &classHint) != BadWindow) {
+        retval = optionsCompareWindowClassName(classHint.res_class);
+        XFree(classHint.res_name);
+        XFree(classHint.res_class);
+    }
+
+    return retval;
+}
+
+static Imlib_Image scrotGrabShot(void)
+{
+    Imlib_Image im;
+
+    if (!opt.silent)
+        XBell(disp, 0);
+
+    im = imlib_create_image_from_drawable(0, 0, 0, scr->width,
+        scr->height, 1);
+    if (opt.pointer)
+        scrotGrabMousePointer(im, 0, 0);
+
+    return im;
+}
+
+static void scrotExecApp(Imlib_Image image, struct tm *tm, char *filenameIM,
+    char *filenameThumb)
+{
+    char *execStr;
+    int ret;
+
+    execStr = imPrintf(opt.exec, tm, filenameIM, filenameThumb, image);
+
+    errno = 0;
+
+    ret = system(execStr);
+
+    if (ret == -1)
+        warn("The child process could not be created");
+    else if (WEXITSTATUS(ret) == 127)
+        warnx("scrot could not execute the command: %s", execStr);
+
+    exit(0);
+}
+
+static Bool scrotXEventVisibility(Display *dpy, XEvent *ev, XPointer arg)
+{
+    (void)dpy; // unused
+    Window *win = (Window *)arg;
+    return (ev->xvisibility.window == *win);
+}
+
+static char *imPrintf(char *str, struct tm *tm, char *filenameIM,
+    char *filenameThumb, Imlib_Image im)
+{
+    char *c;
     char buf[20];
     char ret[4096];
     char strf[4096];
-    char* tmp;
+    char *tmp;
     struct stat st;
 
     ret[0] = '\0';
@@ -610,12 +655,12 @@ char* imPrintf(char* str, struct tm* tm, char* filenameIM, char* filenameThumb, 
     return estrdup(ret);
 }
 
-Window scrotGetClientWindow(Display* display, Window target)
+static Window scrotGetClientWindow(Display *display, Window target)
 {
     Atom state;
     Atom type = None;
     int format, status;
-    unsigned char* data;
+    unsigned char *data;
     unsigned long after, items;
     Window client;
 
@@ -633,16 +678,18 @@ Window scrotGetClientWindow(Display* display, Window target)
     return client;
 }
 
-Window scrotFindWindowByProperty(Display* display, const Window window, const Atom property)
+static Window scrotFindWindowByProperty(Display *display, const Window window,
+    const Atom property)
 {
     Atom type = None;
     int format, status;
-    unsigned char* data;
+    unsigned char *data;
     unsigned int i, numberChildren;
     unsigned long after, numberItems;
     Window child = None, *children, parent, rootReturn;
 
-    status = XQueryTree(display, window, &rootReturn, &parent, &children, &numberChildren);
+    status = XQueryTree(display, window, &rootReturn, &parent, &children,
+        &numberChildren);
     if (!status)
         return None;
     for (i = 0; (i < numberChildren) && (child == None); i++) {
@@ -661,21 +708,24 @@ Window scrotFindWindowByProperty(Display* display, const Window window, const At
     return (child);
 }
 
-Imlib_Image scrotGrabStackWindows(void)
+static Imlib_Image scrotGrabStackWindows(void)
 {
-    if (XGetSelectionOwner(disp, XInternAtom(disp, "_NET_WM_CM_S0", False)) == None)
-        errx(EXIT_FAILURE, "option --stack: Composite Manager is not running, required to use this option.");
+    if (XGetSelectionOwner(disp, XInternAtom(disp, "_NET_WM_CM_S0", False))
+        == None) {
+        errx(EXIT_FAILURE, "option --stack: Composite Manager is not running,"
+            " required to use this option.");
+    }
 
     unsigned long numberItemsReturn;
     unsigned long bytesAfterReturn;
-    unsigned char* propReturn;
+    unsigned char *propReturn;
     long offset = 0L;
     long length = ~0L;
     Bool delete = False;
     int actualFormatReturn;
     Atom actualTypeReturn;
     Imlib_Image im = NULL;
-    XImage* ximage = NULL;
+    XImage *ximage = NULL;
     XWindowAttributes attr;
     unsigned long i = 0;
 
@@ -688,15 +738,17 @@ Imlib_Image scrotGrabStackWindows(void)
         delete, atomType, &actualTypeReturn, &actualFormatReturn,
         &numberItemsReturn, &bytesAfterReturn, &propReturn);
 
-    if (result != Success || numberItemsReturn == 0)
-        errx(EXIT_FAILURE, "option --stack: Failed XGetWindowProperty: " EWMH_CLIENT_LIST);
+    if (result != Success || numberItemsReturn == 0) {
+        errx(EXIT_FAILURE, "option --stack: Failed XGetWindowProperty: %s",
+            EWMH_CLIENT_LIST);
+    }
 
     initializeScrotList(images);
 
     XCompositeRedirectSubwindows(disp, root, CompositeRedirectAutomatic);
 
     for (i = 0; i < numberItemsReturn; i++) {
-        Window win = *((Window*)propReturn + i);
+        Window win = *((Window *)propReturn + i);
 
         if (!XGetWindowAttributes(disp, win, &attr))
             errx(EXIT_FAILURE, "option --stack: Failed XGetWindowAttributes");
@@ -708,12 +760,16 @@ Imlib_Image scrotGrabStackWindows(void)
         if (!scrotMatchWindowClassName(win))
             continue;
 
-        ximage = XGetImage(disp, win, 0, 0, attr.width, attr.height, AllPlanes, ZPixmap);
+        ximage = XGetImage(disp, win, 0, 0, attr.width, attr.height, AllPlanes,
+            ZPixmap);
 
-        if (!ximage)
-            errx(EXIT_FAILURE, "option --stack: Failed XGetImage: Window id 0x%lx", win);
+        if (!ximage) {
+            errx(EXIT_FAILURE,
+                "option --stack: Failed XGetImage: Window id 0x%lx", win);
+        }
 
-        im = imlib_create_image_from_ximage(ximage, NULL, attr.x, attr.y, attr.width, attr.height, 1);
+        im = imlib_create_image_from_ximage(ximage, NULL, attr.x, attr.y,
+            attr.width, attr.height, 1);
 
         XFree(ximage);
 
@@ -723,15 +779,15 @@ Imlib_Image scrotGrabStackWindows(void)
     return stalkImageConcat(&images, opt.stackDirection);
 }
 
-Imlib_Image scrotGrabShotMulti(void)
+static Imlib_Image scrotGrabShotMulti(void)
 {
     int screens = ScreenCount(disp);
     if (screens < 2)
         return scrotGrabShot();
 
     int i;
-    char* dispStr;
-    char* subDisp;
+    char *dispStr;
+    char *subDisp;
     char newDisp[255];
     Imlib_Image ret = NULL;
 
@@ -758,7 +814,7 @@ Imlib_Image scrotGrabShotMulti(void)
     return stalkImageConcat(&images, HORIZONTAL);
 }
 
-Imlib_Image stalkImageConcat(ScrotList* images, enum Direction const dir)
+static Imlib_Image stalkImageConcat(ScrotList *images, const enum Direction dir)
 {
     if (isEmptyScrotList(images))
         return NULL;
@@ -766,9 +822,9 @@ Imlib_Image stalkImageConcat(ScrotList* images, enum Direction const dir)
     int total = 0, max = 0;
     int x = 0, y = 0, w , h;
     Imlib_Image ret, im;
-    ScrotListNode* image = NULL;
+    ScrotListNode *image = NULL;
 
-    bool const vertical = (dir == VERTICAL) ? true : false;
+    const bool vertical = (dir == VERTICAL) ? true : false;
 
     forEachScrotList(images, image) {
         im = (Imlib_Image) image->data;

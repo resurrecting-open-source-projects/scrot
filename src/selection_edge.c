@@ -2,6 +2,7 @@
 
 Copyright 2020-2021 Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
+Copyright 2021-2022 Guilherme Janczak <guilherme.janczak@yandex.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -26,29 +27,123 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 /*
     This file is part of the scrot project.
-    Part of the code comes from the main.c file and maintains its authorship.
+    Part of the code comes from the scrot.c file and maintains its authorship.
 */
-#include "scrot.h"
 
-extern void selectionCalculateRect(int, int, int, int);
-extern struct Selection** selectionGet(void);
+#include <stdlib.h>
+#include <time.h>
+
+#include <X11/Xatom.h>
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/extensions/shape.h>
+
+#include "imlib.h"
+#include "options.h"
+#include "scrot_selection.h"
+#include "selection_edge.h"
 
 struct SelectionEdge {
     Window wndDraw;
-    XClassHint* classHint;
+    XClassHint *classHint;
 };
 
-static Bool xeventUnmap(Display* dpy, XEvent* ev, XPointer arg)
+static void waitUnmapWindowNotify(void);
+static Bool xeventUnmap(Display *, XEvent *, XPointer);
+
+void selectionEdgeCreate(void)
 {
-    (void)dpy; // unused
-    Window* win = (Window*)arg;
-    return (ev->xunmap.window == *win);
+    struct Selection *const sel = *selectionGet();
+
+    sel->edge = calloc(1, sizeof(*sel->edge));
+
+    struct SelectionEdge *const pe = sel->edge;
+
+    XColor color;
+    scrotSelectionGetLineColor(&color);
+
+    XSetWindowAttributes attr;
+    attr.background_pixel = color.pixel;
+    attr.override_redirect = True;
+
+    pe->classHint = XAllocClassHint();
+    pe->classHint->res_name = "scrot";
+    pe->classHint->res_class = "scrot";
+
+    pe->wndDraw = XCreateWindow(disp, root, 0, 0, WidthOfScreen(scr),
+        HeightOfScreen(scr), 0, CopyFromParent, InputOutput, CopyFromParent,
+        CWOverrideRedirect | CWBackPixel, &attr);
+
+    const int lineOpacity = optionsParseRequireRange(opt.lineOpacity,
+            SELECTION_EDGE_OPACITY_MIN, SELECTION_OPACITY_MAX);
+
+    unsigned long opacity = lineOpacity * ((unsigned)-1 / 100);
+
+    XChangeProperty(disp, pe->wndDraw,
+        XInternAtom(disp, "_NET_WM_WINDOW_OPACITY", False), XA_CARDINAL, 32,
+        PropModeReplace, (unsigned char *) &opacity, 1L);
+
+    XChangeProperty(disp, pe->wndDraw,
+        XInternAtom(disp, "_NET_WM_WINDOW_TYPE", False), XA_ATOM, 32,
+        PropModeReplace,
+        (unsigned char *) &(Atom) { XInternAtom(disp, "_NET_WM_WINDOW_TYPE_DOCK", False) },
+        1L);
+
+    XSetClassHint(disp, pe->wndDraw, pe->classHint);
+}
+
+void selectionEdgeDraw(void)
+{
+    const struct Selection *const sel = *selectionGet();
+    const struct SelectionEdge *const pe = sel->edge;
+
+    XRectangle rects[4] = {
+        { sel->rect.x, sel->rect.y, opt.lineWidth, sel->rect.h }, // left
+        { sel->rect.x, sel->rect.y, sel->rect.w, opt.lineWidth }, // top
+        // right
+        { sel->rect.x + sel->rect.w, sel->rect.y, opt.lineWidth, sel->rect.h },
+        // bottom
+        { sel->rect.x, sel->rect.y + sel->rect.h, sel->rect.w + opt.lineWidth,
+            opt.lineWidth }
+    };
+
+    XShapeCombineRectangles(disp, pe->wndDraw, ShapeBounding, 0, 0, rects, 4,
+        ShapeSet, 0);
+    XMapWindow(disp, pe->wndDraw);
+}
+
+void selectionEdgeMotionDraw(int x0, int y0, int x1, int y1)
+{
+    struct Selection *const sel = *selectionGet();
+
+    selectionCalculateRect(x0, y0, x1, y1);
+
+    sel->rect.x -= opt.lineWidth;
+    sel->rect.y -= opt.lineWidth;
+    sel->rect.w += opt.lineWidth;
+    sel->rect.h += opt.lineWidth;
+
+    selectionEdgeDraw();
+}
+
+void selectionEdgeDestroy(void)
+{
+    const struct Selection *const sel = *selectionGet();
+    struct SelectionEdge *pe = sel->edge;
+
+    if (pe->wndDraw != 0) {
+        waitUnmapWindowNotify();
+        XFree(pe->classHint);
+        XDestroyWindow(disp, pe->wndDraw);
+    }
+
+    free(pe);
 }
 
 static void waitUnmapWindowNotify(void)
 {
-    struct Selection const* const sel = *selectionGet();
-    struct SelectionEdge const* const pe = sel->edge;
+    const struct Selection *const sel = *selectionGet();
+    const struct SelectionEdge *const pe = sel->edge;
     XEvent ev;
 
     XSelectInput(disp, pe->wndDraw, StructureNotifyMask);
@@ -64,85 +159,10 @@ static void waitUnmapWindowNotify(void)
     }
 }
 
-void selectionEdgeCreate(void)
+
+static Bool xeventUnmap(Display *dpy, XEvent *ev, XPointer arg)
 {
-    struct Selection* const sel = *selectionGet();
-
-    sel->edge = calloc(1, sizeof(*sel->edge));
-
-    struct SelectionEdge* const pe = sel->edge;
-
-    XColor color;
-    scrotSelectionGetLineColor(&color);
-
-    XSetWindowAttributes attr;
-    attr.background_pixel = color.pixel;
-    attr.override_redirect = True;
-
-    pe->classHint = XAllocClassHint();
-    pe->classHint->res_name = "scrot";
-    pe->classHint->res_class = "scrot";
-
-    pe->wndDraw = XCreateWindow(disp, root, 0, 0, WidthOfScreen(scr), HeightOfScreen(scr), 0,
-        CopyFromParent, InputOutput, CopyFromParent, CWOverrideRedirect | CWBackPixel, &attr);
-
-    int const lineOpacity = optionsParseRequireRange(opt.lineOpacity,
-            SELECTION_EDGE_OPACITY_MIN, SELECTION_OPACITY_MAX);
-
-    unsigned long opacity = lineOpacity * ((unsigned)-1 / 100);
-
-    XChangeProperty(disp, pe->wndDraw, XInternAtom(disp, "_NET_WM_WINDOW_OPACITY", False),
-        XA_CARDINAL, 32, PropModeReplace,
-        (unsigned char*) &opacity, 1L);
-
-    XChangeProperty(disp, pe->wndDraw, XInternAtom(disp, "_NET_WM_WINDOW_TYPE", False),
-        XA_ATOM, 32, PropModeReplace,
-        (unsigned char*) &(Atom) { XInternAtom(disp, "_NET_WM_WINDOW_TYPE_DOCK", False) },
-        1L);
-
-    XSetClassHint(disp, pe->wndDraw, pe->classHint);
-}
-
-void selectionEdgeDestroy(void)
-{
-    struct Selection const* const sel = *selectionGet();
-    struct SelectionEdge* pe = sel->edge;
-
-    if (pe->wndDraw != 0) {
-        waitUnmapWindowNotify();
-        XFree(pe->classHint);
-        XDestroyWindow(disp, pe->wndDraw);
-    }
-
-    free(pe);
-}
-
-void selectionEdgeDraw(void)
-{
-    struct Selection const* const sel = *selectionGet();
-    struct SelectionEdge const* const pe = sel->edge;
-
-    XRectangle rects[4] = {
-        { sel->rect.x, sel->rect.y, opt.lineWidth, sel->rect.h }, // left
-        { sel->rect.x, sel->rect.y, sel->rect.w, opt.lineWidth }, // top
-        { sel->rect.x + sel->rect.w, sel->rect.y, opt.lineWidth, sel->rect.h }, // right
-        { sel->rect.x, sel->rect.y + sel->rect.h, sel->rect.w + opt.lineWidth, opt.lineWidth } // bottom
-    };
-
-    XShapeCombineRectangles(disp, pe->wndDraw, ShapeBounding, 0, 0, rects, 4, ShapeSet, 0);
-    XMapWindow(disp, pe->wndDraw);
-}
-
-void selectionEdgeMotionDraw(int x0, int y0, int x1, int y1)
-{
-    struct Selection* const sel = *selectionGet();
-
-    selectionCalculateRect(x0, y0, x1, y1);
-
-    sel->rect.x -= opt.lineWidth;
-    sel->rect.y -= opt.lineWidth;
-    sel->rect.w += opt.lineWidth;
-    sel->rect.h += opt.lineWidth;
-
-    selectionEdgeDraw();
+    (void)dpy; // unused
+    Window *win = (Window *)arg;
+    return (ev->xunmap.window == *win);
 }

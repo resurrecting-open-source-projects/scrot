@@ -11,7 +11,7 @@ Copyright 2020      Sean Brennan <zettix1@gmail.com>
 Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 Copyright 2021      Wilson Smith <01wsmith+gh@gmail.com>
-Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2021-2022 Guilherme Janczak <guilherme.janczak@yandex.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -40,7 +40,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 // General purpose enum
 enum Direction {
-    // see main.c:stalkImageConcat(...)
+    // see scrot.c:stalkImageConcat(...)
     HORIZONTAL,
     VERTICAL,
 };
@@ -65,15 +65,15 @@ struct ScrotOptions {
     int lineOpacity;
     int stack;
     enum Direction stackDirection;
-    char* lineColor;
-    char* lineMode;
-    char* outputFile;
-    char* thumbFile;
-    char* exec;
-    char* display;
-    char* note;
-    char* windowClassName;
-    char* script;
+    char *lineColor;
+    char *lineMode;
+    char *outputFile;
+    char *thumbFile;
+    char *exec;
+    char *display;
+    char *note;
+    char *windowClassName;
+    char *script;
     int autoselect;
     int autoselectX;
     int autoselectY;
@@ -84,13 +84,13 @@ struct ScrotOptions {
 
 extern struct ScrotOptions opt;
 
-void optionsParse(int, char**);
-char* optionsNameThumbnail(const char*);
-void optionsParseFileName(const char*);
-void optionsParseThumbnail(char*);
-void optionsParseAutoselect(char*);
-void optionsParseDisplay(char*);
-void optionsParseNote(char*);
-int optionsParseRequiredNumber(char const *);
-int optionsCompareWindowClassName(const char*);
+void optionsParse(int, char **);
+char *optionsNameThumbnail(const char *);
+void optionsParseFileName(const char *);
+void optionsParseThumbnail(char *);
+void optionsParseAutoselect(char *);
+void optionsParseDisplay(char *);
+void optionsParseNote(char *);
+int optionsParseRequiredNumber(const char *);
+int optionsCompareWindowClassName(const char *);
 int optionsParseRequireRange(int, int, int);

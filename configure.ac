@@ -2,10 +2,9 @@ dnl Process this file with autoconf to create configure.
 
 AC_INIT([scrot], [1.7], [https://github.com/resurrecting-open-source-projects/scrot/issues],
 		[],[https://github.com/resurrecting-open-source-projects/scrot])
-AC_CONFIG_SRCDIR([src/main.c])
+AC_CONFIG_SRCDIR([src/scrot.c])
 AM_INIT_AUTOMAKE(dist-bzip2)
 AC_CONFIG_HEADERS([src/config.h])
-AX_PREFIX_CONFIG_H([src/scrot_config.h])
 
 # Checks for programs.
 AC_PROG_CC
@@ -44,8 +43,6 @@ AC_CHECK_HEADERS([stdint.h sys/time.h unistd.h])
 # Required: Checks for library functions.
 AC_CHECK_FUNCS([getopt_long getsubopt gethostname select strdup strerror strndup strtol],,
 	AC_MSG_ERROR([required functions are not present.]))
-
-m4_pattern_forbid([^AX_],[=> GNU autoconf-archive not present. <=])
 
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_OUTPUT

@@ -6,6 +6,7 @@ Copyright 2020      ideal <idealities@gmail.com>
 Copyright 2020      Sean Brennan <zettix1@gmail.com>
 Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
+Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -28,27 +29,35 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#include "options.h"
-#include "scrot.h"
+#include <err.h>
+#include <stdlib.h>
 
-Display* disp = NULL;
-Visual* vis = NULL;
-Screen* scr = NULL;
+#include <Imlib2.h>
+#include <X11/Xlib.h>
+
+#include "imlib.h"
+
+/* Imlib stuff */
+Display *disp;
+Visual *vis;
 Colormap cm;
 int depth;
-Window root = 0;
 
-void initXAndImlib(char* dispStr, int screenNumber)
+/* Thumbnail sizes */
+Window root;
+Screen *scr;
+
+void initXAndImlib(char *dispStr, int screenNumber)
 {
     disp = XOpenDisplay(dispStr);
     if (!disp) {
 
-        char const* const format = "Can't open X display. It *is* running, "
+        const char *const format = "Can't open X display. It *is* running, "
             "yeah? [%s]";
 
-        char const* env = NULL;
+        const char *env = NULL;
 
-        char const* const value = dispStr ? dispStr :
+        const char *const value = dispStr ? dispStr :
             (env = getenv("DISPLAY")) ? env : "NULL";
 
         errx(EXIT_FAILURE, format, value);

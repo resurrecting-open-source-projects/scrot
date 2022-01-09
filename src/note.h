@@ -26,11 +26,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-/* This file is part of the scrot project. */
-
 #pragma once
 
-#include "options.h"
 #include <Imlib2.h>
 
 /*
@@ -45,8 +42,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * */
 
 struct ScrotNote {
-    char* font; /* font name                   */
-    char* text; /* text of the note            */
+    char *font; /* font name                   */
+    char *text; /* text of the note            */
     int x; /* position screen (optional)  */
     int y; /* position screen (optional)  */
     double angle; /* angle text (optional)       */
@@ -61,6 +58,6 @@ struct ScrotNote {
 
 extern struct ScrotNote note;
 
-void scrotNoteNew(char*);
+void scrotNoteNew(char *);
 void scrotNoteFree(void);
 void scrotNoteDraw(Imlib_Image);

@@ -23,7 +23,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#include "scrot.h"
+#include <err.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "util.h"
 
 char *estrdup(const char *str)
 {
