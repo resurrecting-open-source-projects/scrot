@@ -163,6 +163,6 @@ static void waitUnmapWindowNotify(void)
 static Bool xeventUnmap(Display *dpy, XEvent *ev, XPointer arg)
 {
     (void)dpy; // unused
-    Window *win = arg;
+    Window *win = (Window *)arg;
     return (ev->xunmap.window == *win);
 }
