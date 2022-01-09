@@ -713,7 +713,7 @@ static Imlib_Image scrotGrabStackWindows(void)
     if (XGetSelectionOwner(disp, XInternAtom(disp, "_NET_WM_CM_S0", False))
         == None) {
         errx(EXIT_FAILURE, "option --stack: Composite Manager is not running,"
-            "required to use this option.");
+            " required to use this option.");
     }
 
     unsigned long numberItemsReturn;
