@@ -49,14 +49,14 @@ struct SelectionClassic {
 
 void selectionClassicCreate(void)
 {
-    struct Selection* const sel = *selectionGet();
+    struct Selection *const sel = *selectionGet();
 
     sel->classic = calloc(1, sizeof(*sel->classic));
 
-    struct SelectionClassic* pc = sel->classic;
+    struct SelectionClassic *pc = sel->classic;
 
-    unsigned long const whiteColor = XWhitePixel(disp, 0);
-    unsigned long const blackColor = XBlackPixel(disp, 0);
+    const unsigned long whiteColor = XWhitePixel(disp, 0);
+    const unsigned long blackColor = XBlackPixel(disp, 0);
 
     pc->gcValues.function = GXxor;
     pc->gcValues.foreground = whiteColor;
@@ -85,8 +85,8 @@ void selectionClassicCreate(void)
 
 void selectionClassicDraw(void)
 {
-    struct Selection const *const sel = *selectionGet();
-    struct SelectionClassic const *const pc = sel->classic;
+    const struct Selection *const sel = *selectionGet();
+    const struct SelectionClassic *const pc = sel->classic;
     XDrawRectangle(disp, root, pc->gc, sel->rect.x, sel->rect.y, sel->rect.w,
         sel->rect.h);
     XFlush(disp);
@@ -94,7 +94,7 @@ void selectionClassicDraw(void)
 
 void selectionClassicMotionDraw(int x0, int y0, int x1, int y1)
 {
-    struct Selection const *const sel = *selectionGet();
+    const struct Selection *const sel = *selectionGet();
 
     if (sel->rect.w)
         selectionClassicDraw();
@@ -104,7 +104,7 @@ void selectionClassicMotionDraw(int x0, int y0, int x1, int y1)
 
 void selectionClassicDestroy(void)
 {
-    struct Selection const *const sel = *selectionGet();
+    const struct Selection *const sel = *selectionGet();
     struct SelectionClassic *pc = sel->classic;
 
     if (opt.freeze)
