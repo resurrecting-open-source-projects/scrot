@@ -74,7 +74,7 @@ void selectionEdgeCreate(void)
         HeightOfScreen(scr), 0, CopyFromParent, InputOutput, CopyFromParent,
         CWOverrideRedirect | CWBackPixel, &attr);
 
-    int const lineOpacity = optionsParseRequireRange(opt.lineOpacity,
+    const int lineOpacity = optionsParseRequireRange(opt.lineOpacity,
             SELECTION_EDGE_OPACITY_MIN, SELECTION_OPACITY_MAX);
 
     unsigned long opacity = lineOpacity * ((unsigned)-1 / 100);
