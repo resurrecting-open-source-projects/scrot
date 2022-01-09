@@ -748,7 +748,7 @@ static Imlib_Image scrotGrabStackWindows(void)
     XCompositeRedirectSubwindows(disp, root, CompositeRedirectAutomatic);
 
     for (i = 0; i < numberItemsReturn; i++) {
-        Window win = *((Window*)propReturn + i);
+        Window win = *((Window *)propReturn + i);
 
         if (!XGetWindowAttributes(disp, win, &attr))
             errx(EXIT_FAILURE, "option --stack: Failed XGetWindowAttributes");
@@ -822,7 +822,7 @@ static Imlib_Image stalkImageConcat(ScrotList *images, const enum Direction dir)
     int total = 0, max = 0;
     int x = 0, y = 0, w , h;
     Imlib_Image ret, im;
-    ScrotListNode* image = NULL;
+    ScrotListNode *image = NULL;
 
     const bool vertical = (dir == VERTICAL) ? true : false;
 
