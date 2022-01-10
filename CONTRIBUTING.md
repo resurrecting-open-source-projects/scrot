@@ -5,10 +5,7 @@
 ## Setting up the development machine
 
 scrot aims to build with no modifications on all the free unix systems. The
-master branch is also kept in working order at all times.  Our builds are tested
-all the way back to [Debian oldstable](https://wiki.debian.org/DebianOldStable),
-so a scrot developer shouldn't need to build the latest git versions of the
-dependencies to start hacking.
+master branch is also kept in working order at all times.
 
 You will want to install the dependencies listed in the `Building` section of
 [README.md](README.md). Look for the text `install_script` in the
