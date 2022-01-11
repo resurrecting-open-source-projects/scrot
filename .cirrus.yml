@@ -49,9 +49,10 @@ task:
       - CC: clang
       - CC: gcc
   install_script:
-    - apk add autoconf automake gzip make pkgconfig clang gcc xorg-server-dev
-              libxcomposite-dev libxext-dev libxfixes-dev imlib2-dev musl-dev
-              bsd-compat-headers
+    - apk add autoconf autoconf-archive automake binutils gzip make pkgconfig
+                       gcc clang xorg-server-dev libxcomposite-dev libxext-dev
+                       libxfixes-dev imlib2-dev musl-dev bsd-compat-headers
+                       libbsd-dev llvm-dev
   << : *common_script
 
 task:
@@ -72,8 +73,8 @@ task:
       - CC: gcc
   install_script:
     - apt-get update
-    - apt-get install -y autoconf make pkg-config clang gcc libx11-dev
-                         libxcomposite-dev libxext-dev libxfixes-dev
+    - apt-get install -y autoconf autoconf-archive make pkg-config $CC
+                         libx11-dev libxcomposite-dev libxext-dev libxfixes-dev
                          libimlib2-dev libbsd-dev
   << : *common_script
 
@@ -88,8 +89,8 @@ task:
       - CC: clang
       - CC: gcc
   install_script:
-    - pkg install -y autoconf automake pkgconf gcc libX11 libXcomposite libXext
-                     libXfixes imlib2
+    - pkg install -y autoconf autoconf-archive automake pkgconf gcc libX11
+                     libXcomposite libXext libXfixes imlib2
   << : *common_script
 
 task:
@@ -104,6 +105,6 @@ task:
       - CC: gcc
   install_script:
     - brew update
-    - brew install autoconf automake make pkg-config gcc libx11 libxcomposite
-                   libxext libxfixes imlib2
+    - brew install autoconf autoconf-archive automake make pkg-config gcc libx11
+                   libxcomposite libxext libxfixes imlib2
   << : *common_script

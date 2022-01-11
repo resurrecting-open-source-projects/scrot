@@ -38,6 +38,7 @@ If you are interested in helping scrot, read the [CONTRIBUTING.md](CONTRIBUTING.
 scrot requires a few projects and libraries:
 
 - [autoconf](https://www.gnu.org/software/autoconf/autoconf.html) (build time only)
+- [autoconf-archive](https://www.gnu.org/software/autoconf-archive/) (build time only)
 - [pkg-config](https://www.freedesktop.org/wiki/Software/pkg-config/) (build time only)
 - [imlib2](https://sourceforge.net/projects/enlightenment/files/imlib2-src/)
 - [libbsd](https://libbsd.freedesktop.org/wiki/) (if `./configure --without-libbsd; make` fails)
