@@ -105,6 +105,9 @@ task:
       - CC: gcc
   install_script:
     - brew update
-    - brew install autoconf autoconf-archive automake make pkg-config gcc libx11
-                   libxcomposite libxext libxfixes imlib2
+    - brew install autoconf autoconf-archive automake make meson pkg-config gcc
+                   samurai libx11 libxcomposite libxext libxfixes imlib2 git
+    # libobsd is needed on OS X, but it's not packaged by Brew.
+    - git clone -b v1.1.1 --depth 1 https://github.com/guijan/libobsd
+    - meson setup -Dprovide_libbsd=true build libobsd && meson install -C build
   << : *common_script

@@ -30,9 +30,19 @@ PKG_CHECK_MODULES([XEXT], [xext])
 PKG_CHECK_MODULES([XFIXES], [xfixes])
 PKG_CHECK_MODULES([IMLIB2], [imlib2])
 
+# NetBSD needs _OPENBSD_SOURCE defined to provide reallocarray().
+AC_MSG_CHECKING([Determining host operating system])
+OS=`uname -s`
+AC_MSG_RESULT($OS)
+AS_IF([test "x$OS" = "xNetBSD"], [
+       CPPFLAGS="$CPPFLAGS -D_OPENBSD_SOURCE"
+])
+
+# libbsd provides our BSD functions where they're missing.
 AC_ARG_WITH([libbsd],
     AS_HELP_STRING([--without-libbsd], [Error when BSD functions are not found]))
-AC_CHECK_FUNCS([strlcpy strlcat err errx warn warnx],, [LIBBSD_NEEDED=yes])
+AC_CHECK_FUNCS([reallocarray strlcpy strlcat err errx warn warnx],,
+    [LIBBSD_NEEDED=yes])
 AC_CHECK_HEADERS([sys/queue.h],, [LIBBSD_NEEDED=yes])
 AS_IF([test "x$LIBBSD_NEEDED" = "xyes"], [
     AS_IF([test "x$with_libbsd" = "xno"], [

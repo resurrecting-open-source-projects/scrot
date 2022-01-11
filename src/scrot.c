@@ -401,7 +401,6 @@ void scrotGrabMousePointer(const Imlib_Image image, const int xOffset,
     const int yOffset)
 {
     XFixesCursorImage *xcim = XFixesGetCursorImage(disp);
-
     if (!xcim) {
         warnx("Failed to get mouse cursor image.");
         return;
@@ -411,24 +410,20 @@ void scrotGrabMousePointer(const Imlib_Image image, const int xOffset,
     const unsigned short height = xcim->height;
     const int x = (xcim->x - xcim->xhot) - xOffset;
     const int y = (xcim->y - xcim->yhot) - yOffset;
-    DATA32 *pixels = NULL;
+    DATA32 *pixels;
+    size_t i;
 
-#ifdef __i386__
-    pixels = (DATA32 *)xcim->pixels;
-#else
-    DATA32 data[width * height * 4];
-
-    unsigned int i;
+    if ((pixels = reallocarray(NULL, width * height, sizeof(pixels))) == NULL)
+        err(EXIT_FAILURE, "reallocarray");
+    /*
+     * Copy (unsigned long *)xcim->pixels into (DATA32 *)pixels by assignment
+     * in case sizeof(unsigned long) != sizeof(DATA32).
+     */
     for (i = 0; i < (width * height); i++)
-        data[i] = (DATA32)xcim->pixels[i];
-
-    pixels = data;
-#endif
-
-    Imlib_Image imcursor = imlib_create_image_using_data(width, height, pixels);
-
+        pixels[i] = xcim->pixels[i];
     XFree(xcim);
 
+    Imlib_Image imcursor = imlib_create_image_using_data(width, height, pixels);
     if (!imcursor) {
         errx(EXIT_FAILURE,
             "scrotGrabMousePointer: Failed create image using data.");
@@ -441,6 +436,7 @@ void scrotGrabMousePointer(const Imlib_Image image, const int xOffset,
         height);
     imlib_context_set_image(imcursor);
     imlib_free_image();
+    free(pixels);
 }
 
 // It assumes that the local variable 'scrot.c:Imlib_Image image' is in context
