@@ -526,6 +526,9 @@ void scrotGetWindowName(Window window)
     assert(disp != NULL);
     assert(window != None);
 
+    if (window == root)
+        return;
+
     if (!findWindowManagerFrame(&window, &(int){0}))
         return;
 
