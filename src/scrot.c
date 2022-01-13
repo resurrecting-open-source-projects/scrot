@@ -665,7 +665,8 @@ static char *imPrintf(char *str, struct tm *tm, char *filenameIM,
                 break;
             case 'W':
                 if (clientWindow) {
-                    tmp = scrotGetWindowName(clientWindow);
+                    if (!(tmp = scrotGetWindowName(clientWindow)))
+                        break;
                     strlcat(ret, tmp, sizeof(ret));
                     free(tmp);
                 }
