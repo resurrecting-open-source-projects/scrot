@@ -34,6 +34,7 @@ extern Visual *vis;
 extern Colormap cm;
 extern int depth;
 extern Window root;
+extern Window clientWindow;
 extern Screen *scr;
 
 void initXAndImlib(char *, int);

@@ -240,7 +240,7 @@ static Imlib_Image scrotGrabFocused(void)
     im = imlib_create_image_from_drawable(0, rx, ry, rw, rh, 1);
     if (opt.pointer)
         scrotGrabMousePointer(im, rx, ry);
-    scrotGetWindowName(target);
+    clientWindow = target;
     return im;
 }
 
@@ -521,28 +521,30 @@ static int scrotMatchWindowClassName(Window target)
     return retval;
 }
 
-void scrotGetWindowName(Window window)
+char *scrotGetWindowName(Window window)
 {
     assert(disp != NULL);
     assert(window != None);
 
     if (window == root)
-        return;
+        return NULL;
 
     if (!findWindowManagerFrame(&window, &(int){0}))
-        return;
+        return NULL;
 
     XClassHint clsHint;
+    char *windowName = NULL;
 
     const Status status = XGetClassHint(disp,
             scrotGetClientWindow(disp, window),
             &clsHint);
 
     if (status != 0) {
-        opt.windowName = estrdup(clsHint.res_name);
+        windowName = estrdup(clsHint.res_name);
         XFree(clsHint.res_name);
         XFree(clsHint.res_class);
     }
+    return windowName;
 }
 
 static Imlib_Image scrotGrabShot(void)
@@ -662,8 +664,11 @@ static char *imPrintf(char *str, struct tm *tm, char *filenameIM,
                 strlcat(ret, "$", sizeof(ret));
                 break;
             case 'W':
-                if (opt.windowName)
-                    strlcat(ret, opt.windowName, sizeof(ret));
+                if (clientWindow) {
+                    tmp = scrotGetWindowName(clientWindow);
+                    strlcat(ret, tmp, sizeof(ret));
+                    free(tmp);
+                }
                 break;
             default:
                 snprintf(buf, sizeof(buf), "%.1s", c);

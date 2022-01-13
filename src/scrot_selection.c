@@ -389,7 +389,7 @@ bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
         /* else it's a window click */
         if (!scrotGetGeometry(target, &rx, &ry, &rw, &rh))
             return false;
-        scrotGetWindowName(target);
+        clientWindow = target;
     }
     scrotNiceClip(&rx, &ry, &rw, &rh);
 

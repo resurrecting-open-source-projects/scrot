@@ -45,6 +45,7 @@ int depth;
 
 /* Thumbnail sizes */
 Window root;
+Window clientWindow;
 Screen *scr;
 
 void initXAndImlib(char *dispStr, int screenNumber)
