@@ -73,7 +73,6 @@ struct ScrotOptions {
     char *display;
     char *note;
     char *windowClassName;
-    char *windowName;
     char *script;
     int autoselect;
     int autoselectX;
