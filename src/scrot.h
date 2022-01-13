@@ -1,6 +1,7 @@
 /* scrot.h
 
-Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2021  Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2022  Daniel T. Borelli <danieltborelli@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -35,3 +36,4 @@ int scrotGetGeometry(Window, int *, int *, int *, int *);
 void scrotNiceClip(int *, int *, int *, int *);
 void scrotDoDelay(void);
 void scrotGrabMousePointer(const Imlib_Image, const int, const int);
+void scrotGetWindowName(Window);
