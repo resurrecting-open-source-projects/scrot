@@ -540,7 +540,7 @@ char *scrotGetWindowName(Window window)
             &clsHint);
 
     if (status != 0) {
-        windowName = estrdup(clsHint.res_name);
+        windowName = estrdup(clsHint.res_class);
         XFree(clsHint.res_name);
         XFree(clsHint.res_class);
     }
