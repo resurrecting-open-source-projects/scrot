@@ -1,6 +1,6 @@
 /* scrot_selection.c
 
-Copyright 2020-2021  Daniel T. Borelli <danieltborelli@gmail.com>
+Copyright 2020-2022  Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2021       Martin C <martincation@protonmail.com>
 Copyright 2021       Peter Wu <peterwu@hotmail.com>
 Copyright 2021       Wilson Smith <01wsmith+gh@gmail.com>
@@ -389,6 +389,7 @@ bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
         /* else it's a window click */
         if (!scrotGetGeometry(target, &rx, &ry, &rw, &rh))
             return false;
+        clientWindow = target;
     }
     scrotNiceClip(&rx, &ry, &rw, &rh);
 

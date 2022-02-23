@@ -6,7 +6,7 @@ Copyright 1999-2000 Tom Gilbert <tom@linuxbrit.co.uk,
 Copyright 2009      James Cameron <quozl@us.netrek.org>
 Copyright 2010      Ibragimov Rinat <ibragimovrinat@mail.ru>
 Copyright 2017      Stoney Sauce <stoneysauce@gmail.com>
-Copyright 2019-2021 Daniel T. Borelli <danieltborelli@gmail.com>
+Copyright 2019-2022 Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2019      Jade Auer <jade@trashwitch.dev>
 Copyright 2020      blockparole
 Copyright 2020      Cungsten Tarbide <ctarbide@tuta.io>
@@ -81,6 +81,7 @@ static Window scrotGetClientWindow(Display *, Window);
 static Window scrotFindWindowByProperty(Display *, const Window,
                                               const Atom);
 static Imlib_Image stalkImageConcat(ScrotList *, const enum Direction);
+static int findWindowManagerFrame(Window *const, int *const);
 
 int main(int argc, char *argv[])
 {
@@ -239,6 +240,7 @@ static Imlib_Image scrotGrabFocused(void)
     im = imlib_create_image_from_drawable(0, rx, ry, rw, rh, 1);
     if (opt.pointer)
         scrotGrabMousePointer(im, rx, ry);
+    clientWindow = target;
     return im;
 }
 
@@ -294,6 +296,29 @@ void scrotNiceClip(int *rx, int *ry, int *rw, int *rh)
         *rh = scr->height - *ry;
 }
 
+static int findWindowManagerFrame(Window *const target, int *const frames)
+{
+    int x, status;
+    unsigned int d;
+    Window rt, *children, parent;
+
+    status = XGetGeometry(disp, *target, &root, &x, &x, &d, &d, &d, &d);
+
+    if (!status)
+        return 0;
+
+    for (;;) {
+        status = XQueryTree(disp, *target, &rt, &parent, &children, &d);
+        if (status && (children != None))
+            XFree(children);
+        if (!status || (parent == None) || (parent == rt))
+            break;
+        *target = parent;
+        ++*frames;
+    }
+    return 1;
+}
+
 /* Get geometry of window and use that */
 int scrotGetGeometry(Window target, int *rx, int *ry, int *rw, int *rh)
 {
@@ -303,25 +328,8 @@ int scrotGetGeometry(Window target, int *rx, int *ry, int *rw, int *rh)
 
     /* Get windowmanager frame of window */
     if (target != root) {
-        unsigned int d;
-        int x;
-        int status;
+        if (findWindowManagerFrame(&target, &frames)) {
 
-        status = XGetGeometry(disp, target, &root, &x, &x, &d, &d, &d, &d);
-        if (status) {
-            Window rt, *children, parent;
-            XEvent ev;
-
-            for (;;) {
-                /* Find window manager frame. */
-                status = XQueryTree(disp, target, &rt, &parent, &children, &d);
-                if (status && (children != None))
-                    XFree(children);
-                if (!status || (parent == None) || (parent == rt))
-                    break;
-                target = parent;
-                ++frames;
-            }
             /* Get client window. */
             if (!opt.border)
                 target = scrotGetClientWindow(disp, target);
@@ -335,7 +343,7 @@ int scrotGetGeometry(Window target, int *rx, int *ry, int *rw, int *rh)
             struct timespec delay = {0, 10000000L}; // 10ms
 
             for (short i = 0; i < 30; ++i) {
-                if (XCheckIfEvent(disp, &ev, &scrotXEventVisibility, (XPointer)&target))
+                if (XCheckIfEvent(disp, &(XEvent){0}, &scrotXEventVisibility, (XPointer)&target))
                     break;
                 nanosleep(&delay, NULL);
             }
@@ -501,16 +509,42 @@ static int scrotMatchWindowClassName(Window target)
     if (!opt.windowClassName)
         return retval;
 
-    XClassHint classHint;
+    XClassHint clsHint;
     retval = NOT_MATCH; // windowClassName != NULL, by default NOT_MATCH
 
-    if (XGetClassHint(disp, target, &classHint) != BadWindow) {
-        retval = optionsCompareWindowClassName(classHint.res_class);
-        XFree(classHint.res_name);
-        XFree(classHint.res_class);
+    if (XGetClassHint(disp, target, &clsHint) != BadWindow) {
+        retval = optionsCompareWindowClassName(clsHint.res_class);
+        XFree(clsHint.res_name);
+        XFree(clsHint.res_class);
     }
 
     return retval;
+}
+
+char *scrotGetWindowName(Window window)
+{
+    assert(disp != NULL);
+    assert(window != None);
+
+    if (window == root)
+        return NULL;
+
+    if (!findWindowManagerFrame(&window, &(int){0}))
+        return NULL;
+
+    XClassHint clsHint;
+    char *windowName = NULL;
+
+    const Status status = XGetClassHint(disp,
+            scrotGetClientWindow(disp, window),
+            &clsHint);
+
+    if (status != 0) {
+        windowName = estrdup(clsHint.res_class);
+        XFree(clsHint.res_name);
+        XFree(clsHint.res_class);
+    }
+    return windowName;
 }
 
 static Imlib_Image scrotGrabShot(void)
@@ -628,6 +662,14 @@ static char *imPrintf(char *str, struct tm *tm, char *filenameIM,
                 break;
             case '$':
                 strlcat(ret, "$", sizeof(ret));
+                break;
+            case 'W':
+                if (clientWindow) {
+                    if (!(tmp = scrotGetWindowName(clientWindow)))
+                        break;
+                    strlcat(ret, tmp, sizeof(ret));
+                    free(tmp);
+                }
                 break;
             default:
                 snprintf(buf, sizeof(buf), "%.1s", c);
