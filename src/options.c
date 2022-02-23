@@ -578,12 +578,10 @@ void optionsParseThumbnail(char *optarg)
                 opt.thumb = 1;
         }
     } else {
-        opt.thumb = optionsParseRequiredNumber(optarg);
-        if (opt.thumb < 1)
-            opt.thumb = 1;
-        else if (opt.thumb > 100)
-            opt.thumb = 100;
+        opt.thumb = optionsParseRequireRange(
+                        optionsParseRequiredNumber(optarg), 1, 100);
     }
+
 }
 
 void optionsParseFileName(const char *optarg)
