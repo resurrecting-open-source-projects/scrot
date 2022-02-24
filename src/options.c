@@ -487,10 +487,9 @@ void optionsParse(int argc, char *argv[])
 static void showUsage(void)
 {
     fputs(/* Check that everything lines up after any changes. */
-        "usage:  " PACKAGE " [-bcfhikmopsuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY]"
-        "\n"
-        "              [-F FILE] [-d SEC] [-e CMD] [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] \n"
-        "              [-t NUM | GEOM] [FILE]\n",
+        "usage:  " PACKAGE " [-bcfhimopuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY]\n"
+        "              [-d SEC] [-e CMD] [-F FILE] [-k OPT] [-l STYLE] [-n OPTS]\n"
+        "              [-q NUM] [-S CMD] [-s OPTS] [-t NUM | GEOM] [FILE]\n",
         stdout);
     exit(0);
 }

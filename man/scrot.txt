@@ -2,8 +2,8 @@ NAME
   scrot - command line screen capture utility
 
 SYNOPSIS
-  scrot [-bcfhikmopsuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY] [-d SEC] [-e CMD]
-        [-F FILE] [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] [-t NUM | GEOM] [FILE]
+  scrot [-bcfhimopuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY] [-d SEC] [-e CMD]
+        [-F FILE] [-k OPT] [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] [-s OPTS] [-t NUM | GEOM] [FILE]
 
 DESCRIPTION
   scrot (SCReenshOT) is a simple command line screen capture utility, it uses
@@ -51,9 +51,9 @@ OPTIONS
                             value represents higher quality and larger
                             file size. Default: 75.
   -S, --script CMD          CMD is an imlib2 script.
-  -s, --select OPT          Interactively select a window or rectangle with the
+  -s, --select OPTS         Interactively select a window or rectangle with the
                             mouse, use the arrow keys to resize. See the -l and
-                            -f options. OPT it's optional; see SELECTION MODE
+                            -f options. OPTS it's optional; see SELECTION MODE
   -t, --thumb NUM | GEOM    Also generate a thumbnail. The argument is the
                             resolution of the thumbnail, it may be a percentage
                             NUM or a resolution GEOM. Examples: 10, 25, 320x240,
