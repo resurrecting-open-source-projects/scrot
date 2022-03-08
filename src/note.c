@@ -96,10 +96,8 @@ void scrotNoteNew(char const *const format)
 
     char *token = strpbrk(format, "-");
 
-    if (!token || (strlen(token) == 1)) {
-        malformed:
-            errx(EXIT_FAILURE, "Error --note option : Malformed syntax.");
-    }
+    if (!token || (strlen(token) == 1))
+        errx(EXIT_FAILURE, "Error --note option : Malformed syntax.");
 
     note = calloc(1, sizeof(*note));
 
@@ -194,7 +192,7 @@ void scrotNoteNew(char const *const format)
     }
 
     if (!note->font || !note->text)
-        goto malformed;
+        errx(EXIT_FAILURE, "Error --note option : Malformed syntax.");
 
     loadFont();
 }
