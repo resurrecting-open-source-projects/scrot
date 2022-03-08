@@ -1,6 +1,6 @@
 /* note.h
 
-Copyright 2019-2021 Daniel T. Borelli <danieltborelli@gmail.com>
+Copyright 2019-2022 Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
@@ -30,34 +30,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <Imlib2.h>
 
-/*
- * Format: -f 'NAME/SIZE' -x NUM -y NUM -t 'TEXT' -c NUM,NUM,NUM,NUM
- *
- * -f fontname/size - absolute path
- * -x screen position x
- * -y screen position y
- * -t text note
- * -c color(red,green,blue,alpha) range 0..255
- *
- * */
-
-struct ScrotNote {
-    char *font; /* font name                   */
-    char *text; /* text of the note            */
-    int x; /* position screen (optional)  */
-    int y; /* position screen (optional)  */
-    double angle; /* angle text (optional)       */
-
-    struct Color { /*                 (optional)  */
-        int r, /* red             */
-            g, /* green           */
-            b, /* blue            */
-            a; /* alpha           */
-    } color;
-};
-
-extern struct ScrotNote note;
-
-void scrotNoteNew(char *);
+void scrotNoteNew(char const *const);
 void scrotNoteFree(void);
 void scrotNoteDraw(Imlib_Image);

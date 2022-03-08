@@ -1,6 +1,6 @@
 /* note.c
 
-Copyright 2019-2021 Daniel T. Borelli <danieltborelli@gmail.com>
+Copyright 2019-2022 Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2021-2022 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
@@ -44,11 +44,35 @@ enum { // default color
     DEF_COLOR_ALPHA = 255
 };
 
-struct ScrotNote note;
+/*
+ * Format: -f 'NAME/SIZE' -x NUM -y NUM -t 'TEXT' -c NUM,NUM,NUM,NUM
+ *
+ * -f fontname/size - absolute path
+ * -x screen position x
+ * -y screen position y
+ * -t text note
+ * -c color(red,green,blue,alpha) range 0..255
+ *
+ * */
 
-static Imlib_Font imFont = NULL;
+struct ScrotNote {
+    char *font;         /* font name                   */
+    char *text;         /* text of the note            */
+    Imlib_Font imFont;  /* private                     */
+    int x;              /* position screen (optional)  */
+    int y;              /* position screen (optional)  */
+    double angle;       /* angle text (optional)       */
+    struct Color {      /* (optional)                  */
+        int r,          /* red                         */
+            g,          /* green                       */
+            b,          /* blue                        */
+            a;          /* alpha                       */
+    } color;
+};
+
+static struct ScrotNote *note;
 static void loadFont(void);
-static char *parseText(char **, char *const);
+static char *parseText(char **, char const *const);
 
 static void pfree(char **ptr)
 {
@@ -66,26 +90,25 @@ static void nextNotSpace(char **token)
     while (*++*token != ' ' && **token != '\0') { }
 }
 
-void scrotNoteNew(char *format)
+void scrotNoteNew(char const *const format)
 {
-    scrotNoteFree();
-
-    note = (struct ScrotNote) {
-        NULL, NULL, 0, 0, 0.0,
-        { DEF_COLOR_RED, DEF_COLOR_GREEN,
-          DEF_COLOR_BLUE, DEF_COLOR_ALPHA }
-    };
-
-    char *const end = format + strlen(format);
+    char const *const end = format + strlen(format);
 
     char *token = strpbrk(format, "-");
 
     if (!token || (strlen(token) == 1)) {
         malformed:
-
-            pfree(&format);
             errx(EXIT_FAILURE, "Error --note option : Malformed syntax.");
     }
+
+    note = calloc(1, sizeof(*note));
+
+    assert(note);
+
+    note->color.r = DEF_COLOR_RED;
+    note->color.g = DEF_COLOR_GREEN;
+    note->color.b = DEF_COLOR_BLUE;
+    note->color.a = DEF_COLOR_ALPHA;
 
     while (token) {
         const char type = *++token;
@@ -96,39 +119,39 @@ void scrotNoteNew(char *format)
 
         switch (type) {
         case 'f':
-            note.font = parseText(&token, end);
+            note->font = parseText(&token, end);
 
-            if (!note.font)
+            if (!note->font)
                 errx(EXIT_FAILURE, "Error --note option : Malformed syntax for -f");
 
-            char *number = strrchr(note.font, '/');
+            char *number = strrchr(note->font, '/');
 
             if (!number)
                 errx(EXIT_FAILURE, "Error --note option : Malformed syntax for -f, required number.");
 
-            int fontSize = optionsParseRequiredNumber(++number);
+            const int fontSize = optionsParseRequiredNumber(++number);
 
             if (fontSize < 6)
                 warnx("Warning: --note option: font size < 6");
             break;
         case 'x':
-            if ((1 != sscanf(token, "%d", &note.x) || (note.x < 0)))
+            if ((1 != sscanf(token, "%d", &note->x) || (note->x < 0)))
                 errx(EXIT_FAILURE, "Error --note option : Malformed syntax for -x");
             nextNotSpace(&token);
             break;
         case 'y':
-            if ((1 != sscanf(token, "%d", &note.y)) || (note.y < 0))
+            if ((1 != sscanf(token, "%d", &note->y)) || (note->y < 0))
                 errx(EXIT_FAILURE, "Error --note option : Malformed syntax for -y");
             nextNotSpace(&token);
             break;
         case 'a':
-            if ((1 != sscanf(token, "%lf", &note.angle)))
+            if ((1 != sscanf(token, "%lf", &note->angle)))
                 errx(EXIT_FAILURE, "Error --note option : Malformed syntax for -a");
             nextNotSpace(&token);
             break;
         case 't':
-            note.text = parseText(&token, end);
-            if (!note.text)
+            note->text = parseText(&token, end);
+            if (!note->text)
                 errx(EXIT_FAILURE, "Error --note option : Malformed syntax for -t");
             break;
         case 'c':
@@ -144,16 +167,16 @@ void scrotNoteNew(char *format)
 
                 switch (++numberColors) {
                 case 1:
-                    note.color.r = color;
+                    note->color.r = color;
                     break;
                 case 2:
-                    note.color.g = color;
+                    note->color.g = color;
                     break;
                 case 3:
-                    note.color.b = color;
+                    note->color.b = color;
                     break;
                 case 4:
-                    note.color.a = color;
+                    note->color.a = color;
                     break;
                 }
 
@@ -170,7 +193,7 @@ void scrotNoteNew(char *format)
         token = strpbrk(token, "-");
     }
 
-    if (!note.font || !note.text)
+    if (!note->font || !note->text)
         goto malformed;
 
     loadFont();
@@ -178,16 +201,22 @@ void scrotNoteNew(char *format)
 
 void scrotNoteFree(void)
 {
-    if (note.text)
-        pfree(&note.text);
+    if(!note)
+        return;
 
-    if (note.font)
-        pfree(&note.font);
+    if (note->text)
+        pfree(&note->text);
 
-    if (imFont) {
-        imlib_context_set_font(imFont);
+    if (note->font)
+        pfree(&note->font);
+
+    if (note->imFont) {
+        imlib_context_set_font(note->imFont);
         imlib_free_font();
     }
+
+    free(note);
+    note = NULL;
 }
 
 void scrotNoteDraw(Imlib_Image im)
@@ -195,32 +224,37 @@ void scrotNoteDraw(Imlib_Image im)
     if (!im)
         return;
 
+    assert(note);
+    assert(note->imFont);
+
     imlib_context_set_image(im);
-    imlib_context_set_font(imFont);
+    imlib_context_set_font(note->imFont);
 
     imlib_context_set_direction(IMLIB_TEXT_TO_ANGLE);
-    imlib_context_set_angle(note.angle);
+    imlib_context_set_angle(note->angle);
 
-    imlib_context_set_color(note.color.r,
-        note.color.g,
-        note.color.b,
-        note.color.a);
+    imlib_context_set_color(note->color.r,
+        note->color.g,
+        note->color.b,
+        note->color.a);
 
-    imlib_text_draw(note.x, note.y, note.text);
+    imlib_text_draw(note->x, note->y, note->text);
 }
 
 static void loadFont(void)
 {
-    imFont = imlib_load_font(note.font);
+    assert(note);
 
-    if (!imFont) {
-        warnx("Error --note option : Failed to load fontname: %s", note.font);
+    note->imFont = imlib_load_font(note->font);
+
+    if (!note->imFont) {
+        warnx("Error --note option : Failed to load fontname: %s", note->font);
         scrotNoteFree();
         exit(EXIT_FAILURE);
     }
 }
 
-static char *parseText(char **token, char *const end)
+static char *parseText(char **token, char const *const end)
 {
     assert(NULL != *token);
     assert(NULL != end);
