@@ -247,11 +247,8 @@ static void loadFont(void)
 
     note->imFont = imlib_load_font(note->font);
 
-    if (!note->imFont) {
-        warnx("Error --note option : Failed to load fontname: %s", note->font);
-        scrotNoteFree();
-        exit(EXIT_FAILURE);
-    }
+    if (!note->imFont)
+        errx(EXIT_FAILURE, "Error --note option : Failed to load fontname: %s", note->font);
 }
 
 static char *parseText(char **token, char const *const end)
