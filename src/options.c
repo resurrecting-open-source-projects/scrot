@@ -591,6 +591,9 @@ void optionsParseFileName(const char *optarg)
 
 void optionsParseNote(char *optarg)
 {
+    if (opt.note)
+        free(opt.note);
+
     opt.note = estrdup(optarg);
 
     if (!opt.note)

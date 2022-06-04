@@ -99,6 +99,8 @@ void scrotNoteNew(char const *const format)
     if (!token || (strlen(token) == 1))
         errx(EXIT_FAILURE, "Error --note option : Malformed syntax.");
 
+    scrotNoteFree();
+
     note = calloc(1, sizeof(*note));
 
     assert(note);
