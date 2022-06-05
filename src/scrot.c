@@ -96,10 +96,11 @@ int main(int argc, char *argv[])
     time_t t;
     struct tm *tm;
 
+    atexit(uninitXAndImlib);
+
     optionsParse(argc, argv);
 
     initXAndImlib(opt.display, 0);
-    atexit(uninitXAndImlib);
 
     if (!opt.outputFile) {
         opt.outputFile = estrdup("%Y-%m-%d-%H%M%S_$wx$h_scrot.png");
@@ -206,8 +207,10 @@ int main(int argc, char *argv[])
 /* atexit register func. */
 static void uninitXAndImlib(void)
 {
-    if (opt.note)
+    if (opt.note) {
         scrotNoteFree();
+        free(opt.note);
+    }
 
     if (disp) {
         XCloseDisplay(disp);
