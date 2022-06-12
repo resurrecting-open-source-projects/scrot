@@ -413,7 +413,7 @@ void scrotGrabMousePointer(const Imlib_Image image, const int xOffset,
     DATA32 *pixels;
     size_t i;
 
-    if ((pixels = reallocarray(NULL, width * height, sizeof(pixels))) == NULL)
+    if ((pixels = reallocarray(NULL, width * height, sizeof(*pixels))) == NULL)
         err(EXIT_FAILURE, "reallocarray");
     /*
      * Copy (unsigned long *)xcim->pixels into (DATA32 *)pixels by assignment
