@@ -412,9 +412,8 @@ void scrotGrabMousePointer(const Imlib_Image image, const int xOffset,
     const int x = (xcim->x - xcim->xhot) - xOffset;
     const int y = (xcim->y - xcim->yhot) - yOffset;
     DATA32 data[width * height];
-    size_t i;
-
-    for (i = 0; i < width*height; i++)
+    
+    for (size_t i = 0; i < width*height; i++)
             data[i] = xcim->pixels[i];
 
     Imlib_Image imcursor = imlib_create_image_using_data(width, height, data);
