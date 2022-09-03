@@ -411,21 +411,12 @@ void scrotGrabMousePointer(const Imlib_Image image, const int xOffset,
     const unsigned short height = xcim->height;
     const int x = (xcim->x - xcim->xhot) - xOffset;
     const int y = (xcim->y - xcim->yhot) - yOffset;
-    DATA32 *pixels = NULL;
+    DATA32 data[width * height];
+    
+    for (size_t i = 0; i < width*height; i++)
+            data[i] = xcim->pixels[i];
 
-#ifdef __i386__
-    pixels = (DATA32 *)xcim->pixels;
-#else
-    DATA32 data[width * height * 4];
-
-    unsigned int i;
-    for (i = 0; i < (width * height); i++)
-        data[i] = (DATA32)xcim->pixels[i];
-
-    pixels = data;
-#endif
-
-    Imlib_Image imcursor = imlib_create_image_using_data(width, height, pixels);
+    Imlib_Image imcursor = imlib_create_image_using_data(width, height, data);
 
     XFree(xcim);
 
