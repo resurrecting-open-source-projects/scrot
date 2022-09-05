@@ -721,7 +721,7 @@ static Window scrotFindWindowByProperty(Display *display, const Window window,
 {
     Atom type = None;
     int format, status;
-    unsigned char *data;
+    unsigned char *data = NULL;
     unsigned int i, numberChildren;
     unsigned long after, numberItems;
     Window child = None, *children, parent, rootReturn;
@@ -734,8 +734,7 @@ static Window scrotFindWindowByProperty(Display *display, const Window window,
         status = XGetWindowProperty(display, children[i], property, 0L, 0L, False,
             AnyPropertyType, &type, &format,
             &numberItems, &after, &data);
-        if (data)
-            XFree(data);
+        XFree(data);
         if ((status == Success) && type)
             child = children[i];
     }
