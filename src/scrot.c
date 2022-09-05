@@ -697,7 +697,7 @@ static Window scrotGetClientWindow(Display *display, Window target)
     Atom state;
     Atom type = None;
     int format, status;
-    unsigned char *data;
+    unsigned char *data = NULL;
     unsigned long after, items;
     Window client;
 
@@ -707,6 +707,7 @@ static Window scrotGetClientWindow(Display *display, Window target)
     status = XGetWindowProperty(display, target, state, 0L, 0L, False,
         AnyPropertyType, &type, &format, &items, &after,
         &data);
+    XFree(data);
     if ((status == Success) && (type != None))
         return target;
     client = scrotFindWindowByProperty(display, target, state);
