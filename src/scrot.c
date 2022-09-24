@@ -18,6 +18,7 @@ Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
 Copyright 2021-2022 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
+Copyright 2022      NRK <nrk@disroot.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -200,6 +201,7 @@ int main(int argc, char *argv[])
 
     imlib_context_set_image(image);
     imlib_free_image_and_decache();
+    free(filenameIM);
 
     return 0;
 }
@@ -696,7 +698,7 @@ static Window scrotGetClientWindow(Display *display, Window target)
     Atom state;
     Atom type = None;
     int format, status;
-    unsigned char *data;
+    unsigned char *data = NULL;
     unsigned long after, items;
     Window client;
 
@@ -706,6 +708,7 @@ static Window scrotGetClientWindow(Display *display, Window target)
     status = XGetWindowProperty(display, target, state, 0L, 0L, False,
         AnyPropertyType, &type, &format, &items, &after,
         &data);
+    XFree(data);
     if ((status == Success) && (type != None))
         return target;
     client = scrotFindWindowByProperty(display, target, state);
@@ -719,7 +722,7 @@ static Window scrotFindWindowByProperty(Display *display, const Window window,
 {
     Atom type = None;
     int format, status;
-    unsigned char *data;
+    unsigned char *data = NULL;
     unsigned int i, numberChildren;
     unsigned long after, numberItems;
     Window child = None, *children, parent, rootReturn;
@@ -732,8 +735,7 @@ static Window scrotFindWindowByProperty(Display *display, const Window window,
         status = XGetWindowProperty(display, children[i], property, 0L, 0L, False,
             AnyPropertyType, &type, &format,
             &numberItems, &after, &data);
-        if (data)
-            XFree(data);
+        XFree(data);
         if ((status == Success) && type)
             child = children[i];
     }
