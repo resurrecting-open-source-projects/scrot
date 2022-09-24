@@ -38,6 +38,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <assert.h>
 #include <err.h>
 #include <errno.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -410,11 +411,11 @@ static void changeImageOpacity(Imlib_Image image, const int opacity)
     const int w = imlib_image_get_width();
     const int h = imlib_image_get_height();
 
-    DATA32 *data = imlib_image_get_data();
-    DATA32 *end = data + (h * w);
+    uint32_t *data = imlib_image_get_data();
+    uint32_t *end = data + (h * w);
 
-    for (DATA32 *pixel = data; pixel != end; ++pixel) {
-        const DATA32 a = (*pixel >> 24) * opacity / 255;
+    for (uint32_t *pixel = data; pixel != end; ++pixel) {
+        const uint32_t a = (*pixel >> 24) * opacity / 255;
        *pixel = (a << 24) | (*pixel & 0x00FFFFFF);
     }
 
