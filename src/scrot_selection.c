@@ -5,6 +5,7 @@ Copyright 2021       Martin C <martincation@protonmail.com>
 Copyright 2021       Peter Wu <peterwu@hotmail.com>
 Copyright 2021       Wilson Smith <01wsmith+gh@gmail.com>
 Copyright 2021-2022  Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2022       NRK <nrk@disroot.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -37,6 +38,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <assert.h>
 #include <err.h>
 #include <errno.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -405,25 +407,16 @@ bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
 
 static void changeImageOpacity(Imlib_Image image, const int opacity)
 {
-#define PIXEL_ARGB(a, r, g, b)  ((a) << 24) | ((r) << 16) | ((g) << 8) | (b)
-#define PIXEL_A(argb)  (((argb) >> 24) & 0xff)
-#define PIXEL_R(argb)  (((argb) >> 16) & 0xff)
-#define PIXEL_G(argb)  (((argb) >>  8) & 0xff)
-#define PIXEL_B(argb)  (((argb)      ) & 0xff)
-
     imlib_context_set_image(image);
     const int w = imlib_image_get_width();
     const int h = imlib_image_get_height();
 
-    DATA32 *data = imlib_image_get_data();
-    DATA32 *end = data + (h * w);
+    uint32_t *data = imlib_image_get_data();
+    uint32_t *end = data + (h * w);
 
-    for (DATA32 *pixel = data; pixel != end; ++pixel) {
-        const DATA8 a = PIXEL_A(*pixel) * opacity / 255;
-        const DATA8 r = PIXEL_R(*pixel);
-        const DATA8 g = PIXEL_G(*pixel);
-        const DATA8 b = PIXEL_B(*pixel);
-       *pixel = (DATA32)PIXEL_ARGB(a, r, g, b);
+    for (uint32_t *pixel = data; pixel != end; ++pixel) {
+        const uint32_t a = (*pixel >> 24) * opacity / 255;
+       *pixel = (a << 24) | (*pixel & 0x00FFFFFF);
     }
 
     imlib_image_put_back_data(data);
