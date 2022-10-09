@@ -401,7 +401,6 @@ void scrotGrabMousePointer(const Imlib_Image image, const int xOffset,
 {
     XFixesCursorImage *xcim = NULL;
     uint32_t *pixels = NULL;
-    Imlib_Image imcursor;
     /* Get the X cursor and the information we want. */
     if ((xcim = XFixesGetCursorImage(disp)) == NULL) {
         warnx("Can't get the cursor from X");
@@ -409,8 +408,6 @@ void scrotGrabMousePointer(const Imlib_Image image, const int xOffset,
     }
     const unsigned short width = xcim->width;
     const unsigned short height = xcim->height;
-    const int x = (xcim->x - xcim->xhot) - xOffset;
-    const int y = (xcim->y - xcim->yhot) - yOffset;
     const size_t pixcnt = (size_t)width*height;
 
     /* xcim->pixels wouldn't be valid if sizeof(*pixels)*pixcnt wrapped around.
@@ -423,13 +420,15 @@ void scrotGrabMousePointer(const Imlib_Image image, const int xOffset,
     /* Convert an X cursor into the format imlib wants. */
     for (size_t i = 0; i < pixcnt; i++)
             pixels[i] = xcim->pixels[i];
-    imcursor = imlib_create_image_using_data(width, height, pixels);
+    Imlib_Image imcursor = imlib_create_image_using_data(width, height, pixels);
     if (!imcursor) {
         warnx("Can't create cursor image");
         goto end;
     }
 
     /* Overlay the cursor into `image`. */
+    const int x = (xcim->x - xcim->xhot) - xOffset;
+    const int y = (xcim->y - xcim->yhot) - yOffset;
     imlib_context_set_image(imcursor);
     imlib_image_set_has_alpha(1);
     imlib_context_set_image(image);
