@@ -396,29 +396,23 @@ Window scrotGetWindow(Display *display, Window window, int x, int y)
     return target;
 }
 
-
 void scrotGrabMousePointer(const Imlib_Image image, const int xOffset,
     const int yOffset)
 {
     XFixesCursorImage *xcim = NULL;
-    unsigned short width;
-    unsigned short height;
-    int x;
-    int y;
-    size_t pixcnt;
     uint32_t *pixels = NULL;
     Imlib_Image imcursor;
-
     /* Get the X cursor and the information we want. */
     if ((xcim = XFixesGetCursorImage(disp)) == NULL) {
         warnx("Can't get the cursor from X");
         goto end;
     }
-    width = xcim->width;
-    height = xcim->height;
-    x = (xcim->x - xcim->xhot) - xOffset;
-    y = (xcim->y - xcim->yhot) - yOffset;
-    pixcnt = (size_t)width*height;
+    const unsigned short width = xcim->width;
+    const unsigned short height = xcim->height;
+    const int x = (xcim->x - xcim->xhot) - xOffset;
+    const int y = (xcim->y - xcim->yhot) - yOffset;
+    const size_t pixcnt = (size_t)width*height;
+
     /* xcim->pixels wouldn't be valid if sizeof(*pixels)*pixcnt wrapped around.
      */
     if ((pixels = malloc(sizeof(*pixels)*pixcnt)) == NULL) {
