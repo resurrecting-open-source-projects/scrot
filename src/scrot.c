@@ -398,35 +398,39 @@ Window scrotGetWindow(Display *display, Window window, int x, int y)
     return target;
 }
 
-
 void scrotGrabMousePointer(const Imlib_Image image, const int xOffset,
     const int yOffset)
 {
-    XFixesCursorImage *xcim = XFixesGetCursorImage(disp);
-
-    if (!xcim) {
-        warnx("Failed to get mouse cursor image.");
-        return;
+    XFixesCursorImage *xcim = NULL;
+    uint32_t *pixels = NULL;
+    /* Get the X cursor and the information we want. */
+    if ((xcim = XFixesGetCursorImage(disp)) == NULL) {
+        warnx("Can't get the cursor from X");
+        goto end;
     }
-
     const unsigned short width = xcim->width;
     const unsigned short height = xcim->height;
-    const int x = (xcim->x - xcim->xhot) - xOffset;
-    const int y = (xcim->y - xcim->yhot) - yOffset;
-    DATA32 data[width * height];
-    
-    for (size_t i = 0; i < width*height; i++)
-            data[i] = xcim->pixels[i];
+    const size_t pixcnt = (size_t)width*height;
 
-    Imlib_Image imcursor = imlib_create_image_using_data(width, height, data);
-
-    XFree(xcim);
-
-    if (!imcursor) {
-        errx(EXIT_FAILURE,
-            "scrotGrabMousePointer: Failed create image using data.");
+    /* xcim->pixels wouldn't be valid if sizeof(*pixels)*pixcnt wrapped around.
+     */
+    if ((pixels = malloc(sizeof(*pixels)*pixcnt)) == NULL) {
+        warn("malloc()");
+        goto end;
     }
 
+    /* Convert an X cursor into the format imlib wants. */
+    for (size_t i = 0; i < pixcnt; i++)
+            pixels[i] = xcim->pixels[i];
+    Imlib_Image imcursor = imlib_create_image_using_data(width, height, pixels);
+    if (!imcursor) {
+        warnx("Can't create cursor image");
+        goto end;
+    }
+
+    /* Overlay the cursor into `image`. */
+    const int x = (xcim->x - xcim->xhot) - xOffset;
+    const int y = (xcim->y - xcim->yhot) - yOffset;
     imlib_context_set_image(imcursor);
     imlib_image_set_has_alpha(1);
     imlib_context_set_image(image);
@@ -434,6 +438,10 @@ void scrotGrabMousePointer(const Imlib_Image image, const int xOffset,
         height);
     imlib_context_set_image(imcursor);
     imlib_free_image();
+
+end:
+    free(pixels);
+    XFree(xcim);
 }
 
 // It assumes that the local variable 'scrot.c:Imlib_Image image' is in context
