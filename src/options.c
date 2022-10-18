@@ -117,7 +117,9 @@ range_error:
 
 static int nonNegativeNumber(int number)
 {
-    return (number < 0) ? 0 : number;
+    if (number < 0)
+        errx(EXIT_FAILURE, "error: non-negative number required (got %d)", number);
+    return number;
 }
 
 int optionsParseRequireRange(int n, int lo, int hi)
