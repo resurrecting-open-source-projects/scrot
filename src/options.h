@@ -12,6 +12,7 @@ Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 Copyright 2021      Wilson Smith <01wsmith+gh@gmail.com>
 Copyright 2021-2022 Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2022      Zev Weiss <zev@bewilderbeest.net>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -80,6 +81,7 @@ struct ScrotOptions {
     int autoselectH;
     int autoselectW;
     SelectionMode selection;
+    int monitor;
 };
 
 extern struct ScrotOptions opt;

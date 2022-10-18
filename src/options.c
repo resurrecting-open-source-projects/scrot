@@ -17,6 +17,7 @@ Copyright 2021-2022 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 Copyright 2021      Wilson Smith <01wsmith+gh@gmail.com>
+Copyright 2022      Zev Weiss <zev@bewilderbeest.net>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -83,6 +84,7 @@ struct ScrotOptions opt = {
     .lineOpacity = SELECTION_OPACITY_DEFAULT,
     .lineMode = LINE_MODE_S_CLASSIC,
     .stackDirection = HORIZONTAL,
+    .monitor = -1,
 };
 
 static void showUsage(void);
@@ -342,7 +344,7 @@ static char *getPathOfStdout(void)
 
 void optionsParse(int argc, char *argv[])
 {
-    static char stropts[] = "a:ofipbcd:e:hmq:s::t:uvzn:l:D:k::C:S:F:";
+    static char stropts[] = "a:ofipbcd:e:hmq:s::t:uvzn:l:D:k::C:S:F:M:";
 
     static struct option lopts[] = {
         /* actions */
@@ -372,6 +374,7 @@ void optionsParse(int argc, char *argv[])
         { "class", required_argument, 0, 'C' },
         { "script", required_argument, 0, 'S' },
         { "file", required_argument, 0, 'F' },
+        { "monitor", required_argument, 0, 'M'},
         { 0, 0, 0, 0 }
     };
     int optch = 0, cmdx = 0;
@@ -454,6 +457,9 @@ void optionsParse(int argc, char *argv[])
         case 'F':
             optionsParseFileName(optarg);
             break;
+        case 'M':
+            opt.monitor = nonNegativeNumber(optionsParseRequiredNumber(optarg));
+            break;
         case '?':
             exit(EXIT_FAILURE);
         default:
@@ -488,8 +494,8 @@ static void showUsage(void)
 {
     fputs(/* Check that everything lines up after any changes. */
         "usage:  " PACKAGE " [-bcfhimopuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY]\n"
-        "              [-d SEC] [-e CMD] [-F FILE] [-k OPT] [-l STYLE] [-n OPTS]\n"
-        "              [-q NUM] [-S CMD] [-s OPTS] [-t NUM | GEOM] [FILE]\n",
+        "              [-d SEC] [-e CMD] [-F FILE] [-k OPT] [-l STYLE] [-M NUM]\n"
+        "              [-n OPTS] [-q NUM] [-S CMD] [-s OPTS] [-t NUM | GEOM] [FILE]\n",
         stdout);
     exit(0);
 }

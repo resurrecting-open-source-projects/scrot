@@ -15,7 +15,7 @@ jobs:
     - name: install_dependencies
       run: |
         sudo apt install libimlib2-dev libxcomposite-dev libxfixes-dev \
-             autoconf-archive libbsd-dev
+             autoconf-archive libbsd-dev libxinerama-dev
     - name: distcheck
       run: |
         ./autogen.sh
@@ -43,7 +43,8 @@ jobs:
     - uses: cygwin/cygwin-install-action@v1
       with:
         packages: autoconf autoconf-archive automake gcc-core libImlib2-devel \
-                  libXcomposite-devel libXext-devel libXfixes-devel make
+                  libXcomposite-devel libXext-devel libXfixes-devel libXinerama-devel \
+                  make
     - name: distcheck
       run: |
         cd ${GITHUB_WORKSPACE}
