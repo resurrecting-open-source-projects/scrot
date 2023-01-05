@@ -1,0 +1,139 @@
+
+                  Frequently Asked Questions about scrot
+
+
+
+ 1. Can I change the start of the selection area?
+
+    Yes. Using the arrow keys on your keyboard.
+
+
+ 2. When I use the --select and --pointer options, how can I capture the
+    mouse cursor if the cursor is being used for selection?
+
+    Use the --delay option which will give you time to move the cursor
+    into the selection area you have created.
+
+
+ 3. How to avoid canceling the selection when pressing any key on the
+    keyboard?
+
+    Use the --ignorekeyboard option. This option prevents exit by
+    ignoring any keyboard event, except the ESC key.
+
+
+ 4. The --select option leaves rectangle trails of the selection
+    rectangle. How do I avoid this?
+
+    There are 2 ways to solve this:
+    Try first with: scrot --select --freeze
+    Or using another selection mode: scrot --select --line mode=edge
+    But this last one does not behave correctly with some
+    CWM (Composite Window Manager)
+
+
+ 5. My CWM allows me to override shading on some windows by adding the
+    class name, does scrot have a class name?
+
+    Yes. The class name is "scrot" and is useful only when using the
+    --line mode=edge.
+
+    For example for the CWM picom:
+      shadow-exclude = [
+          "class_g = 'scrot'",
+      ];
+
+
+ 6. Why isn't the --freeze option enabled by default?
+
+    The --freeze option generates a call to XGrabServer and, according to
+    the X11 documentation, says the following:
+    "[..] disables processing of requests and close downs on all other
+    connections [...] You should not grab the X server any more than is
+    absolutely necessary."
+
+    We must not have a default behavior that is not recommended by X11.
+
+    Also the --freeze option may cause some video players to cause a lag
+    between video and audio or other unforeseen problems.
+    Some users are using this option to freeze a video frame and thus
+    capture it, although it works, keep in mind that this was not the
+    purpose of the option, but rather to provide another alternative to
+    the --select option to solve other problems.
+
+
+ 7. What image file formats can I save my screenshot?
+
+    All formats supported by the Imlib2 library (present and future).
+
+
+ 8. What is the image format that is saved by default?
+
+    The default format is PNG, even if it does not have a .png file
+    extension.
+
+
+ 9. Does it support redirection of the screenshot to the standard output?
+
+    Yes. For example:
+    '$ scrot -'
+    '$ scrot -> myfile.png'
+    '$ scrot - | pngquant -> myfile.png'
+
+
+10. Is there a default image format in the redirection to the standard
+    output?
+
+    Yes. The default format is PNG and there is no option to change it.
+
+
+11. What is the default line mode for the --select option?
+
+    The default line mode is --line mode=classic
+
+
+12. Do all sub-options of the --line option work for both line
+    modes (edge, classic)?
+
+    No. For example the opacity sub-option is only for the edge line mode.
+    To know more consult the man page.
+
+
+13. When I use the --select option and click on the area of a window that
+    is below another, this window does not rise, how can I solve this?
+
+    The way to force a window to have focus and rise is to add the
+    --border option.
+
+
+14. How do I change the opacity of the option --select=hole or
+    --select=hide?
+
+    Using --line opacity=35
+
+
+15. How do I change the color of the option --select=hole or
+    --select=hide?
+
+    Using --line color='Forest Green'
+
+
+16. I am using an image (instead of just color) to hide a selection area
+    with: --select=hide,stamp.png, can I change the opacity of this image?
+
+    Yes. Using the opacity sub-option of the --line option:
+    --line opacity=35
+
+
+17. I am using an image to hide a selection area with:
+    --select=hide,stamp.png --line opacity=35, but the image is always
+    opaque, how do I fix this?
+
+    The image you are using must have an alpha channel (RGBA).
+    You will find out if you do the following:
+
+    '$ file stamp.png' shows the following "8-bit/color RGBA",
+    it has alpha channel,  
+
+    '$ file stamp.png' shows the following "8-bit colormap",
+    does not have alpha channel
