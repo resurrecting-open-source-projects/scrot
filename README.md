@@ -45,7 +45,8 @@ scrot requires a few projects and libraries:
 - X [(e.g. X.Org)](https://www.x.org/wiki/)
 - libXcomposite [(can be found in X.Org)](https://gitlab.freedesktop.org/xorg/lib/libxcomposite)
 - libXext [(can be found in X.Org)](https://gitlab.freedesktop.org/xorg/lib/libxext)
-- libxfixes [(can be found in X.Org)](https://gitlab.freedesktop.org/xorg/lib/libxfixes)
+- libXfixes [(can be found in X.Org)](https://gitlab.freedesktop.org/xorg/lib/libxfixes)
+- libXinerama [(can be found in X.Org)](https://gitlab.freedesktop.org/xorg/lib/libxinerama)
 
 From a Unix command line, building is simple:
 ```
