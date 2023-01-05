@@ -51,8 +51,8 @@ task:
   install_script:
     - apk add autoconf autoconf-archive automake binutils gzip make pkgconfig
                        gcc clang xorg-server-dev libxcomposite-dev libxext-dev
-                       libxfixes-dev imlib2-dev musl-dev bsd-compat-headers
-                       libbsd-dev llvm-dev
+                       libxfixes-dev libxinerama-dev imlib2-dev musl-dev
+                       bsd-compat-headers libbsd-dev llvm-dev
   << : *common_script
 
 task:
@@ -75,7 +75,7 @@ task:
     - apt-get update
     - apt-get install -y autoconf autoconf-archive make pkg-config $CC
                          libx11-dev libxcomposite-dev libxext-dev libxfixes-dev
-                         libimlib2-dev libbsd-dev
+                         libxinerama-dev libimlib2-dev libbsd-dev
   << : *common_script
 
 task:
@@ -90,7 +90,7 @@ task:
       - CC: gcc
   install_script:
     - pkg install -y autoconf autoconf-archive automake pkgconf gcc libX11
-                     libXcomposite libXext libXfixes imlib2
+                     libXcomposite libXext libXfixes libXinerama imlib2
   << : *common_script
 
 task:
@@ -106,5 +106,5 @@ task:
   install_script:
     - brew update
     - brew install autoconf autoconf-archive automake make pkg-config gcc libx11
-                   libxcomposite libxext libxfixes imlib2
+                   libxcomposite libxext libxfixes libxinerama imlib2
   << : *common_script

@@ -3,7 +3,8 @@ NAME
 
 SYNOPSIS
   scrot [-bcfhimopuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY] [-d SEC] [-e CMD]
-        [-F FILE] [-k OPT] [-l STYLE] [-n OPTS] [-q NUM] [-S CMD] [-s OPTS] [-t NUM | GEOM] [FILE]
+        [-F FILE] [-k OPT] [-l STYLE] [-M NUM] [-n OPTS] [-q NUM] [-S CMD] [-s OPTS]
+        [-t NUM | GEOM] [FILE]
 
 DESCRIPTION
   scrot (SCReenshOT) is a simple command line screen capture utility, it uses
@@ -39,6 +40,7 @@ OPTIONS
                             join letter: v/h (vertical/horizontal). Default: h
   -l, --line STYLE          STYLE indicates the style of the line when the -s
                             option is used; see SELECTION STYLE.
+  -M, --monitor NUM         Capture Xinerama monitor number NUM.
   -m, --multidisp           For multiple heads, screenshot all of them in order.
   -n, --note OPTS           OPTS is a collection of options which specify notes
                             to bake into the image. See NOTE FORMAT.

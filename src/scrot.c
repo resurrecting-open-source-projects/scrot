@@ -19,6 +19,7 @@ Copyright 2021-2022 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 Copyright 2022      NRK <nrk@disroot.org>
+Copyright 2022      Zev Weiss <zev@bewilderbeest.net>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -58,6 +59,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <X11/Xutil.h>
 #include <X11/extensions/Xcomposite.h>
 #include <X11/extensions/Xfixes.h>
+#include <X11/extensions/Xinerama.h>
 
 #include "imlib.h"
 #include "note.h"
@@ -73,6 +75,7 @@ static void applyFilterIfRequired(void);
 static Bool scrotXEventVisibility(Display *, XEvent *, XPointer);
 static Imlib_Image scrotGrabAutoselect(void);
 static Imlib_Image scrotGrabShotMulti(void);
+static Imlib_Image scrotGrabShotMonitor(void);
 static Imlib_Image scrotGrabStackWindows(void);
 static Imlib_Image scrotGrabShot(void);
 static void scrotCheckIfOverwriteFile(char **);
@@ -116,6 +119,8 @@ int main(int argc, char *argv[])
         image = scrotGrabFocused();
     else if (opt.selection.mode & SELECTION_MODE_ANY)
         image = scrotSelectionSelectMode();
+    else if (opt.monitor != -1)
+        image = scrotGrabShotMonitor();
     else if (opt.autoselect)
         image = scrotGrabAutoselect();
     else {
@@ -858,6 +863,38 @@ static Imlib_Image scrotGrabShotMulti(void)
     free(subDisp);
 
     return stalkImageConcat(&images, HORIZONTAL);
+}
+
+static Imlib_Image scrotGrabShotMonitor(void)
+{
+    int eventBase, errBase;
+
+    if (!XineramaQueryExtension(disp, &eventBase, &errBase))
+        err(EXIT_FAILURE, "Xinerama extension not found");
+
+    int numScreens = 0;
+    XineramaScreenInfo *screens = XineramaQueryScreens(disp, &numScreens);
+
+    if (!screens && !numScreens)
+        err(EXIT_FAILURE, "Xinerama not active");
+
+    if (!numScreens)
+        err(EXIT_FAILURE, "Xinerama active but did not find any output device");
+
+    if (opt.monitor >= numScreens)
+        err(EXIT_FAILURE, "monitor %d not found", opt.monitor);
+
+    XineramaScreenInfo *mon = &screens[opt.monitor];
+
+    /* Hack: pretend we were invoked in autoselect mode */
+    opt.autoselectX = mon->x_org;
+    opt.autoselectY = mon->y_org;
+    opt.autoselectW = mon->width;
+    opt.autoselectH = mon->height;
+
+    XFree(screens);
+
+    return scrotGrabAutoselect();
 }
 
 static Imlib_Image stalkImageConcat(ScrotList *images, const enum Direction dir)
