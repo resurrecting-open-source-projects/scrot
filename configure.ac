@@ -4,7 +4,7 @@ AC_INIT([scrot], [1.7],
         [https://github.com/resurrecting-open-source-projects/scrot/issues],,
         [https://github.com/resurrecting-open-source-projects/scrot])
 AC_CONFIG_SRCDIR([src/scrot.c])
-AM_INIT_AUTOMAKE(dist-bzip2)
+AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([src/config.h])
 
 # Checks for programs.
