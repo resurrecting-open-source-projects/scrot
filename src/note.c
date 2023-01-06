@@ -1,7 +1,7 @@
 /* note.c
 
 Copyright 2019-2022 Daniel T. Borelli <danieltborelli@gmail.com>
-Copyright 2021-2022 Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2021-2023 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 
@@ -28,6 +28,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <assert.h>
 #include <err.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -114,6 +115,7 @@ void scrotNoteNew(char const *const format)
         const char type = *++token;
         char *savePtr = NULL;
         char *c;
+        const char *errmsg;
 
         nextSpace(&token);
 
@@ -129,7 +131,12 @@ void scrotNoteNew(char const *const format)
             if (!number)
                 errx(EXIT_FAILURE, "Error --note option : Malformed syntax for -f, required number.");
 
-            const int fontSize = optionsParseRequiredNumber(++number);
+            const int fontSize = optionsParseNum(++number, 1, INT_MAX,
+                &errmsg);
+            if (errmsg) {
+                    errx(EXIT_FAILURE, "option --note: font size '%s' is %s",
+                        number, errmsg);
+            }
 
             if (fontSize < 6)
                 warnx("Warning: --note option: font size < 6");
@@ -161,9 +168,17 @@ void scrotNoteNew(char const *const format)
 
             while (c) {
                 token = c;
+                char *const space = strchr(c, ' ');
 
-                const int color = optionsParseRequireRange(
-                        optionsParseRequiredNumber(c), 0 ,255);
+                if (space)
+                    *space = '\0';
+                const int color = optionsParseNum(c, 0, 255, &errmsg);
+                if (errmsg) {
+                        errx(EXIT_FAILURE, "option --note: color '%s' is %s", c,
+                            errmsg);
+                }
+                if (space)
+                    *space = ' ';
 
                 switch (++numberColors) {
                 case 1:

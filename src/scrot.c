@@ -15,7 +15,7 @@ Copyright 2020      nothub
 Copyright 2020      Sean Brennan <zettix1@gmail.com>
 Copyright 2021      c0dev0id <sh+github@codevoid.de>
 Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
-Copyright 2021-2022 Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2021-2023 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 Copyright 2022      NRK <nrk@disroot.org>
@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
         opt.outputFile = estrdup("%Y-%m-%d-%H%M%S_$wx$h_scrot.png");
         opt.thumbFile = estrdup("%Y-%m-%d-%H%M%S_$wx$h_scrot-thumb.png");
     } else {
-        if (opt.thumb)
+        if (opt.thumbWorP)
             opt.thumbFile = optionsNameThumbnail(opt.outputFile);
         scrotHaveFileExtension(opt.outputFile, &haveExtension);
     }
@@ -157,28 +157,19 @@ int main(int argc, char *argv[])
     if (imErr)
         err(EXIT_FAILURE, "Saving to file %s failed", filenameIM);
 
-    if (opt.thumb) {
+    if (opt.thumbWorP) {
         int cwidth, cheight;
         int twidth, theight;
 
         cwidth = imlib_image_get_width();
         cheight = imlib_image_get_height();
 
-        /* Geometry based thumb size */
-        if (opt.thumbWidth || opt.thumbHeight) {
-            if (!opt.thumbWidth) {
-                twidth = cwidth * opt.thumbHeight / cheight;
-                theight = opt.thumbHeight;
-            } else if (!opt.thumbHeight) {
-                twidth = opt.thumbWidth;
-                theight = cheight * opt.thumbWidth / cwidth;
-            } else {
-                twidth = opt.thumbWidth;
-                theight = opt.thumbHeight;
-            }
-        } else {
-            twidth = cwidth * opt.thumb / 100;
-            theight = cheight * opt.thumb / 100;
+        if (opt.thumbH) { /* thumbWorP is a width, thumbH is a height. */
+            twidth = opt.thumbWorP;
+            theight = opt.thumbH;
+        } else { /* thumbWorP is a percentage, thumbH is unset. */
+            twidth = cwidth * opt.thumbWorP / 100;
+            theight = cheight * opt.thumbWorP / 100;
         }
 
         imlib_context_set_anti_alias(1);
