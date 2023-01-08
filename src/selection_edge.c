@@ -2,7 +2,7 @@
 
 Copyright 2020-2021 Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
-Copyright 2021-2022 Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2021-2023 Guilherme Janczak <guilherme.janczak@yandex.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -74,10 +74,7 @@ void selectionEdgeCreate(void)
         HeightOfScreen(scr), 0, CopyFromParent, InputOutput, CopyFromParent,
         CWOverrideRedirect | CWBackPixel, &attr);
 
-    const int lineOpacity = optionsParseRequireRange(opt.lineOpacity,
-            SELECTION_EDGE_OPACITY_MIN, SELECTION_OPACITY_MAX);
-
-    unsigned long opacity = lineOpacity * ((unsigned)-1 / 100);
+    unsigned long opacity = opt.lineOpacity * ((unsigned)-1 / 100);
 
     XChangeProperty(disp, pe->wndDraw,
         XInternAtom(disp, "_NET_WM_WINDOW_OPACITY", False), XA_CARDINAL, 32,

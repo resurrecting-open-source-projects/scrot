@@ -11,7 +11,7 @@ Copyright 2020      Sean Brennan <zettix1@gmail.com>
 Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 Copyright 2021      Wilson Smith <01wsmith+gh@gmail.com>
-Copyright 2021-2022 Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2021-2023 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2022      Zev Weiss <zev@bewilderbeest.net>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -54,9 +54,12 @@ struct ScrotOptions {
     int border;
     int silent;
     int multidisp;
-    int thumb;
-    int thumbWidth;
-    int thumbHeight;
+    /* If true, the --thumb option is in use. */
+    int thumbWorP;
+    /* If thumbH is true, thumbWorP contains a width and thumbH contains a
+     * height. Otherwise, thumbWorP contains a percentage.
+     */
+    int thumbH;
     int pointer;
     int ignoreKeyboard;
     int freeze;
@@ -89,10 +92,9 @@ extern struct ScrotOptions opt;
 void optionsParse(int, char **);
 char *optionsNameThumbnail(const char *);
 void optionsParseFileName(const char *);
-void optionsParseThumbnail(char *);
 void optionsParseAutoselect(char *);
 void optionsParseDisplay(char *);
 void optionsParseNote(char *);
-int optionsParseRequiredNumber(const char *);
+long long optionsParseNum(const char *, long long, long long,
+    const char *[static 1]);
 int optionsCompareWindowClassName(const char *);
-int optionsParseRequireRange(int, int, int);

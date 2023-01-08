@@ -4,7 +4,7 @@ Copyright 2020-2022  Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2021       Martin C <martincation@protonmail.com>
 Copyright 2021       Peter Wu <peterwu@hotmail.com>
 Copyright 2021       Wilson Smith <01wsmith+gh@gmail.com>
-Copyright 2021-2022  Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2021-2023  Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2022       NRK <nrk@disroot.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -482,8 +482,7 @@ Imlib_Image scrotSelectionSelectMode(void)
 
     const int x = rect1.x - rect0.x;
     const int y = rect1.y - rect0.y;
-    const int opacity = optionsParseRequireRange(opt.lineOpacity,
-            SELECTION_OPACITY_MIN, SELECTION_OPACITY_MAX);
+    const int opacity = opt.lineOpacity;
 
     imlib_context_set_image(capture);
 

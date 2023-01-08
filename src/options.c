@@ -13,7 +13,7 @@ Copyright 2019-2022 Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2019      Jade Auer <jade@trashwitch.dev>
 Copyright 2020      Sean Brennan <zettix1@gmail.com>
 Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
-Copyright 2021-2022 Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2021-2023 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 Copyright 2021      Wilson Smith <01wsmith+gh@gmail.com>
@@ -89,42 +89,57 @@ struct ScrotOptions opt = {
 
 static void showUsage(void);
 static void showVersion(void);
+static void optionsParseThumbnail(char *);
 
-int optionsParseRequiredNumber(const char *str)
+/* optionsParseNum: "string to number" function.
+ *
+ * Parses the string representation of an integer in str, and simultaneously
+ * ensures that it is >= min and <= max.
+ *
+ * Returns the integer and sets *errmsg to NULL on success.
+ * Returns 0 and sets *errmsg to a pointer to a string containing the
+ * reason why the number can't be parsed on error.
+ *
+ * usage:
+ * char *errmsg;
+ * unsigned int nonnegative;
+ * if ((nonnegative = optionsParseNum(optarg, 0, UINT_MAX, &errmsg)) == NULL)
+ *     errx(EXIT_FAILURE, "-n: '%s' is %s", optarg, errmsg);
+ */
+long long optionsParseNum(const char *str, long long min, long long max,
+    const char *errmsg[static 1])
 {
-    assert(NULL != str); // fix yout caller function,
-                         //  the user does not impose this behavior
     char *end = NULL;
-    long ret = 0L;
-    errno = 0;
-
-    ret = strtol(str, &end, 10);
-
-    if (errno)
-        goto range_error;
-
-    if (str == end)
-        errx(EXIT_FAILURE, "the option is not a number: %s", end);
-
-    if (ret > INT_MAX || ret < INT_MIN) {
-        errno = ERANGE;
-        goto range_error;
+    long long rval;
+    int saved_errno = errno;
+    if (str == NULL) {
+        *errmsg = "missing";
+        return 0;
     }
+    *errmsg = NULL;
 
-    return ret;
+    errno = 0;
+    rval = strtoll(str, &end, 10);
+    if (errno == ERANGE) {
+        *errmsg = "not representable";
+    } else if (*str == '\0') {
+        *errmsg = "the null string";
+    } else if (*end != '\0') {
+        *errmsg = "not a number";
+    } else if (rval < min) {
+        /*
+         * rval could be set to 0 due to strtoll() returning error and this
+         * could be smaller than min or larger than max. To make sure we don't
+         * return the wrong error message, put min/max checks after everything
+         * else.
+         */
+        *errmsg = min == 0 ? "negative" : "too small";
+    } else if (rval > max) {
+        *errmsg = "too large";
+    }
+    errno = saved_errno;
 
-range_error:
-    err(EXIT_FAILURE, "error strtol");
-}
-
-static int nonNegativeNumber(int number)
-{
-    return (number < 0) ? 0 : number;
-}
-
-int optionsParseRequireRange(int n, int lo, int hi)
-{
-    return (n < lo ? lo : n > hi ? hi : n);
+    return (*errmsg ? 0 : rval);
 }
 
 static bool optionsParseIsString(const char *const str)
@@ -202,11 +217,11 @@ static void optionsParseSelection(const char *optarg)
         errx(EXIT_FAILURE, "option --select: Invalid parameter.");
 
     if (opt.selection.mode == SELECTION_MODE_BLUR) {
-        int const num = nonNegativeNumber(optionsParseRequiredNumber(value));
-
-        opt.selection.paramNum = optionsParseRequireRange(num,
-            SELECTION_MODE_BLUR_MIN, SELECTION_MODE_BLUR_MAX);
-
+        const char *errmsg;
+        opt.selection.paramNum = optionsParseNum(value,
+            SELECTION_MODE_BLUR_MIN, SELECTION_MODE_BLUR_MAX, &errmsg);
+        if (errmsg)
+            errx(EXIT_FAILURE, "option --select: '%s' is %s", value, errmsg);
     } else { // SELECTION_MODE_HIDE
 
         checkMaxInputFileName(value);
@@ -236,6 +251,7 @@ static void optionsParseLine(char *optarg)
 
     char *subopts = optarg;
     char *value = NULL;
+    const char *errmsg;
 
     while (*subopts != '\0') {
         switch (getsubopt(&subopts, token, &value)) {
@@ -255,16 +271,12 @@ static void optionsParseLine(char *optarg)
             }
             break;
         case Width:
-            if (!optionsParseIsString(value)) {
-                errx(EXIT_FAILURE, "Missing value for suboption '%s'",
-                    token[Width]);
-            }
-
-            opt.lineWidth = optionsParseRequiredNumber(value);
-
-            if (opt.lineWidth <= 0 || opt.lineWidth > 8) {
-                errx(EXIT_FAILURE, "Value of the range (1..8) for "
-                    "suboption '%s': %d", token[Width], opt.lineWidth);
+            opt.lineWidth = optionsParseNum(value, 1, 8, &errmsg);
+            if (errmsg) {
+                if (value == NULL)
+                    value = "(null)";
+                errx(EXIT_FAILURE, "option --line: suboption '%s': '%s' is %s",
+                    token[Width], value, errmsg);
             }
             break;
         case Color:
@@ -293,11 +305,14 @@ static void optionsParseLine(char *optarg)
             opt.lineMode = estrdup(value);
             break;
         case Opacity:
-            if (!optionsParseIsString(value)) {
-                errx(EXIT_FAILURE, "Missing value for suboption '%s'",
-                    token[Opacity]);
+            opt.lineOpacity = optionsParseNum(value,
+                SELECTION_OPACITY_MIN, SELECTION_OPACITY_MAX, &errmsg);
+            if (errmsg) {
+                if (value == NULL)
+                        value = "(null)";
+                errx(EXIT_FAILURE, "option --line: suboption %s: '%s' is %s",
+                    token[Opacity], value, errmsg);
             }
-            opt.lineOpacity = optionsParseRequiredNumber(value);
             break;
         default:
             errx(EXIT_FAILURE, "No match found for token: '%s'", value);
@@ -378,6 +393,7 @@ void optionsParse(int argc, char *argv[])
         { 0, 0, 0, 0 }
     };
     int optch = 0, cmdx = 0;
+    const char *errmsg;
 
     /* Now to pass some optionarinos */
     while ((optch = getopt_long(argc, argv, stropts, lopts, &cmdx)) != EOF) {
@@ -394,7 +410,11 @@ void optionsParse(int argc, char *argv[])
             opt.border = 1;
             break;
         case 'd':
-            opt.delay = nonNegativeNumber(optionsParseRequiredNumber(optarg));
+            opt.delay = optionsParseNum(optarg, 0, INT_MAX, &errmsg);
+            if (errmsg) {
+                errx(EXIT_FAILURE, "option --delay: '%s' is %s", optarg,
+                    errmsg);
+            }
             break;
         case 'e':
             opt.exec = estrdup(optarg);
@@ -403,7 +423,11 @@ void optionsParse(int argc, char *argv[])
             opt.multidisp = 1;
             break;
         case 'q':
-            opt.quality = optionsParseRequiredNumber(optarg);
+            opt.quality = optionsParseNum(optarg, 1, 100, &errmsg);
+            if (errmsg) {
+                errx(EXIT_FAILURE, "option --quality: '%s' is %s", optarg,
+                    errmsg);
+            }
             break;
         case 's':
             optionsParseSelection(optarg);
@@ -458,7 +482,11 @@ void optionsParse(int argc, char *argv[])
             optionsParseFileName(optarg);
             break;
         case 'M':
-            opt.monitor = nonNegativeNumber(optionsParseRequiredNumber(optarg));
+            opt.monitor = optionsParseNum(optarg, 0, INT_MAX, &errmsg);
+            if (errmsg) {
+                errx(EXIT_FAILURE, "option --monitor: '%s' is %s", optarg,
+                    errmsg);
+            }
             break;
         case '?':
             exit(EXIT_FAILURE);
@@ -480,7 +508,7 @@ void optionsParse(int argc, char *argv[])
                 free(opt.outputFile);
                 opt.outputFile = getPathOfStdout();
                 opt.overwrite = 1;
-                opt.thumb = 0;
+                opt.thumbWorP = 0;
             }
         } else
             warnx("unrecognised option %s", argv[optind++]);
@@ -533,24 +561,30 @@ char *optionsNameThumbnail(const char *name)
 void optionsParseAutoselect(char *optarg)
 {
     char *token;
-    const char tokenDelimiter[2] = ",";
-    int dimensions[4];
+    int *dimensions[] = {&opt.autoselectX, &opt.autoselectY, &opt.autoselectW,
+        &opt.autoselectH, NULL /* Sentinel. */};
     int i = 0;
+    int min;
+    const char *errmsg;
 
-    if (strchr(optarg, ',')) { /* geometry dimensions must be in format x,y,w,h   */
-        dimensions[i++] = optionsParseRequiredNumber(strtok(optarg, tokenDelimiter));
-        while ((token = strtok(NULL, tokenDelimiter)))
-            dimensions[i++] = optionsParseRequiredNumber(token);
+    /* Geometry dimensions must be in format x,y,w,h */
+    token = strtok(optarg, ",");
+    for (; token != NULL; token = strtok(NULL, ",")) {
+        if (dimensions[i] == NULL)
+            errx(EXIT_FAILURE, "option --autoselect: too many dimensions");
+
+        min = i >= 2; /* X,Y offsets may be 0. Width and height may not. */
+        *dimensions[i] = optionsParseNum(token, min, INT_MAX, &errmsg);
+        if (errmsg) {
+            errx(EXIT_FAILURE, "option --autoselect: '%s' is %s", token,
+                errmsg);
+        }
+        i++;
+
         opt.autoselect = 1;
-        opt.autoselectX = dimensions[0];
-        opt.autoselectY = dimensions[1];
-        opt.autoselectW = dimensions[2];
-        opt.autoselectH = dimensions[3];
-
-        if (i != 4)
-            errx(EXIT_FAILURE, "option 'autoselect' require 4 arguments");
-    } else
-        errx(EXIT_FAILURE, "invalid format for option -- 'autoselect'");
+    }
+    if (i < 4)
+            errx(EXIT_FAILURE, "option --autoselect: too few dimensions");
 }
 
 void optionsParseDisplay(char *optarg)
@@ -560,33 +594,33 @@ void optionsParseDisplay(char *optarg)
         err(EXIT_FAILURE, "Unable to allocate display");
 }
 
-void optionsParseThumbnail(char *optarg)
+static void optionsParseThumbnail(char *optarg)
 {
-    char *token;
+    char *height;
+    const char *errmsg;
 
-    if (strchr(optarg, 'x')) { /* We want to specify the geometry */
-        token = strtok(optarg, "x");
-        opt.thumbWidth = optionsParseRequiredNumber(token);
-        token = strtok(NULL, "x");
-        if (token) {
-            opt.thumbWidth = optionsParseRequiredNumber(optarg);
-            opt.thumbHeight = optionsParseRequiredNumber(token);
+    if ((height = strchr(optarg, 'x')) != NULL) { /* optarg is a resolution. */
+        /* optarg holds the width, height holds the height. */
+        *height++ = '\0';
 
-            if (opt.thumbWidth < 0)
-                opt.thumbWidth = 1;
-            if (opt.thumbHeight < 0)
-                opt.thumbHeight = 1;
-
-            if (!opt.thumbWidth && !opt.thumbHeight)
-                opt.thumb = 0;
-            else
-                opt.thumb = 1;
+        opt.thumbWorP = optionsParseNum(optarg, 1, INT_MAX, &errmsg);
+        if (errmsg) {
+            errx(EXIT_FAILURE, "option --thumb: resolution width '%s' is %s",
+                optarg, errmsg);
         }
-    } else {
-        opt.thumb = optionsParseRequireRange(
-                        optionsParseRequiredNumber(optarg), 1, 100);
-    }
 
+        opt.thumbH = optionsParseNum(height, 1, INT_MAX, &errmsg);
+        if (errmsg) {
+            errx(EXIT_FAILURE, "option --thumb: resolution height '%s' is %s",
+                height, errmsg);
+        }
+    } else { /* optarg is a percentage. */
+        opt.thumbWorP = optionsParseNum(optarg, 1, INT_MAX, &errmsg);
+        if (errmsg) {
+            errx(EXIT_FAILURE, "option --thumb: percentage '%s' is %s", optarg,
+                errmsg);
+        }
+    }
 }
 
 void optionsParseFileName(const char *optarg)
