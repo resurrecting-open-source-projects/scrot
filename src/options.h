@@ -8,10 +8,10 @@ Copyright 2010      Ibragimov Rinat <ibragimovrinat@mail.ru>
 Copyright 2017      Stoney Sauce <stoneysauce@gmail.com>
 Copyright 2019-2022 Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2020      Sean Brennan <zettix1@gmail.com>
+Copyright 2021-2023 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 Copyright 2021      Wilson Smith <01wsmith+gh@gmail.com>
-Copyright 2021-2023 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2022      Zev Weiss <zev@bewilderbeest.net>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

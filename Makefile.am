@@ -4,6 +4,7 @@
 # Copyright 2015-2019 Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 # Copyright 2019-2021 Daniel T. Borelli <danieltborelli@gmail.com>
 # Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
+# Copyright 2022      Sam James <sam@cmpct.info>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to

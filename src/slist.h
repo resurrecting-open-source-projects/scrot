@@ -1,8 +1,8 @@
 /* slist.h
 
 Copyright 2021 Christopher Nelson <christopher.nelson@languidnights.com>
-Copyright 2021 Peter Wu <peterwu@hotmail.com>
 Copyright 2021 Daniel T. Borelli <danieltborelli@gmail.com>
+Copyright 2021 Peter Wu <peterwu@hotmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
