@@ -83,7 +83,7 @@ SPECIAL STRINGS
     $s   The image's size in bytes (ignored when used in the filename).
     $t   The image's file format (ignored when used in the filename).
     $w   The image's width.
-    $W   The name of the window (only for --select and --focused)
+    $W   The name of the window (only for --select and --focused).
     \\n   A literal newline (ignored when used in the filename).
 
   Example:
@@ -171,6 +171,9 @@ NOTE FORMAT
 
     $ scrot -n "-f '/usr/share/fonts/TTF/DroidSans-Bold/40' -x 10
             -y 20 -c 255,0,0,255 -t 'Hi'"
+
+SEE ALSO
+  optipng(1)
 
 AUTHOR
   scrot was originally developed by Tom Gilbert.
