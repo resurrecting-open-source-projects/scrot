@@ -1,3 +1,52 @@
+Mon Jan 09 23:33:55 -03:00 2023  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
+Version 1.8
+
+ [ Daniel T. Borelli ] alias @daltomi
+
+ * Created FAQ file.
+ * README.md: added a reference to libXinerama.
+ * Improvement: added new format specifier $W: name of the window.
+ * Fixes: automake: using default compression format.
+ * Bug fixed: issue when not showing counting progress in terminal.
+ * Several other code improvements.
+
+ [ Guilherme Janczak ] alias @guijan
+
+ * Improvement: modified logo image, shown logo image in README.md.
+ * Improvement: added estrdup function, renamed identifiers that use reserved
+   names.
+ * Improvement: untangle headers files, removed reference to oldstable in
+   CONTRIBUTING.md.
+ * Improvement: small CI revamp: added cygwin, added distcheck, updated MacOS
+   CI.
+ * Improvement: added informative error messages when parsing args.
+ * Fixes: C99: empty initializer braces.
+ * Fixes: removed VLA and imlib2 deprecated DATA32 type.
+ * Fixes: MacOS CI build failures.
+ * Autotools: removed stamp-h.in, check for more libbsd functions, added link
+   time optimization(-flto) and warnings.
+
+ [ Joao Eriberto Mota Filho ] alias @eribertomota
+
+ * Removed copyright symbol from some source files.
+ * Updated copyright notices.
+ * Added SEE ALSO section to manpage.
+ * Updated manpage.
+
+ [ N-R-K ]
+
+ * Fixes: memleak and potentially bad free data.
+ * Fixes: shift error (undefined behavior) and remove deprecated type DATA32.
+
+ [ Sam James ] alias @thesamesam
+
+ * Fixes: autotools: respect --docdir.
+
+ [ Zev Weiss ] alias @zevweiss
+
+ * New option: added -M/--monitor option to capture a Xinerama display.
+ * Added new library dependency: libXinerama.
+
 Tue Nov 09 20:41:00 -03:00 2021  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 Version 1.7
 
