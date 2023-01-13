@@ -57,7 +57,7 @@ scrot requires a few projects and libraries:
 In short, if you are building from an GIT checkout of scrot (but not if you
 are building from a downloaded tarball) then you will first need to run:
 ```
-./autogen.sh
+$ ./autogen.sh
 ```
 
 TIP: if the source code does not have a configure file, you will need to run
@@ -69,31 +69,39 @@ but have applied additional patches then you may also need to run
 
 To build scrot from a downloaded tarball just type:
 ```
-./configure
-make
+$ ./configure
+$ make
 ```
 
 And as root:
 ```
-make install
+# make install
+```
+or
+```
+$ sudo make install
 ```
 
 Cleaning up the build is also simple:
 ```
-make clean
+$ make clean
 ```
 
 To vanish the source code, removing all pre-built files, including configure, run:
 ```
-make distclean
+$ make distclean
 ```
 
 You can return to a pristine source tree before running `./configure`:
 ```
-./autogen.sh clean
+$ ./autogen.sh clean
 ```
 
 Debian users can install scrot from their package manager:
+```
+# apt install scrot
+```
+or
 ```
 $ sudo apt install scrot
 ```
