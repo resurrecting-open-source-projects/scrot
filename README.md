@@ -80,7 +80,12 @@ make install
 
 Cleaning up the build is also simple:
 ```
-$ make distclean
+make clean
+```
+
+To vanish the source code, removing all pre-built files, including configure, run:
+```
+make distclean
 ```
 
 You can return to a pristine source tree before running `./configure`:
