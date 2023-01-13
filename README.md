@@ -35,6 +35,10 @@ If you are interested in helping scrot, read the [CONTRIBUTING.md](CONTRIBUTING.
 
 ## Building ##
 
+This section describes the steps to build and install scrot.
+
+### Dependencies ###
+
 scrot requires a few projects and libraries:
 
 - [autoconf](https://www.gnu.org/software/autoconf/autoconf.html) (build time only)
@@ -48,11 +52,30 @@ scrot requires a few projects and libraries:
 - libXfixes [(can be found in X.Org)](https://gitlab.freedesktop.org/xorg/lib/libxfixes)
 - libXinerama [(can be found in X.Org)](https://gitlab.freedesktop.org/xorg/lib/libxinerama)
 
-From a Unix command line, building is simple:
+### Generic installation instruction ###
+
+In short, if you are building from an GIT checkout of scrot (but not if you
+are building from a downloaded tarball) then you will first need to run:
 ```
-$ ./autogen.sh
-$ ./configure
-$ make
+./autogen.sh
+```
+
+TIP: if the source code does not have a configure file, you will need to run
+     the ```./autogen.sh``` command.
+
+Now, proceed as shown below for a tarball. (If you are using the tarball
+but have applied additional patches then you may also need to run
+```./autogen.sh```.)
+
+To build scrot from a downloaded tarball just type:
+```
+./configure
+make
+```
+
+And as root:
+```
+make install
 ```
 
 Cleaning up the build is also simple:
@@ -62,14 +85,7 @@ $ make distclean
 
 You can return to a pristine source tree before running `./configure`:
 ```
-$ ./autogen.sh clean
-```
-
-## Installing ##
-
-If you've built scrot from source, scrot needs to be installed from a root shell:
-```
-# make install
+./autogen.sh clean
 ```
 
 Debian users can install scrot from their package manager:
