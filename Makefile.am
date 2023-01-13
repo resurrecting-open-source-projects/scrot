@@ -1,7 +1,7 @@
 # Copyright 1999-2000 Tom Gilbert <tom@linuxbrit.co.uk,
 #                                   gilbertt@linuxbrit.co.uk,
 #                                   scrot_sucks@linuxbrit.co.uk>
-# Copyright 2015-2019 Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
+# Copyright 2015-2023 Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 # Copyright 2019-2021 Daniel T. Borelli <danieltborelli@gmail.com>
 # Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
 # Copyright 2022      Sam James <sam@cmpct.info>
@@ -35,9 +35,9 @@ MAINTAINERCLEANFILES = Makefile.in
 
 man_MANS = man/scrot.1
 
-dist_doc_DATA = README.md AUTHORS ChangeLog FAQ doc/scrot.png
+dist_doc_DATA = AUTHORS ChangeLog CONTRIBUTING.md doc/scrot.png FAQ README.md TODO.md
 
-EXTRA_DIST = $(man_MANS)
+EXTRA_DIST = $(man_MANS) autogen.sh
 
 SUBDIRS = src
 
