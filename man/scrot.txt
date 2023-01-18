@@ -4,7 +4,7 @@ NAME
 SYNOPSIS
   scrot [-bcfhimopuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY] [-d SEC] [-e CMD]
         [-F FILE] [-k OPT] [-l STYLE] [-M NUM] [-n OPTS] [-q NUM] [-S CMD] [-s OPTS]
-        [-t % | WxH] [FILE]
+        [-t % | WxH] [-w NUM] [FILE]
 
 DESCRIPTION
   scrot (SCReenshOT) is a simple command line screen capture utility, it uses
@@ -69,6 +69,8 @@ OPTIONS
                             500x200, 100x0, 0x480.
   -u, --focused             Use the currently focused window.
   -v, --version             Output version information and exit.
+  -w, --window              Window identifier to capture.
+                            Must be a valid identifier (see xwininfo(1)).
   -z, --silent              Prevent beeping.
   -                         Redirection to standard output. The output image
                             format is PNG.
@@ -90,7 +92,7 @@ SPECIAL STRINGS
     $s   The image's size in bytes (ignored when used in the filename).
     $t   The image's file format (ignored when used in the filename).
     $w   The image's width.
-    $W   The name of the window (only for --select and --focused).
+    $W   The name of the window (only for --select, --focused and --window).
     \\n   A literal newline (ignored when used in the filename).
 
   Example:
@@ -181,6 +183,7 @@ NOTE FORMAT
 
 SEE ALSO
   optipng(1)
+  xwininfo(1)
 
 AUTHOR
   scrot was originally developed by Tom Gilbert.

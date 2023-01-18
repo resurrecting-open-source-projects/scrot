@@ -85,16 +85,26 @@ struct ScrotOptions opt = {
     .lineMode = LINE_MODE_S_CLASSIC,
     .stackDirection = HORIZONTAL,
     .monitor = -1,
+    .windowId = None,
 };
 
 static void showUsage(void);
 static void showVersion(void);
+static long long optionsParseNumBase(const char *, long long, long long,
+    const char *[static 1], int);
 static void optionsParseThumbnail(char *);
 
-/* optionsParseNum: "string to number" function.
+long long optionsParseNum(const char *str, long long min, long long max,
+    const char *errmsg[static 1])
+{
+    return optionsParseNumBase(str, min, max, errmsg, 10);
+}
+
+/* optionsParseNumBase: "string to number" function.
  *
  * Parses the string representation of an integer in str, and simultaneously
- * ensures that it is >= min and <= max.
+ * ensures that it is >= min and <= max. The string representation must be of
+ * base `base`.
  *
  * Returns the integer and sets *errmsg to NULL on success.
  * Returns 0 and sets *errmsg to a pointer to a string containing the
@@ -106,8 +116,8 @@ static void optionsParseThumbnail(char *);
  * if ((nonnegative = optionsParseNum(optarg, 0, UINT_MAX, &errmsg)) == NULL)
  *     errx(EXIT_FAILURE, "-n: '%s' is %s", optarg, errmsg);
  */
-long long optionsParseNum(const char *str, long long min, long long max,
-    const char *errmsg[static 1])
+static long long optionsParseNumBase(const char *str, long long min, long long max,
+    const char *errmsg[static 1], int base)
 {
     char *end = NULL;
     long long rval;
@@ -119,7 +129,7 @@ long long optionsParseNum(const char *str, long long min, long long max,
     *errmsg = NULL;
 
     errno = 0;
-    rval = strtoll(str, &end, 10);
+    rval = strtoll(str, &end, base);
     if (errno == ERANGE) {
         *errmsg = "not representable";
     } else if (*str == '\0') {
@@ -340,7 +350,7 @@ static const char *getPathOfStdout(void)
 
 void optionsParse(int argc, char *argv[])
 {
-    static char stropts[] = "a:ofipbcd:e:hmq:s::t:uvzn:l:D:k::C:S:F:M:";
+    static char stropts[] = "a:ofipbcd:e:hmq:s::t:uvzn:l:D:k::C:S:F:M:w:";
 
     static struct option lopts[] = {
         /* actions */
@@ -371,6 +381,7 @@ void optionsParse(int argc, char *argv[])
         { "script", required_argument, 0, 'S' },
         { "file", required_argument, 0, 'F' },
         { "monitor", required_argument, 0, 'M'},
+        { "window", required_argument, 0, 'w'},
         { 0, 0, 0, 0 }
     };
     int optch = 0;
@@ -470,6 +481,13 @@ void optionsParse(int argc, char *argv[])
             opt.monitor = optionsParseNum(optarg, 0, INT_MAX, &errmsg);
             if (errmsg) {
                 errx(EXIT_FAILURE, "option --monitor: '%s' is %s", optarg,
+                    errmsg);
+            }
+            break;
+        case 'w':
+            opt.windowId = optionsParseNumBase(optarg, None/*0L*/, LONG_MAX, &errmsg, 0);
+            if (errmsg) {
+                errx(EXIT_FAILURE, "option --window: '%s' is %s", optarg,
                     errmsg);
             }
             break;
