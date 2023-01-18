@@ -87,6 +87,8 @@ static Window scrotFindWindowByProperty(Display *, const Window,
                                               const Atom);
 static Imlib_Image stalkImageConcat(ScrotList *, const enum Direction);
 static int findWindowManagerFrame(Window *const, int *const);
+static Imlib_Image scrotGrabWindowById(Window const window);
+
 
 int main(int argc, char *argv[])
 {
@@ -132,6 +134,8 @@ int main(int argc, char *argv[])
             image = scrotGrabShotMonitor();
         else if (opt.autoselect)
             image = scrotGrabAutoselect();
+        else if (opt.windowId != None)
+            image = scrotGrabWindowById(opt.windowId);
         else
             image = scrotGrabShot();
     }
@@ -241,22 +245,27 @@ static size_t scrotHaveFileExtension(const char *filename, char **ext)
     return 0;
 }
 
-static Imlib_Image scrotGrabFocused(void)
+static Imlib_Image scrotGrabWindowById(Window const window)
 {
     Imlib_Image im = NULL;
     int rx = 0, ry = 0, rw = 0, rh = 0;
-    Window target = None;
-    int ignored;
 
-    XGetInputFocus(disp, &target, &ignored);
-    if (!scrotGetGeometry(target, &rx, &ry, &rw, &rh))
+    if (!scrotGetGeometry(window, &rx, &ry, &rw, &rh))
         return NULL;
     scrotNiceClip(&rx, &ry, &rw, &rh);
     im = imlib_create_image_from_drawable(0, rx, ry, rw, rh, 1);
     if (opt.pointer)
         scrotGrabMousePointer(im, rx, ry);
-    clientWindow = target;
+    clientWindow = window;
     return im;
+}
+
+static Imlib_Image scrotGrabFocused(void)
+{
+    Window target = None;
+
+    XGetInputFocus(disp, &target, &(int){0});
+    return scrotGrabWindowById(target);
 }
 
 static Imlib_Image scrotGrabAutoselect(void)
