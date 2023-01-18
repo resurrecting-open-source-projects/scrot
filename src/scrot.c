@@ -6,7 +6,7 @@ Copyright 1999-2000 Tom Gilbert <tom@linuxbrit.co.uk,
 Copyright 2009      James Cameron <quozl@us.netrek.org>
 Copyright 2010      Ibragimov Rinat <ibragimovrinat@mail.ru>
 Copyright 2017      Stoney Sauce <stoneysauce@gmail.com>
-Copyright 2019-2022 Daniel T. Borelli <danieltborelli@gmail.com>
+Copyright 2019-2023 Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2019      Jade Auer <jade@trashwitch.dev>
 Copyright 2020      blockparole
 Copyright 2020      Cungsten Tarbide <ctarbide@tuta.io>
