@@ -76,9 +76,9 @@
  9. Does it support redirection of the screenshot to the standard output?
 
     Yes. For example:
-    '$ scrot -'
-    '$ scrot -> myfile.png'
-    '$ scrot - | pngquant -> myfile.png'
+    $ scrot -
+    $ scrot -> myfile.png
+    $ scrot - | pngquant -> myfile.png
 
 
 10. Is there a default image format in the redirection to the standard
@@ -132,8 +132,21 @@
     The image you are using must have an alpha channel (RGBA).
     You will find out if you do the following:
 
-    '$ file stamp.png' shows the following "8-bit/color RGBA",
-    it has alpha channel,  
+    $ file stamp.png
+    Shows the following "8-bit/color RGBA", it has alpha channel.
 
-    '$ file stamp.png' shows the following "8-bit colormap",
-    does not have alpha channel
+    $ file stamp.png
+    Shows the following "8-bit colormap", does not have alpha channel.
+
+
+18. Why can't I use floating point numbers anymore?
+
+   Until version v1.7 it would silently convert a floating point number
+   to a zero(0). Which is an error since it allowed the user to believe
+   that the value given to the option was correct, when it is not.
+   Since version v1.8, the entered value is indicated with an
+   error 'is not an integer'
+
+   For example:
+   $ scrot --delay 0.5
+   $ scrot: option --delay: '0.5' is is not an integer
