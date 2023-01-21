@@ -6,7 +6,7 @@ Copyright 1999-2000 Tom Gilbert <tom@linuxbrit.co.uk,
 Copyright 2009      James Cameron <quozl@us.netrek.org>
 Copyright 2010      Ibragimov Rinat <ibragimovrinat@mail.ru>
 Copyright 2017      Stoney Sauce <stoneysauce@gmail.com>
-Copyright 2019-2022 Daniel T. Borelli <danieltborelli@gmail.com>
+Copyright 2019-2023 Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2019      Jade Auer <jade@trashwitch.dev>
 Copyright 2020      blockparole
 Copyright 2020      Cungsten Tarbide <ctarbide@tuta.io>
@@ -115,20 +115,22 @@ int main(int argc, char *argv[])
         scrotHaveFileExtension(opt.outputFile, &haveExtension);
     }
 
-    if (opt.focused)
-        image = scrotGrabFocused();
-    else if (opt.selection.mode & SELECTION_MODE_ANY)
+    if (opt.selection.mode & SELECTION_MODE_ANY)
         image = scrotSelectionSelectMode();
-    else if (opt.monitor != -1)
-        image = scrotGrabShotMonitor();
-    else if (opt.autoselect)
-        image = scrotGrabAutoselect();
     else {
+
         scrotDoDelay();
-        if (opt.multidisp)
+
+        if (opt.focused)
+            image = scrotGrabFocused();
+        else if (opt.multidisp)
             image = scrotGrabShotMulti();
         else if (opt.stack)
             image = scrotGrabStackWindows();
+        else if (opt.monitor != -1)
+            image = scrotGrabShotMonitor();
+        else if (opt.autoselect)
+            image = scrotGrabAutoselect();
         else
             image = scrotGrabShot();
     }
@@ -233,7 +235,6 @@ static Imlib_Image scrotGrabFocused(void)
     Window target = None;
     int ignored;
 
-    scrotDoDelay();
     XGetInputFocus(disp, &target, &ignored);
     if (!scrotGetGeometry(target, &rx, &ry, &rw, &rh))
         return NULL;
@@ -251,7 +252,6 @@ static Imlib_Image scrotGrabAutoselect(void)
     int rx = opt.autoselectX, ry = opt.autoselectY, rw = opt.autoselectW,
         rh = opt.autoselectH;
 
-    scrotDoDelay();
     scrotNiceClip(&rx, &ry, &rw, &rh);
     im = imlib_create_image_from_drawable(0, rx, ry, rw, rh, 1);
     if (opt.pointer)
