@@ -125,7 +125,7 @@ long long optionsParseNum(const char *str, long long min, long long max,
     } else if (*str == '\0') {
         *errmsg = "the null string";
     } else if (*end != '\0') {
-        *errmsg = "is not an integer";
+        *errmsg = "not an integer";
     } else if (rval < min) {
         /*
          * rval could be set to 0 due to strtoll() returning error and this

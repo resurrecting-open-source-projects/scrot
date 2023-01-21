@@ -149,4 +149,4 @@
 
    For example:
    $ scrot --delay 0.5
-   $ scrot: option --delay: '0.5' is is not an integer
+   $ scrot: option --delay: '0.5' is not an integer
