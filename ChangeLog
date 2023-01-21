@@ -1,3 +1,20 @@
+Fri Jan 20 23:46:15 -03:00 2023  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
+Version 1.8.1
+
+ [ Guilherme Janczak ] alias @guijan
+
+ * Fixed libbsd feature test confusion. Rationale: users expressed confusion
+   when using the old "--without-libbsd" configure flag. Some assumed that it
+   compiles scrot without libbsd, but it only made the build script error if
+   libbsd is a dependency. This is useful to package maintainers: it gives them
+   a yes/no answer on whether the library is a dependency on their system. The
+   old configure flag has been replaced by a more verbose
+   "--enable-libbsd-feature-test".
+
+ [ Joao Eriberto Mota Filho ] alias @eribertomota
+
+ * Fixed 'make dist', adding some files to bootstrapped tarballs.
+
 Mon Jan 09 23:33:55 -03:00 2023  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 Version 1.8
 
