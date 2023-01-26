@@ -54,11 +54,9 @@ struct ScrotOptions {
     int border;
     int silent;
     int multidisp;
-    /* If true, the --thumb option is in use. */
-    int thumbWorP;
-    /* If thumbH is true, thumbWorP contains a width and thumbH contains a
-     * height. Otherwise, thumbWorP contains a percentage.
-     */
+    enum thumb { THUMB_DISABLED, THUMB_PERCENT, THUMB_RES } thumb;
+    int thumbPercent;
+    int thumbW;
     int thumbH;
     int pointer;
     int ignoreKeyboard;

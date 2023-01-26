@@ -4,7 +4,7 @@ NAME
 SYNOPSIS
   scrot [-bcfhimopuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY] [-d SEC] [-e CMD]
         [-F FILE] [-k OPT] [-l STYLE] [-M NUM] [-n OPTS] [-q NUM] [-S CMD] [-s OPTS]
-        [-t NUM | GEOM] [FILE]
+        [-t % | WxH] [FILE]
 
 DESCRIPTION
   scrot (SCReenshOT) is a simple command line screen capture utility, it uses
@@ -56,10 +56,15 @@ OPTIONS
   -s, --select OPTS         Interactively select a window or rectangle with the
                             mouse, use the arrow keys to resize. See the -l and
                             -f options. OPTS it's optional; see SELECTION MODE
-  -t, --thumb NUM | GEOM    Also generate a thumbnail. The argument is the
-                            resolution of the thumbnail, it may be a percentage
-                            NUM or a resolution GEOM. Examples: 10, 25, 320x240,
-                            500x200.
+  -t, --thumb % | WxH       Also generate a thumbnail. The argument represents
+                            the thumbnail's resolution: if the argument is a
+                            single number, it is a percentage of the full size
+                            screenshot's resolution; if it is 2 numbers
+                            separated by an "x" character, it is a resolution.
+                            If one of the resolution's dimensions is 0, it is
+                            replaced by a number that maintains the full size
+                            screenshot's aspect ratio. Examples: 10, 25, 320x240,
+                            500x200, 100x0, 0x480.
   -u, --focused             Use the currently focused window.
   -v, --version             Output version information and exit.
   -z, --silent              Prevent beeping.
