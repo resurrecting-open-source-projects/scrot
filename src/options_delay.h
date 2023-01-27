@@ -1,7 +1,5 @@
-/* scrot.h
-
-Copyright 2021 Guilherme Janczak <guilherme.janczak@yandex.com>
-Copyright 2022 Daniel T. Borelli <danieltborelli@gmail.com>
+/*
+Copyright 2023 Guilherme Janczak <guilherme.janczak@yandex.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -24,15 +22,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-/* Part of the code comes from the scrot.c file and maintains its authorship. */
-
 #pragma once
 
-#include <X11/Xlib.h>
-#include <Imlib2.h>
-
-Window scrotGetWindow(Display *, Window, int, int);
-int scrotGetGeometry(Window, int *, int *, int *, int *);
-void scrotNiceClip(int *, int *, int *, int *);
-void scrotGrabMousePointer(const Imlib_Image, const int, const int);
-char *scrotGetWindowName(Window);
+void scrotTimerStart(void);
+void scrotTimerWait(void);

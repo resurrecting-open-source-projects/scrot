@@ -50,6 +50,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "imlib.h"
 #include "options.h"
+#include "options_delay.h"
 #include "scrot.h"
 #include "scrot_selection.h"
 #include "selection_classic.h"
@@ -466,7 +467,7 @@ Imlib_Image scrotSelectionSelectMode(void)
         if (!scrotSelectionGetUserSel(&rect1))
             return NULL;
 
-    scrotDoDelay();
+    scrotTimerWait();
 
     Imlib_Image capture = imlib_create_image_from_drawable(0, rect0.x, rect0.y,
         rect0.w, rect0.h, 1);

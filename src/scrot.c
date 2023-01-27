@@ -64,6 +64,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "imlib.h"
 #include "note.h"
 #include "options.h"
+#include "options_delay.h"
 #include "scrot.h"
 #include "slist.h"
 #include "util.h"
@@ -115,12 +116,10 @@ int main(int argc, char *argv[])
         scrotHaveFileExtension(opt.outputFile, &haveExtension);
     }
 
-    if (opt.selection.mode & SELECTION_MODE_ANY)
+    if (opt.selection.mode & SELECTION_MODE_ANY) {
         image = scrotSelectionSelectMode();
-    else {
-
-        scrotDoDelay();
-
+    } else {
+        scrotTimerWait();
         if (opt.focused)
             image = scrotGrabFocused();
         else if (opt.multidisp)
@@ -257,27 +256,6 @@ static Imlib_Image scrotGrabAutoselect(void)
     if (opt.pointer)
         scrotGrabMousePointer(im, rx, ry);
     return im;
-}
-
-void scrotDoDelay(void)
-{
-    if (opt.delay) {
-        if (opt.countdown) {
-            int i;
-
-            printf("Taking shot in %d.. ", opt.delay);
-            fflush(stdout);
-            sleep(1);
-            for (i = opt.delay - 1; i > 0; i--) {
-                printf("%d.. ", i);
-                fflush(stdout);
-                sleep(1);
-            }
-            printf("0.\n");
-            fflush(stdout);
-        } else
-            sleep(opt.delay);
-    }
 }
 
 /* Clip rectangle nicely */

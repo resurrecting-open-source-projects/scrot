@@ -55,6 +55,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "note.h"
 #include "options.h"
 #include "scrot.h"
+#include "options_delay.h"
 #include "scrot_selection.h"
 #include "util.h"
 
@@ -415,6 +416,7 @@ void optionsParse(int argc, char *argv[])
                 errx(EXIT_FAILURE, "option --delay: '%s' is %s", optarg,
                     errmsg);
             }
+            scrotTimerStart();
             break;
         case 'e':
             opt.exec = estrdup(optarg);
