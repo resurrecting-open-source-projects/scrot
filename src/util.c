@@ -1,6 +1,7 @@
 /* util.c
 
 Copyright 2021 Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2023 NRK <nrk@disroot.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -34,5 +35,13 @@ char *estrdup(const char *str)
     char *p;
     if ((p = strdup(str)) == NULL)
         err(EXIT_FAILURE, "strdup");
+    return p;
+}
+
+void *ecalloc(size_t nmemb, size_t size)
+{
+    void *p = calloc(nmemb, size);
+    if (!p)
+        err(EXIT_FAILURE, "calloc");
     return p;
 }

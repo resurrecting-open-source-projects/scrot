@@ -1,6 +1,7 @@
 /* util.h
 
 Copyright 2021 Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2023 NRK <nrk@disroot.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -26,3 +27,4 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #pragma once
 
 char *estrdup(const char *);
+void *ecalloc(size_t, size_t);
