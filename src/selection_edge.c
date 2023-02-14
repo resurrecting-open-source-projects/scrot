@@ -3,6 +3,7 @@
 Copyright 2020-2021 Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2021-2023 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
+Copyright 2023      NRK <nrk@disroot.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -42,6 +43,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "options.h"
 #include "scrot_selection.h"
 #include "selection_edge.h"
+#include "util.h"
 
 struct SelectionEdge {
     Window wndDraw;
@@ -55,7 +57,7 @@ void selectionEdgeCreate(void)
 {
     struct Selection *const sel = *selectionGet();
 
-    sel->edge = calloc(1, sizeof(*sel->edge));
+    sel->edge = ecalloc(1, sizeof(*sel->edge));
 
     struct SelectionEdge *const pe = sel->edge;
 

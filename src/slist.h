@@ -3,6 +3,7 @@
 Copyright 2021 Christopher Nelson <christopher.nelson@languidnights.com>
 Copyright 2021 Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2021 Peter Wu <peterwu@hotmail.com>
+Copyright 2023 NRK <nrk@disroot.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -28,6 +29,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #pragma once
 
 #include <sys/queue.h>
+#include "util.h"
 
 typedef struct ScrotListNode {
     void *data;
@@ -41,7 +43,7 @@ typedef STAILQ_HEAD(ScrotLists, ScrotListNode) ScrotList;
     STAILQ_INIT(&name);
 
 #define appendToScrotList(name, newData) do {       \
-    ScrotListNode *node = calloc(1, sizeof(*node)); \
+    ScrotListNode *node = ecalloc(1, sizeof(*node)); \
     node->data = (void *)newData;                    \
     STAILQ_INSERT_TAIL(&name, node, nodes);         \
 } while(0)
