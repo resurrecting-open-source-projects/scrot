@@ -4,6 +4,7 @@ Copyright 2019-2022 Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2021-2023 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
+Copyright 2023      NRK <nrk@disroot.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -37,6 +38,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include "note.h"
 #include "options.h"
+#include "util.h"
 
 enum { // default color
     DEF_COLOR_RED = 0,
@@ -102,10 +104,7 @@ void scrotNoteNew(char const *const format)
 
     scrotNoteFree();
 
-    note = calloc(1, sizeof(*note));
-
-    assert(note);
-
+    note = ecalloc(1, sizeof(*note));
     note->color.r = DEF_COLOR_RED;
     note->color.g = DEF_COLOR_GREEN;
     note->color.b = DEF_COLOR_BLUE;
