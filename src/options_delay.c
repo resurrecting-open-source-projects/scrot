@@ -65,7 +65,8 @@ scrotTimerStart(void)
 
     act.sa_sigaction = sigalrm;
     sigemptyset(&act.sa_mask);
-    act.sa_flags = SA_SIGINFO;
+    /* NODEFER guarantees signals aren't discarded. */
+    act.sa_flags = SA_SIGINFO | SA_NODEFER;
     sigaction(SIGALRM, &act, NULL);
 
     /* We trigger the signal every second regardless of whether we're counting
