@@ -276,16 +276,13 @@ void scrotDoDelay(void)
         if (opt.countdown) {
             int i;
 
-            printf("Taking shot in %d.. ", opt.delay);
-            fflush(stdout);
+            dprintf(STDOUT_FILENO, "Taking shot in %d.. ", opt.delay);
             scrotSleep(1);
             for (i = opt.delay - 1; i > 0; i--) {
-                printf("%d.. ", i);
-                fflush(stdout);
+                dprintf(STDOUT_FILENO, "%d.. ", i);
                 scrotSleep(1);
             }
-            printf("0.\n");
-            fflush(stdout);
+            dprintf(STDOUT_FILENO, "0.\n");
         } else
             scrotSleep(opt.delay);
     }
