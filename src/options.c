@@ -397,7 +397,7 @@ void optionsParse(int argc, char *argv[])
     const char *errmsg;
 
     /* Now to pass some optionarinos */
-    while ((optch = getopt_long(argc, argv, stropts, lopts, &cmdx)) != EOF) {
+    while ((optch = getopt_long(argc, argv, stropts, lopts, &cmdx)) != -1) {
         switch (optch) {
         case 0:
             break;
