@@ -26,5 +26,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #pragma once
 
+#define ARRAY_COUNT(X)   (sizeof(X) / sizeof(0[X]))
+
 char *estrdup(const char *);
 void *ecalloc(size_t, size_t);
