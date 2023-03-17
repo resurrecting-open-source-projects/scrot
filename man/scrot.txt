@@ -3,8 +3,8 @@ NAME
 
 SYNOPSIS
   scrot [-bcfhimopuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY] [-d SEC] [-e CMD]
-        [-F FILE] [-k OPT] [-l STYLE] [-M NUM] [-n OPTS] [-q NUM] [-S CMD] [-s OPTS]
-        [-t % | WxH] [-w NUM] [FILE]
+        [-k OPT] [-l STYLE] [-M NUM] [-n OPTS] [-q NUM] [-S CMD] [-s OPTS]
+        [-t % | WxH] [-w NUM] [[-F] FILE]
 
 DESCRIPTION
   scrot (SCReenshOT) is a simple command line screen capture utility, it uses
@@ -33,7 +33,6 @@ OPTIONS
                             When given the `b` prefix, e.g `-d b8`, the delay
                             will be applied before selection.
   -e, --exec CMD            Execute CMD on the saved image.
-  -F, --file                File name. See SPECIAL STRINGS.
   -f, --freeze              Freeze the screen when -s is used.
   -h, --help                Display help and exit.
   -i, --ignorekeyboard      Don't exit for keyboard input. ESC still exits.
@@ -72,8 +71,11 @@ OPTIONS
   -w, --window              Window identifier to capture.
                             Must be a valid identifier (see xwininfo(1)).
   -z, --silent              Prevent beeping.
-  -                         Redirection to standard output. The output image
-                            format is PNG.
+  -F, --file FILE           Specify the output file. If FILE is "-", scrot will
+                            output a PNG image to stdout. The filename is
+                            expanded according to the format specified in
+                            SPECIAL STRINGS. The output file may be specified
+                            through the -F option, or as a non-option argument.
 
 SPECIAL STRINGS
   -e, -F and FILE parameters can take format specifiers that are expanded

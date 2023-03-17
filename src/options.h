@@ -69,7 +69,7 @@ struct ScrotOptions {
     enum Direction stackDirection;
     char *lineColor;
     char *lineMode;
-    char *outputFile;
+    const char *outputFile;
     char *thumbFile;
     char *exec;
     char *display;
@@ -90,8 +90,6 @@ struct ScrotOptions {
 extern struct ScrotOptions opt;
 
 void optionsParse(int, char **);
-char *optionsNameThumbnail(const char *);
-void optionsParseFileName(const char *);
 void optionsParseAutoselect(char *);
 void optionsParseDisplay(char *);
 void optionsParseNote(char *);

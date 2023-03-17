@@ -34,7 +34,8 @@ PKG_CHECK_MODULES([IMLIB2], [imlib2])
 AC_ARG_ENABLE([libbsd-feature-test],
     AS_HELP_STRING([--enable-libbsd-feature-test],
         ["Do not configure the program, return true if libbsd is needed"]))
-AC_CHECK_FUNCS([strlcpy strlcat err errx warn warnx],, [LIBBSD_NEEDED=yes])
+AC_CHECK_FUNCS([strlcpy strlcat err errx getprogname warn warnx],,
+    [LIBBSD_NEEDED=yes])
 AC_CHECK_HEADERS([sys/queue.h],, [LIBBSD_NEEDED=yes])
 # libbsd is obligatory on systems that don't have the BSD functions we use.
 # Pass "--enable-libbsd-feature-test" to ./configure, and the configure script
@@ -43,7 +44,7 @@ AC_CHECK_HEADERS([sys/queue.h],, [LIBBSD_NEEDED=yes])
 AS_IF([test "x$enable_libbsd_feature_test" = "xyes"],
     AS_IF([test "x$LIBBSD_NEEDED" = "xyes"], [
         AC_MSG_NOTICE([scrot depends on libbsd in the current system])
-	exit 0
+        exit 0
     ], [
         AC_MSG_NOTICE([scrot does not depend on libbsd in the current system])
         exit 1
