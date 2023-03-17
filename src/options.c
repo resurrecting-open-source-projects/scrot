@@ -336,26 +336,15 @@ static bool accessFileOk(const char *const pathName)
     return (0 == access(pathName, W_OK));
 }
 
-static char *getPathOfStdout(void)
+static const char *getPathOfStdout(void)
 {
-    char path[16] = {"/dev/stdout"};
-    const size_t len = sizeof(path);
+    const char *paths[] = { "/dev/stdout", "/dev/fd/1", "/proc/self/fd/1" };
 
-    if (!accessFileOk(path)) {
-
-        snprintf(path, len, "/dev/fd/%d", STDOUT_FILENO);
-
-        if (!accessFileOk(path)) {
-
-            snprintf(path, len, "/proc/self/fd/%d", STDOUT_FILENO);
-
-            if (!accessFileOk(path)) {
-                // We quit because imlib2 will fail later anyway.
-                err(EXIT_FAILURE, "access to stdout failed");
-            }
-        }
+    for (size_t i = 0; i < ARRAY_COUNT(paths); ++i) {
+        if (accessFileOk(paths[i]))
+            return paths[i];
     }
-    return strndup(path, len);
+    err(EXIT_FAILURE, "access to stdout failed");
 }
 
 void optionsParse(int argc, char *argv[])
@@ -506,8 +495,7 @@ void optionsParse(int argc, char *argv[])
             const bool redirectChar = ( opt.outputFile[0] == '-'
                                         && opt.outputFile[1] == '\0');
             if (redirectChar) {
-                free(opt.outputFile);
-                opt.outputFile = getPathOfStdout();
+                optionsParseFileName(getPathOfStdout());
                 opt.overwrite = 1;
                 opt.thumb = THUMB_DISABLED;
             }
