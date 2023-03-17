@@ -259,24 +259,32 @@ static Imlib_Image scrotGrabAutoselect(void)
     return im;
 }
 
+/* similar to sleep, but deals with EINTR.
+ * ideally, we'd want to sleep against an absolute time to prevent any drift
+ * but clock_nanosleep doesn't seem to be widely implemented.
+ */
+static void scrotSleep(int sec)
+{
+    assert(sec > 0);
+    struct timespec delay = { .tv_sec = sec };
+    while (nanosleep(&delay, &delay) < 0 && errno == EINTR);
+}
+
 void scrotDoDelay(void)
 {
     if (opt.delay) {
         if (opt.countdown) {
             int i;
 
-            printf("Taking shot in %d.. ", opt.delay);
-            fflush(stdout);
-            sleep(1);
+            dprintf(STDERR_FILENO, "Taking shot in %d.. ", opt.delay);
+            scrotSleep(1);
             for (i = opt.delay - 1; i > 0; i--) {
-                printf("%d.. ", i);
-                fflush(stdout);
-                sleep(1);
+                dprintf(STDERR_FILENO, "%d.. ", i);
+                scrotSleep(1);
             }
-            printf("0.\n");
-            fflush(stdout);
+            dprintf(STDERR_FILENO, "0.\n");
         } else
-            sleep(opt.delay);
+            scrotSleep(opt.delay);
     }
 }
 
