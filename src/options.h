@@ -83,6 +83,7 @@ struct ScrotOptions {
     int autoselectW;
     SelectionMode selection;
     int monitor;
+    bool delay_selection;
 };
 
 extern struct ScrotOptions opt;
