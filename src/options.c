@@ -631,6 +631,7 @@ static void optionsParseThumbnail(char *optarg)
 void optionsParseFileName(const char *optarg)
 {
     checkMaxOutputFileName(optarg);
+    free(opt.outputFile);
     opt.outputFile = estrdup(optarg);
 }
 
