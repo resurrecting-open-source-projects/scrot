@@ -18,6 +18,7 @@ Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 Copyright 2021      Wilson Smith <01wsmith+gh@gmail.com>
 Copyright 2022      Zev Weiss <zev@bewilderbeest.net>
+Copyright 2023      NRK <nrk@disroot.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -536,10 +537,9 @@ static void showVersion(void)
 
 char *optionsNameThumbnail(const char *name)
 {
-    const char *const thumbSuffix = "-thumb";
-    const size_t thumbSuffixLength = 7;
-    const size_t newNameLength = strlen(name) + thumbSuffixLength;
-    char *newName = calloc(1, newNameLength);
+    const char thumbSuffix[] = "-thumb";
+    const size_t newNameLength = strlen(name) + sizeof(thumbSuffix);
+    char *newName = malloc(newNameLength);
 
     if (!newName)
         err(EXIT_FAILURE, "Unable to allocate thumbnail");
