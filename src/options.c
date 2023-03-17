@@ -393,11 +393,11 @@ void optionsParse(int argc, char *argv[])
         { "monitor", required_argument, 0, 'M'},
         { 0, 0, 0, 0 }
     };
-    int optch = 0, cmdx = 0;
+    int optch = 0;
     const char *errmsg;
 
     /* Now to pass some optionarinos */
-    while ((optch = getopt_long(argc, argv, stropts, lopts, &cmdx)) != -1) {
+    while ((optch = getopt_long(argc, argv, stropts, lopts, NULL)) != -1) {
         switch (optch) {
         case 0:
             break;
