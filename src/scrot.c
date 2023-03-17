@@ -422,10 +422,11 @@ void scrotGrabMousePointer(const Imlib_Image image, const int xOffset,
         warn("malloc()");
         goto end;
     }
-
-    /* Convert an X cursor into the format imlib wants. */
+    /* XFixesCursorImage returns pixels as `unsigned long`, which is typically
+     * 64bits, but imlib2 expects 32bit packed integers. */
     for (size_t i = 0; i < pixcnt; i++)
-            pixels[i] = xcim->pixels[i];
+        pixels[i] = xcim->pixels[i];
+
     Imlib_Image imcursor = imlib_create_image_using_data(width, height, pixels);
     if (!imcursor) {
         warnx("Can't create cursor image");
