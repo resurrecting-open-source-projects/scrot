@@ -509,7 +509,7 @@ void optionsParse(int argc, char *argv[])
                 free(opt.outputFile);
                 opt.outputFile = getPathOfStdout();
                 opt.overwrite = 1;
-                opt.thumbWorP = 0;
+                opt.thumb = THUMB_DISABLED;
             }
         } else
             warnx("unrecognised option %s", argv[optind++]);
@@ -603,19 +603,24 @@ static void optionsParseThumbnail(char *optarg)
         /* optarg holds the width, height holds the height. */
         *height++ = '\0';
 
-        opt.thumbWorP = optionsParseNum(optarg, 1, INT_MAX, &errmsg);
+        opt.thumb = THUMB_RES;
+        opt.thumbW = optionsParseNum(optarg, 0, INT_MAX, &errmsg);
         if (errmsg) {
             errx(EXIT_FAILURE, "option --thumb: resolution width '%s' is %s",
                 optarg, errmsg);
         }
 
-        opt.thumbH = optionsParseNum(height, 1, INT_MAX, &errmsg);
+        opt.thumbH = optionsParseNum(height, 0, INT_MAX, &errmsg);
         if (errmsg) {
             errx(EXIT_FAILURE, "option --thumb: resolution height '%s' is %s",
                 height, errmsg);
         }
+
+        if (opt.thumbW == 0 && opt.thumbH == 0)
+            errx(EXIT_FAILURE, "option --thumb: both width and height are 0");
     } else { /* optarg is a percentage. */
-        opt.thumbWorP = optionsParseNum(optarg, 1, INT_MAX, &errmsg);
+        opt.thumb = THUMB_PERCENT;
+        opt.thumbPercent = optionsParseNum(optarg, 1, 100, &errmsg);
         if (errmsg) {
             errx(EXIT_FAILURE, "option --thumb: percentage '%s' is %s", optarg,
                 errmsg);

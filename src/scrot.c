@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
         opt.outputFile = estrdup("%Y-%m-%d-%H%M%S_$wx$h_scrot.png");
         opt.thumbFile = estrdup("%Y-%m-%d-%H%M%S_$wx$h_scrot-thumb.png");
     } else {
-        if (opt.thumbWorP)
+        if (opt.thumb != THUMB_DISABLED)
             opt.thumbFile = optionsNameThumbnail(opt.outputFile);
         scrotHaveFileExtension(opt.outputFile, &haveExtension);
     }
@@ -159,27 +159,38 @@ int main(int argc, char *argv[])
     if (imErr)
         err(EXIT_FAILURE, "Saving to file %s failed", filenameIM);
 
-    if (opt.thumbWorP) {
+    if (opt.thumb != THUMB_DISABLED) {
         int cwidth, cheight;
         int twidth, theight;
 
         cwidth = imlib_image_get_width();
         cheight = imlib_image_get_height();
 
-        if (opt.thumbH) { /* thumbWorP is a width, thumbH is a height. */
-            twidth = opt.thumbWorP;
+        if (opt.thumb == THUMB_RES) {
+            twidth = opt.thumbW;
             theight = opt.thumbH;
-        } else { /* thumbWorP is a percentage, thumbH is unset. */
-            twidth = cwidth * opt.thumbWorP / 100;
-            theight = cheight * opt.thumbWorP / 100;
+            if (twidth == 0)
+                twidth = cwidth * opt.thumbH / cheight;
+            else if (theight == 0)
+                theight = cheight * opt.thumbW / cwidth;
+        } else {
+            twidth = cwidth * opt.thumbPercent / 100;
+            theight = cheight * opt.thumbPercent / 100;
         }
+        /* twidth and theight could be rounded to 0 for extremely small sizes,
+         * fix them up.
+         */
+        if (twidth == 0)
+            twidth = 1;
+        if (theight == 0)
+            theight = 1;
 
         imlib_context_set_anti_alias(1);
         thumbnail = imlib_create_cropped_scaled_image(0, 0, cwidth, cheight,
             twidth, theight);
-        if (!thumbnail)
-            err(EXIT_FAILURE, "unable to create thumbnail");
-        else {
+        if (!thumbnail) {
+            errx(EXIT_FAILURE, "unable to create thumbnail");
+        } else {
             scrotHaveFileExtension(opt.thumbFile, &haveExtension);
             imlib_context_set_image(thumbnail);
             if (!haveExtension)
