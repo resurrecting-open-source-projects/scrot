@@ -52,57 +52,49 @@ scrot requires a few projects and libraries:
 - libXfixes [(can be found in X.Org)](https://gitlab.freedesktop.org/xorg/lib/libxfixes)
 - libXinerama [(can be found in X.Org)](https://gitlab.freedesktop.org/xorg/lib/libxinerama)
 
-### Generic installation instruction ###
+### Generic installation instructions ###
 
-In short, if you are building from an GIT checkout of scrot (but not if you
-are building from a downloaded tarball) then you will first need to run:
-```
+If you are building from a git checkout, or if you have applied additional
+patches to a tarball release, run:
+```console
 $ ./autogen.sh
 ```
+TIP: if the source code does not have a _configure_ file, you need to run
+`./autogen.sh`.
 
-TIP: if the source code does not have a configure file, you will need to run
-     the ```./autogen.sh``` command.
-
-Now, proceed as shown below for a tarball. (If you are using the tarball
-but have applied additional patches then you may also need to run
-```./autogen.sh```.)
-
-To build scrot from a downloaded tarball just type:
-```
-$ ./configure
-$ make
+If you have a tarball release, or after running the command above on a git
+checkout or a patched tarball, run:
+```console
+$ ./configure && make
 ```
 
-And as root:
-```
+To install the compiled result, run as root:
+```console
 # make install
 ```
-or
-```
+Or, as a regular user:
+```console
 $ sudo make install
 ```
 
 Cleaning up the build is also simple:
-```
+```console
 $ make clean
 ```
 
-To vanish the source code, removing all pre-built files, including configure, run:
-```
+To vanish the source code, removing all pre-built files, including _configure_,
+run:
+```console
 $ make distclean
 ```
 
 You can return to a pristine source tree before running `./configure`:
-```
+```console
 $ ./autogen.sh clean
 ```
 
 Debian users can install scrot from their package manager:
-```
-# apt install scrot
-```
-or
-```
+```console
 $ sudo apt install scrot
 ```
 
