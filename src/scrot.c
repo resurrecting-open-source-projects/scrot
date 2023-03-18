@@ -211,6 +211,7 @@ int main(int argc, char *argv[])
     imlib_context_set_image(image);
     imlib_free_image_and_decache();
     free(filenameIM);
+    free(filenameThumb);
 
     return 0;
 }
