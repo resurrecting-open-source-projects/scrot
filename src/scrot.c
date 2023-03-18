@@ -81,6 +81,7 @@ static Imlib_Image scrotGrabShot(void);
 static void scrotCheckIfOverwriteFile(char **);
 static void scrotExecApp(Imlib_Image, struct tm *, char *, char *);
 static char *imPrintf(char *, struct tm *, char *, char *, Imlib_Image);
+static char *scrotGetWindowName(Window);
 static Window scrotGetClientWindow(Display *, Window);
 static Window scrotFindWindowByProperty(Display *, const Window,
                                               const Atom);
@@ -541,32 +542,6 @@ static int scrotMatchWindowClassName(Window target)
     return retval;
 }
 
-char *scrotGetWindowName(Window window)
-{
-    assert(disp != NULL);
-    assert(window != None);
-
-    if (window == root)
-        return NULL;
-
-    if (!findWindowManagerFrame(&window, &(int){0}))
-        return NULL;
-
-    XClassHint clsHint;
-    char *windowName = NULL;
-
-    const Status status = XGetClassHint(disp,
-            scrotGetClientWindow(disp, window),
-            &clsHint);
-
-    if (status != 0) {
-        windowName = estrdup(clsHint.res_class);
-        XFree(clsHint.res_name);
-        XFree(clsHint.res_class);
-    }
-    return windowName;
-}
-
 static Imlib_Image scrotGrabShot(void)
 {
     Imlib_Image im;
@@ -715,6 +690,32 @@ static char *imPrintf(char *str, struct tm *tm, char *filenameIM,
         }
     }
     return estrdup(ret);
+}
+
+static char *scrotGetWindowName(Window window)
+{
+    assert(disp != NULL);
+    assert(window != None);
+
+    if (window == root)
+        return NULL;
+
+    if (!findWindowManagerFrame(&window, &(int){0}))
+        return NULL;
+
+    XClassHint clsHint;
+    char *windowName = NULL;
+
+    const Status status = XGetClassHint(disp,
+            scrotGetClientWindow(disp, window),
+            &clsHint);
+
+    if (status != 0) {
+        windowName = estrdup(clsHint.res_class);
+        XFree(clsHint.res_name);
+        XFree(clsHint.res_class);
+    }
+    return windowName;
 }
 
 static Window scrotGetClientWindow(Display *display, Window target)
