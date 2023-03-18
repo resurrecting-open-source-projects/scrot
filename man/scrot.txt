@@ -35,7 +35,7 @@ OPTIONS
   -f, --freeze              Freeze the screen when -s is used.
   -h, --help                Display help and exit.
   -i, --ignorekeyboard      Don't exit for keyboard input. ESC still exits.
-  -k, --stack OPT           Capture stack/overlapped windows and join them. A
+  -k, --stack[=OPT]         Capture stack/overlapped windows and join them. A
                             running Composite Manager is needed. OPT it's optional
                             join letter: v/h (vertical/horizontal). Default: h
   -l, --line STYLE          STYLE indicates the style of the line when the -s
@@ -53,7 +53,7 @@ OPTIONS
                             value represents higher quality and larger
                             file size. Default: 75.
   -S, --script CMD          CMD is an imlib2 script.
-  -s, --select OPTS         Interactively select a window or rectangle with the
+  -s, --select[=OPTS]       Interactively select a window or rectangle with the
                             mouse, use the arrow keys to resize. See the -l and
                             -f options. OPTS it's optional; see SELECTION MODE
   -t, --thumb % | WxH       Also generate a thumbnail. The argument represents
