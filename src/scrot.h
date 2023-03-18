@@ -36,4 +36,3 @@ int scrotGetGeometry(Window, int *, int *, int *, int *);
 void scrotNiceClip(int *, int *, int *, int *);
 void scrotDoDelay(void);
 void scrotGrabMousePointer(const Imlib_Image, const int, const int);
-char *scrotGetWindowName(Window);
