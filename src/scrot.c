@@ -521,26 +521,19 @@ static void scrotCheckIfOverwriteFile(char **filename)
 static int scrotMatchWindowClassName(Window target)
 {
     assert(disp != NULL);
-
-    const int NOT_MATCH = 0;
-    const int MATCH = 1;
-    /* By default all class names match since windowClassName by default is NULL
-     */
-    int retval = MATCH;
-
     if (!opt.windowClassName)
-        return retval;
+        return 1; /* Match any if the user hasn't requested a specific class. */
 
     XClassHint clsHint;
-    retval = NOT_MATCH; // windowClassName != NULL, by default NOT_MATCH
+    int match = 0;
 
     if (XGetClassHint(disp, target, &clsHint) != BadWindow) {
-        retval = optionsCompareWindowClassName(clsHint.res_class);
+        match = strcmp(clsHint.res_class, opt.windowClassName) == 0;
         XFree(clsHint.res_name);
         XFree(clsHint.res_class);
     }
 
-    return retval;
+    return match;
 }
 
 static Imlib_Image scrotGrabShot(void)

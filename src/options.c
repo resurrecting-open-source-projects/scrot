@@ -73,7 +73,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     STR_LEN_MAX_FILENAME(input, (fileName))
 
 enum {
-    MAX_LEN_WINDOW_CLASS_NAME = 80, //characters
     MAX_FILENAME = 256, // characters
     MAX_DISPLAY_NAME = 256, // characters
 };
@@ -322,14 +321,6 @@ static void optionsParseLine(char *optarg)
     } /* while */
 }
 
-static void optionsParseWindowClassName(const char *windowClassName)
-{
-    assert(windowClassName != NULL);
-
-    if (windowClassName[0] != '\0')
-        opt.windowClassName = strndup(windowClassName, MAX_LEN_WINDOW_CLASS_NAME);
-}
-
 static bool accessFileOk(const char *const pathName)
 {
     errno = 0;
@@ -474,7 +465,7 @@ void optionsParse(int argc, char *argv[])
             optionsParseStack(optarg);
             break;
         case 'C':
-            optionsParseWindowClassName(optarg);
+            opt.windowClassName = optarg;
             break;
         case 'S':
             opt.script = estrdup(optarg);
@@ -648,16 +639,4 @@ void optionsParseNote(char *optarg)
         errx(EXIT_FAILURE, "Required arguments for --note.");
 
     scrotNoteNew(opt.note);
-}
-
-/*
-Return:
-    0 : It does not match
-    1 : If it matches
-*/
-int optionsCompareWindowClassName(const char *targetClassName)
-{
-    assert(targetClassName != NULL);
-    assert(opt.windowClassName != NULL);
-    return !!(!strncmp(targetClassName, opt.windowClassName, MAX_LEN_WINDOW_CLASS_NAME - 1));
 }
