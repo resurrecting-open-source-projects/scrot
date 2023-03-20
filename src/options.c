@@ -525,25 +525,19 @@ static void showVersion(void)
 
 char *optionsNameThumbnail(const char *name)
 {
+    const size_t nameLength = strlen(name);
     const char thumbSuffix[] = "-thumb";
-    const size_t newNameLength = strlen(name) + sizeof(thumbSuffix);
-    char *newName = malloc(newNameLength);
-
-    if (!newName)
-        err(EXIT_FAILURE, "Unable to allocate thumbnail");
-
+    Stream ret = {0};
     const char *const extension = strrchr(name, '.');
+    const size_t baseNameLength = extension ? extension-name : nameLength;
 
-    if (extension) {
-        /* We add one so length includes '\0'*/
-        const ptrdiff_t nameLength = (extension - name) + 1;
-        strlcpy(newName, name, nameLength);
-        strlcat(newName, thumbSuffix, newNameLength);
-        strlcat(newName, extension, newNameLength);
-    } else
-        snprintf(newName, newNameLength, "%s%s", name, thumbSuffix);
+    streamMem(&ret, name, baseNameLength);
+    streamMem(&ret, thumbSuffix, sizeof(thumbSuffix)-1);
+    if (extension)
+        streamMem(&ret, extension, nameLength - baseNameLength);
+    streamChar(&ret, '\0');
 
-    return newName;
+    return ret.buf;
 }
 
 void optionsParseAutoselect(char *optarg)
