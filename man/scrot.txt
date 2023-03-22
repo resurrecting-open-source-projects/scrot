@@ -3,8 +3,8 @@ NAME
 
 SYNOPSIS
   scrot [-bcfhimopuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY] [-d SEC] [-e CMD]
-        [-k OPT] [-l STYLE] [-M NUM] [-n OPTS] [-q NUM] [-S CMD] [-s OPTS]
-        [-t % | WxH] [-w NUM] [[-F] FILE]
+        [-k OPT] [-l STYLE] [-M NUM] [-n OPTS] [-q NUM] [-s OPTS] [-t % | WxH]
+        [-w NUM] [[-F] FILE]
 
 DESCRIPTION
   scrot (SCReenshOT) is a simple command line screen capture utility, it uses
@@ -58,7 +58,6 @@ OPTIONS
                             compression. For lossy output formats, a higher
                             value represents higher quality and larger
                             file size. Default: 75.
-  -S, --script CMD          CMD is an imlib2 script.
   -s, --select[=OPTS]       Interactively select a window or rectangle with the
                             mouse, use the arrow keys to resize. See the -l and
                             -f options. OPTS it's optional; see SELECTION MODE
