@@ -53,7 +53,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
-#include <limits.h>
 
 #include <Imlib2.h>
 #include <X11/Xlib.h>
@@ -590,7 +589,7 @@ static char *imPrintf(char *str, struct tm *tm, char *filenameIM,
     char *filenameThumb, Imlib_Image im)
 {
     char *c;
-    char buf[HOST_NAME_MAX + 1];
+    char buf[20];
     char ret[4096];
     char strf[4096];
     char *tmp;
