@@ -584,6 +584,7 @@ static char *imPrintf(char *str, struct tm *tm, char *filenameIM,
     char *c;
     char buf[20];
     Stream ret = {0};
+    long hostNameMax = 0;
     char strf[4096];
     char *tmp;
     struct stat st;
@@ -597,8 +598,16 @@ static char *imPrintf(char *str, struct tm *tm, char *filenameIM,
             c++;
             switch (*c) {
             case 'a':
-                gethostname(buf, sizeof(buf));
-                streamStr(&ret, buf);
+                /* freebsd and macos don't have HOST_NAME_MAX defined.
+                 * instead sysconf is recommended by freebsd. */
+                if (hostNameMax == 0)
+                    hostNameMax = sysconf(_SC_HOST_NAME_MAX) + 1; /* +1 for nul-terminator */
+
+                streamReserve(&ret, hostNameMax);
+                char *target = ret.buf + ret.off;
+                gethostname(target, hostNameMax);
+                ret.off += strlen(target);
+                assert(ret.buf[ret.off] == '\0');
                 break;
             case 'f':
                 if (filenameIM)
