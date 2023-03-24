@@ -583,12 +583,10 @@ static char *imPrintf(char *str, struct tm *tm, char *filenameIM,
 {
     char *c;
     char buf[20];
-    char ret[4096];
+    Stream ret = {0};
     char strf[4096];
     char *tmp;
     struct stat st;
-
-    ret[0] = '\0';
 
     if (strftime(strf, 4095, str, tm) == 0)
         errx(EXIT_FAILURE, "strftime returned 0");
@@ -600,32 +598,32 @@ static char *imPrintf(char *str, struct tm *tm, char *filenameIM,
             switch (*c) {
             case 'a':
                 gethostname(buf, sizeof(buf));
-                strlcat(ret, buf, sizeof(ret));
+                streamStr(&ret, buf);
                 break;
             case 'f':
                 if (filenameIM)
-                    strlcat(ret, filenameIM, sizeof(ret));
+                    streamStr(&ret, filenameIM);
                 break;
             case 'm': /* t was already taken, so m as in mini */
                 if (filenameThumb)
-                    strlcat(ret, filenameThumb, sizeof(ret));
+                    streamStr(&ret, filenameThumb);
                 break;
             case 'n':
                 if (filenameIM) {
                     tmp = strrchr(filenameIM, '/');
                     if (tmp)
-                        strlcat(ret, tmp + 1, sizeof(ret));
+                        streamStr(&ret, tmp + 1);
                     else
-                        strlcat(ret, filenameIM, sizeof(ret));
+                        streamStr(&ret, filenameIM);
                 }
                 break;
             case 'w':
                 snprintf(buf, sizeof(buf), "%d", imlib_image_get_width());
-                strlcat(ret, buf, sizeof(ret));
+                streamStr(&ret, buf);
                 break;
             case 'h':
                 snprintf(buf, sizeof(buf), "%d", imlib_image_get_height());
-                strlcat(ret, buf, sizeof(ret));
+                streamStr(&ret, buf);
                 break;
             case 's':
                 if (filenameIM) {
@@ -634,35 +632,34 @@ static char *imPrintf(char *str, struct tm *tm, char *filenameIM,
 
                         size = st.st_size;
                         snprintf(buf, sizeof(buf), "%d", size);
-                        strlcat(ret, buf, sizeof(ret));
+                        streamStr(&ret, buf);
                     } else
-                        strlcat(ret, "[err]", sizeof(ret));
+                        streamStr(&ret, "[err]");
                 }
                 break;
             case 'p':
                 snprintf(buf, sizeof(buf), "%d",
                     imlib_image_get_width() * imlib_image_get_height());
-                strlcat(ret, buf, sizeof(ret));
+                streamStr(&ret, buf);
                 break;
             case 't':
                 tmp = imlib_image_format();
                 if (tmp)
-                    strlcat(ret, tmp, sizeof(ret));
+                    streamStr(&ret, tmp);
                 break;
             case '$':
-                strlcat(ret, "$", sizeof(ret));
+                streamChar(&ret, '$');
                 break;
             case 'W':
                 if (clientWindow) {
                     if (!(tmp = scrotGetWindowName(clientWindow)))
                         break;
-                    strlcat(ret, tmp, sizeof(ret));
+                    streamStr(&ret, tmp);
                     free(tmp);
                 }
                 break;
             default:
-                snprintf(buf, sizeof(buf), "%.1s", c);
-                strlcat(ret, buf, sizeof(ret));
+                streamChar(&ret, *c);
                 break;
             }
         } else if (*c == '\\') {
@@ -670,20 +667,18 @@ static char *imPrintf(char *str, struct tm *tm, char *filenameIM,
             switch (*c) {
             case 'n':
                 if (filenameIM)
-                    strlcat(ret, "\n", sizeof(ret));
+                    streamChar(&ret, '\n');
                 break;
             default:
-                snprintf(buf, sizeof(buf), "%.1s", c);
-                strlcat(ret, buf, sizeof(ret));
+                streamChar(&ret, *c);
                 break;
             }
         } else {
-            const size_t length = strlen(ret);
-            ret[length] = *c;
-            ret[length + 1] = '\0';
+            streamChar(&ret, *c);
         }
     }
-    return estrdup(ret);
+    streamChar(&ret, '\0');
+    return ret.buf;
 }
 
 static char *scrotGetWindowName(Window window)
