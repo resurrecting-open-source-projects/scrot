@@ -30,3 +30,4 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 char *estrdup(const char *);
 void *ecalloc(size_t, size_t);
+void *erealloc(void *, size_t);

@@ -45,3 +45,11 @@ void *ecalloc(size_t nmemb, size_t size)
         err(EXIT_FAILURE, "calloc");
     return p;
 }
+
+void *erealloc(void *ptr, size_t size)
+{
+    void *p = realloc(ptr, size);
+    if (!p)
+        err(EXIT_FAILURE, "realloc");
+    return p;
+}

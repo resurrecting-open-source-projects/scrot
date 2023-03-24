@@ -605,7 +605,7 @@ static char *imPrintf(char *str, struct tm *tm, char *filenameIM,
         errx(EXIT_FAILURE, "couldn't grab _SC_HOST_NAME_MAX");
     ++hostNameMax; /* for the nul terminator */
     if (hostNameMax > sizeof buf) {
-        hostBuf = ecalloc(hostNameMax, 1);
+        hostBuf = erealloc(NULL, hostNameMax);
         hostBufLen = hostNameMax;
     } else { /* optimize of the common case, when local buf would suffice */
         hostBuf = buf;
