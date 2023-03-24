@@ -130,11 +130,10 @@ void scrotNoteNew(char const *const format)
             if (!number)
                 errx(EXIT_FAILURE, "Error --note option : Malformed syntax for -f, required number.");
 
-            const int fontSize = optionsParseNum(++number, 1, INT_MAX,
-                &errmsg);
+            const int fontSize = optionsParseNum(++number, 1, INT_MAX, &errmsg);
             if (errmsg) {
-                    errx(EXIT_FAILURE, "option --note: font size '%s' is %s",
-                        number, errmsg);
+                errx(EXIT_FAILURE, "option --note: font size '%s' is %s",
+                    number, errmsg);
             }
 
             if (fontSize < 6)
@@ -173,8 +172,8 @@ void scrotNoteNew(char const *const format)
                     *space = '\0';
                 const int color = optionsParseNum(c, 0, 255, &errmsg);
                 if (errmsg) {
-                        errx(EXIT_FAILURE, "option --note: color '%s' is %s", c,
-                            errmsg);
+                    errx(EXIT_FAILURE, "option --note: color '%s' is %s",
+                         c, errmsg);
                 }
                 if (space)
                     *space = ' ';
@@ -198,7 +197,7 @@ void scrotNoteNew(char const *const format)
             }
 
             if (numberColors > 4)
-                 warnx("Warning --note option : Malformed syntax for -c");
+                warnx("Warning --note option : Malformed syntax for -c");
             break;
         default:
             errx(EXIT_FAILURE, "Error --note option : unknown option: '-%c'", type);
