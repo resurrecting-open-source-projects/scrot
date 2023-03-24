@@ -27,6 +27,18 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #pragma once
 
 #define ARRAY_COUNT(X)   (sizeof(X) / sizeof(0[X]))
+#define MAX(A, B)        ((A) > (B) ? (A) : (B))
+
+typedef struct {
+    char *buf;
+    size_t off, cap;
+} Stream;
 
 char *estrdup(const char *);
 void *ecalloc(size_t, size_t);
+void *erealloc(void *, size_t);
+
+void streamReserve(Stream *, size_t);
+void streamChar(Stream *, char);
+void streamMem(Stream *, const void *, size_t);
+void streamStr(Stream *, const char *);

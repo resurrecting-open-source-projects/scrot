@@ -24,6 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
+#include <assert.h>
 #include <err.h>
 #include <stdlib.h>
 #include <string.h>
@@ -44,4 +45,41 @@ void *ecalloc(size_t nmemb, size_t size)
     if (!p)
         err(EXIT_FAILURE, "calloc");
     return p;
+}
+
+void *erealloc(void *ptr, size_t size)
+{
+    void *p = realloc(ptr, size);
+    if (!p)
+        err(EXIT_FAILURE, "realloc");
+    return p;
+}
+
+void streamReserve(Stream *buf, size_t size)
+{
+    assert(buf->off <= buf->cap);
+    size_t avail = buf->cap - buf->off;
+    if (avail < size) {
+        buf->cap += MAX(size, 128); /* be a bit greedy when allocating */
+        buf->buf = erealloc(buf->buf, buf->cap);
+    }
+    assert((buf->off + size) <= buf->cap);
+}
+
+void streamChar(Stream *buf, char ch)
+{
+    streamReserve(buf, 1);
+    buf->buf[buf->off++] = ch;
+}
+
+void streamMem(Stream *buf, const void *mem, size_t n)
+{
+    streamReserve(buf, n);
+    memcpy(buf->buf + buf->off, mem, n);
+    buf->off += n;
+}
+
+void streamStr(Stream *buf, const char *str)
+{
+    streamMem(buf, str, strlen(str));
 }
