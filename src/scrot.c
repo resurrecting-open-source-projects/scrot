@@ -589,13 +589,28 @@ static char *imPrintf(char *str, struct tm *tm, char *filenameIM,
     char *filenameThumb, Imlib_Image im)
 {
     char *c;
-    char buf[20];
+    char buf[256];
+    char *hostBuf = NULL;
+    long hostBufLen, hostNameMax = 0;
     char ret[4096];
     char strf[4096];
     char *tmp;
     struct stat st;
 
     ret[0] = '\0';
+
+    /* freebsd and macos doesn't have HOST_NAME_MAX defined.
+     * instead sysconf is recommended by freebsd */
+    if ((hostNameMax = sysconf(_SC_HOST_NAME_MAX)) < 0)
+        errx(EXIT_FAILURE, "couldn't grab _SC_HOST_NAME_MAX");
+    ++hostNameMax; /* for the nul terminator */
+    if (hostNameMax > sizeof buf) {
+        hostBuf = ecalloc(hostNameMax, 1);
+        hostBufLen = hostNameMax;
+    } else { /* optimize of the common case, when local buf would suffice */
+        hostBuf = buf;
+        hostBufLen = sizeof buf;
+    }
 
     if (strftime(strf, 4095, str, tm) == 0)
         errx(EXIT_FAILURE, "strftime returned 0");
@@ -606,8 +621,8 @@ static char *imPrintf(char *str, struct tm *tm, char *filenameIM,
             c++;
             switch (*c) {
             case 'a':
-                gethostname(buf, sizeof(buf));
-                strlcat(ret, buf, sizeof(ret));
+                gethostname(hostBuf, hostBufLen);
+                strlcat(ret, hostBuf, sizeof(ret));
                 break;
             case 'f':
                 if (filenameIM)
@@ -690,6 +705,10 @@ static char *imPrintf(char *str, struct tm *tm, char *filenameIM,
             ret[length + 1] = '\0';
         }
     }
+
+    if (hostBuf != buf)
+        free(hostBuf);
+
     return estrdup(ret);
 }
 
