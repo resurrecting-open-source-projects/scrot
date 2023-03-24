@@ -42,6 +42,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
+#define _XOPEN_SOURCE 700L
 #include <sys/stat.h>
 #include <sys/wait.h>
 
