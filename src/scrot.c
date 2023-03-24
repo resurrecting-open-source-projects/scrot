@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
 
     imlib_save_image_with_error_return(filenameIM, &imErr);
     if (imErr)
-        err(EXIT_FAILURE, "Saving to file %s failed", filenameIM);
+        errx(EXIT_FAILURE, "Saving to file %s failed", filenameIM);
 
     if (opt.thumb != THUMB_DISABLED) {
         int cwidth, cheight;
@@ -203,7 +203,7 @@ int main(int argc, char *argv[])
             imlib_free_image_and_decache();
 
             if (imErr)
-                err(EXIT_FAILURE, "Saving thumbnail %s failed", filenameThumb);
+                errx(EXIT_FAILURE, "Saving thumbnail %s failed", filenameThumb);
         }
     }
     if (opt.exec)
@@ -883,19 +883,19 @@ static Imlib_Image scrotGrabShotMonitor(void)
     int eventBase, errBase;
 
     if (!XineramaQueryExtension(disp, &eventBase, &errBase))
-        err(EXIT_FAILURE, "Xinerama extension not found");
+        errx(EXIT_FAILURE, "Xinerama extension not found");
 
     int numScreens = 0;
     XineramaScreenInfo *screens = XineramaQueryScreens(disp, &numScreens);
 
     if (!screens && !numScreens)
-        err(EXIT_FAILURE, "Xinerama not active");
+        errx(EXIT_FAILURE, "Xinerama not active");
 
     if (!numScreens)
-        err(EXIT_FAILURE, "Xinerama active but did not find any output device");
+        errx(EXIT_FAILURE, "Xinerama active but did not find any output device");
 
     if (opt.monitor >= numScreens)
-        err(EXIT_FAILURE, "monitor %d not found", opt.monitor);
+        errx(EXIT_FAILURE, "monitor %d not found", opt.monitor);
 
     XineramaScreenInfo *mon = &screens[opt.monitor];
 

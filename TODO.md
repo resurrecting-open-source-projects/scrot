@@ -11,6 +11,15 @@ Look for any bugs reported downstream or in our github issues and fix them:
 - https://bugzilla.redhat.com/buglist.cgi?bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&component=scrot&product=Fedora
 - https://bugs.gentoo.org/buglist.cgi?quicksearch=scrot
 
+## Switch to newer Imlib2 interfaces
+
+These will require a minimum version bump on imlib2 and so has to be done with
+care.
+
+- Switch to using `imlib_save_image_fd()` for saving images.
+- Switch to `imlib_get_error()` to retrieve the cause of error when saving and
+  loading images (and `imlib_strerror()` to stringify them).
+
 ## Integrate [libbsd](https://libbsd.freedesktop.org/wiki/)
 
 The BSD systems provide nonstandard C functions; many of the functions remove
