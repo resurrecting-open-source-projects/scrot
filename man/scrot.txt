@@ -30,6 +30,8 @@ OPTIONS
   -c, --count               Display a countdown when used with -d.
   -D, --display DISPLAY     DISPLAY is the display to use; see X(7).
   -d, --delay SEC           Wait SEC seconds before taking a shot.
+      --delay-select        If both delay and selection is active, then
+                            perform the delay first.
   -e, --exec CMD            Execute CMD on the saved image.
   -F, --file                File name. See SPECIAL STRINGS.
   -f, --freeze              Freeze the screen when -s is used.

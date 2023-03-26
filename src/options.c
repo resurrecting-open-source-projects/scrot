@@ -341,6 +341,11 @@ static const char *getPathOfStdout(void)
 void optionsParse(int argc, char *argv[])
 {
     static char stropts[] = "a:ofipbcd:e:hmq:s::t:uvzn:l:D:k::C:S:F:M:";
+    enum { /* constants for long-opt only */
+        /* ensure these cannot be represented as a single byte so that they
+         * don't collude with short-opts */
+        OPT_DELAY_SELECT = UCHAR_MAX + 1,
+    };
 
     static struct option lopts[] = {
         /* actions */
@@ -371,6 +376,7 @@ void optionsParse(int argc, char *argv[])
         { "script", required_argument, 0, 'S' },
         { "file", required_argument, 0, 'F' },
         { "monitor", required_argument, 0, 'M'},
+        { "delay-select", no_argument, 0, OPT_DELAY_SELECT},
         { 0, 0, 0, 0 }
     };
     int optch = 0;
@@ -468,6 +474,9 @@ void optionsParse(int argc, char *argv[])
                 errx(EXIT_FAILURE, "option --monitor: '%s' is %s", optarg,
                     errmsg);
             }
+            break;
+        case OPT_DELAY_SELECT:
+            opt.delay_selection = true;
             break;
         case '?':
             exit(EXIT_FAILURE);
