@@ -590,7 +590,6 @@ static Bool scrotXEventVisibility(Display *dpy, XEvent *ev, XPointer arg)
 static char *imPrintf(char *str, struct tm *tm, char *filenameIM,
     char *filenameThumb, Imlib_Image im)
 {
-    char *c;
     char buf[20];
     Stream ret = {0};
     long hostNameMax = 0;
@@ -598,12 +597,13 @@ static char *imPrintf(char *str, struct tm *tm, char *filenameIM,
     char *tmp;
     struct stat st;
 
-    if (strftime(strf, 4095, str, tm) == 0)
+    const size_t strfLen = strftime(strf, sizeof(strf), str, tm);
+    if (strfLen == 0)
         errx(EXIT_FAILURE, "strftime returned 0");
 
     imlib_context_set_image(im);
-    for (c = strf; *c != '\0'; c++) {
-        if (*c == '$') {
+    for (const char *c = strf, *end = strf + strfLen; c < end; ++c) {
+        if (*c == '$' && (c + 1) < end) {
             c++;
             switch (*c) {
             case 'a':
@@ -680,7 +680,7 @@ static char *imPrintf(char *str, struct tm *tm, char *filenameIM,
                 streamChar(&ret, *c);
                 break;
             }
-        } else if (*c == '\\') {
+        } else if (*c == '\\' && (c + 1) < end) {
             c++;
             switch (*c) {
             case 'n':
