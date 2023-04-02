@@ -214,7 +214,7 @@ void scrotNoteNew(char const *const format)
 
 void scrotNoteFree(void)
 {
-    if(!note)
+    if (!note)
         return;
 
     if (note->text)

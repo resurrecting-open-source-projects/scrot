@@ -367,8 +367,8 @@ int scrotGetGeometry(Window target, int *rx, int *ry, int *rw, int *rh)
             XRaiseWindow(disp, target);
 
             /* Give the WM time to update the hidden area of the window.
-               Some windows never send the event, a time limit is placed.
-            */
+             * Some windows never send the event, a time limit is placed.
+             */
             XSelectInput(disp, target, FocusChangeMask);
 
             struct timespec delay = {0, 10000000L}; // 10ms
@@ -508,7 +508,7 @@ static void scrotCheckIfOverwriteFile(char **filename)
 
         snprintf(fmt, sizeof(fmt), "_%03zu", counter++);
 
-        if(ext) {
+        if (ext) {
             ptr -= extLength;
             memcpy(ptr, fmt, sizeof(fmt));
             memcpy(ptr + sizeof(fmt) - 1, ext, extLength);
