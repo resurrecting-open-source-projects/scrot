@@ -80,7 +80,8 @@ static Imlib_Image scrotGrabStackWindows(void);
 static Imlib_Image scrotGrabShot(void);
 static void scrotCheckIfOverwriteFile(char **);
 static void scrotExecApp(Imlib_Image, struct tm *, char *, char *);
-static char *imPrintf(char *, struct tm *, char *, char *, Imlib_Image);
+static char *imPrintf(const char *, struct tm *, const char *, const char *,
+    Imlib_Image);
 static char *scrotGetWindowName(Window);
 static Window scrotGetClientWindow(Display *, Window);
 static Window scrotFindWindowByProperty(Display *, const Window,
@@ -97,8 +98,7 @@ int main(int argc, char *argv[])
     Imlib_Load_Error imErr;
     char *filenameIM = NULL;
     char *filenameThumb = NULL;
-
-    char *haveExtension = NULL;
+    char *haveExtension;
 
     time_t t;
     struct tm *tm;
@@ -108,15 +108,6 @@ int main(int argc, char *argv[])
     optionsParse(argc, argv);
 
     initXAndImlib(opt.display, 0);
-
-    if (!opt.outputFile) {
-        opt.outputFile = estrdup("%Y-%m-%d-%H%M%S_$wx$h_scrot.png");
-        opt.thumbFile = estrdup("%Y-%m-%d-%H%M%S_$wx$h_scrot-thumb.png");
-    } else {
-        if (opt.thumb != THUMB_DISABLED)
-            opt.thumbFile = optionsNameThumbnail(opt.outputFile);
-        scrotHaveFileExtension(opt.outputFile, &haveExtension);
-    }
 
     if (opt.selection.mode & SELECTION_MODE_ANY)
         image = scrotSelectionSelectMode();
@@ -150,10 +141,10 @@ int main(int argc, char *argv[])
     tm = localtime(&t);
 
     imlib_context_set_image(image);
-    imlib_image_attach_data_value("quality", NULL, opt.quality, NULL);
-
+    scrotHaveFileExtension(opt.outputFile, &haveExtension);
     if (!haveExtension)
         imlib_image_set_format("png");
+    imlib_image_attach_data_value("quality", NULL, opt.quality, NULL);
 
     filenameIM = imPrintf(opt.outputFile, tm, NULL, NULL, image);
     scrotCheckIfOverwriteFile(&filenameIM);
@@ -196,7 +187,6 @@ int main(int argc, char *argv[])
         if (!thumbnail) {
             errx(EXIT_FAILURE, "unable to create thumbnail");
         } else {
-            scrotHaveFileExtension(opt.thumbFile, &haveExtension);
             imlib_context_set_image(thumbnail);
             if (!haveExtension)
                 imlib_image_set_format("png");
@@ -587,8 +577,8 @@ static Bool scrotXEventVisibility(Display *dpy, XEvent *ev, XPointer arg)
     return (ev->xvisibility.window == *win);
 }
 
-static char *imPrintf(char *str, struct tm *tm, char *filenameIM,
-    char *filenameThumb, Imlib_Image im)
+static char *imPrintf(const char *str, struct tm *tm, const char *filenameIM,
+    const char *filenameThumb, Imlib_Image im)
 {
     char buf[20];
     Stream ret = {0};

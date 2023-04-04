@@ -66,9 +66,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     }                                                           \
 } while(0)
 
-#define checkMaxOutputFileName(fileName) \
-    STR_LEN_MAX_FILENAME(output, (fileName))
-
 #define checkMaxInputFileName(fileName) \
     STR_LEN_MAX_FILENAME(input, (fileName))
 
@@ -86,6 +83,7 @@ struct ScrotOptions opt = {
     .stackDirection = HORIZONTAL,
     .monitor = -1,
     .windowId = None,
+    .outputFile = "%Y-%m-%d-%H%M%S_$wx$h_scrot.png",
 };
 
 static void showUsage(void);
@@ -93,6 +91,7 @@ static void showVersion(void);
 static long long optionsParseNumBase(const char *, long long, long long,
     const char *[static 1], int);
 static void optionsParseThumbnail(char *);
+static char *optionsNameThumbnail(const char *);
 
 long long optionsParseNum(const char *str, long long min, long long max,
     const char *errmsg[static 1])
@@ -386,6 +385,7 @@ void optionsParse(int argc, char *argv[])
     };
     int optch = 0;
     const char *errmsg;
+    bool FFlagSet = false;
 
     /* Now to pass some optionarinos */
     while ((optch = getopt_long(argc, argv, stropts, lopts, NULL)) != -1) {
@@ -475,7 +475,8 @@ void optionsParse(int argc, char *argv[])
             opt.script = estrdup(optarg);
             break;
         case 'F':
-            optionsParseFileName(optarg);
+            FFlagSet = true;
+            opt.outputFile = optarg;
             break;
         case 'M':
             opt.monitor = optionsParseNum(optarg, 0, INT_MAX, &errmsg);
@@ -497,35 +498,42 @@ void optionsParse(int argc, char *argv[])
             break;
         }
     }
+    argv += optind;
 
-    /* Now the leftovers, which must be files */
-    while (optind < argc) {
-        /* If recursive is NOT set, but the only argument is a directory
-           name, we grab all the files in there, but not subdirs */
-        if (!opt.outputFile) {
-            optionsParseFileName(argv[optind++]);
-
-            const bool redirectChar = ( opt.outputFile[0] == '-'
-                                        && opt.outputFile[1] == '\0');
-            if (redirectChar) {
-                optionsParseFileName(getPathOfStdout());
-                opt.overwrite = 1;
-                opt.thumb = THUMB_DISABLED;
-            }
-        } else
-            warnx("unrecognised option %s", argv[optind++]);
+    if (!FFlagSet && *argv) {
+        opt.outputFile = *argv;
+        argv++;
     }
-
-    /* So that we can safely be called again */
-    optind = 1;
+    if (*argv) {
+        /* If *argv is still not NULL, we have an excess of arguments, so print
+         * out a nice diagnostic message.
+         */
+        fprintf(stderr, "%s: ignoring extraneous non-option arguments: ",
+            getprogname());
+        for (;;) {
+            fputs(*argv, stderr);
+            if (*++argv)
+                fputc(' ', stderr);
+            else
+                break;
+        }
+        fputc('\n', stderr);
+    }
+    if (strcmp(opt.outputFile, "-") == 0) {
+        opt.overwrite = 1;
+        opt.thumb = THUMB_DISABLED;
+        opt.outputFile = getPathOfStdout();
+    }
+    if (opt.thumb != THUMB_DISABLED)
+        opt.thumbFile = optionsNameThumbnail(opt.outputFile);
 }
 
 static void showUsage(void)
 {
     fputs(/* Check that everything lines up after any changes. */
         "usage:  " PACKAGE " [-bcfhimopuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY]\n"
-        "              [-d SEC] [-e CMD] [-F FILE] [-k OPT] [-l STYLE] [-M NUM]\n"
-        "              [-n OPTS] [-q NUM] [-S CMD] [-s OPTS] [-t NUM | GEOM] [FILE]\n",
+        "              [-d SEC] [-e CMD] [-k OPT] [-l STYLE] [-M NUM] [-n OPTS]\n"
+        "              [-q NUM] [-S CMD] [-s OPTS] [-t % | WxH] [[-F] FILE]\n",
         stdout);
     exit(0);
 }
@@ -536,7 +544,7 @@ static void showVersion(void)
     exit(0);
 }
 
-char *optionsNameThumbnail(const char *name)
+static char *optionsNameThumbnail(const char *name)
 {
     const size_t nameLength = strlen(name);
     const char thumbSuffix[] = "-thumb";
@@ -621,13 +629,6 @@ static void optionsParseThumbnail(char *optarg)
                 errmsg);
         }
     }
-}
-
-void optionsParseFileName(const char *optarg)
-{
-    checkMaxOutputFileName(optarg);
-    free(opt.outputFile);
-    opt.outputFile = estrdup(optarg);
 }
 
 void optionsParseNote(char *optarg)
