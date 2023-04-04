@@ -48,7 +48,7 @@ Window root;
 Window clientWindow;
 Screen *scr;
 
-void initXAndImlib(char *dispStr, int screenNumber)
+void initXAndImlib(const char *dispStr, int screenNumber)
 {
     disp = XOpenDisplay(dispStr);
     if (!disp) {

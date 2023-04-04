@@ -72,7 +72,7 @@ struct ScrotOptions {
     const char *outputFile;
     char *thumbFile;
     char *exec;
-    char *display;
+    const char *display;
     char *note;
     Window windowId;
     const char *windowClassName;
@@ -91,7 +91,6 @@ extern struct ScrotOptions opt;
 
 void optionsParse(int, char **);
 void optionsParseAutoselect(char *);
-void optionsParseDisplay(char *);
 void optionsParseNote(char *);
 long long optionsParseNum(const char *, long long, long long,
     const char *[static 1]);
