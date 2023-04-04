@@ -505,21 +505,8 @@ void optionsParse(int argc, char *argv[])
         argv++;
     }
 
-    if (*argv) {
-        /* If *argv is still not NULL, we have an excess of arguments, so print
-         * out a nice diagnostic message.
-         */
-        fprintf(stderr, "%s: ignoring extraneous non-option arguments: ",
-            getprogname());
-        for (;;) {
-            fputs(*argv, stderr);
-            if (*++argv)
-                fputc(' ', stderr);
-            else
-                break;
-        }
-        fputc('\n', stderr);
-    }
+    for (; *argv; ++argv)
+        warnx("ignoring extraneous non-option argument: %s", *argv);
 
     if (strcmp(opt.outputFile, "-") == 0) {
         opt.overwrite = 1;
