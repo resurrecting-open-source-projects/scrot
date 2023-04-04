@@ -38,4 +38,4 @@ extern Window root;
 extern Window clientWindow;
 extern Screen *scr;
 
-void initXAndImlib(char *, int);
+void initXAndImlib(const char *, int);

@@ -71,7 +71,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 enum {
     MAX_FILENAME = 256, // characters
-    MAX_DISPLAY_NAME = 256, // characters
 };
 
 struct ScrotOptions opt = {
@@ -456,7 +455,7 @@ void optionsParse(int argc, char *argv[])
             optionsParseAutoselect(optarg);
             break;
         case 'D':
-            optionsParseDisplay(optarg);
+            opt.display = optarg;
             break;
         case 'n':
             optionsParseNote(optarg);
@@ -590,13 +589,6 @@ void optionsParseAutoselect(char *optarg)
     }
     if (i < 4)
         errx(EXIT_FAILURE, "option --autoselect: too few dimensions");
-}
-
-void optionsParseDisplay(char *optarg)
-{
-    opt.display = strndup(optarg, MAX_DISPLAY_NAME);
-    if (!opt.display)
-        err(EXIT_FAILURE, "Unable to allocate display");
 }
 
 static void optionsParseThumbnail(char *optarg)
