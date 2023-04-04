@@ -504,6 +504,7 @@ void optionsParse(int argc, char *argv[])
         opt.outputFile = *argv;
         argv++;
     }
+
     if (*argv) {
         /* If *argv is still not NULL, we have an excess of arguments, so print
          * out a nice diagnostic message.
@@ -519,6 +520,7 @@ void optionsParse(int argc, char *argv[])
         }
         fputc('\n', stderr);
     }
+
     if (strcmp(opt.outputFile, "-") == 0) {
         opt.overwrite = 1;
         opt.thumb = THUMB_DISABLED;
@@ -587,7 +589,7 @@ void optionsParseAutoselect(char *optarg)
         opt.autoselect = 1;
     }
     if (i < 4)
-            errx(EXIT_FAILURE, "option --autoselect: too few dimensions");
+        errx(EXIT_FAILURE, "option --autoselect: too few dimensions");
 }
 
 void optionsParseDisplay(char *optarg)
