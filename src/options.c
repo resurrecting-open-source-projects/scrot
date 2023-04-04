@@ -348,57 +348,59 @@ static const char *getPathOfStdout(void)
 
 void optionsParse(int argc, char *argv[])
 {
-    static char stropts[] = "a:ofipbcd:e:hmq:s::t:uvzn:l:D:k::C:S:F:M:w:";
-
+    static char stropts[] = "a:bC:cD:d:e:F:fhik::l:M:mn:opq:S:s::t:uvw:z";
     static struct option lopts[] = {
-        /* actions */
-        { "help", no_argument, 0, 'h' },
-        { "version", no_argument, 0, 'v' },
-        { "count", no_argument, 0, 'c' },
-        { "focused", no_argument, 0, 'u' },
-        { "focussed", no_argument, 0, 'u' }, /* macquarie dictionary has both spellings */
-        { "border", no_argument, 0, 'b' },
-        { "multidisp", no_argument, 0, 'm' },
-        { "silent", no_argument, 0, 'z' },
-        { "pointer", no_argument, 0, 'p' },
-        { "ignorekeyboard", no_argument, 0, 'i' },
-        { "freeze", no_argument, 0, 'f' },
-        { "overwrite", no_argument, 0, 'o' },
-        /* toggles */
-        { "stack", optional_argument, 0, 'k' },
-        { "select", optional_argument, 0, 's' },
-        { "thumb", required_argument, 0, 't' },
-        { "delay", required_argument, 0, 'd' },
-        { "quality", required_argument, 0, 'q' },
-        { "exec", required_argument, 0, 'e' },
-        { "autoselect", required_argument, 0, 'a' },
-        { "display", required_argument, 0, 'D' },
-        { "note", required_argument, 0, 'n' },
-        { "line", required_argument, 0, 'l' },
-        { "class", required_argument, 0, 'C' },
-        { "script", required_argument, 0, 'S' },
-        { "file", required_argument, 0, 'F' },
-        { "monitor", required_argument, 0, 'M'},
-        { "window", required_argument, 0, 'w'},
-        { 0, 0, 0, 0 }
+        {"autoselect",      required_argument,  NULL,   'a'},
+        {"border",          no_argument,        NULL,   'b'},
+        {"class",           required_argument,  NULL,   'C'},
+        {"count",           no_argument,        NULL,   'c'},
+        {"display",         required_argument,  NULL,   'D'},
+        {"delay",           required_argument,  NULL,   'd'},
+        {"exec",            required_argument,  NULL,   'e'},
+        {"file",            required_argument,  NULL,   'F'},
+        {"freeze",          no_argument,        NULL,   'f'},
+        {"help",            no_argument,        NULL,   'h'},
+        {"ignorekeyboard",  no_argument,        NULL,   'i'},
+        {"stack",           optional_argument,  NULL,   'k'},
+        {"line",            required_argument,  NULL,   'l'},
+        {"monitor",         required_argument,  NULL,   'M'},
+        {"multidisp",       no_argument,        NULL,   'm'},
+        {"note",            required_argument,  NULL,   'n'},
+        {"overwrite",       no_argument,        NULL,   'o'},
+        {"pointer",         no_argument,        NULL,   'p'},
+        {"quality",         required_argument,  NULL,   'q'},
+        {"script",          required_argument,  NULL,   'S'},
+        {"select",          optional_argument,  NULL,   's'},
+        {"thumb",           required_argument,  NULL,   't'},
+        {"focused",         no_argument,        NULL,   'u'},
+        /* macquarie dictionary has both spellings */
+        {"focussed",        no_argument,        NULL,   'u'},
+        {"version",         no_argument,        NULL,   'v'},
+        {"window",          required_argument,  NULL,   'w'},
+        {"silent",          no_argument,        NULL,   'z'},
+        {0}
     };
-    int optch = 0;
+    int optch;
     const char *errmsg;
     bool FFlagSet = false;
 
     /* Now to pass some optionarinos */
     while ((optch = getopt_long(argc, argv, stropts, lopts, NULL)) != -1) {
         switch (optch) {
-        case 0:
-            break;
-        case 'h':
-            showUsage();
-            break;
-        case 'v':
-            showVersion();
+        case 'a':
+            optionsParseAutoselect(optarg);
             break;
         case 'b':
             opt.border = 1;
+            break;
+        case 'C':
+            opt.windowClassName = optarg;
+            break;
+        case 'c':
+            opt.countdown = 1;
+            break;
+        case 'D':
+            opt.display = optarg;
             break;
         case 'd':
             if (*optarg == 'b') {
@@ -414,68 +416,25 @@ void optionsParse(int argc, char *argv[])
         case 'e':
             opt.exec = estrdup(optarg);
             break;
-        case 'm':
-            opt.multidisp = 1;
-            break;
-        case 'q':
-            opt.quality = optionsParseNum(optarg, 1, 100, &errmsg);
-            if (errmsg) {
-                errx(EXIT_FAILURE, "option --quality: '%s' is %s", optarg,
-                    errmsg);
-            }
-            break;
-        case 's':
-            optionsParseSelection(optarg);
-            break;
-        case 'u':
-            opt.focused = 1;
-            break;
-        case 'c':
-            opt.countdown = 1;
-            break;
-        case 't':
-            optionsParseThumbnail(optarg);
-            break;
-        case 'z':
-            opt.silent = 1;
-            break;
-        case 'p':
-            opt.pointer = 1;
-            break;
-        case 'i':
-            opt.ignoreKeyboard = 1;
+        case 'F':
+            FFlagSet = true;
+            opt.outputFile = optarg;
             break;
         case 'f':
             opt.freeze = 1;
             break;
-        case 'o':
-            opt.overwrite = 1;
+        case 'h':
+            showUsage();
             break;
-        case 'a':
-            optionsParseAutoselect(optarg);
-            break;
-        case 'D':
-            opt.display = optarg;
-            break;
-        case 'n':
-            optionsParseNote(optarg);
-            break;
-        case 'l':
-            optionsParseLine(optarg);
+        case 'i':
+            opt.ignoreKeyboard = 1;
             break;
         case 'k':
             opt.stack = 1;
             optionsParseStack(optarg);
             break;
-        case 'C':
-            opt.windowClassName = optarg;
-            break;
-        case 'S':
-            opt.script = estrdup(optarg);
-            break;
-        case 'F':
-            FFlagSet = true;
-            opt.outputFile = optarg;
+        case 'l':
+            optionsParseLine(optarg);
             break;
         case 'M':
             opt.monitor = optionsParseNum(optarg, 0, INT_MAX, &errmsg);
@@ -484,6 +443,40 @@ void optionsParse(int argc, char *argv[])
                     errmsg);
             }
             break;
+        case 'm':
+            opt.multidisp = 1;
+            break;
+        case 'n':
+            optionsParseNote(optarg);
+            break;
+        case 'o':
+            opt.overwrite = 1;
+            break;
+        case 'p':
+            opt.pointer = 1;
+            break;
+        case 'q':
+            opt.quality = optionsParseNum(optarg, 1, 100, &errmsg);
+            if (errmsg) {
+                errx(EXIT_FAILURE, "option --quality: '%s' is %s", optarg,
+                    errmsg);
+            }
+            break;
+        case 'S':
+            opt.script = estrdup(optarg);
+            break;
+        case 's':
+            optionsParseSelection(optarg);
+            break;
+        case 't':
+            optionsParseThumbnail(optarg);
+            break;
+        case 'u':
+            opt.focused = 1;
+            break;
+        case 'v':
+            showVersion();
+            break;
         case 'w':
             opt.windowId = optionsParseNumBase(optarg, None/*0L*/, LONG_MAX, &errmsg, 0);
             if (errmsg) {
@@ -491,10 +484,11 @@ void optionsParse(int argc, char *argv[])
                     errmsg);
             }
             break;
-        case '?':
-            exit(EXIT_FAILURE);
-        default:
+        case 'z':
+            opt.silent = 1;
             break;
+        default:
+            exit(EXIT_FAILURE);
         }
     }
     argv += optind;
