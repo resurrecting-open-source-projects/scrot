@@ -34,7 +34,7 @@ PKG_CHECK_MODULES([IMLIB2], [imlib2])
 AC_ARG_ENABLE([libbsd-feature-test],
     AS_HELP_STRING([--enable-libbsd-feature-test],
         ["Do not configure the program, return true if libbsd is needed"]))
-AC_CHECK_FUNCS([strlcpy strlcat err errx getprogname warn warnx],,
+AC_CHECK_FUNCS([err errx warn warnx],,
     [LIBBSD_NEEDED=yes])
 AC_CHECK_HEADERS([sys/queue.h],, [LIBBSD_NEEDED=yes])
 # libbsd is obligatory on systems that don't have the BSD functions we use.
