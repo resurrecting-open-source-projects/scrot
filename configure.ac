@@ -10,6 +10,11 @@ AC_CONFIG_HEADERS([src/config.h])
 # Checks for programs.
 orig_CFLAGS="${CFLAGS}" # Save CFLAGS before AC_PROG_CC sets them.
 AC_PROG_CC
+# In autoconf < 2.70, AC_PROG_CC determines the compiler, and AC_PROG_CC_STDC
+# sets it to the newest C standard supported by autoconf.
+# In autoconf >= 2.70, AC_PROG_CC determines the compiler and sets it to the
+# newest C standard supported by autoconf, and AC_PROG_CC_STDC is deprecated.
+m4_version_prereq([2.70],, [AC_PROG_CC_STDC])
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
