@@ -535,11 +535,11 @@ static void showVersion(void)
 
 static char *optionsNameThumbnail(const char *name)
 {
-    const size_t nameLength = strlen(name);
+    const ptrdiff_t nameLength = strlen(name);
     const char thumbSuffix[] = "-thumb";
     Stream ret = {0};
     const char *const extension = strrchr(name, '.');
-    const size_t baseNameLength = extension ? extension-name : nameLength;
+    const ptrdiff_t baseNameLength = extension ? extension-name : nameLength;
 
     streamMem(&ret, name, baseNameLength);
     streamMem(&ret, thumbSuffix, sizeof(thumbSuffix)-1);
