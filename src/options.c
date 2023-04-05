@@ -380,8 +380,8 @@ void optionsParse(int argc, char *argv[])
             opt.display = optarg;
             break;
         case 'd':
-            opt.delay_selection = *optarg == 'b';
-            if (opt.delay_selection)
+            opt.delaySelection = *optarg == 'b';
+            if (opt.delaySelection)
                 ++optarg;
             opt.delay = optionsParseNum(optarg, 0, INT_MAX, &errmsg);
             if (errmsg) {

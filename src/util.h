@@ -1,6 +1,6 @@
 /* util.h
 
-Copyright 2021 Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2021,2023 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2023 NRK <nrk@disroot.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,6 +25,19 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 #pragma once
+
+#include <time.h>
+
+/* On Linux, CLOCK_MONOTONIC does not progress while the system is suspended,
+ * and an alternative non-standard clock which does not suffer from this problem
+ * called CLOCK_BOOTTIME is available. Scrot's CONTINUOUS_CLOCK has the exact
+ * same semantics as CLOCK_MONOTONIC, only it avoids this bug.
+ */
+#if defined(__linux__)
+    #define CONTINUOUS_CLOCK CLOCK_BOOTTIME
+#else
+    #define CONTINUOUS_CLOCK CLOCK_MONOTONIC
+#endif
 
 #define ARRAY_COUNT(X)   (sizeof(X) / sizeof(0[X]))
 #define MAX(A, B)        ((A) > (B) ? (A) : (B))

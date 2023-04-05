@@ -428,8 +428,7 @@ Imlib_Image scrotSelectionSelectMode(void)
 
     opt.selection.mode = SELECTION_MODE_CAPTURE;
 
-    /* if --delay-select is active, then do the delay before selection */
-    if (opt.delay_selection)
+    if (opt.delaySelection)
         scrotDoDelay();
 
     if (!scrotSelectionGetUserSel(&rect0))
@@ -441,8 +440,10 @@ Imlib_Image scrotSelectionSelectMode(void)
         if (!scrotSelectionGetUserSel(&rect1))
             return NULL;
 
-    if (!opt.delay_selection)
+    if (!opt.delaySelection) {
+        clock_gettime(CONTINUOUS_CLOCK, &opt.delayStart);
         scrotDoDelay();
+    }
 
     Imlib_Image capture = imlib_create_image_from_drawable(0, rect0.x, rect0.y,
         rect0.w, rect0.h, 1);

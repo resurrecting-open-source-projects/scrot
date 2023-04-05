@@ -75,6 +75,7 @@ static Imlib_Image scrotGrabFocused(void);
 static void applyFilterIfRequired(void);
 static Bool scrotXEventVisibility(Display *, XEvent *, XPointer);
 static Imlib_Image scrotGrabAutoselect(void);
+static void scrotWaitUntil(const struct timespec *);
 static Imlib_Image scrotGrabShotMulti(void);
 static Imlib_Image scrotGrabShotMonitor(void);
 static Imlib_Image scrotGrabStackWindows(void);
@@ -101,6 +102,9 @@ int main(int argc, char *argv[])
     char *haveExtension = NULL;
     struct timespec timeStamp;
     struct tm *tm;
+
+    /* Get the time ASAP to reduce the timing error in case --delay is used. */
+    clock_gettime(CONTINUOUS_CLOCK, &opt.delayStart);
 
     atexit(uninitXAndImlib);
 
@@ -285,33 +289,46 @@ static Imlib_Image scrotGrabAutoselect(void)
     return im;
 }
 
-/* similar to sleep, but deals with EINTR.
- * ideally, we'd want to sleep against an absolute time to prevent any drift
- * but clock_nanosleep doesn't seem to be widely implemented.
- */
-static void scrotSleep(int sec)
-{
-    assert(sec > 0);
-    struct timespec delay = { .tv_sec = sec };
-    while (nanosleep(&delay, &delay) < 0 && errno == EINTR);
-}
-
 void scrotDoDelay(void)
 {
-    if (opt.delay) {
-        if (opt.countdown) {
-            int i;
-
-            dprintf(STDERR_FILENO, "Taking shot in %d.. ", opt.delay);
-            scrotSleep(1);
-            for (i = opt.delay - 1; i > 0; i--) {
-                dprintf(STDERR_FILENO, "%d.. ", i);
-                scrotSleep(1);
-            }
-            dprintf(STDERR_FILENO, "0.\n");
-        } else
-            scrotSleep(opt.delay);
+    if (!opt.delay)
+        return;
+    if (opt.countdown) {
+        dprintf(STDERR_FILENO, "Taking shot in ");
+        for (int i = opt.delay; i > 0; i--) {
+            dprintf(STDERR_FILENO, "%d.. ", i);
+            opt.delayStart.tv_sec++;
+            scrotWaitUntil(&opt.delayStart);
+        }
+        dprintf(STDERR_FILENO, "0.\n");
+    } else {
+        opt.delayStart.tv_sec += opt.delay;
+        scrotWaitUntil(&opt.delayStart);
     }
+}
+
+/* scrotWaitUntil: clock_nanosleep with a simpler interface and no EINTR nagging
+ */
+static void scrotWaitUntil(const struct timespec *time)
+{
+    /* OpenBSD and OS X lack clock_nanosleep(), so we use a trivial algorithm to
+     * correct for drift and call nanosleep() everywhere.
+     */
+    struct timespec tmp;
+    do {
+        clock_gettime(CONTINUOUS_CLOCK, &tmp);
+
+        /* XXX: Use timespecsub(). OS X doesn't have that BSD macro, and libbsd
+         * doesn't support OS X save for an unmaintained fork. libobsd supports
+         * OS X but doesn't have the macro yet.
+         */
+        tmp.tv_sec = time->tv_sec - tmp.tv_sec;
+        tmp.tv_nsec = time->tv_nsec - tmp.tv_nsec;
+        if (tmp.tv_nsec < 0) {
+            tmp.tv_sec--;
+            tmp.tv_nsec += 1000000000L;
+        }
+    } while (nanosleep(&tmp, &tmp) == -1 && errno == EINTR);
 }
 
 /* Clip rectangle nicely */
