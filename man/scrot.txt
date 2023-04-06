@@ -33,6 +33,11 @@ OPTIONS
                             When given the `b` prefix, e.g `-d b8`, the delay
                             will be applied before selection.
   -e, --exec CMD            Execute CMD on the saved image.
+  -F, --file FILE           Specify the output file. If FILE is "-", scrot will
+                            output a PNG image to stdout. The filename is
+                            expanded according to the format specified in
+                            SPECIAL STRINGS. The output file may be specified
+                            through the -F option, or as a non-option argument.
   -f, --freeze              Freeze the screen when -s is used.
   -h, --help                Display help and exit.
   -i, --ignorekeyboard      Don't exit for keyboard input. ESC still exits.
@@ -71,11 +76,6 @@ OPTIONS
   -w, --window              Window identifier to capture.
                             Must be a valid identifier (see xwininfo(1)).
   -z, --silent              Prevent beeping.
-  -F, --file FILE           Specify the output file. If FILE is "-", scrot will
-                            output a PNG image to stdout. The filename is
-                            expanded according to the format specified in
-                            SPECIAL STRINGS. The output file may be specified
-                            through the -F option, or as a non-option argument.
 
 SPECIAL STRINGS
   -e, -F and FILE parameters can take format specifiers that are expanded
