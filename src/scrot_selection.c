@@ -331,9 +331,10 @@ bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
                 scrotSelectionMotionDraw(rx, ry, ev.xbutton.x, ev.xbutton.y);
                 break;
             }
-            case KeyRelease:
-                /* ignore */
+            case DestroyNotify:
+                errx(EXIT_FAILURE, "received DestroyNotify event");
                 break;
+            case KeyRelease: /* ignore */
             default:
                 break;
             }
