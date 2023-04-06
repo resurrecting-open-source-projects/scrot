@@ -342,6 +342,10 @@ static const char *getPathOfStdout(void)
 
 void optionsParse(int argc, char *argv[])
 {
+    enum { /* long opt only */
+        /* ensure these don't collude with single byte opts. */
+        OPT_FORMAT = UCHAR_MAX + 1,
+    };
     static char stropts[] = "a:bC:cD:d:e:F:fhik::l:M:mn:opq:S:s::t:uvw:z";
     static struct option lopts[] = {
         {"autoselect",      required_argument,  NULL,   'a'},
@@ -372,6 +376,7 @@ void optionsParse(int argc, char *argv[])
         {"version",         no_argument,        NULL,   'v'},
         {"window",          required_argument,  NULL,   'w'},
         {"silent",          no_argument,        NULL,   'z'},
+        {"format",          required_argument,  NULL, OPT_FORMAT},
         {0}
     };
     int optch;
@@ -480,6 +485,9 @@ void optionsParse(int argc, char *argv[])
             break;
         case 'z':
             opt.silent = 1;
+            break;
+        case OPT_FORMAT:
+            opt.format = optarg;
             break;
         default:
             exit(EXIT_FAILURE);

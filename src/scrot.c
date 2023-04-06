@@ -142,9 +142,13 @@ int main(int argc, char *argv[])
     tm = localtime(&t);
 
     imlib_context_set_image(image);
-    scrotHaveFileExtension(opt.outputFile, &haveExtension);
-    if (!haveExtension)
-        imlib_image_set_format("png");
+    if (opt.format) {
+        imlib_image_set_format(opt.format);
+    } else {
+        scrotHaveFileExtension(opt.outputFile, &haveExtension);
+        if (!haveExtension)
+            imlib_image_set_format("png");
+    }
     imlib_image_attach_data_value("quality", NULL, opt.quality, NULL);
 
     filenameIM = imPrintf(opt.outputFile, tm, NULL, NULL, image);
@@ -189,7 +193,9 @@ int main(int argc, char *argv[])
             errx(EXIT_FAILURE, "unable to create thumbnail");
         } else {
             imlib_context_set_image(thumbnail);
-            if (!haveExtension)
+            if (opt.format)
+                imlib_image_set_format(opt.format);
+            else if (!haveExtension)
                 imlib_image_set_format("png");
 
             filenameThumb = imPrintf(opt.thumbFile, tm, NULL, NULL, thumbnail);
