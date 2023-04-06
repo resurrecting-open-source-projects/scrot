@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
     Imlib_Load_Error imErr;
     char *filenameIM = NULL;
     char *filenameThumb = NULL;
-    char *haveExtension;
+    char *haveExtension = NULL;
 
     time_t t;
     struct tm *tm;
@@ -234,10 +234,12 @@ static void uninitXAndImlib(void)
 
 static size_t scrotHaveFileExtension(const char *filename, char **ext)
 {
-    *ext = strrchr(filename, '.');
+    char *s = strrchr(filename, '.');
 
-    if (*ext)
-        return strlen(*ext);
+    if (s && s[1] != '\0') {
+        *ext = s;
+        return strlen(s);
+    }
 
     return 0;
 }
