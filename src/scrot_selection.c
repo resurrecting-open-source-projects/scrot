@@ -238,7 +238,7 @@ void scrotSelectionSetDefaultColorLine(void)
 bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
 {
     XEvent ev;
-    int done = 0;
+    enum { WAIT, DONE, ABORT } done = WAIT;
     int rx = 0, ry = 0, rw = 0, rh = 0, isButtonPressed = 0;
     Window target = None;
     Status ret;
@@ -259,7 +259,7 @@ bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
         errx(EXIT_FAILURE, "failed to grab keyboard");
     }
 
-    while (!done) {
+    while (done == WAIT) {
         XNextEvent(disp, &ev);
         switch (ev.type) {
         case MotionNotify:
@@ -275,7 +275,7 @@ bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
                 target = root;
             break;
         case ButtonRelease:
-            done = 1;
+            done = DONE;
             break;
         case KeyPress:
         {
@@ -291,7 +291,7 @@ bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
             key_abort_shot:
                 if (!opt.ignoreKeyboard || *keysym == XK_Escape) {
                     warnx("Key was pressed, aborting shot");
-                    done = 2;
+                    done = ABORT;
                 }
                 XFree(keysym);
                 break;
@@ -337,7 +337,7 @@ bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
 
     scrotSelectionDestroy();
 
-    if (done == 2)
+    if (done == ABORT)
         return false;
 
     if (isAreaSelect) {
