@@ -33,8 +33,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     Part of the code comes from the scrot.c file and maintains its authorship.
 */
 
-#include <sys/select.h>
-
 #include <assert.h>
 #include <err.h>
 #include <errno.h>
@@ -239,19 +237,13 @@ void scrotSelectionSetDefaultColorLine(void)
 
 bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
 {
-    static int xfd = 0;
-    static int fdSize = 0;
     XEvent ev;
-    fd_set fdSet;
-    int count = 0, done = 0;
+    int done = 0;
     int rx = 0, ry = 0, rw = 0, rh = 0, isButtonPressed = 0;
     Window target = None;
     Status ret;
 
     scrotSelectionCreate();
-
-    xfd = ConnectionNumber(disp);
-    fdSize = xfd + 1;
 
     ret = XGrabKeyboard(disp, root, False, GrabModeAsync, GrabModeAsync, CurrentTime);
     if (ret == AlreadyGrabbed) {
@@ -267,90 +259,74 @@ bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
         errx(EXIT_FAILURE, "failed to grab keyboard");
     }
 
-    while (1) {
-        /* Handle events here */
-        while (!done && XPending(disp)) {
-            XNextEvent(disp, &ev);
-            switch (ev.type) {
-            case MotionNotify:
-                if (isButtonPressed)
-                    scrotSelectionMotionDraw(rx, ry, ev.xbutton.x, ev.xbutton.y);
+    while (!done) {
+        XNextEvent(disp, &ev);
+        switch (ev.type) {
+        case MotionNotify:
+            if (isButtonPressed)
+                scrotSelectionMotionDraw(rx, ry, ev.xbutton.x, ev.xbutton.y);
+            break;
+        case ButtonPress:
+            isButtonPressed = 1;
+            rx = ev.xbutton.x;
+            ry = ev.xbutton.y;
+            target = scrotGetWindow(disp, ev.xbutton.subwindow, ev.xbutton.x, ev.xbutton.y);
+            if (target == None)
+                target = root;
+            break;
+        case ButtonRelease:
+            done = 1;
+            break;
+        case KeyPress:
+        {
+            KeySym *keysym = NULL;
+            int keycode; /*dummy*/
+
+            keysym = XGetKeyboardMapping(disp, ev.xkey.keycode, 1, &keycode);
+
+            if (!keysym)
                 break;
-            case ButtonPress:
-                isButtonPressed = 1;
-                rx = ev.xbutton.x;
-                ry = ev.xbutton.y;
-                target = scrotGetWindow(disp, ev.xbutton.subwindow, ev.xbutton.x, ev.xbutton.y);
-                if (target == None)
-                    target = root;
-                break;
-            case ButtonRelease:
-                done = 1;
-                break;
-            case KeyPress:
-            {
-                KeySym *keysym = NULL;
-                int keycode; /*dummy*/
 
-                keysym = XGetKeyboardMapping(disp, ev.xkey.keycode, 1, &keycode);
-
-                if (!keysym)
-                    break;
-
-                if (!isButtonPressed) {
-                key_abort_shot:
-                    if (!opt.ignoreKeyboard || *keysym == XK_Escape) {
-                        warnx("Key was pressed, aborting shot");
-                        done = 2;
-                    }
-                    XFree(keysym);
-                    break;
-                }
-
-                switch (*keysym) {
-                case XK_Right:
-                    if (++rx > scr->width)
-                        rx = scr->width;
-                    break;
-                case XK_Left:
-                    if (--rx < 0)
-                        rx = 0;
-                    break;
-                case XK_Down:
-                    if (++ry > scr->height)
-                        ry = scr->height;
-                    break;
-                case XK_Up:
-                    if (--ry < 0)
-                        ry = 0;
-                    break;
-                default:
-                    goto key_abort_shot;
+            if (!isButtonPressed) {
+            key_abort_shot:
+                if (!opt.ignoreKeyboard || *keysym == XK_Escape) {
+                    warnx("Key was pressed, aborting shot");
+                    done = 2;
                 }
                 XFree(keysym);
-                scrotSelectionMotionDraw(rx, ry, ev.xbutton.x, ev.xbutton.y);
                 break;
             }
-            case DestroyNotify:
-                errx(EXIT_FAILURE, "received DestroyNotify event");
-                break;
-            case KeyRelease: /* ignore */
-            default:
-                break;
-            }
-        }
-        if (done)
-            break;
 
-        /* now block some */
-        FD_ZERO(&fdSet);
-        FD_SET(xfd, &fdSet);
-        errno = 0;
-        count = select(fdSize, &fdSet, NULL, NULL, NULL);
-        if ((count < 0)
-            && ((errno == ENOMEM) || (errno == EINVAL) || (errno == EBADF))) {
-            scrotSelectionDestroy();
-            errx(EXIT_FAILURE, "Connection to X display lost");
+            switch (*keysym) {
+            case XK_Right:
+                if (++rx > scr->width)
+                    rx = scr->width;
+                break;
+            case XK_Left:
+                if (--rx < 0)
+                    rx = 0;
+                break;
+            case XK_Down:
+                if (++ry > scr->height)
+                    ry = scr->height;
+                break;
+            case XK_Up:
+                if (--ry < 0)
+                    ry = 0;
+                break;
+            default:
+                goto key_abort_shot;
+            }
+            XFree(keysym);
+            scrotSelectionMotionDraw(rx, ry, ev.xbutton.x, ev.xbutton.y);
+            break;
+        }
+        case DestroyNotify:
+            errx(EXIT_FAILURE, "received DestroyNotify event");
+            break;
+        case KeyRelease: /* ignore */
+        default:
+            break;
         }
     }
     scrotSelectionDraw();
