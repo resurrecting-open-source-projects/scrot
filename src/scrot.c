@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
     }
 
     if (!image)
-        err(EXIT_FAILURE, "no image grabbed");
+        errx(EXIT_FAILURE, "no image grabbed");
 
     if (opt.note)
         scrotNoteDraw(image);
