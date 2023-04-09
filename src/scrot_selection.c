@@ -324,8 +324,8 @@ bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
         case DestroyNotify:
             errx(EXIT_FAILURE, "received DestroyNotify event");
             break;
-        case KeyRelease: /* ignore */
         default:
+            /* ignore */
             break;
         }
     }
