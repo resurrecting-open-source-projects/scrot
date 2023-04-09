@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
     Imlib_Load_Error imErr;
     char *filenameIM = NULL;
     char *filenameThumb = NULL;
-    char *haveExtension;
+    char *haveExtension = NULL;
 
     time_t t;
     struct tm *tm;
@@ -142,9 +142,13 @@ int main(int argc, char *argv[])
     tm = localtime(&t);
 
     imlib_context_set_image(image);
-    scrotHaveFileExtension(opt.outputFile, &haveExtension);
-    if (!haveExtension)
-        imlib_image_set_format("png");
+    if (opt.format) {
+        imlib_image_set_format(opt.format);
+    } else {
+        scrotHaveFileExtension(opt.outputFile, &haveExtension);
+        if (!haveExtension)
+            imlib_image_set_format("png");
+    }
     imlib_image_attach_data_value("quality", NULL, opt.quality, NULL);
 
     filenameIM = imPrintf(opt.outputFile, tm, NULL, NULL, image);
@@ -189,7 +193,9 @@ int main(int argc, char *argv[])
             errx(EXIT_FAILURE, "unable to create thumbnail");
         } else {
             imlib_context_set_image(thumbnail);
-            if (!haveExtension)
+            if (opt.format)
+                imlib_image_set_format(opt.format);
+            else if (!haveExtension)
                 imlib_image_set_format("png");
 
             filenameThumb = imPrintf(opt.thumbFile, tm, NULL, NULL, thumbnail);
@@ -228,10 +234,12 @@ static void uninitXAndImlib(void)
 
 static size_t scrotHaveFileExtension(const char *filename, char **ext)
 {
-    *ext = strrchr(filename, '.');
+    char *s = strrchr(filename, '.');
 
-    if (*ext)
-        return strlen(*ext);
+    if (s && s[1] != '\0') {
+        *ext = s;
+        return strlen(s);
+    }
 
     return 0;
 }

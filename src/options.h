@@ -67,6 +67,7 @@ struct ScrotOptions {
     int lineOpacity;
     int stack;
     enum Direction stackDirection;
+    const char *format;
     char *lineColor;
     char *lineMode;
     const char *outputFile;
