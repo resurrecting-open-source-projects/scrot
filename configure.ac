@@ -69,7 +69,7 @@ AC_SUBST([CPPFLAGS], ["$X11_CFLAGS $XCOMPOSITE_CFLAGS $XEXT_CFLAGS \
 AC_CHECK_HEADERS([stdint.h sys/time.h unistd.h])
 
 # Required: Checks for library functions.
-AC_CHECK_FUNCS([getopt_long getsubopt gethostname select strdup strerror strndup strtol],,
+AC_CHECK_FUNCS([getopt_long getsubopt gethostname strdup strerror strndup strtol],,
     AC_MSG_ERROR([required functions are not present.]))
 
 AC_CONFIG_FILES([Makefile src/Makefile])
