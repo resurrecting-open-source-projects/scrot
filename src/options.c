@@ -107,15 +107,9 @@ long long optionsParseNum(const char *str, long long min, long long max,
  * Returns the integer and sets *errmsg to NULL on success.
  * Returns 0 and sets *errmsg to a pointer to a string containing the
  * reason why the number can't be parsed on error.
- *
- * usage:
- * char *errmsg;
- * unsigned int nonnegative;
- * if ((nonnegative = optionsParseNum(optarg, 0, UINT_MAX, &errmsg)) == NULL)
- *     errx(EXIT_FAILURE, "-n: '%s' is %s", optarg, errmsg);
  */
-static long long optionsParseNumBase(const char *str, long long min, long long max,
-    const char *errmsg[static 1], int base)
+static long long optionsParseNumBase(const char *str, long long min,
+    long long max, const char *errmsg[static 1], int base)
 {
     char *end = NULL;
     long long rval;
