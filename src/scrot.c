@@ -586,7 +586,7 @@ static Bool scrotXEventVisibility(Display *dpy, XEvent *ev, XPointer arg)
 {
     (void)dpy; // unused
     Window *win = (Window *)arg;
-    return (ev->xvisibility.window == *win);
+    return (ev->type == VisibilityNotify && ev->xvisibility.window == *win);
 }
 
 static char *imPrintf(const char *str, struct tm *tm, const char *filenameIM,
