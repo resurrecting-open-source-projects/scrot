@@ -473,10 +473,11 @@ end:
 // It assumes that the local variable 'scrot.c:Imlib_Image image' is in context
 static void applyFilterIfRequired(void)
 {
-    warnx("--script is deprecated. See: "
-        "https://github.com/resurrecting-open-source-projects/scrot/pull/231");
-    if (opt.script)
+    if (opt.script) {
+        warnx("--script is deprecated. See: "
+            "https://github.com/resurrecting-open-source-projects/scrot/pull/231");
         imlib_apply_filter(opt.script);
+    }
 }
 
 static void scrotCheckIfOverwriteFile(char **filename)
