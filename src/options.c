@@ -517,7 +517,7 @@ static void showUsage(void)
     fputs(/* Check that everything lines up after any changes. */
         "usage:  " PACKAGE " [-bcfhimopuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY]\n"
         "              [-d SEC] [-e CMD] [-k OPT] [-l STYLE] [-M NUM] [-n OPTS]\n"
-        "              [-q NUM] [-S CMD] [-s OPTS] [-t % | WxH] [[-F] FILE]\n",
+        "              [-q NUM] [-s OPTS] [-t % | WxH] [[-F] FILE]\n",
         stdout);
     exit(0);
 }
