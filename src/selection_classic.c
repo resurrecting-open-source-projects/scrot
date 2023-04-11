@@ -33,6 +33,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <assert.h>
 #include <stdlib.h>
+#include <err.h>
 
 #include <X11/Xlib.h>
 
@@ -75,8 +76,8 @@ void selectionClassicCreate(void)
     pc->gc = XCreateGC(disp, root,
         GCFunction | GCForeground | GCBackground | GCSubwindowMode,
         &pc->gcValues);
-
-    assert(pc->gc != NULL);
+    if (pc->gc == NULL)
+        errx(EXIT_FAILURE, "failed to create GC");
 
     XSetLineAttributes(disp, pc->gc, opt.lineWidth, opt.lineStyle, CapRound,
         JoinRound);
