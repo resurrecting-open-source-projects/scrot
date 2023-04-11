@@ -100,8 +100,7 @@ int main(int argc, char *argv[])
     char *filenameIM = NULL;
     char *filenameThumb = NULL;
     char *haveExtension = NULL;
-
-    time_t t;
+    struct timespec timeStamp;
     struct tm *tm;
 
     atexit(uninitXAndImlib);
@@ -131,15 +130,22 @@ int main(int argc, char *argv[])
         else
             image = scrotGrabShot();
     }
-
     if (!image)
         errx(EXIT_FAILURE, "no image grabbed");
 
+    /* Get the time right after the screenshot.
+     * Don't put any new code between this clock_gettime() call and the
+     * screenshot-taking above or it will skew the timing.
+     */
+    clock_gettime(CLOCK_REALTIME, &timeStamp);
+    if (timeStamp.tv_nsec >= 500*1000*1000) {
+        /* Round the timestamp to the nearest second. */
+        timeStamp.tv_sec++;
+    }
+    tm = localtime(&timeStamp.tv_sec);
+
     if (opt.note)
         scrotNoteDraw(image);
-
-    time(&t); /* Get the time directly after the screenshot */
-    tm = localtime(&t);
 
     imlib_context_set_image(image);
     if (opt.format) {
