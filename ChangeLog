@@ -1,3 +1,40 @@
+Draft
+
+ [ Daniel T. Borelli ] alias @daltomi
+
+ * Fixes: Add delay to all capture options
+ * Fixes: Indicate that the value is not an integer
+ * New option: --window
+
+ [ Guilherme Janczak ] alias @guijan
+
+ * Deprecate -S
+ * Fixes: compilation on CentOS 7
+ * Fixes: multiple bugs in output file handling
+ * Fixes: multiple bugs in scrot's -C option
+ * Fixes: restore "keep ratio" functionality in --thumb
+
+ [ NRK ] alias @N-R-K
+
+ * Fixes: Introduce scrotSleep() which deals with EINTR
+ * New option: add --format flag
+ * Improvement: allow `b` prefix in --delay argument
+ * Fixes: displaying incorrect error message (bad err() usage).
+ * Fixes: memory leak on multiple -F options
+ * Fixes: filenameThumb memory leak
+ * Fixes: hostname potentially getting truncated
+ * Fixes: imPrintf: avoid going out of bound
+ * Improvement: imPrintf: use dynamic buffer instead of strlcat
+ * Improvement: manpage: use conventional brackets to indicate optional argument
+ * Fixes: remove unnecessary allocation and truncation in display name
+ * Fixes: replace unchecked calloc calls with ecalloc
+ * Fixes: scrot.c: include stdint.h (fixes compile failure on certain systems)
+ * Improvement: scrotDoDelay: output countdown to stderr
+ * Fixes: Edge case of dot in last char when detecting file extension
+ * Fixes: handle DestroyNotify event
+ * Fixes: faulty assert, handle XCreateGC() error properly
+ * Fixes: check type of XEvent union before reading it
+
 Fri Jan 20 23:46:15 -03:00 2023  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 Version 1.8.1
 
