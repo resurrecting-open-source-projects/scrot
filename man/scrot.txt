@@ -75,7 +75,7 @@ OPTIONS
   -w, --window              Window identifier to capture.
                             Must be a valid identifier (see xwininfo(1)).
   -z, --silent              Prevent beeping.
-      --format FMT          Specify the output file format. E.g "--format png".
+  --format FMT              Specify the output file format. E.g "--format png".
                             If no format is specified, scrot will use the file
                             extension to determine the format. If filename
                             does not have an extension either, then PNG will
