@@ -84,7 +84,7 @@
 10. Is there a default image format in the redirection to the standard
     output?
 
-    Yes. The default format is PNG and there is no option to change it.
+    Yes. The default format is PNG. Use --format flag to change it.
 
 
 11. What is the default line mode for the --select option?
