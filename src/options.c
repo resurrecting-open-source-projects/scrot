@@ -78,7 +78,7 @@ struct ScrotOptions opt = {
     .lineStyle = LineSolid,
     .lineWidth = 1,
     .lineOpacity = SELECTION_OPACITY_DEFAULT,
-    .lineMode = LINE_MODE_S_CLASSIC,
+    .lineMode = LINE_MODE_CLASSIC,
     .stackDirection = HORIZONTAL,
     .monitor = -1,
     .windowId = None,
@@ -291,15 +291,14 @@ static void optionsParseLine(char *optarg)
                     token[Mode]);
             }
 
-            bool isValidMode = !strcmp(value, LINE_MODE_S_CLASSIC) ||
-                !strcmp(value, LINE_MODE_S_EDGE);
-
-            if (!isValidMode) {
+            if (!strcmp(value, "classic"))
+                opt.lineMode = LINE_MODE_CLASSIC;
+            else if (!strcmp(value, "edge"))
+                opt.lineMode = LINE_MODE_EDGE;
+            else {
                 errx(EXIT_FAILURE, "Unknown value for suboption '%s': %s",
                     token[Mode], value);
             }
-
-            opt.lineMode = estrdup(value);
             break;
         case Opacity:
             opt.lineOpacity = optionsParseNum(value,
