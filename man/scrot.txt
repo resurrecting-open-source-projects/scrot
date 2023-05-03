@@ -34,7 +34,7 @@ OPTIONS
                             will be applied before selection.
   -e, --exec CMD            Execute CMD on the saved image.
   -F, --file FILE           Specify the output file. If FILE is "-", scrot will
-                            output a PNG image to stdout. The filename is
+                            output the image to stdout. The filename is
                             expanded according to the format specified in
                             SPECIAL STRINGS. The output file may be specified
                             through the -F option, or as a non-option argument.
