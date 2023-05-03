@@ -63,6 +63,7 @@ struct ScrotOptions {
     int ignoreKeyboard;
     int freeze;
     int overwrite;
+    enum LineMode lineMode;
     int lineStyle;
     int lineWidth;
     int lineOpacity;
@@ -70,7 +71,6 @@ struct ScrotOptions {
     enum Direction stackDirection;
     const char *format;
     char *lineColor;
-    char *lineMode;
     const char *outputFile;
     char *thumbFile;
     char *exec;

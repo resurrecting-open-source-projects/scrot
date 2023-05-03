@@ -142,12 +142,12 @@ void scrotSelectionCreate(void)
 
     createCursors();
 
-    if (!strncmp(opt.lineMode, LINE_MODE_S_CLASSIC, LINE_MODE_L_CLASSIC)) {
+    if (opt.lineMode == LINE_MODE_CLASSIC) {
         sel->create = selectionClassicCreate;
         sel->draw = selectionClassicDraw;
         sel->motionDraw = selectionClassicMotionDraw;
         sel->destroy = selectionClassicDestroy;
-    } else if (!strncmp(opt.lineMode, LINE_MODE_S_EDGE, LINE_MODE_L_EDGE)) {
+    } else if (opt.lineMode == LINE_MODE_EDGE) {
         sel->create = selectionEdgeCreate;
         sel->draw = selectionEdgeDraw;
         sel->motionDraw = selectionEdgeMotionDraw;
