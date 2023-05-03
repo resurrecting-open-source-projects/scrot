@@ -73,7 +73,7 @@ OPTIONS
   -u, --focused             Use the currently focused window.
   -v, --version             Output version information and exit.
   -w, --window WID          Window identifier to capture.
-                            Must be a valid identifier (see xwininfo(1)).
+                            WID must be a valid identifier (see xwininfo(1)).
   -z, --silent              Prevent beeping.
   --format FMT              Specify the output file format. E.g "--format png".
                             If no format is specified, scrot will use the file
