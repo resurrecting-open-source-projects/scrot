@@ -263,9 +263,9 @@ static void optionsParseLine(char *optarg)
                     token[Style]);
             }
 
-            if (!strncmp(value, "dash", 4))
+            if (!strcmp(value, "dash"))
                 opt.lineStyle = LineOnOffDash;
-            else if (!strncmp(value, "solid", 5))
+            else if (!strcmp(value, "solid"))
                 opt.lineStyle = LineSolid;
             else {
                 errx(EXIT_FAILURE, "Unknown value for suboption '%s': %s",
@@ -295,9 +295,8 @@ static void optionsParseLine(char *optarg)
                     token[Mode]);
             }
 
-            bool isValidMode = !strncmp(value, LINE_MODE_S_CLASSIC, LINE_MODE_L_CLASSIC);
-
-            isValidMode = isValidMode || !strncmp(value, LINE_MODE_S_EDGE, LINE_MODE_L_EDGE);
+            bool isValidMode = !strcmp(value, LINE_MODE_S_CLASSIC) ||
+                !strcmp(value, LINE_MODE_S_EDGE);
 
             if (!isValidMode) {
                 errx(EXIT_FAILURE, "Unknown value for suboption '%s': %s",
