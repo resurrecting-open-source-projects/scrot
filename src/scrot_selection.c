@@ -469,7 +469,7 @@ Imlib_Image scrotSelectionSelectMode(void)
 
     imlib_context_set_image(capture);
 
-    switch(opt.selection.mode) {
+    switch (opt.selection.mode) {
     case SELECTION_MODE_HOLE:
         if (opacity > 0) {
             Imlib_Image hole = imlib_clone_image();
@@ -515,7 +515,7 @@ Imlib_Image scrotSelectionSelectMode(void)
         break;
     }
     default:
-        assert(0);
+        assert(0 && "unreachable");
     }
 
     return capture;

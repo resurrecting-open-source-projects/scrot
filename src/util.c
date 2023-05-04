@@ -33,8 +33,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 char *estrdup(const char *str)
 {
-    char *p;
-    if ((p = strdup(str)) == NULL)
+    char *p = strdup(str);
+    if (!p)
         err(EXIT_FAILURE, "strdup");
     return p;
 }

@@ -191,22 +191,18 @@ static void optionsParseSelection(const char *optarg)
     if (!strncmp(value, SELECTION_MODE_S_CAPTURE, SELECTION_MODE_L_CAPTURE)) {
         opt.selection.mode = SELECTION_MODE_CAPTURE;
         return; /* it has no parameter */
-    }
-    else if (!strncmp(value, SELECTION_MODE_S_HIDE, SELECTION_MODE_L_HIDE)) {
+    } else if (!strncmp(value, SELECTION_MODE_S_HIDE, SELECTION_MODE_L_HIDE)) {
         opt.selection.mode = SELECTION_MODE_HIDE;
         value += SELECTION_MODE_L_HIDE;
-    }
-    else if (!strncmp(value, SELECTION_MODE_S_HOLE, SELECTION_MODE_L_HOLE)) {
+    } else if (!strncmp(value, SELECTION_MODE_S_HOLE, SELECTION_MODE_L_HOLE)) {
         opt.selection.mode = SELECTION_MODE_HOLE;
-    }
-    else if (!strncmp(value, SELECTION_MODE_S_BLUR, SELECTION_MODE_L_BLUR)) {
+    } else if (!strncmp(value, SELECTION_MODE_S_BLUR, SELECTION_MODE_L_BLUR)) {
         opt.selection.mode = SELECTION_MODE_BLUR;
         opt.selection.paramNum = SELECTION_MODE_BLUR_DEFAULT;
         value += SELECTION_MODE_L_BLUR;
-    }
-    else {
+    } else {
         errx(EXIT_FAILURE, "option --select: Unknown value for suboption '%s'",
-             value);
+            value);
     }
 
     if (opt.selection.mode & SELECTION_MODE_NOT_NEED_PARAM)

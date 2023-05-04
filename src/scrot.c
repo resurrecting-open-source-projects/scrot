@@ -85,8 +85,7 @@ static char *imPrintf(const char *, struct tm *, const char *, const char *,
     Imlib_Image);
 static char *scrotGetWindowName(Window);
 static Window scrotGetClientWindow(Display *, Window);
-static Window scrotFindWindowByProperty(Display *, const Window,
-                                              const Atom);
+static Window scrotFindWindowByProperty(Display *, const Window, const Atom);
 static Imlib_Image stalkImageConcat(ScrotList *, const enum Direction);
 static int findWindowManagerFrame(Window *const, int *const);
 static Imlib_Image scrotGrabWindowById(Window const window);
@@ -806,8 +805,7 @@ static Imlib_Image scrotGrabStackWindows(void)
     XImage *ximage = NULL;
     XWindowAttributes attr;
     unsigned long i = 0;
-
-#define EWMH_CLIENT_LIST "_NET_CLIENT_LIST" // spec EWMH
+    char EWMH_CLIENT_LIST[] = "_NET_CLIENT_LIST"; // spec EWMH
 
     Atom atomProp = XInternAtom(disp, EWMH_CLIENT_LIST, False);
     Atom atomType = AnyPropertyType;
