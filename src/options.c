@@ -407,7 +407,7 @@ void optionsParse(int argc, char *argv[])
             }
             break;
         case 'e':
-            opt.exec = estrdup(optarg);
+            opt.exec = optarg;
             break;
         case 'F':
             FFlagSet = true;
@@ -456,7 +456,7 @@ void optionsParse(int argc, char *argv[])
             }
             break;
         case 'S':
-            opt.script = estrdup(optarg);
+            opt.script = optarg;
             break;
         case 's':
             optionsParseSelection(optarg);
