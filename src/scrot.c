@@ -676,11 +676,9 @@ static char *imPrintf(const char *str, struct tm *tm, const char *filenameIM,
                 streamChar(&ret, '$');
                 break;
             case 'W':
-                if (clientWindow) {
-                    if (!(tmp = scrotGetWindowName(clientWindow)))
-                        break;
+                if (clientWindow && (tmp = scrotGetWindowName(clientWindow))) {
                     streamStr(&ret, tmp);
-                    free(tmp);
+                    XFree(tmp);
                 }
                 break;
             default:
@@ -706,6 +704,7 @@ static char *imPrintf(const char *str, struct tm *tm, const char *filenameIM,
     return ret.buf;
 }
 
+/* return value should be freed by XFree() */
 static char *scrotGetWindowName(Window window)
 {
     assert(disp != NULL);
@@ -725,9 +724,8 @@ static char *scrotGetWindowName(Window window)
             &clsHint);
 
     if (status != 0) {
-        windowName = estrdup(clsHint.res_class);
+        windowName = clsHint.res_class;
         XFree(clsHint.res_name);
-        XFree(clsHint.res_class);
     }
     return windowName;
 }
