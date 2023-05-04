@@ -225,7 +225,7 @@ void scrotSelectionGetLineColor(XColor *color)
 
     if (!ret) {
         scrotSelectionDestroy();
-        errx(EXIT_FAILURE, "Error allocate color:%s", strerror(BadColor));
+        errx(EXIT_FAILURE, "Error allocating color: %s", opt.lineColor);
     }
 }
 
