@@ -219,20 +219,12 @@ Status scrotSelectionCreateNamedColor(const char *nameColor, XColor *color)
 
 void scrotSelectionGetLineColor(XColor *color)
 {
-    scrotSelectionSetDefaultColorLine();
-
     const Status ret = scrotSelectionCreateNamedColor(opt.lineColor, color);
 
     if (!ret) {
         scrotSelectionDestroy();
         errx(EXIT_FAILURE, "Error allocating color: %s", opt.lineColor);
     }
-}
-
-void scrotSelectionSetDefaultColorLine(void)
-{
-    if (!opt.lineColor)
-        opt.lineColor = "gray";
 }
 
 bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)

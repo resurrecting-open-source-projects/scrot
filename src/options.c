@@ -83,6 +83,7 @@ struct ScrotOptions opt = {
     .monitor = -1,
     .windowId = None,
     .outputFile = "%Y-%m-%d-%H%M%S_$wx$h_scrot.png",
+    .lineColor = "gray",
 };
 
 static void showUsage(void);
@@ -283,7 +284,7 @@ static void optionsParseLine(char *optarg)
                     token[Color]);
             }
 
-            opt.lineColor = estrdup(value);
+            opt.lineColor = value;
             break;
         case Mode:
             if (!optionsParseIsString(value)) {

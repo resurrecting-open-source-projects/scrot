@@ -70,7 +70,7 @@ struct ScrotOptions {
     int stack;
     enum Direction stackDirection;
     const char *format;
-    char *lineColor;
+    const char *lineColor;
     const char *outputFile;
     char *thumbFile;
     const char *exec;
