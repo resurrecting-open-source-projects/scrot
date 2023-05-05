@@ -222,10 +222,8 @@ static void optionsParseSelection(const char *optarg)
         if (errmsg)
             errx(EXIT_FAILURE, "option --select: '%s' is %s", value, errmsg);
     } else { // SELECTION_MODE_HIDE
-
         checkMaxInputFileName(value);
-
-        opt.selection.paramStr = estrdup(value);
+        opt.selection.paramStr = value;
     }
 }
 

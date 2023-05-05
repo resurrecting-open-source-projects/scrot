@@ -474,7 +474,7 @@ Imlib_Image scrotSelectionSelectMode(void)
         break;
     case SELECTION_MODE_HIDE:
     {
-        char *const fileName = opt.selection.paramStr;
+        const char *const fileName = opt.selection.paramStr;
 
         if (fileName) {
             if (opacity > 0) {
@@ -487,7 +487,6 @@ Imlib_Image scrotSelectionSelectMode(void)
                 imlib_context_set_image(hide);
                 imlib_free_image_and_decache();
             }
-            free(fileName);
         } else {
             imlib_context_set_color(color.red, color.green, color.blue, opacity);
             imlib_image_fill_rectangle(x, y, rect1.w, rect1.h);
