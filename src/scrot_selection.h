@@ -77,8 +77,8 @@ struct SelectionRect {
 
 typedef struct SelectionMode {
     unsigned int mode;
-    int paramNum;
-    const char *paramStr;
+    int blur;
+    const char *fileName;
 } SelectionMode;
 
 struct SelectionClassic;

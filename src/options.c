@@ -199,7 +199,7 @@ static void optionsParseSelection(const char *optarg)
         opt.selection.mode = SELECTION_MODE_HOLE;
     } else if (!strncmp(value, SELECTION_MODE_S_BLUR, SELECTION_MODE_L_BLUR)) {
         opt.selection.mode = SELECTION_MODE_BLUR;
-        opt.selection.paramNum = SELECTION_MODE_BLUR_DEFAULT;
+        opt.selection.blur = SELECTION_MODE_BLUR_DEFAULT;
         value += SELECTION_MODE_L_BLUR;
     } else {
         errx(EXIT_FAILURE, "option --select: Unknown value for suboption '%s'",
@@ -217,13 +217,13 @@ static void optionsParseSelection(const char *optarg)
 
     if (opt.selection.mode == SELECTION_MODE_BLUR) {
         const char *errmsg;
-        opt.selection.paramNum = optionsParseNum(value,
+        opt.selection.blur = optionsParseNum(value,
             SELECTION_MODE_BLUR_MIN, SELECTION_MODE_BLUR_MAX, &errmsg);
         if (errmsg)
             errx(EXIT_FAILURE, "option --select: '%s' is %s", value, errmsg);
     } else { // SELECTION_MODE_HIDE
         checkMaxInputFileName(value);
-        opt.selection.paramStr = value;
+        opt.selection.fileName = value;
     }
 }
 

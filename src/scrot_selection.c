@@ -474,7 +474,7 @@ Imlib_Image scrotSelectionSelectMode(void)
         break;
     case SELECTION_MODE_HIDE:
     {
-        const char *const fileName = opt.selection.paramStr;
+        const char *const fileName = opt.selection.fileName;
 
         if (fileName) {
             if (opacity > 0) {
@@ -495,7 +495,7 @@ Imlib_Image scrotSelectionSelectMode(void)
     }
     case SELECTION_MODE_BLUR:
     {
-        const int amountBlur = opt.selection.paramNum;
+        const int amountBlur = opt.selection.blur;
         Imlib_Image blur = imlib_clone_image();
         imlib_context_set_image(blur);
         imlib_image_blur(amountBlur);
