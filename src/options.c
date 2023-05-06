@@ -59,20 +59,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "scrot_selection.h"
 #include "util.h"
 
-#define STR_LEN_MAX_FILENAME(msg, fileName) do {                \
-    if (strlen((fileName)) > MAX_FILENAME) {                    \
-        errx(EXIT_FAILURE, #msg " filename too long, must be "  \
-            "less than %d characters", MAX_FILENAME);           \
-    }                                                           \
-} while(0)
-
-#define checkMaxInputFileName(fileName) \
-    STR_LEN_MAX_FILENAME(input, (fileName))
-
-enum {
-    MAX_FILENAME = 256, // characters
-};
-
 struct ScrotOptions opt = {
     .quality = 75,
     .lineStyle = LineSolid,
@@ -222,7 +208,6 @@ static void optionsParseSelection(const char *optarg)
         if (errmsg)
             errx(EXIT_FAILURE, "option --select: '%s' is %s", value, errmsg);
     } else { // SELECTION_MODE_HIDE
-        checkMaxInputFileName(value);
         opt.selection.fileName = value;
     }
 }
