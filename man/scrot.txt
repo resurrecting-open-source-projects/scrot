@@ -53,11 +53,12 @@ OPTIONS
   -o, --overwrite           By default scrot does not overwrite the output
                             FILE, use this option to enable it.
   -p, --pointer             Capture the mouse pointer.
-  -q, --quality NUM         NUM must be between 1 and 100. For lossless output
-                            formats, a higher value represents better but slower
-                            compression. For lossy output formats, a higher
-                            value represents higher quality and larger
-                            file size. Default: 75.
+  -q, --quality NUM         NUM must be between 1 and 100. A higher value
+                            represents better quality image at the cost of
+                            higher file size. A lower value will provide smaller
+                            file size at the cost of image quality. For lossless
+                            formats (such as PNG) only file size is affected.
+                            Default: 75.
   -s, --select[=OPTS]       Interactively select a window or rectangle with the
                             mouse, use the arrow keys to resize. See the -l and
                             -f options. OPTS it's optional; see SELECTION MODE
