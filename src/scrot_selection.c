@@ -219,20 +219,12 @@ Status scrotSelectionCreateNamedColor(const char *nameColor, XColor *color)
 
 void scrotSelectionGetLineColor(XColor *color)
 {
-    scrotSelectionSetDefaultColorLine();
-
     const Status ret = scrotSelectionCreateNamedColor(opt.lineColor, color);
 
     if (!ret) {
         scrotSelectionDestroy();
         errx(EXIT_FAILURE, "Error allocating color: %s", opt.lineColor);
     }
-}
-
-void scrotSelectionSetDefaultColorLine(void)
-{
-    if (!opt.lineColor)
-        opt.lineColor = "gray";
 }
 
 bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
@@ -482,7 +474,7 @@ Imlib_Image scrotSelectionSelectMode(void)
         break;
     case SELECTION_MODE_HIDE:
     {
-        char *const fileName = opt.selection.paramStr;
+        const char *const fileName = opt.selection.fileName;
 
         if (fileName) {
             if (opacity > 0) {
@@ -495,7 +487,6 @@ Imlib_Image scrotSelectionSelectMode(void)
                 imlib_context_set_image(hide);
                 imlib_free_image_and_decache();
             }
-            free(fileName);
         } else {
             imlib_context_set_color(color.red, color.green, color.blue, opacity);
             imlib_image_fill_rectangle(x, y, rect1.w, rect1.h);
@@ -504,7 +495,7 @@ Imlib_Image scrotSelectionSelectMode(void)
     }
     case SELECTION_MODE_BLUR:
     {
-        const int amountBlur = opt.selection.paramNum;
+        const int amountBlur = opt.selection.blur;
         Imlib_Image blur = imlib_clone_image();
         imlib_context_set_image(blur);
         imlib_image_blur(amountBlur);

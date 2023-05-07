@@ -59,20 +59,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "scrot_selection.h"
 #include "util.h"
 
-#define STR_LEN_MAX_FILENAME(msg, fileName) do {                \
-    if (strlen((fileName)) > MAX_FILENAME) {                    \
-        errx(EXIT_FAILURE, #msg " filename too long, must be "  \
-            "less than %d characters", MAX_FILENAME);           \
-    }                                                           \
-} while(0)
-
-#define checkMaxInputFileName(fileName) \
-    STR_LEN_MAX_FILENAME(input, (fileName))
-
-enum {
-    MAX_FILENAME = 256, // characters
-};
-
 struct ScrotOptions opt = {
     .quality = 75,
     .lineStyle = LineSolid,
@@ -83,6 +69,7 @@ struct ScrotOptions opt = {
     .monitor = -1,
     .windowId = None,
     .outputFile = "%Y-%m-%d-%H%M%S_$wx$h_scrot.png",
+    .lineColor = "gray",
 };
 
 static void showUsage(void);
@@ -198,7 +185,7 @@ static void optionsParseSelection(const char *optarg)
         opt.selection.mode = SELECTION_MODE_HOLE;
     } else if (!strncmp(value, SELECTION_MODE_S_BLUR, SELECTION_MODE_L_BLUR)) {
         opt.selection.mode = SELECTION_MODE_BLUR;
-        opt.selection.paramNum = SELECTION_MODE_BLUR_DEFAULT;
+        opt.selection.blur = SELECTION_MODE_BLUR_DEFAULT;
         value += SELECTION_MODE_L_BLUR;
     } else {
         errx(EXIT_FAILURE, "option --select: Unknown value for suboption '%s'",
@@ -216,15 +203,12 @@ static void optionsParseSelection(const char *optarg)
 
     if (opt.selection.mode == SELECTION_MODE_BLUR) {
         const char *errmsg;
-        opt.selection.paramNum = optionsParseNum(value,
+        opt.selection.blur = optionsParseNum(value,
             SELECTION_MODE_BLUR_MIN, SELECTION_MODE_BLUR_MAX, &errmsg);
         if (errmsg)
             errx(EXIT_FAILURE, "option --select: '%s' is %s", value, errmsg);
     } else { // SELECTION_MODE_HIDE
-
-        checkMaxInputFileName(value);
-
-        opt.selection.paramStr = estrdup(value);
+        opt.selection.fileName = value;
     }
 }
 
@@ -283,7 +267,7 @@ static void optionsParseLine(char *optarg)
                     token[Color]);
             }
 
-            opt.lineColor = estrdup(value);
+            opt.lineColor = value;
             break;
         case Mode:
             if (!optionsParseIsString(value)) {
@@ -407,7 +391,7 @@ void optionsParse(int argc, char *argv[])
             }
             break;
         case 'e':
-            opt.exec = estrdup(optarg);
+            opt.exec = optarg;
             break;
         case 'F':
             FFlagSet = true;
@@ -456,7 +440,7 @@ void optionsParse(int argc, char *argv[])
             }
             break;
         case 'S':
-            opt.script = estrdup(optarg);
+            opt.script = optarg;
             break;
         case 's':
             optionsParseSelection(optarg);

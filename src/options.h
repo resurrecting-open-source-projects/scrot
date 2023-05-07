@@ -70,15 +70,15 @@ struct ScrotOptions {
     int stack;
     enum Direction stackDirection;
     const char *format;
-    char *lineColor;
+    const char *lineColor;
     const char *outputFile;
     char *thumbFile;
-    char *exec;
+    const char *exec;
     const char *display;
     char *note;
     Window windowId;
     const char *windowClassName;
-    char *script;
+    const char *script;
     int autoselect;
     int autoselectX;
     int autoselectY;
