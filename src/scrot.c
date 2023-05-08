@@ -570,21 +570,14 @@ static Imlib_Image scrotGrabShot(void)
 static void scrotExecApp(Imlib_Image image, struct tm *tm, char *filenameIM,
     char *filenameThumb)
 {
-    char *execStr;
-    int ret;
-
-    execStr = imPrintf(opt.exec, tm, filenameIM, filenameThumb, image);
-
-    errno = 0;
-
-    ret = system(execStr);
+    char *execStr = imPrintf(opt.exec, tm, filenameIM, filenameThumb, image);
+    int ret = system(execStr);
 
     if (ret == -1)
         warn("The child process could not be created");
     else if (WEXITSTATUS(ret) == 127)
         warnx("scrot could not execute the command: %s", execStr);
-
-    exit(0);
+    free(execStr);
 }
 
 static Bool scrotXEventVisibility(Display *dpy, XEvent *ev, XPointer arg)
