@@ -575,7 +575,7 @@ static void scrotExecApp(Imlib_Image image, struct tm *tm, char *filenameIM,
 
     if (ret == -1)
         warn("The child process could not be created");
-    else if (WEXITSTATUS(ret) == 127)
+    else if (WIFEXITED(ret) && WEXITSTATUS(ret) == 127)
         warnx("scrot could not execute the command: %s", execStr);
     free(execStr);
 }
