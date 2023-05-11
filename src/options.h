@@ -50,6 +50,7 @@ enum Direction {
 struct ScrotOptions {
     int delay;
     int quality;
+    int compression;
     enum thumb { THUMB_DISABLED, THUMB_PERCENT, THUMB_RES } thumb;
     int thumbPercent;
     int thumbW;

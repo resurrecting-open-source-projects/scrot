@@ -54,11 +54,10 @@ OPTIONS
                             FILE, use this option to enable it.
   -p, --pointer             Capture the mouse pointer.
   -q, --quality NUM         NUM must be between 1 and 100. A higher value
-                            represents better quality image at the cost of
-                            higher file size. A lower value will provide smaller
-                            file size at the cost of image quality. For lossless
-                            formats (such as PNG) only file size is affected.
-                            Default: 75.
+                            represents better quality image and a lower value
+                            represents worse quality image. Effect of this flag
+                            depends on the file format, see COMPRESSION QUALITY
+                            section. Default: 75.
   -s, --select[=OPTS]       Interactively select a window or rectangle with the
                             mouse, use the arrow keys to resize. See the -l and
                             -f options. OPTS it's optional; see SELECTION MODE
@@ -75,6 +74,11 @@ OPTIONS
   -v, --version             Output version information and exit.
   -w, --window WID          Window identifier to capture.
                             WID must be a valid identifier (see xwininfo(1)).
+  -Z, --compression LVL     Compression level to use, LVL must be between 0 and
+                            9. Higher level compression provides lower file
+                            size at the cost of slower encoding/saving speed.
+                            Effect of this flag depends on the file format, see
+                            COMPRESSION QUALITY section. Default: 7.
   -z, --silent              Prevent beeping.
   --format FMT              Specify the output file format. E.g "--format png".
                             If no format is specified, scrot will use the file
@@ -187,6 +191,13 @@ NOTE FORMAT
 
     $ scrot -n "-f '/usr/share/fonts/TTF/DroidSans-Bold/40' -x 10
             -y 20 -c 255,0,0,255 -t 'Hi'"
+
+COMPRESSION QUALITY
+
+For lossless formats (e.g PNG), the quality options is ignored. For lossy
+formats where the quality and compression are tied together (e.g JPEG),
+compression will be ignored. And for image formats where quality and
+compression can be independently set (e.g WebP, JXL), both flags are respected.
 
 SEE ALSO
   optipng(1)
