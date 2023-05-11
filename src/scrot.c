@@ -155,6 +155,7 @@ int main(int argc, char *argv[])
             imlib_image_set_format("png");
     }
     imlib_image_attach_data_value("quality", NULL, opt.quality, NULL);
+    imlib_image_attach_data_value("compression", NULL, opt.compression, NULL);
 
     filenameIM = imPrintf(opt.outputFile, tm, NULL, NULL, image);
     scrotCheckIfOverwriteFile(&filenameIM);

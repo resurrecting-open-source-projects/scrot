@@ -61,6 +61,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 struct ScrotOptions opt = {
     .quality = 75,
+    .compression = 7,
     .lineStyle = LineSolid,
     .lineWidth = 1,
     .lineOpacity = SELECTION_OPACITY_DEFAULT,
@@ -324,7 +325,7 @@ void optionsParse(int argc, char *argv[])
         /* ensure these don't collude with single byte opts. */
         OPT_FORMAT = UCHAR_MAX + 1,
     };
-    static char stropts[] = "a:bC:cD:d:e:F:fhik::l:M:mn:opq:S:s::t:uvw:z";
+    static char stropts[] = "a:bC:cD:d:e:F:fhik::l:M:mn:opq:S:s::t:uvw:Z:z";
     static struct option lopts[] = {
         {"autoselect",      required_argument,  NULL,   'a'},
         {"border",          no_argument,        NULL,   'b'},
@@ -353,6 +354,7 @@ void optionsParse(int argc, char *argv[])
         {"focussed",        no_argument,        NULL,   'u'},
         {"version",         no_argument,        NULL,   'v'},
         {"window",          required_argument,  NULL,   'w'},
+        {"compression",     required_argument,  NULL,   'Z'},
         {"silent",          no_argument,        NULL,   'z'},
         {"format",          required_argument,  NULL, OPT_FORMAT},
         {0}
@@ -457,6 +459,13 @@ void optionsParse(int argc, char *argv[])
             opt.windowId = optionsParseNumBase(optarg, None/*0L*/, LONG_MAX, &errmsg, 0);
             if (errmsg) {
                 errx(EXIT_FAILURE, "option --window: '%s' is %s", optarg,
+                    errmsg);
+            }
+            break;
+        case 'Z':
+            opt.compression = optionsParseNum(optarg, 0, 9, &errmsg);
+            if (errmsg) {
+                errx(EXIT_FAILURE, "option --compression: '%s' is %s", optarg,
                     errmsg);
             }
             break;
