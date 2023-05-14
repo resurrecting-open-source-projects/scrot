@@ -367,6 +367,7 @@ void optionsParse(int argc, char *argv[])
     int optch;
     const char *errmsg;
     bool FFlagSet = false;
+    const char *note = NULL;
 
     /* Now to pass some optionarinos */
     while ((optch = getopt_long(argc, argv, stropts, lopts, NULL)) != -1) {
@@ -430,7 +431,9 @@ void optionsParse(int argc, char *argv[])
             opt.multidisp = true;
             break;
         case 'n':
-            optionsParseNote(optarg);
+            if (optarg[0] == '\0')
+                errx(EXIT_FAILURE, "Required arguments for --note.");
+            note = optarg;
             break;
         case 'o':
             opt.overwrite = true;
@@ -501,6 +504,11 @@ void optionsParse(int argc, char *argv[])
     }
     if (opt.thumb != THUMB_DISABLED)
         opt.thumbFile = optionsNameThumbnail(opt.outputFile);
+
+    if (note) {
+        opt.note = estrdup(note); /* TODO: investigate if dup is needed */
+        scrotNoteNew(opt.note);
+    }
 }
 
 static void showUsage(void)
@@ -597,20 +605,4 @@ static void optionsParseThumbnail(char *optarg)
                 errmsg);
         }
     }
-}
-
-void optionsParseNote(char *optarg)
-{
-    if (opt.note)
-        free(opt.note);
-
-    opt.note = estrdup(optarg);
-
-    if (!opt.note)
-        return;
-
-    if (opt.note[0] == '\0')
-        errx(EXIT_FAILURE, "Required arguments for --note.");
-
-    scrotNoteNew(opt.note);
 }

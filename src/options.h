@@ -97,6 +97,5 @@ extern struct ScrotOptions opt;
 
 void optionsParse(int, char **);
 void optionsParseAutoselect(char *);
-void optionsParseNote(char *);
 long long optionsParseNum(const char *, long long, long long,
     const char *[static 1]);
