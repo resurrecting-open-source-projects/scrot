@@ -356,7 +356,7 @@ bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
         // Not record pointer if there is a selection area because it is busy on that,
         // unless the delay option is used.
         if (opt.delay == 0)
-            opt.pointer = 0;
+            opt.pointer = false;
     } else {
         /* else it's a window click */
         if (!scrotGetGeometry(target, &rx, &ry, &rw, &rh))

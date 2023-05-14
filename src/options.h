@@ -49,25 +49,15 @@ enum Direction {
 
 struct ScrotOptions {
     int delay;
-    int countdown;
-    int focused;
     int quality;
-    int border;
-    int silent;
-    int multidisp;
     enum thumb { THUMB_DISABLED, THUMB_PERCENT, THUMB_RES } thumb;
     int thumbPercent;
     int thumbW;
     int thumbH;
-    int pointer;
-    int ignoreKeyboard;
-    int freeze;
-    int overwrite;
     enum LineMode lineMode;
     int lineStyle;
     int lineWidth;
     int lineOpacity;
-    int stack;
     enum Direction stackDirection;
     const char *format;
     const char *lineColor;
@@ -79,7 +69,6 @@ struct ScrotOptions {
     Window windowId;
     const char *windowClassName;
     const char *script;
-    int autoselect;
     int autoselectX;
     int autoselectY;
     int autoselectH;
@@ -87,6 +76,17 @@ struct ScrotOptions {
     SelectionMode selection;
     int monitor;
     bool delay_selection;
+    bool countdown;
+    bool border;
+    bool silent;
+    bool focused;
+    bool pointer;
+    bool overwrite;
+    bool multidisp;
+    bool freeze;
+    bool ignoreKeyboard;
+    bool stack;
+    bool autoselect;
 };
 
 extern struct ScrotOptions opt;

@@ -368,13 +368,13 @@ void optionsParse(int argc, char *argv[])
             optionsParseAutoselect(optarg);
             break;
         case 'b':
-            opt.border = 1;
+            opt.border = true;
             break;
         case 'C':
             opt.windowClassName = optarg;
             break;
         case 'c':
-            opt.countdown = 1;
+            opt.countdown = true;
             break;
         case 'D':
             opt.display = optarg;
@@ -398,16 +398,16 @@ void optionsParse(int argc, char *argv[])
             opt.outputFile = optarg;
             break;
         case 'f':
-            opt.freeze = 1;
+            opt.freeze = true;
             break;
         case 'h':
             showUsage();
             break;
         case 'i':
-            opt.ignoreKeyboard = 1;
+            opt.ignoreKeyboard = true;
             break;
         case 'k':
-            opt.stack = 1;
+            opt.stack = true;
             optionsParseStack(optarg);
             break;
         case 'l':
@@ -421,16 +421,16 @@ void optionsParse(int argc, char *argv[])
             }
             break;
         case 'm':
-            opt.multidisp = 1;
+            opt.multidisp = true;
             break;
         case 'n':
             optionsParseNote(optarg);
             break;
         case 'o':
-            opt.overwrite = 1;
+            opt.overwrite = true;
             break;
         case 'p':
-            opt.pointer = 1;
+            opt.pointer = true;
             break;
         case 'q':
             opt.quality = optionsParseNum(optarg, 1, 100, &errmsg);
@@ -449,7 +449,7 @@ void optionsParse(int argc, char *argv[])
             optionsParseThumbnail(optarg);
             break;
         case 'u':
-            opt.focused = 1;
+            opt.focused = true;
             break;
         case 'v':
             showVersion();
@@ -462,7 +462,7 @@ void optionsParse(int argc, char *argv[])
             }
             break;
         case 'z':
-            opt.silent = 1;
+            opt.silent = true;
             break;
         case OPT_FORMAT:
             opt.format = optarg;
@@ -482,7 +482,7 @@ void optionsParse(int argc, char *argv[])
         warnx("ignoring extraneous non-option argument: %s", *argv);
 
     if (strcmp(opt.outputFile, "-") == 0) {
-        opt.overwrite = 1;
+        opt.overwrite = true;
         opt.thumb = THUMB_DISABLED;
         opt.outputFile = getPathOfStdout();
     }
@@ -546,7 +546,7 @@ void optionsParseAutoselect(char *optarg)
         }
         i++;
 
-        opt.autoselect = 1;
+        opt.autoselect = true;
     }
     if (i < 4)
         errx(EXIT_FAILURE, "option --autoselect: too few dimensions");

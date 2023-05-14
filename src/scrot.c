@@ -392,7 +392,7 @@ int scrotGetGeometry(Window target, int *rx, int *ry, int *rw, int *rh)
     XTranslateCoordinates(disp, target, root, 0, 0, rx, ry, &child);
 
     /* Special case when the TWM emulates the border directly on the window. */
-    if (opt.border == 1 && frames < 2 && attr.border_width > 0) {
+    if (opt.border && frames < 2 && attr.border_width > 0) {
         *rw += attr.border_width * 2;
         *rh += attr.border_width * 2;
         *rx -= attr.border_width;
