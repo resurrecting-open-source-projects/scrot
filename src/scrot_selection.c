@@ -231,7 +231,8 @@ bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
 {
     XEvent ev;
     enum { WAIT, DONE, ABORT } done = WAIT;
-    int rx = 0, ry = 0, rw = 0, rh = 0, isButtonPressed = 0;
+    int rx = 0, ry = 0, rw = 0, rh = 0;
+    bool isButtonPressed = false;
     Window target = None;
     Status ret;
 
@@ -259,7 +260,7 @@ bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
                 scrotSelectionMotionDraw(rx, ry, ev.xbutton.x, ev.xbutton.y);
             break;
         case ButtonPress:
-            isButtonPressed = 1;
+            isButtonPressed = true;
             rx = ev.xbutton.x;
             ry = ev.xbutton.y;
             target = scrotGetWindow(disp, ev.xbutton.subwindow, ev.xbutton.x, ev.xbutton.y);
