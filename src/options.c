@@ -380,10 +380,9 @@ void optionsParse(int argc, char *argv[])
             opt.display = optarg;
             break;
         case 'd':
-            if (*optarg == 'b') {
-                opt.delay_selection = true;
+            opt.delay_selection = *optarg == 'b';
+            if (opt.delay_selection)
                 ++optarg;
-            }
             opt.delay = optionsParseNum(optarg, 0, INT_MAX, &errmsg);
             if (errmsg) {
                 errx(EXIT_FAILURE, "option --delay: '%s' is %s", optarg,
