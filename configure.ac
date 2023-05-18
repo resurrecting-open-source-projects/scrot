@@ -65,9 +65,5 @@ AC_SUBST([LIBS], ["$X11_LIBS $XCOMPOSITE_LIBS $XEXT_LIBS $XFIXES_LIBS \
 AC_SUBST([CPPFLAGS], ["$X11_CFLAGS $XCOMPOSITE_CFLAGS $XEXT_CFLAGS \
     $XFIXES_CFLAGS $XINERAMA_CFLAGS $IMLIB2_CFLAGS $LIBBSD_CFLAGS $CPPFLAGS"])
 
-# Required: Checks for library functions.
-AC_CHECK_FUNCS([getopt_long],,
-    AC_MSG_ERROR([required functions are not present.]))
-
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_OUTPUT
