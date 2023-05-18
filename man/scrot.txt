@@ -53,7 +53,7 @@ OPTIONS
   -o, --overwrite           By default scrot does not overwrite the output
                             FILE, use this option to enable it.
   -p, --pointer             Capture the mouse pointer.
-  -q, --quality NUM         NUM must be between 1 and 100. A higher value
+  -q, --quality NUM         NUM must be within [1, 100]. A higher value
                             represents better quality image and a lower value
                             represents worse quality image. Effect of this flag
                             depends on the file format, see COMPRESSION QUALITY
@@ -74,8 +74,8 @@ OPTIONS
   -v, --version             Output version information and exit.
   -w, --window WID          Window identifier to capture.
                             WID must be a valid identifier (see xwininfo(1)).
-  -Z, --compression LVL     Compression level to use, LVL must be between 0 and
-                            9. Higher level compression provides lower file
+  -Z, --compression LVL     Compression level to use, LVL must be within
+                            [0, 9]. Higher level compression provides lower file
                             size at the cost of slower encoding/saving speed.
                             Effect of this flag depends on the file format, see
                             COMPRESSION QUALITY section. Default: 7.
@@ -128,7 +128,7 @@ SELECTION MODE
 
     blur,AMOUNT         Blurs the selection area.
                         Optionally you can specify the amount of blur.
-                        Amount,range: 1..30,  default: 18
+                        Amount must be within [1, 30]. Default: 18.
 
   In modes 'hole' and 'hide' the color of the area is indicated by 'color' property of the
   line style and the opacity of the color (or image) is indicated by property 'opacity', SELECTION STYLE
@@ -150,7 +150,7 @@ SELECTION STYLE
 
     style=STYLE     STYLE is either "solid" or "dash" without quotes.
 
-    width=NUM       NUM is a pixel count between 1 and 8 inclusive.
+    width=NUM       NUM is a pixel count within [1, 8].
 
     color="COLOR"   Color is a hexadecimal HTML color code or the name of
                     a color. HTML color codes are composed of a pound
@@ -159,10 +159,9 @@ SELECTION STYLE
                     blue respectively. Examples: #FF0000 (red), #E0FFFF
                     (light cyan), #000000 (black).
 
-    opacity=NUM     NUM is between 0 and 255 inclusive. 255 means
-                    100% opaque, 0 means 100% transparent. For the
-                    opacity of the line this is only effective if a
-                    Composite Manager is running.
+    opacity=NUM     NUM is within [0, 255]. 255 means 100% opaque, 0 means
+                    100% transparent. For the opacity of the line this is only
+                    effective if a Composite Manager is running.
 
     mode=MODE       MODE is either "edge" or "classic" without quotes.
                     edge is the new selection, classic uses the old one.
@@ -184,7 +183,7 @@ NOTE FORMAT
     -t  'text'
     -x  position (optional)
     -y  position (optional)
-    -c  color(RGBA, range 0..255) (optional)
+    -c  color(RGBA, within [0, 255]) (optional)
     -a  angle (optional)
 
   Example:
