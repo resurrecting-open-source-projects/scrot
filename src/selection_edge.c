@@ -76,7 +76,7 @@ void selectionEdgeCreate(void)
         HeightOfScreen(scr), 0, CopyFromParent, InputOutput, CopyFromParent,
         CWOverrideRedirect | CWBackPixel, &attr);
 
-    unsigned long opacity = opt.lineOpacity * ((unsigned)-1 / 100);
+    unsigned long opacity = opt.lineOpacity * (0xFFFFFFFFu / 255);
 
     XChangeProperty(disp, pe->wndDraw,
         XInternAtom(disp, "_NET_WM_WINDOW_OPACITY", False), XA_CARDINAL, 32,
