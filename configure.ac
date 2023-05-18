@@ -23,7 +23,7 @@ AM_MAINTAINER_MODE
 m4_pattern_forbid([^AX_],[=> GNU autoconf-archive not present. <=])
 AS_IF([test "x$orig_CFLAGS" = "x"], [
     CFLAGS=""
-    SCROT_FLAGS="-O2 -flto -g -Wall -Wextra -Wpedantic"
+    SCROT_FLAGS="-O3 -flto -Wall -Wextra -Wpedantic"
     AX_APPEND_COMPILE_FLAGS(["$SCROT_FLAGS"])
     AX_APPEND_LINK_FLAGS(["$SCROT_FLAGS"])
 ])
