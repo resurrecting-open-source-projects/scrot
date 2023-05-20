@@ -1,7 +1,7 @@
 /* scrot_selection_classic.c
 
 Copyright 2020-2021 Daniel T. Borelli <danieltborelli@gmail.com>
-Copyright 2021-2022 Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2021-2023 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 Copyright 2023      NRK <nrk@disroot.org>
 
@@ -31,7 +31,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     Part of the code comes from the scrot.c file and maintains its authorship.
 */
 
-#include <assert.h>
 #include <stdlib.h>
 #include <err.h>
 

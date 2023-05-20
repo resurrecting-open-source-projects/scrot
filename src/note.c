@@ -237,7 +237,6 @@ void scrotNoteDraw(Imlib_Image im)
     if (!im)
         return;
 
-    assert(note);
     assert(note->imFont);
 
     imlib_context_set_image(im);
@@ -256,8 +255,6 @@ void scrotNoteDraw(Imlib_Image im)
 
 static void loadFont(void)
 {
-    assert(note);
-
     note->imFont = imlib_load_font(note->font);
 
     if (!note->imFont)
@@ -266,9 +263,6 @@ static void loadFont(void)
 
 static char *parseText(char **token, char const *const end)
 {
-    assert(NULL != *token);
-    assert(NULL != end);
-
     if (**token != '\'')
         return NULL;
 
