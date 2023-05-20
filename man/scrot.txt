@@ -2,8 +2,8 @@ NAME
   scrot - command line screen capture utility
 
 SYNOPSIS
-  scrot [-bcfhimopuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY] [-d SEC] [-e CMD]
-        [-k OPT] [-l STYLE] [-M NUM] [-n OPTS] [-q NUM] [-s OPTS] [-t % | WxH]
+  scrot [-bcfhimopuvz] [-a X,Y,W,H] [-C NAME] [-d SEC] [-e CMD] [-k OPT]
+        [-l STYLE] [-M NUM] [-n OPTS] [-q NUM] [-s OPTS] [-t % | WxH]
         [-w NUM] [[-F] FILE]
 
 DESCRIPTION
@@ -28,7 +28,6 @@ OPTIONS
                             Use with -s to raise the focus of the window.
   -C, --class NAME          NAME is a window class name. Associative with -k.
   -c, --count               Display a countdown when used with -d.
-  -D, --display DISPLAY     DISPLAY is the display to use; see X(7).
   -d, --delay [b]SEC        Wait SEC seconds before taking a shot.
                             When given the `b` prefix, e.g `-d b8`, the delay
                             will be applied before selection.

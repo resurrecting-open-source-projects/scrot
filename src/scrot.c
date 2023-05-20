@@ -110,6 +110,10 @@ int main(int argc, char *argv[])
 
     optionsParse(argc, argv);
 
+    if (opt.display) {
+        warnx("--display is deprecated.");
+        warnx("Specify an X server through the DISPLAY environment variable");
+    }
     initXAndImlib(opt.display, 0);
 
     if (opt.selection.mode & SELECTION_MODE_ANY)
