@@ -329,7 +329,7 @@ static void scrotWaitUntil(const struct timespec *time)
             tmp.tv_sec--;
             tmp.tv_nsec += 1000000000L;
         }
-    } while (nanosleep(&tmp, &tmp) == -1 && errno == EINTR);
+    } while (nanosleep(&tmp, NULL) == -1 && errno == EINTR);
 }
 
 /* Clip rectangle nicely */
