@@ -350,8 +350,6 @@ void optionsParse(int argc, char *argv[])
         {"select",          optional_argument,  NULL,   's'},
         {"thumb",           required_argument,  NULL,   't'},
         {"focused",         no_argument,        NULL,   'u'},
-        /* macquarie dictionary has both spellings */
-        {"focussed",        no_argument,        NULL,   'u'},
         {"version",         no_argument,        NULL,   'v'},
         {"window",          required_argument,  NULL,   'w'},
         {"compression",     required_argument,  NULL,   'Z'},
