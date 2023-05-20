@@ -719,7 +719,6 @@ static char *imPrintf(const char *str, struct tm *tm, const char *filenameIM,
 static char *scrotGetWindowName(Window window)
 {
     assert(disp != NULL);
-    assert(window != None);
 
     if (window == root)
         return NULL;

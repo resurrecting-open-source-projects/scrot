@@ -77,8 +77,6 @@ static void createCursors(void)
 {
     struct Selection *const sel = *selectionGet();
 
-    assert(sel != NULL);
-
     if (opt.selection.mode == SELECTION_MODE_CAPTURE)
         sel->curCross = XCreateFontCursor(disp, XC_cross);
     else if (opt.selection.mode == SELECTION_MODE_HIDE)
@@ -96,8 +94,6 @@ static void createCursors(void)
 static void freeCursors(void)
 {
     struct Selection *const sel = *selectionGet();
-
-    assert(sel != NULL);
 
     XFreeCursor(disp, sel->curCross);
     XFreeCursor(disp, sel->curAngleNE);
@@ -137,8 +133,6 @@ void scrotSelectionCreate(void)
     selectionAllocate();
 
     struct Selection *const sel = *selectionGet();
-
-    assert(sel != NULL);
 
     createCursors();
 
