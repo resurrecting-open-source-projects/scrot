@@ -38,6 +38,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #pragma once
 
+#include <time.h>
+
 #include "scrot_selection.h"
 
 // General purpose enum
@@ -49,6 +51,7 @@ enum Direction {
 
 struct ScrotOptions {
     int delay;
+    struct timespec delayStart;
     int quality;
     int compression;
     enum thumb { THUMB_DISABLED, THUMB_PERCENT, THUMB_RES } thumb;
@@ -76,7 +79,7 @@ struct ScrotOptions {
     int autoselectW;
     SelectionMode selection;
     int monitor;
-    bool delay_selection;
+    bool delaySelection;
     bool countdown;
     bool border;
     bool silent;
