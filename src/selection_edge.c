@@ -50,9 +50,6 @@ struct SelectionEdge {
     XClassHint *classHint;
 };
 
-static void waitUnmapWindowNotify(void);
-static Bool xeventUnmap(Display *, XEvent *, XPointer);
-
 void selectionEdgeCreate(void)
 {
     struct Selection *const sel = *selectionGet();
@@ -130,38 +127,17 @@ void selectionEdgeDestroy(void)
     const struct Selection *const sel = *selectionGet();
     struct SelectionEdge *pe = sel->edge;
 
-    if (pe->wndDraw != 0) {
-        waitUnmapWindowNotify();
-        XFree(pe->classHint);
+    if (pe->wndDraw != None) {
+        XSelectInput(disp, pe->wndDraw, StructureNotifyMask);
         XDestroyWindow(disp, pe->wndDraw);
+        for (XEvent ev; true;) {
+            XNextEvent(disp, &ev);
+            if (ev.type == DestroyNotify && ev.xdestroywindow.window == pe->wndDraw)
+                break;
+        }
+
+        XFree(pe->classHint);
     }
 
     free(pe);
-}
-
-static void waitUnmapWindowNotify(void)
-{
-    const struct Selection *const sel = *selectionGet();
-    const struct SelectionEdge *const pe = sel->edge;
-    XEvent ev;
-
-    XSelectInput(disp, pe->wndDraw, StructureNotifyMask);
-
-    XUnmapWindow(disp, pe->wndDraw);
-
-    struct timespec delay = {0, 80000000L}; // 80ms
-
-    for (short i = 0; i < 30; ++i) {
-        if (XCheckIfEvent(disp, &ev, &xeventUnmap, (XPointer) & (pe->wndDraw)))
-            break;
-        nanosleep(&delay, NULL);
-    }
-}
-
-
-static Bool xeventUnmap(Display *dpy, XEvent *ev, XPointer arg)
-{
-    (void)dpy; // unused
-    Window *win = (Window *)arg;
-    return (ev->xunmap.window == *win);
 }
