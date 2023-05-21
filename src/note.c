@@ -27,7 +27,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#include <assert.h>
 #include <err.h>
 #include <limits.h>
 #include <stdio.h>
@@ -237,7 +236,7 @@ void scrotNoteDraw(Imlib_Image im)
     if (!im)
         return;
 
-    assert(note->imFont);
+    scrotAssert(note->imFont);
 
     imlib_context_set_image(im);
     imlib_context_set_font(note->imFont);

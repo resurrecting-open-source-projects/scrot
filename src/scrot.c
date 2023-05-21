@@ -45,7 +45,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <sys/stat.h>
 #include <sys/wait.h>
 
-#include <assert.h>
 #include <err.h>
 #include <errno.h>
 #include <stdio.h>
@@ -541,7 +540,7 @@ static void scrotCheckIfOverwriteFile(char **filename)
             memcpy(ptr, fmt, sizeof(fmt));
     } while ((counter < maxCounter) && !access(newName, F_OK));
 
-    assert(newName[nalloc - 1] == '\0');
+    scrotAssert(newName[nalloc - 1] == '\0');
 
     free(*filename);
     *filename = newName;
@@ -554,7 +553,7 @@ static void scrotCheckIfOverwriteFile(char **filename)
 
 static int scrotMatchWindowClassName(Window target)
 {
-    assert(disp != NULL);
+    scrotAssert(disp != NULL);
     if (!opt.windowClassName)
         return 1; /* Match any if the user hasn't requested a specific class. */
 
@@ -634,7 +633,7 @@ static char *imPrintf(const char *str, struct tm *tm, const char *filenameIM,
                 char *target = ret.buf + ret.off;
                 gethostname(target, hostNameMax);
                 ret.off += strlen(target);
-                assert(ret.buf[ret.off] == '\0');
+                scrotAssert(ret.buf[ret.off] == '\0');
                 break;
             case 'f':
                 if (filenameIM)
@@ -718,8 +717,8 @@ static char *imPrintf(const char *str, struct tm *tm, const char *filenameIM,
 /* return value should be freed by XFree() */
 static char *scrotGetWindowName(Window window)
 {
-    assert(disp != NULL);
-    assert(window != None);
+    scrotAssert(disp != NULL);
+    scrotAssert(window != None);
 
     if (window == root)
         return NULL;

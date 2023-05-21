@@ -33,7 +33,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     Part of the code comes from the scrot.c file and maintains its authorship.
 */
 
-#include <assert.h>
 #include <err.h>
 #include <errno.h>
 #include <stdint.h>
@@ -148,7 +147,7 @@ void scrotSelectionCreate(void)
         sel->destroy = selectionEdgeDestroy;
     } else {
         // It never happened, fix the options.c file
-        assert(0);
+        scrotAssert(0);
     }
 
     sel->create();
@@ -204,8 +203,8 @@ struct SelectionRect *scrotSelectionGetRect(void)
 
 Status scrotSelectionCreateNamedColor(const char *nameColor, XColor *color)
 {
-    assert(nameColor != NULL);
-    assert(color != NULL);
+    scrotAssert(nameColor != NULL);
+    scrotAssert(color != NULL);
 
     return XAllocNamedColor(disp, XDefaultColormap(disp, DefaultScreen(disp)),
         nameColor, color, &(XColor){0});
@@ -502,7 +501,7 @@ Imlib_Image scrotSelectionSelectMode(void)
         break;
     }
     default:
-        assert(0 && "unreachable");
+        scrotAssert(0 && "unreachable");
     }
 
     return capture;

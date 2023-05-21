@@ -24,7 +24,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#include <assert.h>
 #include <err.h>
 #include <stdlib.h>
 #include <string.h>
@@ -57,13 +56,13 @@ void *erealloc(void *ptr, size_t size)
 
 void streamReserve(Stream *buf, size_t size)
 {
-    assert(buf->off <= buf->cap);
+    scrotAssert(buf->off <= buf->cap);
     size_t avail = buf->cap - buf->off;
     if (avail < size) {
         buf->cap += MAX(size, 128); /* be a bit greedy when allocating */
         buf->buf = erealloc(buf->buf, buf->cap);
     }
-    assert((buf->off + size) <= buf->cap);
+    scrotAssert((buf->off + size) <= buf->cap);
 }
 
 void streamChar(Stream *buf, char ch)
