@@ -41,7 +41,7 @@ AC_ARG_ENABLE([libbsd-feature-test],
         ["Do not configure the program, return true if libbsd is needed"]))
 AC_CHECK_FUNCS([err errx warn warnx],,
     [LIBBSD_NEEDED=yes])
-AC_CHECK_HEADERS([sys/queue.h],, [LIBBSD_NEEDED=yes])
+AC_CHECK_HEADERS([sys/queue.h],, [LIBBSD_NEEDED=yes], [ ])
 # libbsd is obligatory on systems that don't have the BSD functions we use.
 # Pass "--enable-libbsd-feature-test" to ./configure, and the configure script
 # will tell you whether the library is a dependency. This option is intended to
