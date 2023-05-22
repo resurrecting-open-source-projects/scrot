@@ -28,6 +28,8 @@ AS_IF([test "x$orig_CFLAGS" = "x"], [
     AX_APPEND_LINK_FLAGS(["$SCROT_FLAGS"])
 ])
 
+AX_APPEND_COMPILE_FLAGS("-D_XOPEN_SOURCE=700L")
+
 # Checks for libraries.
 PKG_CHECK_MODULES([X11], [x11])
 PKG_CHECK_MODULES([XCOMPOSITE], [xcomposite])
