@@ -26,6 +26,11 @@ jobs:
       run: |
         make
         src/scrot -v
+    - name: bare build
+      run: |
+        make -s distclean
+        c99 -o src/scrot src/*.c $(pkg-config --cflags --libs ./deps.pc)
+        src/scrot -v
   cygwin:
     runs-on: windows-latest
     env:
