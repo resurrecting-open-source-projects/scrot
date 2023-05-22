@@ -37,7 +37,7 @@ man_MANS = man/scrot.1
 
 dist_doc_DATA = AUTHORS ChangeLog CONTRIBUTING.md doc/scrot.png FAQ README.md TODO.md
 
-EXTRA_DIST = $(man_MANS) autogen.sh
+EXTRA_DIST = $(man_MANS) autogen.sh deps.pc
 
 SUBDIRS = src
 
