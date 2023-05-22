@@ -5,7 +5,6 @@ AC_INIT([scrot], [1.9],
         [https://github.com/resurrecting-open-source-projects/scrot])
 AC_CONFIG_SRCDIR([src/scrot.c])
 AM_INIT_AUTOMAKE
-AC_CONFIG_HEADERS([src/config.h])
 
 # Checks for programs.
 orig_CFLAGS="${CFLAGS}" # Save CFLAGS before AC_PROG_CC sets them.
@@ -41,8 +40,7 @@ PKG_CHECK_MODULES([IMLIB2], [imlib2])
 AC_ARG_ENABLE([libbsd-feature-test],
     AS_HELP_STRING([--enable-libbsd-feature-test],
         ["Do not configure the program, return true if libbsd is needed"]))
-AC_CHECK_FUNCS([err errx warn warnx],,
-    [LIBBSD_NEEDED=yes])
+AC_CHECK_FUNCS([err errx warn warnx],, [LIBBSD_NEEDED=yes])
 AC_CHECK_HEADERS([sys/queue.h],, [LIBBSD_NEEDED=yes], [ ])
 # libbsd is obligatory on systems that don't have the BSD functions we use.
 # Pass "--enable-libbsd-feature-test" to ./configure, and the configure script

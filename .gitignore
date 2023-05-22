@@ -14,7 +14,6 @@ missing
 src/*.o
 src/.deps
 src/Makefile
-src/config.h
 src/scrot
 src/scrot_config.h
 src/stamp-h1

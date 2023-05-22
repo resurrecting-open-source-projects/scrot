@@ -51,12 +51,18 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <string.h>
 #include <unistd.h>
 
-#include "config.h"
 #include "note.h"
 #include "options.h"
 #include "scrot.h"
 #include "scrot_selection.h"
 #include "util.h"
+
+#ifndef PACKAGE
+    #define PACKAGE "scrot"
+#endif
+#ifndef VERSION
+    #define VERSION "unknown"
+#endif
 
 struct ScrotOptions opt = {
     .quality = 75,
