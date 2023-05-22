@@ -15,5 +15,4 @@ src/*.o
 src/.deps
 src/Makefile
 src/scrot
-src/scrot_config.h
 src/stamp-h1

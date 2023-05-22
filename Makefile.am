@@ -54,5 +54,4 @@ distclean-local:
 	Makefile.in \
 	missing \
 	src/config.h.in \
-	src/Makefile.in \
-	src/scrot_config.h
+	src/Makefile.in
