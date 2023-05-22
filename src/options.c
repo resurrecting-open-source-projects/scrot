@@ -57,11 +57,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "scrot_selection.h"
 #include "util.h"
 
-#ifndef PACKAGE
-    #define PACKAGE "scrot"
+#ifndef PACKAGE_NAME
+    #define PACKAGE_NAME "scrot"
 #endif
-#ifndef VERSION
-    #define VERSION "unknown"
+#ifndef PACKAGE_VERSION
+    #define PACKAGE_VERSION "unknown"
 #endif
 
 struct ScrotOptions opt = {
@@ -506,7 +506,7 @@ void optionsParse(int argc, char *argv[])
 static void showUsage(void)
 {
     fputs(/* Check that everything lines up after any changes. */
-        "usage:  " PACKAGE " [-bcfhimopuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY]\n"
+        "usage:  " PACKAGE_NAME " [-bcfhimopuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY]\n"
         "              [-d SEC] [-e CMD] [-k OPT] [-l STYLE] [-M NUM] [-n OPTS]\n"
         "              [-q NUM] [-s OPTS] [-t % | WxH] [[-F] FILE]\n",
         stdout);
@@ -515,7 +515,7 @@ static void showUsage(void)
 
 static void showVersion(void)
 {
-    printf(PACKAGE " version " VERSION "\n");
+    puts(PACKAGE_NAME " version " PACKAGE_VERSION);
     exit(0);
 }
 
