@@ -31,6 +31,14 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <X11/Xlib.h>
 #include <Imlib2.h>
 
+extern Display *disp;
+extern Visual *vis;
+extern Colormap cm;
+extern int depth;
+extern Window root;
+extern Window clientWindow;
+extern Screen *scr;
+
 Window scrotGetWindow(Display *, Window, int, int);
 int scrotGetGeometry(Window, int *, int *, int *, int *);
 void scrotNiceClip(int *, int *, int *, int *);

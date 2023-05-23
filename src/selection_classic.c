@@ -36,7 +36,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <X11/Xlib.h>
 
-#include "imlib.h"
 #include "options.h"
 #include "scrot.h"
 #include "scrot_selection.h"

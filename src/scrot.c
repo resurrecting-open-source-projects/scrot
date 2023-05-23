@@ -13,6 +13,7 @@ Copyright 2020      Cungsten Tarbide <ctarbide@tuta.io>
 Copyright 2020      Hinigatsu <hinigatsu@protonmail.com>
 Copyright 2020      nothub
 Copyright 2020      Sean Brennan <zettix1@gmail.com>
+Copyright 2020      ideal <idealities@gmail.com>
 Copyright 2021      c0dev0id <sh+github@codevoid.de>
 Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
 Copyright 2021-2023 Guilherme Janczak <guilherme.janczak@yandex.com>
@@ -61,13 +62,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <X11/extensions/Xfixes.h>
 #include <X11/extensions/Xinerama.h>
 
-#include "imlib.h"
 #include "note.h"
 #include "options.h"
 #include "scrot.h"
 #include "slist.h"
 #include "util.h"
 
+static void initXAndImlib(const char *, int);
 static void uninitXAndImlib(void);
 static size_t scrotHaveFileExtension(const char *, char **);
 static Imlib_Image scrotGrabFocused(void);
@@ -90,6 +91,16 @@ static Imlib_Image stalkImageConcat(ScrotList *, const enum Direction);
 static int findWindowManagerFrame(Window *const, int *const);
 static Imlib_Image scrotGrabWindowById(Window const window);
 
+/* X11 stuff */
+Display *disp;
+Visual *vis;
+Colormap cm;
+int depth;
+
+/* Thumbnail sizes */
+Window root;
+Window clientWindow;
+Screen *scr;
 
 int main(int argc, char *argv[])
 {
@@ -225,6 +236,40 @@ int main(int argc, char *argv[])
     free(filenameThumb);
 
     return 0;
+}
+
+static void initXAndImlib(const char *dispStr, int screenNumber)
+{
+    disp = XOpenDisplay(dispStr);
+    if (!disp) {
+
+        const char *const format = "Can't open X display. It *is* running, "
+            "yeah? [%s]";
+
+        const char *env = NULL;
+
+        const char *const value = dispStr ? dispStr :
+            (env = getenv("DISPLAY")) ? env : "NULL";
+
+        errx(EXIT_FAILURE, format, value);
+    }
+
+    if (screenNumber)
+        scr = ScreenOfDisplay(disp, screenNumber);
+    else
+        scr = ScreenOfDisplay(disp, DefaultScreen(disp));
+
+    vis = DefaultVisual(disp, XScreenNumberOfScreen(scr));
+    depth = DefaultDepth(disp, XScreenNumberOfScreen(scr));
+    cm = DefaultColormap(disp, XScreenNumberOfScreen(scr));
+    root = RootWindow(disp, XScreenNumberOfScreen(scr));
+
+    imlib_context_set_drawable(root);
+    imlib_context_set_display(disp);
+    imlib_context_set_visual(vis);
+    imlib_context_set_colormap(cm);
+    imlib_context_set_color_modifier(NULL);
+    imlib_context_set_operation(IMLIB_OP_COPY);
 }
 
 /* atexit register func. */
