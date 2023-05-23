@@ -39,8 +39,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <X11/Xutil.h>
 #include <X11/extensions/shape.h>
 
-#include "imlib.h"
 #include "options.h"
+#include "scrot.h"
 #include "scrot_selection.h"
 #include "selection_edge.h"
 #include "util.h"
