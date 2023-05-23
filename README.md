@@ -18,7 +18,7 @@ scrot has many useful features:
 Because scrot is a command line utility, it can easily be scripted and put to
 novel uses. For instance, scrot can be used to monitor an X server in absence.
 
-scrot is free software under the [MIT-advertising](COPYING) license.
+scrot is free software under the [MIT-feh](COPYING) license.
 
 ## Help this project ##
 
