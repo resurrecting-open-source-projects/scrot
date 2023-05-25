@@ -481,7 +481,6 @@ void scrotGrabMousePointer(Imlib_Image image, const int xOffset,
     const int yOffset)
 {
     XFixesCursorImage *xcim = NULL;
-    uint32_t *pixels = NULL;
     /* Get the X cursor and the information we want. */
     if ((xcim = XFixesGetCursorImage(disp)) == NULL) {
         warnx("Can't get the cursor from X");
@@ -491,16 +490,13 @@ void scrotGrabMousePointer(Imlib_Image image, const int xOffset,
     const unsigned short height = xcim->height;
     const size_t pixcnt = (size_t)width*height;
 
-    /* xcim->pixels wouldn't be valid if sizeof(*pixels)*pixcnt wrapped around.
-     */
-    if ((pixels = malloc(sizeof(*pixels)*pixcnt)) == NULL) {
-        warn("malloc()");
-        goto end;
-    }
+    uint32_t *pixels = (uint32_t *)xcim->pixels;
     /* XFixesCursorImage returns pixels as `unsigned long`, which is typically
      * 64bits, but imlib2 expects 32bit packed integers. */
-    for (size_t i = 0; i < pixcnt; i++)
-        pixels[i] = xcim->pixels[i];
+    if (sizeof *xcim->pixels > sizeof *pixels) {
+        for (size_t i = 0; i < pixcnt; ++i)
+            pixels[i] = xcim->pixels[i];
+    }
 
     Imlib_Image imcursor = imlib_create_image_using_data(width, height, pixels);
     if (!imcursor) {
@@ -520,7 +516,6 @@ void scrotGrabMousePointer(Imlib_Image image, const int xOffset,
     imlib_free_image();
 
 end:
-    free(pixels);
     XFree(xcim);
 }
 
