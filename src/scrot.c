@@ -480,12 +480,9 @@ Window scrotGetWindow(Display *display, Window window, int x, int y)
 void scrotGrabMousePointer(Imlib_Image image, const int xOffset,
     const int yOffset)
 {
-    XFixesCursorImage *xcim = NULL;
-    /* Get the X cursor and the information we want. */
-    if ((xcim = XFixesGetCursorImage(disp)) == NULL) {
-        warnx("Can't get the cursor from X");
-        goto end;
-    }
+    XFixesCursorImage *xcim = XFixesGetCursorImage(disp);
+    if (!xcim)
+        errx(EXIT_FAILURE, "Can't get the cursor from X");
     const unsigned short width = xcim->width;
     const unsigned short height = xcim->height;
     const size_t pixcnt = (size_t)width*height;
@@ -499,10 +496,8 @@ void scrotGrabMousePointer(Imlib_Image image, const int xOffset,
     }
 
     Imlib_Image imcursor = imlib_create_image_using_data(width, height, pixels);
-    if (!imcursor) {
-        warnx("Can't create cursor image");
-        goto end;
-    }
+    if (!imcursor)
+        errx(EXIT_FAILURE, "Can't create cursor image");
 
     /* Overlay the cursor into `image`. */
     const int x = (xcim->x - xcim->xhot) - xOffset;
@@ -514,8 +509,6 @@ void scrotGrabMousePointer(Imlib_Image image, const int xOffset,
         height);
     imlib_context_set_image(imcursor);
     imlib_free_image();
-
-end:
     XFree(xcim);
 }
 
