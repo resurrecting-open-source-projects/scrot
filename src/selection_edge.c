@@ -31,6 +31,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     Part of the code comes from the scrot.c file and maintains its authorship.
 */
 
+#include <errno.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -135,6 +136,12 @@ void selectionEdgeDestroy(void)
             if (ev.type == DestroyNotify && ev.xdestroywindow.window == pe->wndDraw)
                 break;
         }
+        /* HACK: although we recived a DestroyNotify event, the frame still
+         * might not have been updated. a compositor might also buffer frames
+         * adding latency. so wait a bit for the screen to update and the
+         * selection borders to go away. */
+        struct timespec t = { .tv_nsec = 80 * 1000L * 1000L };
+        while (nanosleep(&t, &t) < 0 && errno == EINTR);
 
         XFree(pe->classHint);
     }
