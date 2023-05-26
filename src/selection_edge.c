@@ -131,10 +131,13 @@ void selectionEdgeDestroy(void)
     if (pe->wndDraw != None) {
         XSelectInput(disp, pe->wndDraw, StructureNotifyMask);
         XDestroyWindow(disp, pe->wndDraw);
-        for (XEvent ev; true;) {
+        bool is_unmapped = false, is_destroyed = false;
+        for (XEvent ev; !(is_unmapped && is_destroyed);) {
             XNextEvent(disp, &ev);
             if (ev.type == DestroyNotify && ev.xdestroywindow.window == pe->wndDraw)
-                break;
+                is_destroyed = true;
+            if (ev.type == UnmapNotify && ev.xunmap.window == pe->wndDraw)
+                is_unmapped = true;
         }
         /* HACK: although we recived a DestroyNotify event, the frame still
          * might not have been updated. a compositor might also buffer frames
