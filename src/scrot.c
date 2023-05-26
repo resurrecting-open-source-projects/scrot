@@ -73,7 +73,6 @@ static void uninitXAndImlib(void);
 static size_t scrotHaveFileExtension(const char *, char **);
 static Imlib_Image scrotGrabFocused(void);
 static void applyFilterIfRequired(void);
-static Bool scrotXEventVisibility(Display *, XEvent *, XPointer);
 static Imlib_Image scrotGrabAutoselect(void);
 static void scrotWaitUntil(const struct timespec *);
 static Imlib_Image scrotGrabShotMulti(void);
@@ -420,24 +419,18 @@ int scrotGetGeometry(Window target, int *rx, int *ry, int *rw, int *rh)
     /* Get windowmanager frame of window */
     if (target != root) {
         if (findWindowManagerFrame(&target, &frames)) {
-
             /* Get client window. */
             if (!opt.border)
                 target = scrotGetClientWindow(disp, target);
+
             XRaiseWindow(disp, target);
+            XSync(disp, False);
 
-            /* Give the WM time to update the hidden area of the window.
-             * Some windows never send the event, a time limit is placed.
-             */
-            XSelectInput(disp, target, FocusChangeMask);
-
-            struct timespec delay = {0, 10000000L}; // 10ms
-
-            for (short i = 0; i < 30; ++i) {
-                if (XCheckIfEvent(disp, &(XEvent){0}, &scrotXEventVisibility, (XPointer)&target))
-                    break;
-                nanosleep(&delay, NULL);
-            }
+            /* HACK: there doesn't seem to be any way to figure out whether the
+             * raise request was accepted or rejected. so just sleep a bit to
+             * give the WM some time to update. */
+            struct timespec t = { .tv_nsec = 160 * 1000L * 1000L };
+            while (nanosleep(&t, &t) < 0 && errno == EINTR);
         }
     }
     stat = XGetWindowAttributes(disp, target, &attr);
@@ -634,13 +627,6 @@ static void scrotExecApp(Imlib_Image image, struct tm *tm, char *filenameIM,
     else if (WIFEXITED(ret) && WEXITSTATUS(ret) == 127)
         warnx("scrot could not execute the command: %s", execStr);
     free(execStr);
-}
-
-static Bool scrotXEventVisibility(Display *dpy, XEvent *ev, XPointer arg)
-{
-    (void)dpy; // unused
-    Window *win = (Window *)arg;
-    return (ev->type == VisibilityNotify && ev->xvisibility.window == *win);
 }
 
 static char *imPrintf(const char *str, struct tm *tm, const char *filenameIM,
