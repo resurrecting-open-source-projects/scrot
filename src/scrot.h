@@ -32,9 +32,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <Imlib2.h>
 
 extern Display *disp;
-extern Visual *vis;
-extern Colormap cm;
-extern int depth;
 extern Window root;
 extern Window clientWindow;
 extern Screen *scr;

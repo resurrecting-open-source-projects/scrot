@@ -93,11 +93,6 @@ static Imlib_Image scrotGrabWindowById(Window const window);
 
 /* X11 stuff */
 Display *disp;
-Visual *vis;
-Colormap cm;
-int depth;
-
-/* Thumbnail sizes */
 Window root;
 Window clientWindow;
 Screen *scr;
@@ -259,9 +254,8 @@ static void initXAndImlib(const char *dispStr, int screenNumber)
     else
         scr = ScreenOfDisplay(disp, DefaultScreen(disp));
 
-    vis = DefaultVisual(disp, XScreenNumberOfScreen(scr));
-    depth = DefaultDepth(disp, XScreenNumberOfScreen(scr));
-    cm = DefaultColormap(disp, XScreenNumberOfScreen(scr));
+    Visual *vis = DefaultVisual(disp, XScreenNumberOfScreen(scr));
+    Colormap cm = DefaultColormap(disp, XScreenNumberOfScreen(scr));
     root = RootWindow(disp, XScreenNumberOfScreen(scr));
 
     imlib_context_set_drawable(root);
