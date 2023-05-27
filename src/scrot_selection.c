@@ -233,9 +233,9 @@ bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
     ret = XGrabKeyboard(disp, root, False, GrabModeAsync, GrabModeAsync, CurrentTime);
     if (ret == AlreadyGrabbed) {
         int attempts = 20;
-        struct timespec delay = { 0, 50 * 1000L * 1000L };
+        struct timespec t = clockNow();
         do {
-            nanosleep(&delay, NULL);
+            t = scrotSleepFor(t, 50);
             ret = XGrabKeyboard(disp, root, False, GrabModeAsync, GrabModeAsync, CurrentTime);
         } while (--attempts > 0 && ret == AlreadyGrabbed);
     }

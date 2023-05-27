@@ -143,8 +143,7 @@ void selectionEdgeDestroy(void)
          * might not have been updated. a compositor might also buffer frames
          * adding latency. so wait a bit for the screen to update and the
          * selection borders to go away. */
-        struct timespec t = { .tv_nsec = 80 * 1000L * 1000L };
-        while (nanosleep(&t, &t) < 0 && errno == EINTR);
+        scrotSleepFor(clockNow(), 80);
 
         XFree(pe->classHint);
     }
