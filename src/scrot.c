@@ -75,7 +75,6 @@ static Imlib_Image scrotGrabFocused(void);
 static void applyFilterIfRequired(void);
 static Imlib_Image scrotGrabAutoselect(void);
 static long miliToNanoSec(int);
-static void scrotWaitUntil(const struct timespec *);
 static Imlib_Image scrotGrabShotMulti(void);
 static Imlib_Image scrotGrabShotMonitor(void);
 static Imlib_Image scrotGrabStackWindows(void);
@@ -336,13 +335,11 @@ void scrotDoDelay(void)
         dprintf(STDERR_FILENO, "Taking shot in ");
         for (int i = opt.delay; i > 0; i--) {
             dprintf(STDERR_FILENO, "%d.. ", i);
-            opt.delayStart.tv_sec++;
-            scrotWaitUntil(&opt.delayStart);
+            opt.delayStart = scrotSleepFor(opt.delayStart, 1000);
         }
         dprintf(STDERR_FILENO, "0.\n");
     } else {
-        opt.delayStart.tv_sec += opt.delay;
-        scrotWaitUntil(&opt.delayStart);
+        scrotSleepFor(opt.delayStart, opt.delay * 1000);
     }
 }
 
@@ -366,13 +363,22 @@ struct timespec clockNow(void)
     return ret;
 }
 
-/* scrotWaitUntil: clock_nanosleep with a simpler interface and no EINTR nagging
+/* OpenBSD and OS X lack clock_nanosleep(), so we call nanosleep() and use a
+ * trivial algorithm to correct for drift. The end timespec is returned for
+ * callers that want it. EINTR is also dealt with.
  */
-static void scrotWaitUntil(const struct timespec *time)
+struct timespec scrotSleepFor(struct timespec start, int ms)
 {
-    /* OpenBSD and OS X lack clock_nanosleep(), so we use a trivial algorithm to
-     * correct for drift and call nanosleep() everywhere.
-     */
+    scrotAssert(ms >= 0);
+    struct timespec end = {
+        .tv_sec  = start.tv_sec  + (ms / 1000),
+        .tv_nsec = start.tv_nsec + miliToNanoSec(ms % 1000),
+    };
+    if (end.tv_nsec >= miliToNanoSec(1000)) {
+        ++end.tv_sec;
+        end.tv_nsec -= miliToNanoSec(1000);
+    }
+
     struct timespec tmp;
     do {
         tmp = clockNow();
@@ -381,13 +387,15 @@ static void scrotWaitUntil(const struct timespec *time)
          * doesn't support OS X save for an unmaintained fork. libobsd supports
          * OS X but doesn't have the macro yet.
          */
-        tmp.tv_sec = time->tv_sec - tmp.tv_sec;
-        tmp.tv_nsec = time->tv_nsec - tmp.tv_nsec;
+        tmp.tv_sec  = end.tv_sec  - tmp.tv_sec;
+        tmp.tv_nsec = end.tv_nsec - tmp.tv_nsec;
         if (tmp.tv_nsec < 0) {
-            tmp.tv_sec--;
+            --tmp.tv_sec;
             tmp.tv_nsec += miliToNanoSec(1000);
         }
-    } while (nanosleep(&tmp, NULL) == -1 && errno == EINTR);
+    } while (nanosleep(&tmp, NULL) < 0 && errno == EINTR);
+
+    return end;
 }
 
 /* Clip rectangle nicely */
@@ -450,8 +458,7 @@ int scrotGetGeometry(Window target, int *rx, int *ry, int *rw, int *rh)
             /* HACK: there doesn't seem to be any way to figure out whether the
              * raise request was accepted or rejected. so just sleep a bit to
              * give the WM some time to update. */
-            struct timespec t = { .tv_nsec = 160 * 1000L * 1000L };
-            while (nanosleep(&t, &t) < 0 && errno == EINTR);
+            scrotSleepFor(clockNow(), 160);
         }
     }
     stat = XGetWindowAttributes(disp, target, &attr);
