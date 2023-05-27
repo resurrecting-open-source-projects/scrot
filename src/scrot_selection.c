@@ -434,7 +434,7 @@ Imlib_Image scrotSelectionSelectMode(void)
             return NULL;
 
     if (!opt.delaySelection) {
-        clock_gettime(CONTINUOUS_CLOCK, &opt.delayStart);
+        opt.delayStart = clockNow();
         scrotDoDelay();
     }
 
