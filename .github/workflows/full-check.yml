@@ -37,6 +37,11 @@ jobs:
         cppcheck --std=c99 -j$(nproc) --quiet --force --error-exitcode=1 \
             --enable=portability,performance src/*.c \
             $(pkg-config --cflags ./deps.pc)
+    - name: clang-tidy
+      run: |
+        clang-tidy --version
+        find src -name '*.c' -print | xargs -P$(nproc) -I{} \
+            clang-tidy --quiet {} -- $(pkg-config --cflags ./deps.pc)
   cygwin:
     runs-on: windows-latest
     env:
