@@ -477,7 +477,7 @@ Window scrotGetWindow(Display *display, Window window, int x, int y)
     return target;
 }
 
-void scrotGrabMousePointer(const Imlib_Image image, const int xOffset,
+void scrotGrabMousePointer(Imlib_Image image, const int xOffset,
     const int yOffset)
 {
     XFixesCursorImage *xcim = NULL;
