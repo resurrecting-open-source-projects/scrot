@@ -92,6 +92,7 @@ static void createCursors(void)
 static void freeCursors(void)
 {
     struct Selection *const sel = *selectionGet();
+    scrotAssert(sel); /* silence clang-tidy */
 
     XFreeCursor(disp, sel->curCross);
     XFreeCursor(disp, sel->curAngleNE);
@@ -449,7 +450,7 @@ Imlib_Image scrotSelectionSelectMode(void)
     XColor color;
     scrotSelectionGetLineColor(&color);
 
-    const int x = rect1.x - rect0.x;
+    const int x = rect1.x - rect0.x; /* NOLINT(*UndefinedBinaryOperatorResult) */
     const int y = rect1.y - rect0.y;
     const int opacity = opt.lineOpacity;
 

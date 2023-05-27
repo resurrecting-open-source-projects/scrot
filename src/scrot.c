@@ -942,6 +942,7 @@ static Imlib_Image scrotGrabShotMonitor(void)
     if (opt.monitor >= numScreens)
         errx(EXIT_FAILURE, "monitor %d not found", opt.monitor);
 
+    scrotAssert(screens); /* silence clang-tidy */
     XineramaScreenInfo *mon = &screens[opt.monitor];
 
     /* Hack: pretend we were invoked in autoselect mode */

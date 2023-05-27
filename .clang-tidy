@@ -1,0 +1,35 @@
+# Cannot inline comments, so here's some rationale for disabling certain checks:
+#
+# -clang-analyzer-security.insecureAPI.*:
+#    garbage check, blindly recommends using non-portable annex K functions.
+#    doesn't catch actual bugs.
+# -misc-no-recursion
+#    blindly flags every single recursion regardless of whether the usage was
+#    safe or not.
+Checks: >
+    performance-*,
+    misc-*,
+    android-cloexec-*,
+    readability-duplicate-include,
+    readability-misleading-indentation,
+    bugprone-assert-side-effect,
+    bugprone-macro-repeated-side-effects,
+    bugprone-infinite-loop,
+    bugprone-macro-parentheses,
+    bugprone-posix-return,
+    bugprone-reserved-identifier,
+    bugprone-signal-handler,
+    bugprone-signed-char-misuse,
+    bugprone-sizeof-expression,
+    bugprone-branch-clone,
+    -clang-analyzer-security.insecureAPI.*,
+    -misc-no-recursion,
+
+# treat all warnings as errors
+WarningsAsErrors: '*'
+
+CheckOptions:
+  - key:             bugprone-assert-side-effect.AssertMacros
+    value:           'scrotAssert'
+
+ExtraArgs: [-std=c99,-DDEBUG]
