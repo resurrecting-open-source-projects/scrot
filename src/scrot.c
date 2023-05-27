@@ -74,6 +74,7 @@ static size_t scrotHaveFileExtension(const char *, char **);
 static Imlib_Image scrotGrabFocused(void);
 static void applyFilterIfRequired(void);
 static Imlib_Image scrotGrabAutoselect(void);
+static long miliToNanoSec(int);
 static void scrotWaitUntil(const struct timespec *);
 static Imlib_Image scrotGrabShotMulti(void);
 static Imlib_Image scrotGrabShotMonitor(void);
@@ -145,7 +146,7 @@ int main(int argc, char *argv[])
      * screenshot-taking above or it will skew the timing.
      */
     clock_gettime(CLOCK_REALTIME, &timeStamp);
-    if (timeStamp.tv_nsec >= 500*1000*1000) {
+    if (timeStamp.tv_nsec >= miliToNanoSec(500)) {
         /* Round the timestamp to the nearest second. */
         timeStamp.tv_sec++;
     }
@@ -345,6 +346,11 @@ void scrotDoDelay(void)
     }
 }
 
+static long miliToNanoSec(int ms)
+{
+    return ms * 1000L * 1000L;
+}
+
 /* scrotWaitUntil: clock_nanosleep with a simpler interface and no EINTR nagging
  */
 static void scrotWaitUntil(const struct timespec *time)
@@ -364,7 +370,7 @@ static void scrotWaitUntil(const struct timespec *time)
         tmp.tv_nsec = time->tv_nsec - tmp.tv_nsec;
         if (tmp.tv_nsec < 0) {
             tmp.tv_sec--;
-            tmp.tv_nsec += 1000000000L;
+            tmp.tv_nsec += miliToNanoSec(1000);
         }
     } while (nanosleep(&tmp, NULL) == -1 && errno == EINTR);
 }
