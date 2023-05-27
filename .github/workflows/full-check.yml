@@ -16,7 +16,7 @@ jobs:
     - name: install_dependencies
       run: |
         sudo apt install libimlib2-dev libxcomposite-dev libxfixes-dev \
-             autoconf-archive libbsd-dev libxinerama-dev
+             autoconf-archive libbsd-dev libxinerama-dev cppcheck
     - name: distcheck
       run: |
         ./autogen.sh
@@ -31,6 +31,12 @@ jobs:
         make -s distclean
         c99 -o src/scrot src/*.c $(pkg-config --cflags --libs ./deps.pc)
         src/scrot -v
+    - name: cppcheck
+      run: |
+        cppcheck --version
+        cppcheck --std=c99 -j$(nproc) --quiet --force --error-exitcode=1 \
+            --enable=portability,performance src/*.c \
+            $(pkg-config --cflags ./deps.pc)
   cygwin:
     runs-on: windows-latest
     env:
