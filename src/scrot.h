@@ -28,6 +28,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #pragma once
 
+#include <time.h>
+
 #include <X11/Xlib.h>
 #include <Imlib2.h>
 
@@ -39,5 +41,6 @@ extern Screen *scr;
 Window scrotGetWindow(Display *, Window, int, int);
 int scrotGetGeometry(Window, int *, int *, int *, int *);
 void scrotNiceClip(int *, int *, int *, int *);
+struct timespec clockNow(void);
 void scrotDoDelay(void);
 void scrotGrabMousePointer(const Imlib_Image, const int, const int);

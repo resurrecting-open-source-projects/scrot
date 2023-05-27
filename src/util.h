@@ -26,20 +26,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #pragma once
 
-#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-/* On Linux, CLOCK_MONOTONIC does not progress while the system is suspended,
- * and an alternative non-standard clock which does not suffer from this problem
- * called CLOCK_BOOTTIME is available. Scrot's CONTINUOUS_CLOCK has the exact
- * same semantics as CLOCK_MONOTONIC, only it avoids this bug.
- */
-#if defined(__linux__)
-    #define CONTINUOUS_CLOCK CLOCK_BOOTTIME
-#else
-    #define CONTINUOUS_CLOCK CLOCK_MONOTONIC
-#endif
 
 #ifdef DEBUG
     #define scrotAssert(X) do { \

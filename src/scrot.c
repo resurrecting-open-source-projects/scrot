@@ -109,7 +109,7 @@ int main(int argc, char *argv[])
     struct tm *tm;
 
     /* Get the time ASAP to reduce the timing error in case --delay is used. */
-    clock_gettime(CONTINUOUS_CLOCK, &opt.delayStart);
+    opt.delayStart = clockNow();
 
     atexit(uninitXAndImlib);
 
@@ -351,6 +351,21 @@ static long miliToNanoSec(int ms)
     return ms * 1000L * 1000L;
 }
 
+/* clockNow() has the exact same semantics as CLOCK_MONOTONIC. Except that on
+ * Linux, CLOCK_MONOTONIC does not progress while the system is suspended, so
+ * the non-standard CLOCK_BOOTTIME is used instead to avoid this bug.
+ */
+struct timespec clockNow(void)
+{
+    struct timespec ret;
+#if defined(__linux__)
+    clock_gettime(CLOCK_BOOTTIME, &ret);
+#else
+    clock_gettime(CLOCK_MONOTONIC, &ret);
+#endif
+    return ret;
+}
+
 /* scrotWaitUntil: clock_nanosleep with a simpler interface and no EINTR nagging
  */
 static void scrotWaitUntil(const struct timespec *time)
@@ -360,7 +375,7 @@ static void scrotWaitUntil(const struct timespec *time)
      */
     struct timespec tmp;
     do {
-        clock_gettime(CONTINUOUS_CLOCK, &tmp);
+        tmp = clockNow();
 
         /* XXX: Use timespecsub(). OS X doesn't have that BSD macro, and libbsd
          * doesn't support OS X save for an unmaintained fork. libobsd supports
