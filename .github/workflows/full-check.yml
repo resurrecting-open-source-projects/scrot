@@ -34,8 +34,9 @@ jobs:
     - name: cppcheck
       run: |
         cppcheck --version
-        cppcheck -j$(nproc) --enable=portability,performance --quiet --force \
-            --error-exitcode=1 src/*.c $(pkg-config --cflags ./deps.pc)
+        cppcheck --std=c99 -j$(nproc) --quiet --force --error-exitcode=1 \
+            --enable=portability,performance src/*.c \
+            $(pkg-config --cflags ./deps.pc)
   cygwin:
     runs-on: windows-latest
     env:
