@@ -506,6 +506,8 @@ void optionsParse(int argc, char *argv[])
         opt.thumbFile = optionsNameThumbnail(opt.outputFile);
 
     if (note) {
+        warnx("--note is deprecated. See: "
+            "https://github.com/resurrecting-open-source-projects/scrot/discussions/207");
         opt.note = estrdup(note); /* TODO: investigate if dup is needed */
         scrotNoteNew(opt.note);
     }
@@ -515,7 +517,7 @@ static void showUsage(void)
 {
     fputs(/* Check that everything lines up after any changes. */
         "usage:  " PACKAGE_NAME " [-bcfhimopuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY]\n"
-        "              [-d SEC] [-e CMD] [-k OPT] [-l STYLE] [-M NUM] [-n OPTS]\n"
+        "              [-d SEC] [-e CMD] [-k OPT] [-l STYLE] [-M NUM]\n"
         "              [-q NUM] [-s OPTS] [-t % | WxH] [[-F] FILE]\n",
         stdout);
     exit(0);

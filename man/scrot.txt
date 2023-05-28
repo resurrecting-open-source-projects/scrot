@@ -48,8 +48,6 @@ OPTIONS
                             option is used; see SELECTION STYLE.
   -M, --monitor NUM         Capture Xinerama monitor number NUM.
   -m, --multidisp           For multiple heads, screenshot all of them in order.
-  -n, --note OPTS           OPTS is a collection of options which specify notes
-                            to bake into the image. See NOTE FORMAT.
   -o, --overwrite           By default scrot does not overwrite the output
                             FILE, use this option to enable it.
   -p, --pointer             Capture the mouse pointer.
@@ -175,21 +173,6 @@ SELECTION STYLE
   Example:
 
     $ scrot -l style=dash,width=3,color="red" -s
-
-NOTE FORMAT
-  The -n option's argument is more arguments:
-
-    -f  'FontName/size'
-    -t  'text'
-    -x  position (optional)
-    -y  position (optional)
-    -c  color(RGBA, within [0, 255]) (optional)
-    -a  angle (optional)
-
-  Example:
-
-    $ scrot -n "-f '/usr/share/fonts/TTF/DroidSans-Bold/40' -x 10
-            -y 20 -c 255,0,0,255 -t 'Hi'"
 
 COMPRESSION QUALITY
 
