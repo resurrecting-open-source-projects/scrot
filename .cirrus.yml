@@ -57,19 +57,6 @@ task:
   << : *common_script
 
 task:
-  container:
-    image: alpine:latest
-    kvm: true
-  install_script:
-    - apk add build-base pkgconfig gzip
-              xorg-server-dev libxcomposite-dev libxext-dev
-              libxfixes-dev libxinerama-dev imlib2-dev libbsd-dev
-  name: alpine-latest-bare-build
-  test_script:
-    - c99 -o src/scrot src/*.c $(pkg-config --cflags --libs ./deps.pc libbsd-overlay)
-    - src/scrot -v
-
-task:
   matrix:
     - container:
         image: debian:testing
@@ -122,3 +109,16 @@ task:
     - brew install autoconf autoconf-archive automake make pkg-config gcc libx11
                    libxcomposite libxext libxfixes libxinerama imlib2
   << : *common_script
+
+task:
+  container:
+    image: alpine:latest
+    kvm: true
+  install_script:
+    - apk add build-base pkgconfig gzip
+              xorg-server-dev libxcomposite-dev libxext-dev
+              libxfixes-dev libxinerama-dev imlib2-dev libbsd-dev
+  name: alpine-latest-bare-build
+  test_script:
+    - c99 -o src/scrot src/*.c $(pkg-config --cflags --libs ./deps.pc libbsd-overlay)
+    - src/scrot -v
