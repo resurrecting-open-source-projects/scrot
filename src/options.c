@@ -391,7 +391,8 @@ void optionsParse(int argc, char *argv[])
             opt.delaySelection = *optarg == 'b';
             if (opt.delaySelection)
                 ++optarg;
-            opt.delay = optionsParseNum(optarg, 0, INT_MAX, &errmsg);
+            /* NOTE: div 1000 so that converting to milliseconds doesn't overflow */
+            opt.delay = optionsParseNum(optarg, 0, INT_MAX/1000, &errmsg);
             if (errmsg) {
                 errx(EXIT_FAILURE, "option --delay: '%s' is %s", optarg,
                     errmsg);
