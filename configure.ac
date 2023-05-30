@@ -22,9 +22,19 @@ AM_MAINTAINER_MODE
 m4_pattern_forbid([^AX_],[=> GNU autoconf-archive not present. <=])
 AS_IF([test "x$orig_CFLAGS" = "x"], [
     CFLAGS=""
-    SCROT_FLAGS="-O3 -flto -Wall -Wextra -Wpedantic"
-    AX_APPEND_COMPILE_FLAGS(["$SCROT_FLAGS"])
-    AX_APPEND_LINK_FLAGS(["$SCROT_FLAGS"])
+    AX_APPEND_COMPILE_FLAGS(["-flto"])
+    AS_IF([test "x$CFLAGS" = "x-flto"], [
+        LTO_ENABLED=yes
+        AX_APPEND_LINK_FLAGS(["-flto"])
+    ])
+    m4_foreach([SCROT_FLAG],
+        [["-O3"], ["-Wall"], ["-Wextra"], ["-Wpedantic"]], [
+            AX_APPEND_COMPILE_FLAGS(["SCROT_FLAG"])
+            AS_IF([test "x$LTO_ENABLED" = "xyes"], [
+                AX_APPEND_LINK_FLAGS(["SCROT_FLAG"])
+            ])
+        ]
+    )
 ])
 
 # Checks for libraries.
