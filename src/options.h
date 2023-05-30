@@ -36,7 +36,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#pragma once
+#ifndef H_OPTIONS
+#define H_OPTIONS
 
 #include <time.h>
 
@@ -99,3 +100,5 @@ void optionsParse(int, char **);
 void optionsParseAutoselect(char *);
 long long optionsParseNum(const char *, long long, long long,
     const char *[static 1]);
+
+#endif /* !defined(H_OPTIONS) */

@@ -1,7 +1,7 @@
 /* util.h
 
 Copyright 2021,2023 Guilherme Janczak <guilherme.janczak@yandex.com>
-Copyright 2023 NRK <nrk@disroot.org>
+Copyright 2023      NRK <nrk@disroot.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -24,7 +24,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#pragma once
+#ifndef H_UTIL
+#define H_UTIL
 
 #include <time.h>
 #include <stdio.h>
@@ -68,3 +69,5 @@ void streamReserve(Stream *, size_t);
 void streamChar(Stream *, char);
 void streamMem(Stream *, const void *, size_t);
 void streamStr(Stream *, const char *);
+
+#endif /* !defined(H_UTIL) */
