@@ -15,7 +15,7 @@ jobs:
     - uses: actions/checkout@v2.4.0
     - name: install_dependencies
       run: |
-        sudo apt install libimlib2-dev libxcomposite-dev libxfixes-dev \
+        sudo apt install tcc libimlib2-dev libxcomposite-dev libxfixes-dev \
              autoconf-archive libbsd-dev libxinerama-dev cppcheck
     - name: distcheck
       run: |
@@ -25,6 +25,11 @@ jobs:
     - name: run_program
       run: |
         make
+        src/scrot -v
+    - name: tcc
+      run: |
+        ./configure CC=tcc
+        make clean all
         src/scrot -v
     - name: bare build
       run: |
