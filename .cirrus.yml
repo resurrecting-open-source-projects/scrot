@@ -51,7 +51,7 @@ task:
       - CC: gcc
   install_script:
     - apk add autoconf autoconf-archive automake binutils gzip make pkgconfig
-                       gcc clang xorg-server-dev libxcomposite-dev libxext-dev
+                       $CC xorg-server-dev libxcomposite-dev libxext-dev
                        libxfixes-dev libxinerama-dev imlib2-dev musl-dev
                        bsd-compat-headers libbsd-dev llvm-dev
   << : *common_script
@@ -72,6 +72,7 @@ task:
     matrix:
       - CC: clang
       - CC: gcc
+      - CC: tcc
   install_script:
     - apt-get update
     - apt-get install -y autoconf autoconf-archive make pkg-config $CC
