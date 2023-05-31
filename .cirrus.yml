@@ -36,8 +36,8 @@ task:
     - name: alpine-latest-gcc-aggressive-fanalyzer
       test_script:
         - gcc --version
-        - gcc -std=c99 -o src/scrot src/*.c -Wall -Wextra -Wpedantic -Werror \
-              -fanalyzer -O3 -flto -fuse-linker-plugin -fno-common \
-              -fgraphite-identity -floop-nest-optimize -fipa-pta \
+        - gcc -std=c99 -o src/scrot src/*.c -Wall -Wextra -Wpedantic -Werror
+              -fanalyzer -O3 -flto -fuse-linker-plugin -fno-common
+              -fgraphite-identity -floop-nest-optimize -fipa-pta
               $(pkg-config --cflags --libs ./deps.pc libbsd-overlay)
         - src/scrot -v
