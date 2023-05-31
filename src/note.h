@@ -2,7 +2,7 @@
 
 Copyright 2019-2022 Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
-Copyright 2021      Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2021,2023 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,10 +26,13 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#pragma once
+#ifndef H_NOTE
+#define H_NOTE
 
 #include <Imlib2.h>
 
 void scrotNoteNew(char const *const);
 void scrotNoteFree(void);
 void scrotNoteDraw(Imlib_Image);
+
+#endif /* !defined(H_NOTE) */

@@ -26,7 +26,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 /* Part of the code comes from the scrot.c file and maintains its authorship. */
 
-#pragma once
+#ifndef H_SCROT
+#define H_SCROT
 
 #include <X11/Xlib.h>
 #include <Imlib2.h>
@@ -41,3 +42,5 @@ int scrotGetGeometry(Window, int *, int *, int *, int *);
 void scrotNiceClip(int *, int *, int *, int *);
 void scrotDoDelay(void);
 void scrotGrabMousePointer(const Imlib_Image, const int, const int);
+
+#endif /* !defined(H_SCROT) */

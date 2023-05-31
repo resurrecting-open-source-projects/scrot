@@ -1,7 +1,7 @@
 /* scrot_selection_classic.h
 
 Copyright 2020-2021 Daniel T. Borelli <danieltborelli@gmail.com>
-Copyright 2021-2022 Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2021-2023 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,9 +30,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     Part of the code comes from the scrot.c file and maintains its authorship.
 */
 
-#pragma once
+#ifndef H_SELECTION_CLASSIC
+#define H_SELECTION_CLASSIC
 
 void selectionClassicCreate(void);
 void selectionClassicDraw(void);
 void selectionClassicMotionDraw(int, int, int, int);
 void selectionClassicDestroy(void);
+
+#endif /* !defined(H_SELECTION_CLASSIC) */

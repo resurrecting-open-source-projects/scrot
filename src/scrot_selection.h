@@ -31,7 +31,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     Part of the code comes from the scrot.c file and maintains its authorship.
 */
 
-#pragma once
+#ifndef H_SCROT_SELECTION
+#define H_SCROT_SELECTION
 
 #include <stdbool.h>
 
@@ -109,3 +110,5 @@ Status scrotSelectionCreateNamedColor(const char *, XColor *);
 void scrotSelectionSetDefaultColorLine(void);
 bool scrotSelectionGetUserSel(struct SelectionRect *);
 Imlib_Image scrotSelectionSelectMode(void);
+
+#endif /* !defined(H_SCROT_SELECTION) */
