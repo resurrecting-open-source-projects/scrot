@@ -119,7 +119,16 @@ task:
     - apk add build-base pkgconfig gzip
               xorg-server-dev libxcomposite-dev libxext-dev
               libxfixes-dev libxinerama-dev imlib2-dev libbsd-dev
-  name: alpine-latest-bare-build
-  test_script:
-    - c99 -o src/scrot src/*.c $(pkg-config --cflags --libs ./deps.pc libbsd-overlay)
-    - src/scrot -v
+  matrix:
+    - name: alpine-latest-bare-build
+      test_script:
+        - c99 -o src/scrot src/*.c $(pkg-config --cflags --libs ./deps.pc libbsd-overlay)
+        - src/scrot -v
+    - name: alpine-latest-gcc-aggressive-fanalyzer
+      test_script:
+        - gcc --version
+        - gcc -std=c99 -o src/scrot src/*.c -Wall -Wextra -Wpedantic -Werror \
+              -fanalyzer -O3 -flto -fuse-linker-plugin -fno-common \
+              -fgraphite-identity -floop-nest-optimize -fipa-pta \
+              $(pkg-config --cflags --libs ./deps.pc libbsd-overlay)
+        - src/scrot -v
