@@ -40,4 +40,5 @@ task:
               -fanalyzer -O3 -flto -fuse-linker-plugin -fno-common
               -fgraphite-identity -floop-nest-optimize -fipa-pta
               $(pkg-config --cflags --libs ./deps.pc libbsd-overlay)
+              -Wno-error=cpp
         - src/scrot -v
