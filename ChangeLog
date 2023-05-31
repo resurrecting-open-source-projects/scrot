@@ -1,3 +1,43 @@
+DRAFT
+Version 1.10
+
+ [ Guilherme Janczak ] alias @guijan
+
+ * Improvement: Timing in `scrot --delay`
+ * Improvement: Screenshot timestamps timing
+ * Improvement: Robustness of default CFLAGS
+ * Improvement: Don't duplicate {C,CPP}FLAGS in automake
+ * Document: Not all compositors support opacity
+ * Document: Depend on an interface, not an implementation
+ * Fixes: Use portable ifdef guards
+
+ [ NRK ] alias @N-R-K
+
+ * New option: --compression to specify a compression level. Note that certain
+ formats (such as PNG) will now use `--compression` instead of `--quality`.
+ * Improvement: Use -O3 and do not build debug info by default if no CFLAGS
+ was set by the user.
+ * Improvement: Disable asserts by default by using scrotAssert()
+ * Improvement: Fatally error out in case the mouse pointer image cannot be
+ acquired.
+ * Deprecate: --note.
+ * Fixes: DestroyNotify regression with --line mode edge and non-default
+ --select option.
+ * Fixes: Build failure on c99 or -std=c99
+ * Fixes: Faulty strerror call
+ * Fixes: Loose suboption parsing for --line
+ * Fixes: Reset delaySelect properly
+ * Fixes: Unnecessary filename length check
+ * Fixes: Removed various unnecessary allocation and string duplications.
+ * Fixes: Memory leak.
+ * Fixes: Check for WIFEXITED first before using WEXITSTATUS
+ * Fixes: Use documented PACKAGE_NAME and PACKAGE_VERSION macros instead.
+ * Document: Fixed license to MIT-feh. NOTE: this is NOT a license change, we
+ simply fixed the document to correctly identify the license.
+ * Document: Make it clear --window option takes an argument
+ * Document: Clarify imlib2 feature requirement
+ * Document: Fix --quality description in manpage
+
 Mon Apr 10 23:57:58 -03:00 2023  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 Version 1.9
 
