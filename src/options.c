@@ -315,6 +315,7 @@ static const char *getPathOfStdout(void)
             return paths[i];
     }
     err(EXIT_FAILURE, "access to stdout failed");
+    return 0; /* silence tcc warning */
 }
 
 void optionsParse(int argc, char *argv[])

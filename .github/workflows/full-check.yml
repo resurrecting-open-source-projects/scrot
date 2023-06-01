@@ -20,7 +20,7 @@ jobs:
     - name: distcheck
       run: |
         ./autogen.sh
-        ./configure
+        ./configure SCROT_PRIVATE_FLAGS="-Werror -Wno-error=cpp -Wno-error=pedantic"
         make distcheck
     - name: run_program
       run: |
@@ -28,7 +28,7 @@ jobs:
         src/scrot -v
     - name: tcc
       run: |
-        ./configure CC=tcc
+        ./configure SCROT_PRIVATE_FLAGS="-Werror -Wno-error=cpp -Wno-error=pedantic" CC=tcc
         make clean all
         src/scrot -v
     - name: bare build
@@ -68,10 +68,12 @@ jobs:
                   libXcomposite-devel libXext-devel libXfixes-devel libXinerama-devel \
                   make
     - name: distcheck
+      # NOTE: cygwin's imlib2 version is too old, and it's imlib_apply_filter
+      # lacks `const` qualifier. so use `-Wno-error=discarded-qualifiers`.
       run: |
         cd ${GITHUB_WORKSPACE}
         ./autogen.sh
-        ./configure
+        ./configure SCROT_PRIVATE_FLAGS="-Werror -Wno-error=cpp -Wno-error=pedantic -Wno-error=discarded-qualifiers"
         make distcheck
     - name: run_program
       run: |
