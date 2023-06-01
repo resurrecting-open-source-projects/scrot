@@ -106,7 +106,7 @@ static long long optionsParseNumBase(const char *str, long long min,
 {
     char *end = NULL;
     long long rval;
-    int saved_errno = errno;
+
     if (str == NULL) {
         *errmsg = "missing";
         return 0;
@@ -132,7 +132,6 @@ static long long optionsParseNumBase(const char *str, long long min,
     } else if (rval > max) {
         *errmsg = "too large";
     }
-    errno = saved_errno;
 
     return (*errmsg ? 0 : rval);
 }
@@ -295,7 +294,7 @@ static void optionsParseLine(char *optarg)
                 SELECTION_OPACITY_MIN, SELECTION_OPACITY_MAX, &errmsg);
             if (errmsg) {
                 if (value == NULL)
-                        value = "(null)";
+                    value = "(null)";
                 errx(EXIT_FAILURE, "option --line: suboption %s: '%s' is %s",
                     token[Opacity], value, errmsg);
             }
@@ -307,18 +306,12 @@ static void optionsParseLine(char *optarg)
     } /* while */
 }
 
-static bool accessFileOk(const char *const pathName)
-{
-    errno = 0;
-    return (0 == access(pathName, W_OK));
-}
-
 static const char *getPathOfStdout(void)
 {
     const char *paths[] = { "/dev/stdout", "/dev/fd/1", "/proc/self/fd/1" };
 
     for (size_t i = 0; i < ARRAY_COUNT(paths); ++i) {
-        if (accessFileOk(paths[i]))
+        if (access(paths[i], W_OK) == 0)
             return paths[i];
     }
     err(EXIT_FAILURE, "access to stdout failed");
