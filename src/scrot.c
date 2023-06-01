@@ -80,9 +80,8 @@ static Imlib_Image scrotGrabShotMonitor(void);
 static Imlib_Image scrotGrabStackWindows(void);
 static Imlib_Image scrotGrabShot(void);
 static void scrotCheckIfOverwriteFile(char **);
-static void scrotExecApp(Imlib_Image, struct tm *, char *, char *);
-static char *imPrintf(const char *, struct tm *, const char *, const char *,
-    Imlib_Image);
+static void scrotExecApp(struct tm *, char *, char *);
+static char *imPrintf(const char *, struct tm *, const char *, const char *);
 static char *scrotGetWindowName(Window);
 static Window scrotGetClientWindow(Display *, Window);
 static Window scrotFindWindowByProperty(Display *, const Window, const Atom);
@@ -165,7 +164,7 @@ int main(int argc, char *argv[])
     imlib_image_attach_data_value("quality", NULL, opt.quality, NULL);
     imlib_image_attach_data_value("compression", NULL, opt.compression, NULL);
 
-    filenameIM = imPrintf(opt.outputFile, tm, NULL, NULL, image);
+    filenameIM = imPrintf(opt.outputFile, tm, NULL, NULL);
     scrotCheckIfOverwriteFile(&filenameIM);
 
     applyFilterIfRequired();
@@ -212,7 +211,7 @@ int main(int argc, char *argv[])
             else if (!haveExtension)
                 imlib_image_set_format("png");
 
-            filenameThumb = imPrintf(opt.thumbFile, tm, NULL, NULL, thumbnail);
+            filenameThumb = imPrintf(opt.thumbFile, tm, NULL, NULL);
             scrotCheckIfOverwriteFile(&filenameThumb);
             imlib_save_image_with_error_return(filenameThumb, &imErr);
             imlib_free_image_and_decache();
@@ -222,7 +221,7 @@ int main(int argc, char *argv[])
         }
     }
     if (opt.exec)
-        scrotExecApp(image, tm, filenameIM, filenameThumb);
+        scrotExecApp(tm, filenameIM, filenameThumb);
 
     imlib_context_set_image(image);
     imlib_free_image_and_decache();
@@ -632,10 +631,9 @@ static Imlib_Image scrotGrabShot(void)
     return im;
 }
 
-static void scrotExecApp(Imlib_Image image, struct tm *tm, char *filenameIM,
-    char *filenameThumb)
+static void scrotExecApp(struct tm *tm, char *filenameIM, char *filenameThumb)
 {
-    char *execStr = imPrintf(opt.exec, tm, filenameIM, filenameThumb, image);
+    char *execStr = imPrintf(opt.exec, tm, filenameIM, filenameThumb);
     int ret = system(execStr);
 
     if (ret == -1)
@@ -646,7 +644,7 @@ static void scrotExecApp(Imlib_Image image, struct tm *tm, char *filenameIM,
 }
 
 static char *imPrintf(const char *str, struct tm *tm, const char *filenameIM,
-    const char *filenameThumb, Imlib_Image im)
+    const char *filenameThumb)
 {
     char buf[20];
     Stream ret = {0};
@@ -659,7 +657,6 @@ static char *imPrintf(const char *str, struct tm *tm, const char *filenameIM,
     if (strfLen == 0)
         errx(EXIT_FAILURE, "strftime returned 0");
 
-    imlib_context_set_image(im);
     for (const char *c = strf, *end = strf + strfLen; c < end; ++c) {
         if (*c == '$' && (c + 1) < end) {
             c++;
