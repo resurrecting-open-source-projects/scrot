@@ -35,6 +35,13 @@ AS_IF([test "x$orig_CFLAGS" = "x"], [
             ])
         ]
     )
+    # SCROT_PRIVATE_FLAGS are mainly used by the CI to append additional flags.
+    # append them unconditionally, the CI shouldn't try to add flags the
+    # compiler doesn't support.
+    AC_SUBST([CFLAGS], ["$CFLAGS $SCROT_PRIVATE_FLAGS"])
+    AS_IF([test "x$LTO_ENABLED" = "xyes"], [
+        AC_SUBST([LDFLAGS], ["$LDFLAGS $SCROT_PRIVATE_FLAGS"])
+    ])
 ])
 
 # Checks for libraries.
@@ -44,6 +51,10 @@ AC_ARG_ENABLE([libbsd-feature-test],
     AS_HELP_STRING([--enable-libbsd-feature-test],
         ["Do not configure the program, return true if libbsd is needed"]))
 AC_CHECK_FUNCS([err errx warn warnx],, [LIBBSD_NEEDED=yes])
+# TODO: header checks fail due to empty translation unit when -Wpedantic and
+# -Werror are both set. figure out a way to fix it and remove
+# -Wno-error=pedantic from the CI.
+# See also: https://github.com/resurrecting-open-source-projects/scrot/pull/333#issuecomment-1572157050
 AC_CHECK_HEADERS([sys/queue.h],, [LIBBSD_NEEDED=yes], [ ])
 # libbsd is obligatory on systems that don't have the BSD functions we use.
 # Pass "--enable-libbsd-feature-test" to ./configure, and the configure script

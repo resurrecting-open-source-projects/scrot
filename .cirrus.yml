@@ -25,7 +25,7 @@ common_template: &common_script
   name: ${OS}-${CC}
   build_script:
     - ./autogen.sh
-    - ./configure
+    - ./configure SCROT_PRIVATE_FLAGS="-Werror -Wno-error=cpp -Wno-error=pedantic"
     - make distcheck
   test_script:
     - make
