@@ -43,6 +43,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
+#define _GNU_SOURCE
 #include <sys/stat.h>
 #include <sys/wait.h>
 
@@ -95,6 +96,15 @@ Window root;
 Window clientWindow;
 Screen *scr;
 
+// USAGE INSTRUCTIONS:
+//
+// mkdir input output
+// printf '%s\n' '%Y-%m-%d_$$wx$$h.png' > input/sample
+// afl-clang-fast -g3 -fsanitize=address,undefined -fsanitize-undefined-trap-on-error -o scrot-fuzz src/*.c $(pkg-config --cflags --libs ./deps.pc)
+// afl-fuzz -i input -o output ./scrot-fuzz
+
+__AFL_FUZZ_INIT();
+
 int main(int argc, char *argv[])
 {
     Imlib_Image image;
@@ -114,6 +124,24 @@ int main(int argc, char *argv[])
     optionsParse(argc, argv);
 
     initXAndImlib(opt.display, 0);
+
+    clock_gettime(CLOCK_REALTIME, &timeStamp);
+    tm = localtime(&timeStamp.tv_sec);
+
+#ifdef __AFL_HAVE_MANUAL_CONTROL
+    __AFL_INIT();
+#endif
+
+    unsigned char *afl_buf = __AFL_FUZZ_TESTCASE_BUF;
+    /* NOTE: __AFL_LOOP() takes care of memory leaks and such. no need for
+     * manual cleanup. */
+    while (__AFL_LOOP(10000)) {
+        int len = __AFL_FUZZ_TESTCASE_LEN;
+        char *buf = malloc(len + 1);
+        *(char *)mempcpy(buf, afl_buf, len) = 0;
+        char *p = imPrintf(buf, tm, 0, 0);
+    }
+    return 0;
 
     if (opt.selection.mode & SELECTION_MODE_ANY)
         image = scrotSelectionSelectMode();
@@ -657,7 +685,10 @@ static char *imPrintf(const char *str, struct tm *tm, const char *filenameIM,
     if (strfLen == 0)
         errx(EXIT_FAILURE, "strftime returned 0");
 
-    for (const char *c = strf, *end = strf + strfLen; c < end; ++c) {
+    char *strf_dup = estrdup(strf); // allow ASan to catch OOB read/writes
+    memset(strf, 0xCD, sizeof strf);
+
+    for (const char *c = strf_dup, *end = strf_dup + strfLen; c < end; ++c) {
         if (*c == '$' && (c + 1) < end) {
             c++;
             switch (*c) {
