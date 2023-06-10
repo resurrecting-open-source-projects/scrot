@@ -100,7 +100,8 @@ struct Selection {
     void (*motionDraw)(int, int, int, int);
 };
 
-struct Selection **selectionGet(void);
+extern struct Selection selection;
+
 void selectionCalculateRect(int, int, int, int);
 void scrotSelectionCreate(void);
 void scrotSelectionDestroy(void);

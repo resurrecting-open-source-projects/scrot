@@ -53,7 +53,7 @@ struct SelectionEdge {
 
 void selectionEdgeCreate(void)
 {
-    struct Selection *const sel = *selectionGet();
+    struct Selection *const sel = &selection;
 
     sel->edge = ecalloc(1, sizeof(*sel->edge));
 
@@ -91,7 +91,7 @@ void selectionEdgeCreate(void)
 
 void selectionEdgeDraw(void)
 {
-    const struct Selection *const sel = *selectionGet();
+    const struct Selection *const sel = &selection;
     const struct SelectionEdge *const pe = sel->edge;
 
     XRectangle rects[4] = {
@@ -111,7 +111,7 @@ void selectionEdgeDraw(void)
 
 void selectionEdgeMotionDraw(int x0, int y0, int x1, int y1)
 {
-    struct Selection *const sel = *selectionGet();
+    struct Selection *const sel = &selection;
 
     selectionCalculateRect(x0, y0, x1, y1);
 
@@ -125,7 +125,7 @@ void selectionEdgeMotionDraw(int x0, int y0, int x1, int y1)
 
 void selectionEdgeDestroy(void)
 {
-    const struct Selection *const sel = *selectionGet();
+    const struct Selection *const sel = &selection;
     struct SelectionEdge *pe = sel->edge;
 
     if (pe->wndDraw != None) {
