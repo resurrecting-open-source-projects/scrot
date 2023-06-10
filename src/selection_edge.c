@@ -49,6 +49,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 struct SelectionEdge {
     Window wndDraw;
     XClassHint *classHint;
+    bool mapped;
 };
 
 void selectionEdgeCreate(void)
@@ -92,7 +93,7 @@ void selectionEdgeCreate(void)
 void selectionEdgeDraw(void)
 {
     const struct Selection *const sel = *selectionGet();
-    const struct SelectionEdge *const pe = sel->edge;
+    struct SelectionEdge *const pe = sel->edge;
 
     XRectangle rects[4] = {
         { sel->rect.x, sel->rect.y, opt.lineWidth, sel->rect.h }, // left
@@ -106,7 +107,9 @@ void selectionEdgeDraw(void)
 
     XShapeCombineRectangles(disp, pe->wndDraw, ShapeBounding, 0, 0, rects, 4,
         ShapeSet, 0);
-    XMapWindow(disp, pe->wndDraw);
+    if (!pe->mapped)
+        XMapWindow(disp, pe->wndDraw);
+    pe->mapped = true;
 }
 
 void selectionEdgeMotionDraw(int x0, int y0, int x1, int y1)
