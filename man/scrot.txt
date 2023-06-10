@@ -93,6 +93,7 @@ SPECIAL STRINGS
 
     $$   A literal '$'.
     $a   The system's hostname.
+    $F   The output file format.
     $f   The image's full path (ignored when used in the filename).
     $h   The image's height.
     $m   The thumbnail's full path (ignored when used in the filename).

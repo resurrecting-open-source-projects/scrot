@@ -70,7 +70,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 static void initXAndImlib(const char *, int);
 static void uninitXAndImlib(void);
-static size_t scrotHaveFileExtension(const char *, char **);
 static Imlib_Image scrotGrabFocused(void);
 static void applyFilterIfRequired(void);
 static Imlib_Image scrotGrabAutoselect(void);
@@ -104,7 +103,6 @@ int main(int argc, char *argv[])
     Imlib_Load_Error imErr;
     char *filenameIM = NULL;
     char *filenameThumb = NULL;
-    char *haveExtension = NULL;
     struct timespec timeStamp;
     struct tm *tm;
 
@@ -156,13 +154,7 @@ int main(int argc, char *argv[])
         scrotNoteDraw(image);
 
     imlib_context_set_image(image);
-    if (opt.format) {
-        imlib_image_set_format(opt.format);
-    } else {
-        scrotHaveFileExtension(opt.outputFile, &haveExtension);
-        if (!haveExtension)
-            imlib_image_set_format("png");
-    }
+    imlib_image_set_format(opt.format);
     imlib_image_attach_data_value("quality", NULL, opt.quality, NULL);
     imlib_image_attach_data_value("compression", NULL, opt.compression, NULL);
 
@@ -208,10 +200,7 @@ int main(int argc, char *argv[])
             errx(EXIT_FAILURE, "unable to create thumbnail");
         } else {
             imlib_context_set_image(thumbnail);
-            if (opt.format)
-                imlib_image_set_format(opt.format);
-            else if (!haveExtension)
-                imlib_image_set_format("png");
+            imlib_image_set_format(opt.format);
 
             filenameThumb = imPrintf(opt.thumbFile, tm, NULL, NULL, thumbnail);
             scrotCheckIfOverwriteFile(&filenameThumb);
@@ -280,7 +269,7 @@ static void uninitXAndImlib(void)
     }
 }
 
-static size_t scrotHaveFileExtension(const char *filename, char **ext)
+size_t scrotHaveFileExtension(const char *filename, char **ext)
 {
     char *s = strrchr(filename, '.');
 
@@ -676,6 +665,9 @@ static char *imPrintf(const char *str, struct tm *tm, const char *filenameIM,
                 gethostname(target, hostNameMax);
                 ret.off += strlen(target);
                 scrotAssert(ret.buf[ret.off] == '\0');
+                break;
+            case 'F':
+                streamStr(&ret, opt.format);
                 break;
             case 'f':
                 if (filenameIM)
