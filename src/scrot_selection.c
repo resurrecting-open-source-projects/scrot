@@ -52,28 +52,11 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "selection_edge.h"
 #include "util.h"
 
-struct Selection **selectionGet(void)
-{
-    static struct Selection *sel = NULL;
-    return &sel;
-}
-
-static void selectionAllocate(void)
-{
-    struct Selection **sel = selectionGet();
-    *sel = ecalloc(1, sizeof(**sel));
-}
-
-static void selectionDeallocate(void)
-{
-    struct Selection **sel = selectionGet();
-    free(*sel);
-    *sel = NULL;
-}
+struct Selection selection;
 
 static void createCursors(void)
 {
-    struct Selection *const sel = *selectionGet();
+    struct Selection *const sel = &selection;
 
     if (opt.selection.mode == SELECTION_MODE_CAPTURE)
         sel->curCross = XCreateFontCursor(disp, XC_cross);
@@ -91,7 +74,7 @@ static void createCursors(void)
 
 static void freeCursors(void)
 {
-    struct Selection *const sel = *selectionGet();
+    struct Selection *const sel = &selection;
     scrotAssert(sel); /* silence clang-tidy */
 
     XFreeCursor(disp, sel->curCross);
@@ -129,9 +112,7 @@ void selectionCalculateRect(int x0, int y0, int x1, int y1)
 
 void scrotSelectionCreate(void)
 {
-    selectionAllocate();
-
-    struct Selection *const sel = *selectionGet();
+    struct Selection *const sel = &selection;
 
     createCursors();
 
@@ -164,23 +145,22 @@ void scrotSelectionCreate(void)
 
 void scrotSelectionDestroy(void)
 {
-    struct Selection *const sel = *selectionGet();
+    struct Selection *const sel = &selection;
     XUngrabPointer(disp, CurrentTime);
     freeCursors();
     XSync(disp, True);
     sel->destroy();
-    selectionDeallocate();
 }
 
 void scrotSelectionDraw(void)
 {
-    const struct Selection *const sel = *selectionGet();
+    const struct Selection *const sel = &selection;
     sel->draw();
 }
 
 void scrotSelectionMotionDraw(int x0, int y0, int x1, int y1)
 {
-    const struct Selection *const sel = *selectionGet();
+    const struct Selection *const sel = &selection;
     const unsigned int EVENT_MASK = ButtonMotionMask | ButtonReleaseMask;
     Cursor cursor = None;
 
@@ -198,7 +178,7 @@ void scrotSelectionMotionDraw(int x0, int y0, int x1, int y1)
 
 struct SelectionRect *scrotSelectionGetRect(void)
 {
-    return &(*selectionGet())->rect;
+    return &(&selection)->rect;
 }
 
 Status scrotSelectionCreateNamedColor(const char *nameColor, XColor *color)

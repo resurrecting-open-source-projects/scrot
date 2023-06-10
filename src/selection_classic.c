@@ -50,7 +50,7 @@ struct SelectionClassic {
 
 void selectionClassicCreate(void)
 {
-    struct Selection *const sel = *selectionGet();
+    struct Selection *const sel = &selection;
 
     sel->classic = ecalloc(1, sizeof(*sel->classic));
 
@@ -86,7 +86,7 @@ void selectionClassicCreate(void)
 
 void selectionClassicDraw(void)
 {
-    const struct Selection *const sel = *selectionGet();
+    const struct Selection *const sel = &selection;
     const struct SelectionClassic *const pc = sel->classic;
     XDrawRectangle(disp, root, pc->gc, sel->rect.x, sel->rect.y, sel->rect.w,
         sel->rect.h);
@@ -95,7 +95,7 @@ void selectionClassicDraw(void)
 
 void selectionClassicMotionDraw(int x0, int y0, int x1, int y1)
 {
-    const struct Selection *const sel = *selectionGet();
+    const struct Selection *const sel = &selection;
 
     if (sel->rect.w)
         selectionClassicDraw();
@@ -105,7 +105,7 @@ void selectionClassicMotionDraw(int x0, int y0, int x1, int y1)
 
 void selectionClassicDestroy(void)
 {
-    const struct Selection *const sel = *selectionGet();
+    const struct Selection *const sel = &selection;
     struct SelectionClassic *pc = sel->classic;
 
     if (opt.freeze)
