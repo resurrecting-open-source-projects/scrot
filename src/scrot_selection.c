@@ -75,7 +75,6 @@ static void createCursors(void)
 static void freeCursors(void)
 {
     struct Selection *const sel = &selection;
-    scrotAssert(sel); /* silence clang-tidy */
 
     XFreeCursor(disp, sel->curCross);
     XFreeCursor(disp, sel->curAngleNE);
@@ -86,7 +85,7 @@ static void freeCursors(void)
 
 void selectionCalculateRect(int x0, int y0, int x1, int y1)
 {
-    struct SelectionRect *const rect = scrotSelectionGetRect();
+    struct SelectionRect *const rect = &selection.rect;
 
     rect->x = x0;
     rect->y = y0;
@@ -145,17 +144,10 @@ void scrotSelectionCreate(void)
 
 void scrotSelectionDestroy(void)
 {
-    struct Selection *const sel = &selection;
     XUngrabPointer(disp, CurrentTime);
     freeCursors();
     XSync(disp, True);
-    sel->destroy();
-}
-
-void scrotSelectionDraw(void)
-{
-    const struct Selection *const sel = &selection;
-    sel->draw();
+    selection.destroy();
 }
 
 void scrotSelectionMotionDraw(int x0, int y0, int x1, int y1)
@@ -174,11 +166,6 @@ void scrotSelectionMotionDraw(int x0, int y0, int x1, int y1)
         cursor = sel->curAngleNW;
     XChangeActivePointerGrab(disp, EVENT_MASK, cursor, CurrentTime);
     sel->motionDraw(x0, y0, x1, y1);
-}
-
-struct SelectionRect *scrotSelectionGetRect(void)
-{
-    return &(&selection)->rect;
 }
 
 Status scrotSelectionCreateNamedColor(const char *nameColor, XColor *color)
@@ -295,11 +282,11 @@ bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
             break;
         }
     }
-    scrotSelectionDraw();
+    selection.draw();
 
     XUngrabKeyboard(disp, CurrentTime);
 
-    const bool isAreaSelect = (scrotSelectionGetRect()->w > 5);
+    const bool isAreaSelect = (selection.rect.w > 5);
 
     scrotSelectionDestroy();
 
