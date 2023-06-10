@@ -11,9 +11,9 @@ Copyright 2019      Jade Auer <jade@trashwitch.dev>
 Copyright 2020      blockparole
 Copyright 2020      Cungsten Tarbide <ctarbide@tuta.io>
 Copyright 2020      Hinigatsu <hinigatsu@protonmail.com>
+Copyright 2020      ideal <idealities@gmail.com>
 Copyright 2020      nothub
 Copyright 2020      Sean Brennan <zettix1@gmail.com>
-Copyright 2020      ideal <idealities@gmail.com>
 Copyright 2021      c0dev0id <sh+github@codevoid.de>
 Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
 Copyright 2021-2023 Guilherme Janczak <guilherme.janczak@yandex.com>

@@ -5,7 +5,8 @@
 # Copyright 2020-2021 Daniel T. Borelli <danieltborelli@gmail.com>
 # Copyright 2020      Jeroen Roovers <jer@gentoo.org>
 # Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
-# Copyright 2021,2023 Guilherme Janczak <guilherme.janczak@yandex.com>
+# Copyright 2021-2023 Guilherme Janczak <guilherme.janczak@yandex.com>
+# Copyright 2023      NRK <nrk@disroot.org>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to

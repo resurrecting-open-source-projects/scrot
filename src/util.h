@@ -1,6 +1,6 @@
 /* util.h
 
-Copyright 2021,2023 Guilherme Janczak <guilherme.janczak@yandex.com>
+Copyright 2021-2023 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2023      NRK <nrk@disroot.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
