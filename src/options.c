@@ -64,6 +64,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
     #define PACKAGE_VERSION "unknown"
 #endif
 
+static char defaultOutputFile[] = "%Y-%m-%d-%H%M%S_$wx$h_scrot.$F";
 struct ScrotOptions opt = {
     .quality = 75,
     .compression = 7,
@@ -73,7 +74,7 @@ struct ScrotOptions opt = {
     .stackDirection = HORIZONTAL,
     .monitor = -1,
     .windowId = None,
-    .outputFile = "%Y-%m-%d-%H%M%S_$wx$h_scrot.png",
+    .outputFile = defaultOutputFile,
     .lineColor = "gray",
 };
 
@@ -493,11 +494,21 @@ void optionsParse(int argc, char *argv[])
     for (; *argv; ++argv)
         warnx("ignoring extraneous non-option argument: %s", *argv);
 
+    if (!opt.format) {
+        char *ext = NULL;
+        scrotHaveFileExtension(opt.outputFile, &ext);
+        if (!ext || opt.outputFile == defaultOutputFile)
+            opt.format = "png";
+        else
+            opt.format = ext+1;
+    }
+
     if (strcmp(opt.outputFile, "-") == 0) {
         opt.overwrite = true;
         opt.thumb = THUMB_DISABLED;
         opt.outputFile = getPathOfStdout();
     }
+
     if (opt.thumb != THUMB_DISABLED)
         opt.thumbFile = optionsNameThumbnail(opt.outputFile);
 
