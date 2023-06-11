@@ -38,7 +38,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <Imlib2.h>
 #include <X11/Xlib.h>
-#include <X11/Xutil.h>
 
 /* S: string, L: len */
 #define SELECTION_MODE_S_CAPTURE "capture"
@@ -89,7 +88,6 @@ struct SelectionClassic {
 };
 struct SelectionEdge {
     Window wndDraw;
-    XClassHint *classHint;
 };
 
 struct Selection {

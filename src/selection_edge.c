@@ -57,10 +57,6 @@ void selectionEdgeCreate(void)
     attr.background_pixel = color.pixel;
     attr.override_redirect = True;
 
-    pe->classHint = XAllocClassHint();
-    pe->classHint->res_name = "scrot";
-    pe->classHint->res_class = "scrot";
-
     pe->wndDraw = XCreateWindow(disp, root, 0, 0, WidthOfScreen(scr),
         HeightOfScreen(scr), 0, CopyFromParent, InputOutput, CopyFromParent,
         CWOverrideRedirect | CWBackPixel, &attr);
@@ -77,7 +73,8 @@ void selectionEdgeCreate(void)
         (unsigned char *) &(Atom) { XInternAtom(disp, "_NET_WM_WINDOW_TYPE_DOCK", False) },
         1L);
 
-    XSetClassHint(disp, pe->wndDraw, pe->classHint);
+    XClassHint hint = { .res_name = "scrot", .res_class = "scrot" };
+    XSetClassHint(disp, pe->wndDraw, &hint);
 }
 
 void selectionEdgeDraw(void)
@@ -134,7 +131,5 @@ void selectionEdgeDestroy(void)
          * adding latency. so wait a bit for the screen to update and the
          * selection borders to go away. */
         scrotSleepFor(clockNow(), 80);
-
-        XFree(pe->classHint);
     }
 }
