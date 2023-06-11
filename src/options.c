@@ -70,7 +70,6 @@ struct ScrotOptions opt = {
     .lineStyle = LineSolid,
     .lineWidth = 1,
     .lineOpacity = SELECTION_OPACITY_DEFAULT,
-    .lineMode = LINE_MODE_CLASSIC,
     .stackDirection = HORIZONTAL,
     .monitor = -1,
     .windowId = None,
@@ -280,7 +279,9 @@ static void optionsParseLine(char *optarg)
                     token[Mode]);
             }
 
-            if (!strcmp(value, "classic"))
+            if (!strcmp(value, "auto"))
+                opt.lineMode = LINE_MODE_AUTO;
+            else if (!strcmp(value, "classic"))
                 opt.lineMode = LINE_MODE_CLASSIC;
             else if (!strcmp(value, "edge"))
                 opt.lineMode = LINE_MODE_EDGE;
