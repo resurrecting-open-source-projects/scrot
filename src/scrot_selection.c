@@ -112,6 +112,7 @@ void selectionCalculateRect(int x0, int y0, int x1, int y1)
 void scrotSelectionCreate(void)
 {
     struct Selection *const sel = &selection;
+    *sel = (struct Selection){0};
 
     createCursors();
 
