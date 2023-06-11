@@ -46,18 +46,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "selection_edge.h"
 #include "util.h"
 
-struct SelectionEdge {
-    Window wndDraw;
-    XClassHint *classHint;
-};
-
 void selectionEdgeCreate(void)
 {
-    struct Selection *const sel = &selection;
-
-    sel->edge = ecalloc(1, sizeof(*sel->edge));
-
-    struct SelectionEdge *const pe = sel->edge;
+    struct SelectionEdge *const pe = &selection.edge;
 
     XColor color;
     scrotSelectionGetLineColor(&color);
@@ -92,7 +83,7 @@ void selectionEdgeCreate(void)
 void selectionEdgeDraw(void)
 {
     const struct Selection *const sel = &selection;
-    const struct SelectionEdge *const pe = sel->edge;
+    const struct SelectionEdge *const pe = &sel->edge;
 
     XRectangle rects[4] = {
         { sel->rect.x, sel->rect.y, opt.lineWidth, sel->rect.h }, // left
@@ -125,8 +116,7 @@ void selectionEdgeMotionDraw(int x0, int y0, int x1, int y1)
 
 void selectionEdgeDestroy(void)
 {
-    const struct Selection *const sel = &selection;
-    struct SelectionEdge *pe = sel->edge;
+    const struct SelectionEdge *pe = &selection.edge;
 
     if (pe->wndDraw != None) {
         XSelectInput(disp, pe->wndDraw, StructureNotifyMask);
@@ -147,6 +137,4 @@ void selectionEdgeDestroy(void)
 
         XFree(pe->classHint);
     }
-
-    free(pe);
 }

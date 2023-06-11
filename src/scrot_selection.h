@@ -39,6 +39,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <Imlib2.h>
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
 
 /* S: string, L: len */
 #define SELECTION_MODE_S_CAPTURE "capture"
@@ -84,15 +85,21 @@ typedef struct SelectionMode {
     const char *fileName;
 } SelectionMode;
 
-struct SelectionClassic;
-struct SelectionEdge;
+struct SelectionClassic {
+    XGCValues gcValues;
+    GC gc;
+};
+struct SelectionEdge {
+    Window wndDraw;
+    XClassHint *classHint;
+};
 
 struct Selection {
     Cursor curCross, curAngleNW, curAngleNE, curAngleSW, curAngleSE;
 
     struct SelectionRect rect;
-    struct SelectionClassic *classic;
-    struct SelectionEdge *edge;
+    struct SelectionClassic classic;
+    struct SelectionEdge edge;
 
     void (*create)(void);
     void (*destroy)(void);

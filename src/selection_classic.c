@@ -43,18 +43,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "selection_edge.h"
 #include "util.h"
 
-struct SelectionClassic {
-    XGCValues gcValues;
-    GC gc;
-};
-
 void selectionClassicCreate(void)
 {
     struct Selection *const sel = &selection;
-
-    sel->classic = ecalloc(1, sizeof(*sel->classic));
-
-    struct SelectionClassic *pc = sel->classic;
+    struct SelectionClassic *pc = &sel->classic;
 
     const unsigned long whiteColor = XWhitePixel(disp, 0);
     const unsigned long blackColor = XBlackPixel(disp, 0);
@@ -87,7 +79,7 @@ void selectionClassicCreate(void)
 void selectionClassicDraw(void)
 {
     const struct Selection *const sel = &selection;
-    const struct SelectionClassic *const pc = sel->classic;
+    const struct SelectionClassic *const pc = &sel->classic;
     XDrawRectangle(disp, root, pc->gc, sel->rect.x, sel->rect.y, sel->rect.w,
         sel->rect.h);
     XFlush(disp);
@@ -106,7 +98,7 @@ void selectionClassicMotionDraw(int x0, int y0, int x1, int y1)
 void selectionClassicDestroy(void)
 {
     const struct Selection *const sel = &selection;
-    struct SelectionClassic *pc = sel->classic;
+    const struct SelectionClassic *pc = &sel->classic;
 
     if (opt.freeze)
         XUngrabServer(disp);
@@ -114,6 +106,5 @@ void selectionClassicDestroy(void)
     if (pc->gc)
         XFreeGC(disp, pc->gc);
 
-    free(pc);
     XFlush(disp);
 }
