@@ -418,8 +418,18 @@ Imlib_Image scrotSelectionSelectMode(void)
     struct SelectionRect rect0, rect1;
 
     const unsigned int oldMode = opt.selection.mode;
-
     opt.selection.mode = SELECTION_MODE_CAPTURE;
+
+    if (opt.lineMode == LINE_MODE_AUTO) {
+        char buf[128];
+        snprintf(buf, sizeof(buf), "_NET_WM_CM_S%d", DefaultScreen(disp));
+        Atom cm = XInternAtom(disp, buf, False);
+        /* use edge mode if no compositor is running */
+        if (XGetSelectionOwner(disp, cm) == None)
+            opt.lineMode = LINE_MODE_EDGE;
+        else
+            opt.lineMode = LINE_MODE_CLASSIC;
+    }
 
     if (opt.delaySelection)
         scrotDoDelay();
