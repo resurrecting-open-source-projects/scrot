@@ -250,7 +250,7 @@ bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
         switch (ev.type) {
         case MotionNotify:
             if (isButtonPressed)
-                scrotSelectionMotionDraw(rx, ry, ev.xbutton.x, ev.xbutton.y);
+                scrotSelectionMotionDraw(rx, ry, ev.xmotion.x, ev.xmotion.y);
             break;
         case ButtonPress:
             isButtonPressed = true;
@@ -304,7 +304,7 @@ bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
                 goto key_abort_shot;
             }
             XFree(keysym);
-            scrotSelectionMotionDraw(rx, ry, ev.xbutton.x, ev.xbutton.y);
+            scrotSelectionMotionDraw(rx, ry, ev.xkey.x, ev.xkey.y);
             break;
         }
         case DestroyNotify:
