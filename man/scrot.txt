@@ -190,7 +190,7 @@ Copying screenshot to clipboard using xclip(1):
 
   $ scrot - | xclip -selection clipboard -target image/png
 
-Taking a screenshot and optimizing it's size with optipng(1):
+Taking a screenshot and optimizing its size with optipng(1):
 
   $ scrot -e 'optipng -o4 $f'
 
@@ -198,17 +198,17 @@ Selecting a window by PID with xdo(1):
 
   $ scrot -w $(xdo id -p PID)
 
-Taking a screenshot and adding annotating it with ImageMagick(1):
+Taking a screenshot and annotating it with ImageMagick(1):
 
  $ scrot - | convert -pointsize 64 -gravity North -annotate '+16+16' 'hello, world!' - out.png
 
 
 SEE ALSO
+  ImageMagick(1)
   optipng(1)
-  xwininfo(1)
   xclip(1)
   xdo(1)
-  ImageMagick(1)
+  xwininfo(1)
 
 AUTHOR
   scrot was originally developed by Tom Gilbert.
