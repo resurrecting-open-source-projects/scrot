@@ -106,10 +106,10 @@ SPECIAL STRINGS
 
   Example:
 
-    $ scrot '%Y-%m-%d_$wx$h.png' -e 'optipng $f'
+    $ scrot '%Y-%m-%d_$wx$h.png' -e 'du -h $f'
 
   This would create a PNG file with a name similar to 2000-10-30_2560x1024.png
-  and optimize it with optipng(1).
+  and show the disk-usage with du(1).
 
 SELECTION MODE
   When using -s, optionally you can indicate the action to perform with the selection area.
@@ -182,8 +182,32 @@ formats where the quality and compression are tied together (e.g JPEG),
 compression will be ignored. And for image formats where quality and
 compression can be independently set (e.g WebP, JXL), both flags are respected.
 
+EXAMPLES
+
+Following are a couple examples of using scrot with other utilities.
+
+Copying screenshot to clipboard using xclip(1):
+
+  $ scrot - | xclip -selection clipboard -target image/png
+
+Taking a screenshot and optimizing its size with optipng(1):
+
+  $ scrot -e 'optipng -o4 $f'
+
+Selecting a window by PID with xdo(1):
+
+  $ scrot -w $(xdo id -p PID)
+
+Taking a screenshot and annotating it with ImageMagick(1):
+
+ $ scrot - | convert -pointsize 64 -gravity North -annotate '+16+16' 'hello, world!' - out.png
+
+
 SEE ALSO
+  ImageMagick(1)
   optipng(1)
+  xclip(1)
+  xdo(1)
   xwininfo(1)
 
 AUTHOR
