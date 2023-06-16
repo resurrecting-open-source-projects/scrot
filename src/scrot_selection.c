@@ -416,11 +416,8 @@ Imlib_Image scrotSelectionSelectMode(void)
         scrotDoDelay();
     }
 
-    Imlib_Image capture = imlib_create_image_from_drawable(0, rect0.x, rect0.y,
-        rect0.w, rect0.h, 1);
-
-    if (opt.pointer)
-       scrotGrabMousePointer(capture, rect0.x, rect0.y);
+    Imlib_Image capture = scrotGrabRectAndPointer(
+        rect0.x, rect0.y, rect0.w, rect0.h);
 
     if (opt.selection.mode == SELECTION_MODE_CAPTURE)
         return capture;
