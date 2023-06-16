@@ -900,6 +900,10 @@ static Imlib_Image scrotGrabStackWindows(void)
 
         im = imlib_create_image_from_ximage(ximage, NULL, attr.x, attr.y,
             attr.width, attr.height, 1);
+        if (!im) {
+            errx(EXIT_FAILURE, "option --stack: "
+                "Failed to create Imlib2 image: Window id 0x%lx", win);
+        }
 
         XFree(ximage);
 
@@ -936,6 +940,8 @@ static Imlib_Image scrotGrabShotMulti(void)
         initXAndImlib(newDisp, i);
         ret = imlib_create_image_from_drawable(0, 0, 0, scr->width,
             scr->height, 1);
+        if (!ret)
+            errx(EXIT_FAILURE, "failed to grab image");
 
         appendToScrotList(images, ret);
     }
