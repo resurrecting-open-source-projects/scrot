@@ -967,16 +967,11 @@ static Imlib_Image scrotGrabShotMonitor(void)
 
     scrotAssert(screens); /* silence clang-tidy */
     XineramaScreenInfo *mon = &screens[opt.monitor];
-
-    /* Hack: pretend we were invoked in autoselect mode */
-    opt.autoselectX = mon->x_org;
-    opt.autoselectY = mon->y_org;
-    opt.autoselectW = mon->width;
-    opt.autoselectH = mon->height;
-
+    int x = mon->x_org, y = mon->y_org, w = mon->width, h = mon->height;
     XFree(screens);
 
-    return scrotGrabAutoselect();
+    scrotNiceClip(&x, &y, &w, &h);
+    return scrotGrabRectAndPointer(x, y, w, h);
 }
 
 static Imlib_Image stalkImageConcat(ScrotList *images, const enum Direction dir)
