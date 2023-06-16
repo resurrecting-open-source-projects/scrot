@@ -89,6 +89,7 @@ static Window scrotFindWindowByProperty(Display *, const Window, const Atom);
 static Imlib_Image stalkImageConcat(ScrotList *, const enum Direction);
 static int findWindowManagerFrame(Window *const, int *const);
 static Imlib_Image scrotGrabWindowById(Window const window);
+static void scrotGrabMousePointer(Imlib_Image, const int, const int);
 
 /* X11 stuff */
 Display *disp;
@@ -291,6 +292,16 @@ static size_t scrotHaveFileExtension(const char *filename, char **ext)
     return 0;
 }
 
+Imlib_Image scrotGrabRectAndPointer(int x, int y, int w, int h)
+{
+    Imlib_Image im = imlib_create_image_from_drawable(0, x, y, w, h, 1);
+    if (!im)
+        errx(EXIT_FAILURE, "failed to grab image");
+    if (opt.pointer)
+        scrotGrabMousePointer(im, x, y);
+    return im;
+}
+
 static Imlib_Image scrotGrabWindowById(Window const window)
 {
     Imlib_Image im = NULL;
@@ -299,9 +310,7 @@ static Imlib_Image scrotGrabWindowById(Window const window)
     if (!scrotGetGeometry(window, &rx, &ry, &rw, &rh))
         return NULL;
     scrotNiceClip(&rx, &ry, &rw, &rh);
-    im = imlib_create_image_from_drawable(0, rx, ry, rw, rh, 1);
-    if (opt.pointer)
-        scrotGrabMousePointer(im, rx, ry);
+    im = scrotGrabRectAndPointer(rx, ry, rw, rh);
     clientWindow = window;
     return im;
 }
@@ -316,15 +325,10 @@ static Imlib_Image scrotGrabFocused(void)
 
 static Imlib_Image scrotGrabAutoselect(void)
 {
-    Imlib_Image im = NULL;
     int rx = opt.autoselectX, ry = opt.autoselectY, rw = opt.autoselectW,
         rh = opt.autoselectH;
-
     scrotNiceClip(&rx, &ry, &rw, &rh);
-    im = imlib_create_image_from_drawable(0, rx, ry, rw, rh, 1);
-    if (opt.pointer)
-        scrotGrabMousePointer(im, rx, ry);
-    return im;
+    return scrotGrabRectAndPointer(rx, ry, rw, rh);
 }
 
 void scrotDoDelay(void)
@@ -505,7 +509,7 @@ Window scrotGetWindow(Display *display, Window window, int x, int y)
     return target;
 }
 
-void scrotGrabMousePointer(Imlib_Image image, const int xOffset,
+static void scrotGrabMousePointer(Imlib_Image image, const int xOffset,
     const int yOffset)
 {
     XFixesCursorImage *xcim = XFixesGetCursorImage(disp);
@@ -619,17 +623,9 @@ static int scrotMatchWindowClassName(Window target)
 
 static Imlib_Image scrotGrabShot(void)
 {
-    Imlib_Image im;
-
     if (!opt.silent)
         XBell(disp, 0);
-
-    im = imlib_create_image_from_drawable(0, 0, 0, scr->width,
-        scr->height, 1);
-    if (opt.pointer)
-        scrotGrabMousePointer(im, 0, 0);
-
-    return im;
+    return scrotGrabRectAndPointer(0, 0, scr->width, scr->height);
 }
 
 static void scrotExecApp(Imlib_Image image, struct tm *tm, char *filenameIM,
