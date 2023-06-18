@@ -332,12 +332,17 @@ void scrotDoDelay(void)
     if (!opt.delay)
         return;
     if (opt.countdown) {
-        dprintf(STDERR_FILENO, "Taking shot in ");
+        fputs("Taking shot in ", stderr);
         for (int i = opt.delay; i > 0; i--) {
-            dprintf(STDERR_FILENO, "%d.. ", i);
+            /* Illumos doesn't have dprintf():
+             * https://www.illumos.org/issues/1609
+             */
+            fprintf(stderr, "%d.. ", i);
+            fflush(stderr);
             opt.delayStart = scrotSleepFor(opt.delayStart, 1000);
         }
-        dprintf(STDERR_FILENO, "0.\n");
+        fprintf(stderr, "0.\n");
+        fflush(stderr);
     } else {
         scrotSleepFor(opt.delayStart, opt.delay * 1000);
     }
