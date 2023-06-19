@@ -345,7 +345,7 @@ void scrotDoDelay(void)
             fflush(stderr);
             opt.delayStart = scrotSleepFor(opt.delayStart, 1000);
         }
-        fprintf(stderr, "0.\n");
+        fputs("0.\n", stderr);
         fflush(stderr);
     } else {
         scrotSleepFor(opt.delayStart, opt.delay * 1000);
