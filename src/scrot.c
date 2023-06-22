@@ -1006,6 +1006,10 @@ static Imlib_Image stalkImageConcat(ScrotList *images, const enum Direction dir)
     imlib_context_set_color(0, 0, 0, 255);
     imlib_image_fill_rectangle(0, 0, w, h);
 
+    imlib_context_set_anti_alias(0);
+    imlib_context_set_dither(1);
+    imlib_context_set_blend(0);
+
     image = firstScrotList(images);
     while (image) {
         im = (Imlib_Image) image->data;
@@ -1013,10 +1017,6 @@ static Imlib_Image stalkImageConcat(ScrotList *images, const enum Direction dir)
         h = imlib_image_get_height();
         w = imlib_image_get_width();
         imlib_context_set_image(ret);
-        imlib_context_set_anti_alias(0);
-        imlib_context_set_dither(1);
-        imlib_context_set_blend(0);
-        imlib_context_set_angle(0);
         imlib_blend_image_onto_image(im, 0, 0, 0, w, h, x, y, w, h);
         (!vertical) ? (x += w) : (y += h);
         imlib_context_set_image(im);
