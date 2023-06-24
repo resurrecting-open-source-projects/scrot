@@ -588,13 +588,14 @@ static void scrotCheckIfOverwriteFile(char **filename)
 
     scrotAssert(newName[nalloc - 1] == '\0');
 
-    free(*filename);
-    *filename = newName;
-
     if (counter == maxCounter) {
         errx(EXIT_FAILURE, "scrot can no longer generate new file names.\n"
             "The last attempt is %s", newName);
     }
+
+    warnx("`%s` already exists, attempting `%s` instead", *filename, newName);
+    free(*filename);
+    *filename = newName;
 }
 
 static int scrotMatchWindowClassName(Window target)
