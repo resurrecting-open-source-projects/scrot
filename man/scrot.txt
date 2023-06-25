@@ -42,8 +42,9 @@ OPTIONS
   -h, --help                Display help and exit.
   -i, --ignorekeyboard      Don't exit for keyboard input. ESC still exits.
   -k, --stack[=OPT]         Capture stack/overlapped windows and join them. A
-                            running Composite Manager is needed. OPT it's optional
-                            join letter: v/h (vertical/horizontal). Default: h
+                            running Composite Manager is needed for it to work
+                            correctly. OPT is optional join letter: v/h
+                            (vertical/horizontal). Default: h
   -l, --line STYLE          STYLE indicates the style of the line when the -s
                             option is used; see SELECTION STYLE.
   -M, --monitor NUM         Capture Xinerama monitor number NUM.
