@@ -897,6 +897,7 @@ static Imlib_Image scrotGrabStackWindows(void)
 
         appendToScrotList(images, im);
     }
+    XFree(propReturn);
 
     return stalkImageConcat(&images, opt.stackDirection);
 }
