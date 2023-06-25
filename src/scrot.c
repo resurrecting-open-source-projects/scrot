@@ -893,7 +893,7 @@ static Imlib_Image scrotGrabStackWindows(void)
                 "Failed to create Imlib2 image: Window id 0x%lx", win);
         }
 
-        XFree(ximage);
+        XDestroyImage(ximage);
 
         appendToScrotList(images, im);
     }
