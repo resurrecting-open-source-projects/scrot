@@ -65,7 +65,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "note.h"
 #include "options.h"
 #include "scrot.h"
-#include "slist.h"
 #include "util.h"
 
 static void initXAndImlib(const char *, int);
@@ -85,7 +84,7 @@ static char *imPrintf(const char *, struct tm *, const char *, const char *,
 static char *scrotGetWindowName(Window);
 static Window scrotGetClientWindow(Display *, Window);
 static Window scrotFindWindowByProperty(Display *, const Window, const Atom);
-static Imlib_Image stalkImageConcat(ScrotList *, const enum Direction);
+static Imlib_Image stalkImageConcat(Imlib_Image *, size_t, const enum Direction);
 static int findWindowManagerFrame(Window *const, int *const);
 static Imlib_Image scrotGrabWindowById(Window const window);
 static void scrotGrabMousePointer(Imlib_Image, const int, const int);
@@ -862,7 +861,8 @@ static Imlib_Image scrotGrabStackWindows(void)
             EWMH_CLIENT_LIST);
     }
 
-    initializeScrotList(images);
+    size_t imagesCount = 0;
+    Imlib_Image *images = erealloc(NULL, numberItemsReturn * sizeof(*images));
 
     XCompositeRedirectSubwindows(disp, root, CompositeRedirectAutomatic);
 
@@ -896,11 +896,11 @@ static Imlib_Image scrotGrabStackWindows(void)
 
         XDestroyImage(ximage);
 
-        appendToScrotList(images, im);
+        images[imagesCount++] = im;
     }
     XFree(propReturn);
 
-    return stalkImageConcat(&images, opt.stackDirection);
+    return stalkImageConcat(images, imagesCount, opt.stackDirection);
 }
 
 static Imlib_Image scrotGrabShotMulti(void)
@@ -914,8 +914,8 @@ static Imlib_Image scrotGrabShotMulti(void)
     char *subDisp;
     char newDisp[255];
     Imlib_Image ret = NULL;
-
-    initializeScrotList(images);
+    size_t imagesCount = 0;
+    Imlib_Image *images = erealloc(NULL, screens * sizeof(*images));
 
     subDisp = estrdup(DisplayString(disp));
 
@@ -933,11 +933,11 @@ static Imlib_Image scrotGrabShotMulti(void)
         if (!ret)
             errx(EXIT_FAILURE, "failed to grab image");
 
-        appendToScrotList(images, ret);
+        images[imagesCount++] = ret;
     }
     free(subDisp);
 
-    return stalkImageConcat(&images, HORIZONTAL);
+    return stalkImageConcat(images, imagesCount, HORIZONTAL);
 }
 
 static Imlib_Image scrotGrabShotMonitor(void)
@@ -968,20 +968,20 @@ static Imlib_Image scrotGrabShotMonitor(void)
     return scrotGrabRectAndPointer(x, y, w, h);
 }
 
-static Imlib_Image stalkImageConcat(ScrotList *images, const enum Direction dir)
+static Imlib_Image stalkImageConcat(
+    Imlib_Image *images, size_t imagesCount, const enum Direction dir)
 {
-    if (isEmptyScrotList(images))
+    if (imagesCount == 0)
         return NULL;
 
     int total = 0, max = 0;
     int x = 0, y = 0, w , h;
     Imlib_Image ret, im;
-    ScrotListNode *image = NULL;
 
     const bool vertical = (dir == VERTICAL) ? true : false;
 
-    forEachScrotList(images, image) {
-        im = (Imlib_Image) image->data;
+    for (size_t i = 0; i < imagesCount; ++i) {
+        im = images[i];
         imlib_context_set_image(im);
         h = imlib_image_get_height();
         w = imlib_image_get_width();
@@ -1012,9 +1012,8 @@ static Imlib_Image stalkImageConcat(ScrotList *images, const enum Direction dir)
     imlib_context_set_dither(1);
     imlib_context_set_blend(0);
 
-    image = firstScrotList(images);
-    while (image) {
-        im = (Imlib_Image) image->data;
+    for (size_t i = 0; i < imagesCount; ++i) {
+        im = images[i];
         imlib_context_set_image(im);
         h = imlib_image_get_height();
         w = imlib_image_get_width();
@@ -1023,7 +1022,7 @@ static Imlib_Image stalkImageConcat(ScrotList *images, const enum Direction dir)
         (!vertical) ? (x += w) : (y += h);
         imlib_context_set_image(im);
         imlib_free_image_and_decache();
-        nextAndFreeScrotList(image);
     }
+    free(images);
     return ret;
 }

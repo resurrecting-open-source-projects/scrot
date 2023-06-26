@@ -52,7 +52,6 @@ AC_CHECK_FUNCS([err errx warn warnx],, [LIBBSD_NEEDED=yes])
 # -Werror are both set. figure out a way to fix it and remove
 # -Wno-error=pedantic from the CI.
 # See also: https://github.com/resurrecting-open-source-projects/scrot/pull/333#issuecomment-1572157050
-AC_CHECK_HEADERS([sys/queue.h],, [LIBBSD_NEEDED=yes], [ ])
 AS_IF([test "x$LIBBSD_NEEDED" = "xyes"], [
     PKG_CHECK_MODULES([LIBBSD], [libbsd-overlay],,
         [AC_MSG_ERROR([BSD functions not found, libbsd is required])])
