@@ -40,5 +40,4 @@ options.c options.h                     \
 scrot_selection.c scrot_selection.h     \
 selection_classic.c selection_classic.h \
 selection_edge.c selection_edge.h       \
-slist.h                                 \
 util.c util.h
