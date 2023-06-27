@@ -47,11 +47,13 @@ AS_IF([test "x$orig_CFLAGS" = "x"], [
 # Checks for libraries.
 PKG_CHECK_MODULES([SCROT_DEPS], ["$srcdir/deps.pc"])
 
+# TODO: When -Wpedantic and -Werror are both set:
+# - header checks fail due to empty translation unit:
+#   https://github.com/resurrecting-open-source-projects/scrot/pull/333#issuecomment-1572157050
+# - functions checks fail due to -Wstrict-prototypes:
+#   https://github.com/resurrecting-open-source-projects/scrot/pull/356#issuecomment-1608585396
+# figure out a way to fix these and remove `-Wno-error=pedantic` from the CI.
 AC_CHECK_FUNCS([err errx warn warnx],, [LIBBSD_NEEDED=yes])
-# TODO: header checks fail due to empty translation unit when -Wpedantic and
-# -Werror are both set. figure out a way to fix it and remove
-# -Wno-error=pedantic from the CI.
-# See also: https://github.com/resurrecting-open-source-projects/scrot/pull/333#issuecomment-1572157050
 AS_IF([test "x$LIBBSD_NEEDED" = "xyes"], [
     PKG_CHECK_MODULES([LIBBSD], [libbsd-overlay],,
         [AC_MSG_ERROR([BSD functions not found, libbsd is required])])
