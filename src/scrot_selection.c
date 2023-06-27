@@ -52,6 +52,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "selection_edge.h"
 #include "util.h"
 
+static void scrotSelectionCreate(void);
+static void scrotSelectionDestroy(void);
+static void scrotSelectionMotionDraw(int, int, int, int);
+static Status scrotSelectionCreateNamedColor(const char *, XColor *);
+static bool scrotSelectionGetUserSel(struct SelectionRect *);
+
 struct Selection selection;
 
 static void createCursors(void)
@@ -109,7 +115,7 @@ void selectionCalculateRect(int x0, int y0, int x1, int y1)
     }
 }
 
-void scrotSelectionCreate(void)
+static void scrotSelectionCreate(void)
 {
     struct Selection *const sel = &selection;
     *sel = (struct Selection){0};
@@ -143,7 +149,7 @@ void scrotSelectionCreate(void)
     }
 }
 
-void scrotSelectionDestroy(void)
+static void scrotSelectionDestroy(void)
 {
     XUngrabPointer(disp, CurrentTime);
     freeCursors();
@@ -151,7 +157,7 @@ void scrotSelectionDestroy(void)
     selection.destroy();
 }
 
-void scrotSelectionMotionDraw(int x0, int y0, int x1, int y1)
+static void scrotSelectionMotionDraw(int x0, int y0, int x1, int y1)
 {
     const struct Selection *const sel = &selection;
     const unsigned int EVENT_MASK = ButtonMotionMask | ButtonReleaseMask;
@@ -169,7 +175,7 @@ void scrotSelectionMotionDraw(int x0, int y0, int x1, int y1)
     sel->motionDraw(x0, y0, x1, y1);
 }
 
-Status scrotSelectionCreateNamedColor(const char *nameColor, XColor *color)
+static Status scrotSelectionCreateNamedColor(const char *nameColor, XColor *color)
 {
     scrotAssert(nameColor != NULL);
     scrotAssert(color != NULL);
@@ -188,7 +194,7 @@ void scrotSelectionGetLineColor(XColor *color)
     }
 }
 
-bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
+static bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
 {
     XEvent ev;
     enum { WAIT, DONE, ABORT } done = WAIT;
