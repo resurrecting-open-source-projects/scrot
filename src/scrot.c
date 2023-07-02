@@ -98,7 +98,7 @@ Screen *scr;
 
 int main(int argc, char *argv[])
 {
-    Imlib_Image image;
+    Imlib_Image image = NULL;
     Imlib_Image thumbnail;
     Imlib_Load_Error imErr;
     char *filenameIM = NULL;
