@@ -72,8 +72,6 @@ struct ScrotOptions opt = {
     .lineWidth = 1,
     .lineOpacity = SELECTION_OPACITY_DEFAULT,
     .stackDirection = HORIZONTAL,
-    .monitor = -1,
-    .windowId = None,
     .outputFile = defaultOutputFile,
     .lineColor = "gray",
 };
@@ -369,6 +367,7 @@ void optionsParse(int argc, char *argv[])
     while ((optch = getopt_long(argc, argv, stropts, lopts, NULL)) != -1) {
         switch (optch) {
         case 'a':
+            opt.mode = MODE_AUTOSEL;
             optionsParseAutoselect(optarg);
             break;
         case 'b':
@@ -411,13 +410,14 @@ void optionsParse(int argc, char *argv[])
             opt.ignoreKeyboard = true;
             break;
         case 'k':
-            opt.stack = true;
+            opt.mode = MODE_STACK;
             optionsParseStack(optarg);
             break;
         case 'l':
             optionsParseLine(optarg);
             break;
         case 'M':
+            opt.mode = MODE_MONITOR;
             opt.monitor = optionsParseNum(optarg, 0, INT_MAX, &errmsg);
             if (errmsg) {
                 errx(EXIT_FAILURE, "option --monitor: '%s' is %s", optarg,
@@ -425,7 +425,7 @@ void optionsParse(int argc, char *argv[])
             }
             break;
         case 'm':
-            opt.multidisp = true;
+            opt.mode = MODE_MULTIDISP;
             break;
         case 'n':
             if (optarg[0] == '\0')
@@ -449,18 +449,20 @@ void optionsParse(int argc, char *argv[])
             opt.script = optarg;
             break;
         case 's':
+            opt.mode = MODE_SELECT;
             optionsParseSelection(optarg);
             break;
         case 't':
             optionsParseThumbnail(optarg);
             break;
         case 'u':
-            opt.focused = true;
+            opt.mode = MODE_FOCUSED;
             break;
         case 'v':
             showVersion();
             break;
         case 'w':
+            opt.mode = MODE_WINDOW;
             opt.windowId = optionsParseNumBase(optarg, None/*0L*/, LONG_MAX, &errmsg, 0);
             if (errmsg) {
                 errx(EXIT_FAILURE, "option --window: '%s' is %s", optarg,
@@ -575,8 +577,6 @@ void optionsParseAutoselect(char *optarg)
                 errmsg);
         }
         i++;
-
-        opt.autoselect = true;
     }
     if (i < 4)
         errx(EXIT_FAILURE, "option --autoselect: too few dimensions");
