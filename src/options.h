@@ -55,7 +55,7 @@ struct ScrotOptions {
     struct timespec delayStart;
     int quality;
     int compression;
-    enum thumb { THUMB_DISABLED, THUMB_PERCENT, THUMB_RES } thumb;
+    enum { THUMB_DISABLED, THUMB_PERCENT, THUMB_RES } thumb;
     int thumbPercent;
     int thumbW;
     int thumbH;
