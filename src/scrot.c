@@ -864,6 +864,9 @@ static Imlib_Image scrotGrabStackWindows(void)
     size_t imagesCount = 0;
     Imlib_Image *images = erealloc(NULL, numberItemsReturn * sizeof(*images));
 
+    if (!XCompositeQueryVersion(disp, &(int){0}, &(int){0}))
+        errx(EXIT_FAILURE, "XCompositeQueryVersion() failed");
+
     XCompositeRedirectSubwindows(disp, root, CompositeRedirectAutomatic);
 
     for (i = 0; i < numberItemsReturn; i++) {
