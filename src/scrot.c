@@ -69,6 +69,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 static void initXAndImlib(const char *, int);
 static void uninitXAndImlib(void);
+static void scrotSaveImage(const char *);
 static Imlib_Image scrotGrabFocused(void);
 static void applyFilterIfRequired(void);
 static Imlib_Image scrotGrabAutoselect(void);
@@ -99,7 +100,6 @@ int main(int argc, char *argv[])
 {
     Imlib_Image image;
     Imlib_Image thumbnail;
-    Imlib_Load_Error imErr;
     char *filenameIM = NULL;
     char *filenameThumb = NULL;
     struct timespec timeStamp;
@@ -162,9 +162,7 @@ int main(int argc, char *argv[])
 
     applyFilterIfRequired();
 
-    imlib_save_image_with_error_return(filenameIM, &imErr);
-    if (imErr)
-        errx(EXIT_FAILURE, "Saving to file %s failed", filenameIM);
+    scrotSaveImage(filenameIM);
 
     if (opt.thumb != THUMB_DISABLED) {
         int cwidth, cheight;
@@ -203,11 +201,8 @@ int main(int argc, char *argv[])
 
             filenameThumb = imPrintf(opt.thumbFile, tm, NULL, NULL, thumbnail);
             scrotCheckIfOverwriteFile(&filenameThumb);
-            imlib_save_image_with_error_return(filenameThumb, &imErr);
+            scrotSaveImage(filenameThumb);
             imlib_free_image_and_decache();
-
-            if (imErr)
-                errx(EXIT_FAILURE, "Saving thumbnail %s failed", filenameThumb);
         }
     }
     if (opt.exec)
@@ -265,6 +260,25 @@ static void uninitXAndImlib(void)
     if (disp) {
         XCloseDisplay(disp);
         disp = NULL;
+    }
+}
+
+static void scrotSaveImage(const char *filename)
+{
+    Imlib_Load_Error imErr;
+    imlib_save_image_with_error_return(filename, &imErr);
+    if (imErr) {
+        const char *colon = "", *errmsg = "", imlibPrefix[] = "Imlib2: ";
+#if defined(IMLIB2_VERSION)
+#if IMLIB2_VERSION >= IMLIB2_VERSION_(1, 10, 0)
+        colon = ": ";
+        errmsg = imlib_strerror(imlib_get_error());
+#endif
+#endif
+        if (strncmp(errmsg, imlibPrefix, sizeof(imlibPrefix) - 1) == 0)
+            errmsg += sizeof(imlibPrefix) - 1;
+        errx(EXIT_FAILURE, "failed to save image: %s%s%s",
+            filename, colon, errmsg);
     }
 }
 

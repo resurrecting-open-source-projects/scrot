@@ -17,8 +17,8 @@ These will require a minimum version bump on imlib2 and so has to be done with
 care.
 
 - Switch to using `imlib_save_image_fd()` for saving images.
-- Switch to `imlib_get_error()` to retrieve the cause of error when saving and
-  loading images (and `imlib_strerror()` to stringify them).
+- ~~Switch to `imlib_get_error()` to retrieve the cause of error when saving and
+  loading images (and `imlib_strerror()` to stringify them).~~
 
 ## Integrate [libbsd](https://libbsd.freedesktop.org/wiki/)
 
