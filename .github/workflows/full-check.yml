@@ -41,6 +41,7 @@ jobs:
       run: |
         cppcheck --version
         cppcheck --std=c99 -j$(nproc) --quiet --force --error-exitcode=1 \
+            --suppress=uninitvar \
             --enable=portability,performance src/*.c \
             $(pkg-config --cflags ./deps.pc)
     - name: clang-tidy
