@@ -509,6 +509,9 @@ void optionsParse(int argc, char *argv[])
         opt.outputFile = getPathOfStdout();
     }
 
+    if (opt.outputFile[0] == '\0')
+        errx(EXIT_FAILURE, "output filename cannot be empty");
+
     if (opt.thumb != THUMB_DISABLED)
         opt.thumbFile = optionsNameThumbnail(opt.outputFile);
 
