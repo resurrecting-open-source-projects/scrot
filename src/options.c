@@ -528,13 +528,14 @@ static char *optionsNameThumbnail(const char *name)
     const ptrdiff_t nameLength = strlen(name);
     const char thumbSuffix[] = "-thumb";
     Stream ret = {0};
-    const char *const extension = strrchr(name, '.');
-    const ptrdiff_t baseNameLength = extension ? extension-name : nameLength;
+    char *extension = NULL;
+    size_t extLength = scrotHaveFileExtension(name, &extension);
+    const ptrdiff_t baseNameLength = nameLength - extLength;
 
     streamMem(&ret, name, baseNameLength);
     streamMem(&ret, thumbSuffix, sizeof(thumbSuffix)-1);
-    if (extension)
-        streamMem(&ret, extension, nameLength - baseNameLength);
+    if (extLength)
+        streamMem(&ret, extension, extLength);
     streamChar(&ret, '\0');
 
     return ret.buf;

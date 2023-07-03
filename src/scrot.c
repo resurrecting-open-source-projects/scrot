@@ -287,7 +287,12 @@ static void scrotSaveImage(const char *filename)
 
 size_t scrotHaveFileExtension(const char *filename, char **ext)
 {
-    char *s = strrchr(filename, '.');
+    const char *basename = strrchr(filename, '/');
+    if (!basename)
+        basename = filename;
+    basename += *basename == '/';
+    basename += *basename == '.'; /* dot files are not extensions */
+    char *s = strrchr(basename, '.');
 
     if (s && s[1] != '\0') {
         *ext = s;
