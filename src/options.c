@@ -493,8 +493,11 @@ void optionsParse(int argc, char *argv[])
         opt.outputFile = getPathOfStdout();
     }
 
-    if (opt.outputFile[0] == '\0')
-        errx(EXIT_FAILURE, "output filename cannot be empty");
+    size_t outputFileLen = strlen(opt.outputFile);
+    if (outputFileLen == 0)
+        errx(EXIT_FAILURE, "output file cannot be empty");
+    if (opt.outputFile[outputFileLen - 1] == '/')
+        errx(EXIT_FAILURE, "output file cannot be a directory");
 
     if (opt.thumb != THUMB_DISABLED)
         opt.thumbFile = optionsNameThumbnail(opt.outputFile);
