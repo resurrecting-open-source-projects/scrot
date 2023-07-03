@@ -641,16 +641,29 @@ static char *imPrintf(const char *str, struct tm *tm, const char *filenameIM,
     char buf[20];
     Stream ret = {0};
     long hostNameMax = 0;
-    char strf[4096];
     char *tmp;
     struct stat st;
 
-    const size_t strfLen = strftime(strf, sizeof(strf), str, tm);
+    /* prepend a useless '.' to distinguish between valid 0 return vs 0 return
+     * due to small buffer size.
+     */
+    Stream fmt = {0};
+    streamChar(&fmt, '.');
+    streamStr(&fmt, str);
+    streamChar(&fmt, '\0');
+
+    size_t strfLen, strfSize = 32;
+    char *strf = NULL;
+    do {
+        strfSize *= 2;
+        strf = erealloc(strf, strfSize);
+    } while ((strfLen = strftime(strf, strfSize, fmt.buf, tm)) == 0);
+    free(fmt.buf);
     if (strfLen == 0)
         errx(EXIT_FAILURE, "strftime returned 0");
 
     imlib_context_set_image(im);
-    for (const char *c = strf, *end = strf + strfLen; c < end; ++c) {
+    for (const char *c = strf + 1, *end = strf + strfLen; c < end; ++c) {
         if (*c == '$' && (c + 1) < end) {
             c++;
             switch (*c) {
@@ -744,6 +757,7 @@ static char *imPrintf(const char *str, struct tm *tm, const char *filenameIM,
             streamChar(&ret, *c);
         }
     }
+    free(strf);
     streamChar(&ret, '\0');
     return ret.buf;
 }
