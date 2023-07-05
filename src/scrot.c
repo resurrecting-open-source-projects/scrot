@@ -252,6 +252,7 @@ static void initXAndImlib(const char *dispStr, int screenNumber)
     imlib_context_set_colormap(cm);
     imlib_context_set_color_modifier(NULL);
     imlib_context_set_operation(IMLIB_OP_COPY);
+    imlib_set_cache_size(0);
 }
 
 /* atexit register func. */
