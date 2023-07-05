@@ -904,7 +904,7 @@ static Imlib_Image scrotGrabStackWindows(void)
                 "option --stack: Failed XGetImage: Window id 0x%lx", win);
         }
 
-        im = imlib_create_image_from_ximage(ximage, NULL, attr.x, attr.y,
+        im = imlib_create_image_from_ximage(ximage, NULL, 0, 0,
             attr.width, attr.height, 1);
         if (!im) {
             errx(EXIT_FAILURE, "option --stack: "
