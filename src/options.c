@@ -141,16 +141,10 @@ static bool optionsParseIsString(const char *const str)
 
 static void optionsParseStack(const char *optarg)
 {
-    // the suboption it's optional
-    if (!optarg) {
+    if (!optarg /* the suboption is optional */ || strcmp(optarg, "h") == 0)
         opt.stackDirection = HORIZONTAL;
-        return;
-    }
-
-    if (*optarg == 'v')
+    else if (strcmp(optarg, "v") == 0)
         opt.stackDirection = VERTICAL;
-    else if (*optarg == 'h')
-        opt.stackDirection = HORIZONTAL;
     else {
         errx(EXIT_FAILURE, "option --stack: Unknown value for suboption '%s'",
              optarg);
