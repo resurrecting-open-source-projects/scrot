@@ -146,20 +146,14 @@ static void optionsParseStack(const char *optarg)
         opt.stackDirection = HORIZONTAL;
         return;
     }
-    const char *value = strchr(optarg, '=');
 
-    if (value)
-        ++value;
-    else
-        value = optarg;
-
-    if (*value == 'v')
+    if (*optarg == 'v')
         opt.stackDirection = VERTICAL;
-    else if (*value == 'h')
+    else if (*optarg == 'h')
         opt.stackDirection = HORIZONTAL;
     else {
         errx(EXIT_FAILURE, "option --stack: Unknown value for suboption '%s'",
-             value);
+             optarg);
     }
 }
 
@@ -170,13 +164,7 @@ static void optionsParseSelection(const char *optarg)
         opt.selection.mode = SELECTION_MODE_CAPTURE;
         return;
     }
-
-    const char *value = strchr(optarg, '=');
-
-    if (value)
-        ++value;
-    else
-        value = optarg;
+    const char *value = optarg;
 
     if (!strncmp(value, SELECTION_MODE_S_CAPTURE, SELECTION_MODE_L_CAPTURE)) {
         opt.selection.mode = SELECTION_MODE_CAPTURE;
