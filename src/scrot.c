@@ -713,10 +713,7 @@ static char *imPrintf(const char *str, struct tm *tm, const char *filenameIM,
             case 's':
                 if (filenameIM) {
                     if (!stat(filenameIM, &st)) {
-                        int size;
-
-                        size = st.st_size;
-                        snprintf(buf, sizeof(buf), "%d", size);
+                        snprintf(buf, sizeof(buf), "%jd", (intmax_t)st.st_size);
                         streamStr(&ret, buf);
                     } else
                         streamStr(&ret, "[err]");
