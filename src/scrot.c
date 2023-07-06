@@ -97,7 +97,7 @@ Screen *scr;
 
 int main(int argc, char *argv[])
 {
-    Imlib_Image image;
+    Imlib_Image image = NULL;
     Imlib_Image thumbnail;
     Imlib_Load_Error imErr;
     char *filenameIM = NULL;
@@ -114,26 +114,28 @@ int main(int argc, char *argv[])
 
     initXAndImlib(opt.display, 0);
 
-    if (opt.selection.mode & SELECTION_MODE_ANY)
+    if (opt.mode == MODE_SELECT)
         image = scrotSelectionSelectMode();
     else {
 
         scrotDoDelay();
 
-        if (opt.focused)
+        if (opt.mode == MODE_FOCUSED)
             image = scrotGrabFocused();
-        else if (opt.multidisp)
+        else if (opt.mode == MODE_MULTIDISP)
             image = scrotGrabShotMulti();
-        else if (opt.stack)
+        else if (opt.mode == MODE_STACK)
             image = scrotGrabStackWindows();
-        else if (opt.monitor != -1)
+        else if (opt.mode == MODE_MONITOR)
             image = scrotGrabShotMonitor();
-        else if (opt.autoselect)
+        else if (opt.mode == MODE_AUTOSEL)
             image = scrotGrabAutoselect();
-        else if (opt.windowId != None)
+        else if (opt.mode == MODE_WINDOW)
             image = scrotGrabWindowById(opt.windowId);
-        else
+        else if (opt.mode == MODE_SCREEN)
             image = scrotGrabShot();
+        else
+            scrotAssert(!"unreachable");
     }
     if (!image)
         errx(EXIT_FAILURE, "no image grabbed");

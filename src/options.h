@@ -50,7 +50,19 @@ enum Direction {
     VERTICAL,
 };
 
+enum ShotMode {
+    MODE_SCREEN, /* first is the default one */
+    MODE_WINDOW,
+    MODE_AUTOSEL,
+    MODE_MONITOR,
+    MODE_STACK,
+    MODE_MULTIDISP,
+    MODE_FOCUSED,
+    MODE_SELECT,
+};
+
 struct ScrotOptions {
+    enum ShotMode mode;
     int delay;
     struct timespec delayStart;
     int quality;
@@ -84,14 +96,10 @@ struct ScrotOptions {
     bool countdown;
     bool border;
     bool silent;
-    bool focused;
     bool pointer;
     bool overwrite;
-    bool multidisp;
     bool freeze;
     bool ignoreKeyboard;
-    bool stack;
-    bool autoselect;
 };
 
 extern struct ScrotOptions opt;
