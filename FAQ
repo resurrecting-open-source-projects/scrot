@@ -89,7 +89,7 @@
 
 11. What is the default line mode for the --select option?
 
-    The default line mode is --line mode=classic
+    The default line mode is --line mode=auto
 
 
 12. Do all sub-options of the --line option work for both line
@@ -103,7 +103,8 @@
     is below another, this window does not rise, how can I solve this?
 
     The way to force a window to have focus and rise is to add the
-    --border option.
+    --border option. However, this does not work on all WMs. So you may
+    have to manually raise the window beforehand.
 
 
 14. How do I change the opacity of the option --select=hole or
