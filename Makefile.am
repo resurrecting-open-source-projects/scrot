@@ -36,7 +36,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 man_MANS = man/scrot.1
 
-dist_doc_DATA = AUTHORS ChangeLog CONTRIBUTING.md doc/scrot.png FAQ README.md TODO.md
+dist_doc_DATA = AUTHORS ChangeLog CONTRIBUTING.md doc/scrot.png FAQ.md README.md TODO.md
 
 EXTRA_DIST = $(man_MANS) autogen.sh deps.pc
 
