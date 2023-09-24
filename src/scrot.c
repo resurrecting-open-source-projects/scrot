@@ -633,11 +633,10 @@ static void scrotExecApp(Imlib_Image image, struct tm *tm, char *filenameIM,
 {
     char *execStr = imPrintf(opt.exec, tm, filenameIM, filenameThumb, image);
     int ret = system(execStr);
-
     if (ret == -1)
-        warn("The child process could not be created");
-    else if (WIFEXITED(ret) && WEXITSTATUS(ret) == 127)
-        warnx("scrot could not execute the command: %s", execStr);
+        err(EXIT_FAILURE, "The child process could not be created");
+    else if (!WIFEXITED(ret) || WEXITSTATUS(ret) != 0)
+        exit(69 /* EX_UNAVAILABLE */ );
     free(execStr);
 }
 
