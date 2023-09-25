@@ -479,9 +479,9 @@ void optionsParse(int argc, char *argv[])
         warnx("ignoring extraneous non-option argument: %s", *argv);
 
     if (!opt.format) {
-        char *ext = NULL;
-        scrotHaveFileExtension(opt.outputFile, &ext);
-        if (!ext || opt.outputFile == defaultOutputFile)
+        char *ext;
+        size_t extLength = scrotHaveFileExtension(opt.outputFile, &ext);
+        if (extLength == 0 || opt.outputFile == defaultOutputFile)
             opt.format = "png";
         else
             opt.format = ext+1;
@@ -528,14 +528,13 @@ static char *optionsNameThumbnail(const char *name)
     const ptrdiff_t nameLength = strlen(name);
     const char thumbSuffix[] = "-thumb";
     Stream ret = {0};
-    char *extension = NULL;
+    char *extension;
     size_t extLength = scrotHaveFileExtension(name, &extension);
     const ptrdiff_t baseNameLength = nameLength - extLength;
 
     streamMem(&ret, name, baseNameLength);
     streamMem(&ret, thumbSuffix, sizeof(thumbSuffix)-1);
-    if (extLength)
-        streamMem(&ret, extension, extLength);
+    streamMem(&ret, extension, extLength);
     streamChar(&ret, '\0');
 
     return ret.buf;

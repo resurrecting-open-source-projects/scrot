@@ -293,13 +293,8 @@ size_t scrotHaveFileExtension(const char *filename, char **ext)
     basename += *basename == '/';
     basename += *basename == '.'; /* dot files are not extensions */
     char *s = strrchr(basename, '.');
-
-    if (s && s[1] != '\0') {
-        *ext = s;
-        return strlen(s);
-    }
-
-    return 0;
+    *ext = (s && s[1] != '\0') ? s : "";
+    return strlen(*ext);
 }
 
 Imlib_Image scrotGrabRectAndPointer(int x, int y, int w, int h)
@@ -588,7 +583,7 @@ static void scrotCheckIfOverwriteFile(char **filename)
 
     extLength = scrotHaveFileExtension(*filename, &ext);
 
-    if (ext)
+    if (extLength)
         nalloc += extLength; // .ext
 
     newName = ecalloc(nalloc, sizeof(*newName));
@@ -599,7 +594,7 @@ static void scrotCheckIfOverwriteFile(char **filename)
 
         snprintf(fmt, sizeof(fmt), "_%03zu", counter++);
 
-        if (ext) {
+        if (extLength) {
             ptr -= extLength;
             memcpy(ptr, fmt, sizeof(fmt));
             memcpy(ptr + sizeof(fmt) - 1, ext, extLength);
