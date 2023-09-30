@@ -88,7 +88,7 @@ OPTIONS
 SPECIAL STRINGS
   -e, -F and FILE parameters can take format specifiers that are expanded
   by scrot when encountered. There are two types of format specifier:
-  Characters preceded by a '%' are interpreted by strftime(2). The second kind
+  Characters preceded by a '%' are interpreted by strftime(3). The second kind
   are internal to scrot and are prefixed by '$'. The following specifiers are
   recognised by scrot:
 
