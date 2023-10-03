@@ -29,29 +29,32 @@
 # OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 # SUCH DAMAGE.
 
+[ "$#" -ge 1 ] && {
+    case "$1" in
+        (clean)
+            if [ -e Makefile ]; then
+                echo "I can not clean. Use 'make distclean'." >&2
+                exit 1
+            else
+                echo "Vanishing the code"
+                rm -rf aclocal.m4 autom4te.cache/ compile configure depcomp install-sh \
+                       Makefile.in missing src/config.h.in src/Makefile.in
+                exit
+            fi
+        ;;
+        (*)
+            echo "Invalid option '$1', maybe try running './${0##*/} clean'." >&2
 
-# Use clean option
-if [ "$1" = "clean" ] && [ ! -e Makefile ]
-then
-    echo "Vanishing the code"
-    rm -rf aclocal.m4 autom4te.cache/ compile configure depcomp install-sh \
-           Makefile.in missing src/config.h.in src/Makefile.in
-    exit 0
-fi
-
-# Do not use clean option
-if [ "$1" = "clean" ] && [ -e Makefile ]
-then
-    echo "I can not clean. Use '$ make distclean'."
-    exit 0
-fi
+            exit 1
+        ;;
+    esac
+}
 
 # Do autoreconf
-autoreconf -i \
-   && { echo " "; \
-        echo "Done. You can use the 'clean' option to vanish the source code."; \
-        echo "Example of use: $ ./autogen.sh clean"; \
-        echo " "; \
-        echo "Now run ./configure, make, and make install."; \
-      } \
-|| { echo "We have a problem..."; exit 1; }
+autoreconf -i && cat << MESSAGE
+
+Done. You can use the 'clean' option to vanish the source code.
+Usage example: './autogen.sh clean'
+
+Now run './configure', 'make', and 'make install'.
+MESSAGE
