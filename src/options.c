@@ -306,8 +306,8 @@ void optionsParse(int argc, char *argv[])
         /* ensure these don't collude with single byte opts. */
         OPT_FORMAT = UCHAR_MAX + 1,
     };
-    static char stropts[] = "a:bC:cD:d:e:F:fhik::l:M:mn:opq:S:s::t:uvw:Z:z";
-    static struct option lopts[] = {
+    static const char stropts[] = "a:bC:cD:d:e:F:fhik::l:M:mn:opq:S:s::t:uvw:Z:z";
+    static const struct option lopts[] = {
         {"autoselect",      required_argument,  NULL,   'a'},
         {"border",          no_argument,        NULL,   'b'},
         {"class",           required_argument,  NULL,   'C'},
