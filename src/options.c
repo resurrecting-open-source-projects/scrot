@@ -305,8 +305,10 @@ void optionsParse(int argc, char *argv[])
     enum { /* long opt only */
         /* ensure these don't collude with single byte opts. */
         OPT_FORMAT = UCHAR_MAX + 1,
+        OPT_LIST_OPTS,
     };
     static const char stropts[] = "a:bC:cD:d:e:F:fhik::l:M:mn:opq:S:s::t:uvw:Z:z";
+    // NOTE: make sure lopts and opt_description indexes are kept in sync
     static const struct option lopts[] = {
         {"autoselect",      required_argument,  NULL,   'a'},
         {"border",          no_argument,        NULL,   'b'},
@@ -338,7 +340,43 @@ void optionsParse(int argc, char *argv[])
         {"compression",     required_argument,  NULL,   'Z'},
         {"silent",          no_argument,        NULL,   'z'},
         {"format",          required_argument,  NULL, OPT_FORMAT},
+        {"list-options",    optional_argument,  NULL, OPT_LIST_OPTS},
         {0}
+    };
+    static const char OPT_DEPRECATED[] = "";
+    static const struct option_desc {
+        const char *description, *arg_description;
+    } opt_description[] = {
+        /* a */  { "autoselect provided region", "x,y,w,h" },
+        /* b */  { "capture the window borders as well", "" },
+        /* C */  { "capture specified window class", "NAME" },
+        /* c */  { "display a countdown for delay", "" },
+        /* D */  { "capture specified display", "DISPLAY" },
+        /* d */  { "add delay before screenshot", "[b]SEC" },
+        /* e */  { "execute command on saved image", "CMD" },
+        /* F */  { "specify output file", "FILE" },
+        /* f */  { "freeze the screen when -s is used", "" },
+        /* h */  { "display help and exit", "" },
+        /* i */  { "ignore keyboard", "" },
+        /* k */  { "capture overlapped window and join them", "v|h" },
+        /* l */  { "specify the style of the selection line", "STYLE" },
+        /* M */  { "capture monitor", "NUM" },
+        /* m */  { "capture all monitors", "" },
+        /* n */  { OPT_DEPRECATED, OPT_DEPRECATED },
+        /* o */  { "overwrite the output file if needed", "" },
+        /* p */  { "capture the mouse pointer as well", "" },
+        /* q */  { "image quality", "NUM" },
+        /* S */  { OPT_DEPRECATED, OPT_DEPRECATED },
+        /* s */  { "interactively select a region to capture", "OPTS" },
+        /* t */  { "also generate a thumbnail", "% | WxH" },
+        /* u */  { "capture the currently focused window", "" },
+        /* u */  { "capture the currently focused window", "" },
+        /* v */  { "output version and exit", "" },
+        /* w */  { "X window ID to capture", "WID" },
+        /* Z */  { "image compression level", "LVL" },
+        /* z */  { "prevent beeping", "" },
+        /* OPT_FORMAT */     { "specify output file format", "FMT" },
+        /* OPT_LIST_OPTS */  { "list all options", "human|tsv" },
     };
     int optch;
     const char *errmsg;
@@ -464,6 +502,51 @@ void optionsParse(int argc, char *argv[])
         case OPT_FORMAT:
             opt.format = optarg;
             break;
+        case OPT_LIST_OPTS: {
+            bool tsv = false;
+            if (optarg != NULL) {
+                if (strcmp(optarg, "tsv") == 0) {
+                    tsv = true;
+                } else if (strcmp(optarg, "human") == 0) {
+                    // no-op
+                } else {
+                    errx(EXIT_FAILURE,
+                        "unknown argument for --list-options: `%s`", optarg);
+                }
+            }
+
+            for (size_t i = 0; i < ARRAY_COUNT(opt_description); ++i) {
+                const struct option *o = &lopts[i];
+                const struct option_desc *d = &opt_description[i];
+                if (d->description == OPT_DEPRECATED)
+                    continue;
+
+                if (!tsv) {
+                    int n = 0;
+                    if (o->val <= UCHAR_MAX)
+                        n += printf("-%c, ", o->val);
+                    n += printf("--%s", o->name);
+                    if (o->has_arg == required_argument)
+                        n += printf(" <%s>", d->arg_description);
+                    else if (o->has_arg == optional_argument)
+                        n += printf("[=%s]", d->arg_description);
+                    for (; n >= 0 && n < 32; ++n)
+                        putchar(' ');
+                    printf("%s\n", d->description);
+                } else {
+                    printf("%c\t", o->val <= UCHAR_MAX ? o->val : ' ');
+                    printf("%s\t", o->name);
+                    if (o->has_arg == required_argument)
+                        printf("R:%s\t", d->arg_description);
+                    else if (o->has_arg == optional_argument)
+                        printf("O:%s\t", d->arg_description);
+                    else
+                        printf("N:\t");
+                    printf("%s\n", d->description);
+                }
+            }
+            exit(EXIT_SUCCESS);
+        } break;
         default:
             exit(EXIT_FAILURE);
         }

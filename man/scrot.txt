@@ -84,6 +84,10 @@ OPTIONS
                             extension to determine the format. If filename
                             does not have an extension either, then PNG will
                             be used as fallback.
+  --list-options[=OPT]      List all program options. If argument is "tsv" it
+                            outputs a TAB separated list intended for scripts.
+                            Default is "human". Note that the tsv format is not
+                            stable and may change in the future.
 
 SPECIAL STRINGS
   -e, -F and FILE parameters can take format specifiers that are expanded
