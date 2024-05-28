@@ -1,0 +1,29 @@
+#!/bin/bash
+#
+# Copyright 2024 NRK <nrk@disroot.org>
+#
+# This is free and unencumbered software released into the public domain.
+# For more information, please refer to <https://unlicense.org/>
+
+_scrot_autocomp() {
+	local -a _scrot_opt_list
+	IFS=$'\n' _scrot_opt_list=( $(scrot --list-options=tsv) ) 2>/dev/null
+	local _scrot_opts=""
+	for ln in "${_scrot_opt_list[@]}"; do
+		local -a tokens
+		IFS=$'\t' tokens=( ${ln} )
+
+		local sopt="${tokens[0]}"
+		local lopt="${tokens[1]}"
+		# TODO: better support for flags that accept argument
+		# local argtype=${tokens[2]%%:*}
+		# local argdesc=${tokens[2]#*:}
+		# local desc=${tokens[3]}
+		_scrot_opts+="--${lopt} "
+		if [[ "$sopt" = [[:alnum:]]* ]]; then
+			_scrot_opts+="-${sopt} "
+		fi
+	done
+	printf "%s" "${_scrot_opts% }"
+}
+complete -W "$(_scrot_autocomp)" scrot

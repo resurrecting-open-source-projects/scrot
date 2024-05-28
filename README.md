@@ -99,6 +99,9 @@ Debian users can install scrot from their package manager:
 $ sudo apt install scrot
 ```
 
+Bash and Zsh completion scripts are available in [etc/](./etc).
+Distro packagers are encouraged to install them to the appropriate directory.
+
 ## Author ##
 
 scrot was originally developed by Tom Gilbert.

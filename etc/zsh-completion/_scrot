@@ -1,0 +1,30 @@
+#compdef scrot
+#
+# Copyright 2024 NRK <nrk@disroot.org>
+#
+# This is free and unencumbered software released into the public domain.
+# For more information, please refer to <https://unlicense.org/>
+
+local -a args
+local list=$($~words[1] --list-options=tsv) 2>/dev/null
+for ln in ${(f)list}; do
+    IFS=$'\t' local tokens=( ${=ln} )
+
+    local sopt="${tokens[1]}"
+    local lopt="${tokens[2]}"
+    local argtype=${tokens[3]%%:*}
+    local argdesc=${tokens[3]#*:}
+    local desc="[${tokens[4]}]"
+
+    case "$argtype" in
+        R) desc+=":$argdesc" ;; # Required
+        O) sopt+="+"; lopt+="=" ;; # Optional
+        N) ;; # None
+    esac
+
+    if [[ "${sopt}" = [[:alnum:]]* ]]; then
+        args+=( "-${sopt}${desc}" )
+    fi
+    args+=( "--${lopt}${desc}" )
+done
+_arguments "${args[@]}"
