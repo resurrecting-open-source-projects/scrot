@@ -11,6 +11,17 @@ Look for any bugs reported downstream or in our github issues and fix them:
 - <https://bugzilla.redhat.com/buglist.cgi?bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&component=scrot&product=Fedora>
 - <https://bugs.gentoo.org/buglist.cgi?quicksearch=scrot>
 
+## Shell completion improvements
+
+- Improve the bash completion script. Currently it's quite rudimentary.
+- Filter out mutually exclusive options in zsh completion. E.g if `-b` is
+  already provided then `--border` should no longer be considered a potential
+  match.
+- Add some way to install zsh/bash completion scripts. Since the directory where
+  completion script go into can vary, we want the user to explicitly set the
+  installation directory. E.g via the configure script
+  `./configure --with-zsh-completion-path=...`.
+
 ## Switch to newer Imlib2 interfaces
 
 These will require a minimum version bump on imlib2 and so has to be done with
