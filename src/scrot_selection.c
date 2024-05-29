@@ -155,6 +155,11 @@ static void scrotSelectionDestroy(void)
     freeCursors();
     XSync(disp, True);
     selection.destroy();
+    /* HACK: although we destroyed the selection, the frame still might not
+     * have been updated. a compositor might also buffer frames adding
+     * latency. so wait a bit for the screen to update and the selection
+     * borders to go away. */
+    scrotSleepFor(clockNow(), 80);
 }
 
 static void scrotSelectionMotionDraw(int x0, int y0, int x1, int y1)
