@@ -16,17 +16,6 @@ into the selection area you have created.
 Use the `--ignorekeyboard` option. This option prevents exit by
 ignoring any keyboard event, except the <kbd>ESC</kbd> key.
 
-### The `--select` option leaves rectangle trails of the selection rectangle. How do I avoid this?
-
-There are 2 ways to solve this:
-
-Try first with: `scrot --select --freeze`
-
-Or using another selection mode: `scrot --select --line mode=edge`
-
-But this last one does not behave correctly with some
-CWM (Composite Window Manager)
-
 ### Does scrot have a class name?
 
 Yes. The class name is "scrot" and is useful only when using the

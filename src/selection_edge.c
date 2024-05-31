@@ -126,10 +126,5 @@ void selectionEdgeDestroy(void)
             if (ev.type == UnmapNotify && ev.xunmap.window == pe->wndDraw)
                 is_unmapped = true;
         }
-        /* HACK: although we recived a DestroyNotify event, the frame still
-         * might not have been updated. a compositor might also buffer frames
-         * adding latency. so wait a bit for the screen to update and the
-         * selection borders to go away. */
-        scrotSleepFor(clockNow(), 80);
     }
 }
