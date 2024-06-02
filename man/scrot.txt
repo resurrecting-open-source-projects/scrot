@@ -69,7 +69,7 @@ OPTIONS
                             replaced by a number that maintains the full size
                             screenshot's aspect ratio. Examples: 10, 25, 320x240,
                             500x200, 100x0, 0x480.
-  -u, --focused             Use the currently focused window.
+  -u, --focused, --focussed Use the currently focused window.
   -v, --version             Output version information and exit.
   -w, --window WID          Window identifier to capture.
                             WID must be a valid identifier (see xwininfo(1)).
