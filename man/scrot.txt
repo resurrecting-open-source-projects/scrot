@@ -204,6 +204,11 @@ Taking a screenshot and annotating it with ImageMagick(1):
 
  $ scrot - | convert -pointsize 64 -gravity North -annotate '+16+16' 'hello, world!' - out.png
 
+AUTHOR
+  scrot was originally developed by Tom Gilbert.
+
+  Currently, source code is maintained by volunteers. Newer versions
+  are available at https://github.com/resurrecting-open-source-projects/scrot
 
 SEE ALSO
   ImageMagick(1)
@@ -211,9 +216,3 @@ SEE ALSO
   xclip(1)
   xdo(1)
   xwininfo(1)
-
-AUTHOR
-  scrot was originally developed by Tom Gilbert.
-
-  Currently, source code is maintained by volunteers. Newer versions
-  are available at https://github.com/resurrecting-open-source-projects/scrot
