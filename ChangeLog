@@ -1,3 +1,37 @@
+DRAFT
+Version 1.11
+
+ [ Alejandro Cervera ] alias @tricantivu
+
+ * Document: Correct strftime section in the manual
+
+ [ Guilherme Janczak ] alias @guijan
+
+ * Improvement: rewrite autogen.sh to be simpler and more robust
+ * Fixes: replace dprintf() calls to fix the SmartOS port
+
+ [ NRK ] alias @N-R-K
+
+ * New feature: zsh and bash completion
+ * Improvement: more detailed `--help` output and new `--list-options` flag
+ * Improvement: better error reporting on newer imlib2 versions
+ * Improvement: better handle mutually exclusive options
+ * Improvement: `--stack` no longer errors out if no compositor is running
+ * Improvement: print a warning if output file was changed
+ * Improvement: default file-name extension is now based on the format used
+ * Improvement: selection line mode will be automatically set to "edge" mode
+   if no compositors is running
+ * Document: add examples of using scrot with other utilities in manpage
+ * Fixes: selection borders appearing in the screenshot (PR: #378)
+ * Fixes: reject filenames with trailing slash
+ * Fixes: incorrect line opacity mapping
+ * Fixes: don't return 0 on exec failure
+ * Fixes: bad extension detection
+ * Fixes: stricter optional argument parsing
+ * Fixes: buffer overrun due to bad x,y in imlib_create_image_from_ximage call
+ * Fixes: printing potentially truncated file-size
+ * Fixes: various memory leaks
+
 Sat Jun 10 15:41:23 -03:00 2023  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 Version 1.10
 
