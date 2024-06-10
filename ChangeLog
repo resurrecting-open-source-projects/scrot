@@ -1,3 +1,11 @@
+Mon Jun 10 14:36:36 -03:00 2024  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
+Version 1.11.1
+
+ [ NRK ] alias @N-R-K
+
+ * Fixes: remove trailing slash from etc/ from Makefile.am to allow the
+   'make dist' command to run correctly.
+
 Sun Jun 09 21:19:28 -03:00 2024  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 Version 1.11
 
