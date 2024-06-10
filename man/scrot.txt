@@ -206,7 +206,7 @@ Selecting a window by PID with xdo(1):
 
 Taking a screenshot and annotating it with ImageMagick(1):
 
- $ scrot - | convert -pointsize 64 -gravity North -annotate '+16+16' 'hello, world!' - out.png
+  $ scrot - | convert -pointsize 64 -gravity North -annotate '+16+16' 'hello, world!' - out.png
 
 AUTHOR
   scrot was originally developed by Tom Gilbert.
