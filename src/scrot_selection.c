@@ -413,22 +413,33 @@ Imlib_Image scrotSelectionSelectMode(void)
     if (opt.delaySelection)
         scrotDoDelay();
 
-    if (!scrotSelectionGetUserSel(&rect0))
+    if (opt.freeze)
+        XGrabServer(disp);
+
+    bool success = scrotSelectionGetUserSel(&rect0);
+    if (success) {
+        opt.selection.mode = oldMode;
+        if (opt.selection.mode & SELECTION_MODE_NOT_CAPTURE)
+            success = scrotSelectionGetUserSel(&rect1);
+    }
+
+    if (!success) {
+        if (opt.freeze)
+            XUngrabServer(disp);
         return NULL;
+    }
 
-    opt.selection.mode = oldMode;
-
-    if (opt.selection.mode & SELECTION_MODE_NOT_CAPTURE)
-        if (!scrotSelectionGetUserSel(&rect1))
-            return NULL;
-
+    // this doesn't seem to make much sense if `--freeze` is enabled...
     if (!opt.delaySelection) {
         opt.delayStart = clockNow();
         scrotDoDelay();
     }
 
     Imlib_Image capture = scrotGrabRectAndPointer(
-        rect0.x, rect0.y, rect0.w, rect0.h);
+        rect0.x, rect0.y, rect0.w, rect0.h, opt.freeze);
+
+    if (opt.freeze)
+        XUngrabServer(disp);
 
     if (opt.selection.mode == SELECTION_MODE_CAPTURE)
         return capture;

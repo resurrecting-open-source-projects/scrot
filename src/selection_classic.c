@@ -71,9 +71,6 @@ void selectionClassicCreate(void)
 
     XSetLineAttributes(disp, pc->gc, opt.lineWidth, opt.lineStyle, CapRound,
         JoinRound);
-
-    if (opt.freeze)
-        XGrabServer(disp);
 }
 
 void selectionClassicDraw(void)
@@ -99,9 +96,6 @@ void selectionClassicDestroy(void)
 {
     const struct Selection *const sel = &selection;
     const struct SelectionClassic *pc = &sel->classic;
-
-    if (opt.freeze)
-        XUngrabServer(disp);
 
     if (pc->gc)
         XFreeGC(disp, pc->gc);
