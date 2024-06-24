@@ -46,7 +46,7 @@ void scrotNiceClip(int *, int *, int *, int *);
 struct timespec clockNow(void);
 struct timespec scrotSleepFor(struct timespec, int);
 void scrotDoDelay(void);
-Imlib_Image scrotGrabRectAndPointer(int x, int y, int w, int h);
+Imlib_Image scrotGrabRectAndPointer(int, int, int, int, bool);
 size_t scrotHaveFileExtension(const char *, char **);
 
 #endif /* !defined(H_SCROT) */
