@@ -6,6 +6,8 @@
 # -misc-no-recursion
 #    blindly flags every single recursion regardless of whether the usage was
 #    safe or not.
+# -misc-include-cleaner
+#    not compatible with scrot's existing include policy
 Checks: >
     performance-*,
     misc-*,
@@ -24,6 +26,7 @@ Checks: >
     bugprone-branch-clone,
     -clang-analyzer-security.insecureAPI.*,
     -misc-no-recursion,
+    -misc-include-cleaner,
 
 # treat all warnings as errors
 WarningsAsErrors: '*'
