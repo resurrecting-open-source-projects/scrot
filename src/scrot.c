@@ -271,7 +271,8 @@ static void scrotSaveImage(const char *filename)
     Imlib_Load_Error imErr;
     imlib_save_image_with_error_return(filename, &imErr);
     if (imErr) {
-        const char *colon = "", *errmsg = "", imlibPrefix[] = "Imlib2: ";
+        const char *colon = "", *errmsg = "";  // NOLINT(*DeadStores)
+        const char imlibPrefix[] = "Imlib2: ";
 #if defined(IMLIB2_VERSION)
 #if IMLIB2_VERSION >= IMLIB2_VERSION_(1, 10, 0)
         colon = ": ";
