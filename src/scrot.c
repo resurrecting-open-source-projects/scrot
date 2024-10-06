@@ -298,9 +298,9 @@ size_t scrotHaveFileExtension(const char *filename, char **ext)
     return strlen(*ext);
 }
 
-Imlib_Image scrotGrabRectAndPointer(int x, int y, int w, int h)
+Imlib_Image scrotGrabRectAndPointer(int x, int y, int w, int h, bool isGrabbed)
 {
-    Imlib_Image im = imlib_create_image_from_drawable(0, x, y, w, h, 1);
+    Imlib_Image im = imlib_create_image_from_drawable(0, x, y, w, h, !isGrabbed);
     if (!im)
         errx(EXIT_FAILURE, "failed to grab image");
     if (opt.pointer)
@@ -316,7 +316,7 @@ static Imlib_Image scrotGrabWindowById(Window const window)
     if (!scrotGetGeometry(window, &rx, &ry, &rw, &rh))
         return NULL;
     scrotNiceClip(&rx, &ry, &rw, &rh);
-    im = scrotGrabRectAndPointer(rx, ry, rw, rh);
+    im = scrotGrabRectAndPointer(rx, ry, rw, rh, false);
     clientWindow = window;
     return im;
 }
@@ -334,7 +334,7 @@ static Imlib_Image scrotGrabAutoselect(void)
     int rx = opt.autoselectX, ry = opt.autoselectY, rw = opt.autoselectW,
         rh = opt.autoselectH;
     scrotNiceClip(&rx, &ry, &rw, &rh);
-    return scrotGrabRectAndPointer(rx, ry, rw, rh);
+    return scrotGrabRectAndPointer(rx, ry, rw, rh, false);
 }
 
 void scrotDoDelay(void)
@@ -626,7 +626,7 @@ static Imlib_Image scrotGrabShot(void)
 {
     if (!opt.silent)
         XBell(disp, 0);
-    return scrotGrabRectAndPointer(0, 0, scr->width, scr->height);
+    return scrotGrabRectAndPointer(0, 0, scr->width, scr->height, false);
 }
 
 static void scrotExecApp(Imlib_Image image, struct tm *tm, char *filenameIM,
@@ -985,7 +985,7 @@ static Imlib_Image scrotGrabShotMonitor(void)
     XFree(screens);
 
     scrotNiceClip(&x, &y, &w, &h);
-    return scrotGrabRectAndPointer(x, y, w, h);
+    return scrotGrabRectAndPointer(x, y, w, h, false);
 }
 
 static Imlib_Image stalkImageConcat(
