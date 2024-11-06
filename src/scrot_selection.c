@@ -232,15 +232,22 @@ static bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
                 scrotSelectionMotionDraw(rx, ry, ev.xmotion.x, ev.xmotion.y);
             break;
         case ButtonPress:
-            isButtonPressed = true;
-            rx = ev.xbutton.x;
-            ry = ev.xbutton.y;
-            target = scrotGetWindow(disp, ev.xbutton.subwindow, ev.xbutton.x, ev.xbutton.y);
-            if (target == None)
-                target = root;
+            if (ev.xbutton.button == 1) {
+                isButtonPressed = true;
+                rx = ev.xbutton.x;
+                ry = ev.xbutton.y;
+                target = scrotGetWindow(disp, ev.xbutton.subwindow, ev.xbutton.x, ev.xbutton.y);
+                if (target == None)
+                    target = root;
+            }
             break;
         case ButtonRelease:
-            done = DONE;
+            if (ev.xbutton.button == 1)
+                done = DONE;
+            else if (ev.xbutton.button == 3) {
+                warnx("Right mouse button was pressed, aborting shot");
+                done = ABORT;
+            }
             break;
         case KeyPress:
         {
