@@ -90,6 +90,7 @@ struct SelectionClassic {
 };
 struct SelectionEdge {
     Window wndDraw;
+    bool isMapped;
 };
 
 struct Selection {
