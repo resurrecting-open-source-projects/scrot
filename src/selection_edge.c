@@ -60,6 +60,7 @@ void selectionEdgeCreate(void)
     pe->wndDraw = XCreateWindow(disp, root, 0, 0, WidthOfScreen(scr),
         HeightOfScreen(scr), 0, CopyFromParent, InputOutput, CopyFromParent,
         CWOverrideRedirect | CWBackPixel, &attr);
+    pe->isMapped = false;
 
     unsigned long opacity = opt.lineOpacity * (0xFFFFFFFFu / 255);
 
@@ -79,8 +80,8 @@ void selectionEdgeCreate(void)
 
 void selectionEdgeDraw(void)
 {
-    const struct Selection *const sel = &selection;
-    const struct SelectionEdge *const pe = &sel->edge;
+    struct Selection *const sel = &selection;
+    struct SelectionEdge *const pe = &sel->edge;
 
     XRectangle rects[4] = {
         { sel->rect.x, sel->rect.y, opt.lineWidth, sel->rect.h }, // left
@@ -95,6 +96,7 @@ void selectionEdgeDraw(void)
     XShapeCombineRectangles(disp, pe->wndDraw, ShapeBounding, 0, 0, rects, 4,
         ShapeSet, 0);
     XMapWindow(disp, pe->wndDraw);
+    pe->isMapped = true;
 }
 
 void selectionEdgeMotionDraw(int x0, int y0, int x1, int y1)
@@ -118,7 +120,7 @@ void selectionEdgeDestroy(void)
     if (pe->wndDraw != None) {
         XSelectInput(disp, pe->wndDraw, StructureNotifyMask);
         XDestroyWindow(disp, pe->wndDraw);
-        bool is_unmapped = false, is_destroyed = false;
+        bool is_unmapped = !pe->isMapped, is_destroyed = false;
         for (XEvent ev; !(is_unmapped && is_destroyed);) {
             XNextEvent(disp, &ev);
             if (ev.type == DestroyNotify && ev.xdestroywindow.window == pe->wndDraw)
