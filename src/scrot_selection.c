@@ -165,7 +165,7 @@ static void scrotSelectionDestroy(void)
 static void scrotSelectionMotionDraw(int x0, int y0, int x1, int y1)
 {
     const struct Selection *const sel = &selection;
-    const unsigned int EVENT_MASK = ButtonMotionMask | ButtonReleaseMask;
+    const unsigned int EVENT_MASK = ButtonMotionMask | ButtonPressMask | ButtonReleaseMask;
     Cursor cursor = None;
 
     if (x1 > x0 && y1 > y0)
@@ -205,6 +205,7 @@ static bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
     enum { WAIT, DONE, ABORT } done = WAIT;
     int rx = 0, ry = 0, rw = 0, rh = 0;
     bool isButtonPressed = false;
+    unsigned int buttonId = -1;
     Window target = None;
     Status ret;
 
@@ -232,15 +233,22 @@ static bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
                 scrotSelectionMotionDraw(rx, ry, ev.xmotion.x, ev.xmotion.y);
             break;
         case ButtonPress:
-            isButtonPressed = true;
-            rx = ev.xbutton.x;
-            ry = ev.xbutton.y;
-            target = scrotGetWindow(disp, ev.xbutton.subwindow, ev.xbutton.x, ev.xbutton.y);
-            if (target == None)
-                target = root;
+            if (!isButtonPressed) {
+                isButtonPressed = true;
+                buttonId = ev.xbutton.button;
+                rx = ev.xbutton.x;
+                ry = ev.xbutton.y;
+                target = scrotGetWindow(disp, ev.xbutton.subwindow, ev.xbutton.x, ev.xbutton.y);
+                if (target == None)
+                    target = root;
+            } else {
+                warnx("Alternate button pressed, aborting shot");
+                done = ABORT;
+            }
             break;
         case ButtonRelease:
-            done = DONE;
+            if (isButtonPressed && ev.xbutton.button == buttonId)
+                done = DONE;
             break;
         case KeyPress:
         {
