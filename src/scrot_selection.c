@@ -141,9 +141,16 @@ static void scrotSelectionCreate(void)
 
     unsigned int const EVENT_MASK = ButtonMotionMask | ButtonPressMask | ButtonReleaseMask;
 
-    if ((XGrabPointer(disp, root, False, EVENT_MASK, GrabModeAsync,
-             GrabModeAsync, root, sel->curCross, CurrentTime)
-            != GrabSuccess)) {
+    int ret;
+    struct timespec t = clockNow();
+    for (int attempts = 0; attempts < 20; ++attempts) {
+        ret = XGrabPointer(disp, root, False, EVENT_MASK, GrabModeAsync,
+            GrabModeAsync, root, sel->curCross, CurrentTime);
+        if (ret != AlreadyGrabbed)
+            break;
+        t = scrotSleepFor(t, 50);
+    }
+    if (ret != GrabSuccess) {
         scrotSelectionDestroy();
         errx(EXIT_FAILURE, "couldn't grab pointer");
     }
