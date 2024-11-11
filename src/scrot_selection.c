@@ -211,14 +211,12 @@ static bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
 
     scrotSelectionCreate();
 
-    ret = XGrabKeyboard(disp, root, False, GrabModeAsync, GrabModeAsync, CurrentTime);
-    if (ret == AlreadyGrabbed) {
-        int attempts = 20;
-        struct timespec t = clockNow();
-        do {
-            t = scrotSleepFor(t, 50);
-            ret = XGrabKeyboard(disp, root, False, GrabModeAsync, GrabModeAsync, CurrentTime);
-        } while (--attempts > 0 && ret == AlreadyGrabbed);
+    struct timespec t = clockNow();
+    for (int attempts = 0; attempts < 20; ++attempts) {
+        ret = XGrabKeyboard(disp, root, False, GrabModeAsync, GrabModeAsync, CurrentTime);
+        if (ret != AlreadyGrabbed)
+            break;
+        t = scrotSleepFor(t, 50);
     }
     if (ret != GrabSuccess) {
         scrotSelectionDestroy();
