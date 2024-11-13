@@ -120,13 +120,13 @@ void selectionEdgeDestroy(void)
     if (pe->wndDraw != None) {
         XSelectInput(disp, pe->wndDraw, StructureNotifyMask);
         XDestroyWindow(disp, pe->wndDraw);
-        bool is_unmapped = !pe->isMapped, is_destroyed = false;
-        for (XEvent ev; !(is_unmapped && is_destroyed);) {
+        bool isUnmapped = !pe->isMapped, isDestroyed = false;
+        for (XEvent ev; !(isUnmapped && isDestroyed);) {
             XNextEvent(disp, &ev);
             if (ev.type == DestroyNotify && ev.xdestroywindow.window == pe->wndDraw)
-                is_destroyed = true;
+                isDestroyed = true;
             if (ev.type == UnmapNotify && ev.xunmap.window == pe->wndDraw)
-                is_unmapped = true;
+                isUnmapped = true;
         }
     }
 }
