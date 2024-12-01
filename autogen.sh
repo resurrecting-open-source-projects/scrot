@@ -24,7 +24,7 @@
 
 
 if [ "$#" -eq 0 ]; then
-    autoreconf -i || { echo "autoreconf failed." >&2; exit 1; }
+    autoreconf -i -Im4 || { echo "autoreconf failed." >&2; exit 1; }
     echo "autogen.sh: done."
     echo "Run './configure && make && make install' to install."
     echo "Or run './autogen.sh clean' to clean up."
