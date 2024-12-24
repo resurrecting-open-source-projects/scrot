@@ -53,6 +53,14 @@ scrot requires a few projects and libraries:
 - libXfixes [(can be found in X.Org)](https://gitlab.freedesktop.org/xorg/lib/libxfixes)
 - libXinerama [(can be found in X.Org)](https://gitlab.freedesktop.org/xorg/lib/libxinerama)
 
+On Debian / Ubuntu based systems, you might install dependencies with:
+
+```
+apt install autoconf autoconf-archive pkg-config libimlib2 libimlib2-dev libxcomposite1 libxcomposite-dev libxext6 libxext-dev libxfixes3 libxfixes-dev libxinerama1 libxinerama-dev
+```
+
+as **root** user.
+
 ### Generic installation instructions ###
 
 If you are building from a git checkout, or if you have applied additional
