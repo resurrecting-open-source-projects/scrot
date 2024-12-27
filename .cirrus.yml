@@ -85,7 +85,7 @@ task:
   freebsd_instance:
     # Keep updated with the newest release from
     # https://www.freebsd.org/releases/
-    image: freebsd-13-2-release-amd64
+    image: freebsd-14-2-release-amd64-ufs
   env:
     OS: freebsd
     matrix:
