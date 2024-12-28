@@ -36,15 +36,14 @@ If you are interested in helping scrot, read the [CONTRIBUTING.md](CONTRIBUTING.
 ## Installing ##
 
 scrot is available in the official repository of many linux/BSD distributions.
-It is recommended to use the official package manager to install scrot.
-For example, Debian users can install scrot from their package manager via
-running the command:
+It is recommended to use the system package manager for installing scrot.
+For example, Debian users can run the following command to install scrot:
 
 ```console
 $ sudo apt install scrot
 ```
 
-A list of repositories which package scrot is
+A list of repositories that package scrot is
 [available here](https://repology.org/project/scrot/versions).
 If your distribution does not package scrot, you may also build scrot from
 source by following the build instructions below.
