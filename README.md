@@ -33,6 +33,21 @@ Now, scrot is maintained by volunteers under [Resurrecting Open Source Projects]
 
 If you are interested in helping scrot, read the [CONTRIBUTING.md](CONTRIBUTING.md) file.
 
+## Installing ##
+
+scrot is available in the official repository of many linux/BSD distributions.
+It is recommended to use the system package manager for installing scrot.
+For example, Debian users can run the following command to install scrot:
+
+```console
+$ sudo apt install scrot
+```
+
+A list of repositories that package scrot is
+[available here](https://repology.org/project/scrot/versions).
+If your distribution does not package scrot, you may also build scrot from
+source by following the build instructions below.
+
 ## Building ##
 
 This section describes the steps to build and install scrot.
@@ -92,11 +107,6 @@ $ make distclean
 You can return to a pristine source tree before running `./configure`:
 ```console
 $ ./autogen.sh clean
-```
-
-Debian users can install scrot from their package manager:
-```console
-$ sudo apt install scrot
 ```
 
 Bash and Zsh completion scripts are available in [etc/](./etc).
