@@ -45,6 +45,8 @@ AS_IF([test "x$orig_CFLAGS" = "x"], [
 ])
 
 # Checks for libraries.
+m4_ifndef([PKG_PREREQ],
+     [m4_fatal([either pkg-config or pkg.m4 is not installed])])
 PKG_CHECK_MODULES([SCROT_DEPS], ["$srcdir/deps.pc"])
 
 # TODO: When -Wpedantic and -Werror are both set:
