@@ -13,7 +13,7 @@ jobs:
   ubuntu:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2.4.0
+    - uses: actions/checkout@v4
     - name: install_dependencies
       run: |
         sudo apt install tcc libimlib2-dev libxcomposite-dev libxfixes-dev \
@@ -63,7 +63,7 @@ jobs:
       # default Github Actions Windows VM. This step tells git to translate Unix
       # newlines to DOS newlines.
       shell: bash
-    - uses: actions/checkout@v2.4.0
+    - uses: actions/checkout@v4
     - uses: cygwin/cygwin-install-action@v1
       with:
         packages: autoconf autoconf-archive automake gcc-core libImlib2-devel \

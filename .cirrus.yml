@@ -51,10 +51,9 @@ task:
       - CC: clang
       - CC: gcc
   install_script:
-    - apk add autoconf autoconf-archive automake binutils gzip make pkgconfig
-                       $CC xorg-server-dev libxcomposite-dev libxext-dev
-                       libxfixes-dev libxinerama-dev imlib2-dev musl-dev
-                       bsd-compat-headers libbsd-dev llvm-dev
+    - apk add build-base autoconf autoconf-archive automake gzip pkgconfig $CC
+              xorg-server-dev libxcomposite-dev libxext-dev libxfixes-dev
+              libxinerama-dev imlib2-dev
   << : *common_script
 
 task:
@@ -78,7 +77,7 @@ task:
     - apt-get update
     - apt-get install -y autoconf autoconf-archive make pkg-config $CC
                          libx11-dev libxcomposite-dev libxext-dev libxfixes-dev
-                         libxinerama-dev libimlib2-dev libbsd-dev
+                         libxinerama-dev libimlib2-dev
   << : *common_script
 
 task:
@@ -117,21 +116,19 @@ task:
     image: alpine:latest
     kvm: true
   install_script:
-    - apk add build-base pkgconfig gzip
+    - apk add build-base pkgconfig
               xorg-server-dev libxcomposite-dev libxext-dev
-              libxfixes-dev libxinerama-dev imlib2-dev libbsd-dev
+              libxfixes-dev libxinerama-dev imlib2-dev
   matrix:
     - name: alpine-latest-bare-build
       test_script:
-        - c99 -o src/scrot src/*.c $(pkg-config --cflags --libs ./deps.pc libbsd-overlay)
+        - c99 -o src/scrot src/*.c $(pkg-config --cflags --libs ./deps.pc)
         - src/scrot -v
     - name: alpine-latest-gcc-aggressive-fanalyzer
-      # NOTE: libbsd on musl triggers some `#warning`. so use `-Wno-error=cpp`.
       test_script:
         - gcc --version
         - gcc -std=c99 -o src/scrot src/*.c -Wall -Wextra -Wpedantic -Werror
               -fanalyzer -O3 -flto -fuse-linker-plugin -fno-common
               -fgraphite-identity -floop-nest-optimize -fipa-pta
-              $(pkg-config --cflags --libs ./deps.pc libbsd-overlay)
-              -Wno-error=cpp
+              $(pkg-config --cflags --libs ./deps.pc)
         - src/scrot -v
