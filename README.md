@@ -10,7 +10,7 @@ scrot is a simple command line screen capture utility, it uses imlib2 to grab
 and save images.
 
 scrot has many useful features:
-  - Support for multiple image formats: JPG, PNG, GIF, and others.
+  - Support for multiple image formats: JPG, PNG, GIF, and others supported by Imlib2.
   - The screenshot's quality is configurable.
   - It is possible to capture a specific window or a rectangular area on the
     screen.
