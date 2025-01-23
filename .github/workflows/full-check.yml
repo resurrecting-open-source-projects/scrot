@@ -64,7 +64,7 @@ jobs:
       # newlines to DOS newlines.
       shell: bash
     - uses: actions/checkout@v4
-    - uses: cygwin/cygwin-install-action@v1
+    - uses: cygwin/cygwin-install-action@v5
       with:
         packages: autoconf autoconf-archive automake gcc-core libImlib2-devel \
                   libXcomposite-devel libXext-devel libXfixes-devel libXinerama-devel \
