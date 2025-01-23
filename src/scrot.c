@@ -70,7 +70,6 @@ static void initXAndImlib(const char *, int);
 static void uninitXAndImlib(void);
 static void scrotSaveImage(const char *);
 static Imlib_Image scrotGrabFocused(void);
-static void applyFilterIfRequired(void);
 static Imlib_Image scrotGrabAutoselect(void);
 static long miliToNanoSec(int);
 static Imlib_Image scrotGrabShotMulti(void);
@@ -157,8 +156,6 @@ int main(int argc, char *argv[])
 
     filenameIM = imPrintf(opt.outputFile, tm, NULL, NULL, image);
     scrotCheckIfOverwriteFile(&filenameIM);
-
-    applyFilterIfRequired();
 
     scrotSaveImage(filenameIM);
 
@@ -544,16 +541,6 @@ static void scrotGrabMousePointer(Imlib_Image image, const int xOffset,
     imlib_context_set_image(imcursor);
     imlib_free_image();
     XFree(xcim);
-}
-
-// It assumes that the local variable 'scrot.c:Imlib_Image image' is in context
-static void applyFilterIfRequired(void)
-{
-    if (opt.script) {
-        warnx("--script is deprecated. See: "
-            "https://github.com/resurrecting-open-source-projects/scrot/pull/231");
-        imlib_apply_filter(opt.script);
-    }
 }
 
 static void scrotCheckIfOverwriteFile(char **filename)
