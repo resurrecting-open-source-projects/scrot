@@ -80,7 +80,7 @@ enum { /* long opt only */
     OPT_FORMAT = UCHAR_MAX + 1,
     OPT_LIST_OPTS,
 };
-static const char stropts[] = "a:bC:cD:d:e:F:fhik::l:M:mopq:S:s::t:uvw:Z:z";
+static const char stropts[] = "a:bC:cD:d:e:F:fhik::l:M:mopq:s::t:uvw:Z:z";
 // NOTE: make sure lopts and opt_description indexes are kept in sync
 static const struct option lopts[] = {
     {"autoselect",      required_argument,  NULL,   'a'},
@@ -101,7 +101,6 @@ static const struct option lopts[] = {
     {"overwrite",       no_argument,        NULL,   'o'},
     {"pointer",         no_argument,        NULL,   'p'},
     {"quality",         required_argument,  NULL,   'q'},
-    {"script",          required_argument,  NULL,   'S'},
     {"select",          optional_argument,  NULL,   's'},
     {"thumb",           required_argument,  NULL,   't'},
     {"focused",         no_argument,        NULL,   'u'},
@@ -137,7 +136,6 @@ static const struct option_desc {
     /* o */  { "overwrite the output file if needed", "" },
     /* p */  { "capture the mouse pointer as well", "" },
     /* q */  { "image quality", "NUM" },
-    /* S */  { OPT_DEPRECATED, OPT_DEPRECATED },
     /* s */  { "interactively select a region to capture", "OPTS" },
     /* t */  { "also generate a thumbnail", "% | WxH" },
     /* u */  { "capture the currently focused window", "" },
@@ -457,9 +455,6 @@ void optionsParse(int argc, char *argv[])
                 errx(EXIT_FAILURE, "option --quality: '%s' is %s", optarg,
                     errmsg);
             }
-            break;
-        case 'S':
-            opt.script = optarg;
             break;
         case 's':
             opt.mode = MODE_SELECT;
