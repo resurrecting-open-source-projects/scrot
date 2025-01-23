@@ -35,7 +35,6 @@ MAINTAINERCLEANFILES = Makefile.in
 
 bin_PROGRAMS  = scrot
 scrot_SOURCES  = scrot.c scrot.h        \
-note.c note.h                           \
 options.c options.h                     \
 scrot_selection.c scrot_selection.h     \
 selection_classic.c selection_classic.h \
