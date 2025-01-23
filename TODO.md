@@ -50,3 +50,21 @@ The following libbsd integration efforts are in progress:
 - ~~Replace error exits with the err() family of functions.~~
 - ~~Replace local implementations of data structures with the sys/queue.h API.~~
 - Find places where other BSD functions can serve scrot well.
+
+## v2 checklist
+
+Version 2 will remove some deprecated features and increase the minimum version
+required for some of the dependencies.
+Work for it happens on the `v2` branch.
+It will be released when Imlib2 v1.11 is available on Debian stable to ease the
+transition for users and avoid depending on bleeding edge library versions.
+
+- [ ] Require Imlib2 v1.11.0
+- [ ] Document minimum version of other dependencies [#307](https://github.com/resurrecting-open-source-projects/scrot/issues/307)
+- [ ] Use file descriptors when saving images
+  - [ ] https://github.com/resurrecting-open-source-projects/scrot/issues/244
+  - [ ] https://github.com/resurrecting-open-source-projects/scrot/issues/246
+  - [ ] https://github.com/resurrecting-open-source-projects/scrot/issues/226
+- [ ] Remove deprecated features
+  - [ ] --note  [#236](https://github.com/resurrecting-open-source-projects/scrot/issues/236)
+  - [ ] --script
