@@ -2,4 +2,4 @@ Name: scrot's mandatory dependencies
 Description: ditto
 Version: infinite
 Cflags: -D_XOPEN_SOURCE=700L
-Requires: x11 imlib2 >= 1.4.7 xcomposite >= 0.2.0 xext xfixes >= 5.0.1 xinerama >= 1.1.3
+Requires: x11 imlib2 >= 1.11.0 xcomposite >= 0.2.0 xext xfixes >= 5.0.1 xinerama >= 1.1.3
