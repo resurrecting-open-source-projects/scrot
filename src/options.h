@@ -82,7 +82,6 @@ struct ScrotOptions {
     char *thumbFile;
     const char *exec;
     const char *display;
-    char *note;
     Window windowId;
     const char *windowClassName;
     const char *script;

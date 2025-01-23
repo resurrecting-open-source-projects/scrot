@@ -51,7 +51,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <string.h>
 #include <unistd.h>
 
-#include "note.h"
 #include "options.h"
 #include "scrot.h"
 #include "scrot_selection.h"
@@ -81,7 +80,7 @@ enum { /* long opt only */
     OPT_FORMAT = UCHAR_MAX + 1,
     OPT_LIST_OPTS,
 };
-static const char stropts[] = "a:bC:cD:d:e:F:fhik::l:M:mn:opq:S:s::t:uvw:Z:z";
+static const char stropts[] = "a:bC:cD:d:e:F:fhik::l:M:mopq:S:s::t:uvw:Z:z";
 // NOTE: make sure lopts and opt_description indexes are kept in sync
 static const struct option lopts[] = {
     {"autoselect",      required_argument,  NULL,   'a'},
@@ -99,7 +98,6 @@ static const struct option lopts[] = {
     {"line",            required_argument,  NULL,   'l'},
     {"monitor",         required_argument,  NULL,   'M'},
     {"multidisp",       no_argument,        NULL,   'm'},
-    {"note",            required_argument,  NULL,   'n'},
     {"overwrite",       no_argument,        NULL,   'o'},
     {"pointer",         no_argument,        NULL,   'p'},
     {"quality",         required_argument,  NULL,   'q'},
@@ -136,7 +134,6 @@ static const struct option_desc {
     /* l */  { "specify the style of the selection line", "STYLE" },
     /* M */  { "capture monitor", "NUM" },
     /* m */  { "capture all multi-head screens in order", "" },
-    /* n */  { OPT_DEPRECATED, OPT_DEPRECATED },
     /* o */  { "overwrite the output file if needed", "" },
     /* p */  { "capture the mouse pointer as well", "" },
     /* q */  { "image quality", "NUM" },
@@ -383,7 +380,6 @@ void optionsParse(int argc, char *argv[])
     int optch;
     const char *errmsg;
     bool FFlagSet = false;
-    const char *note = NULL;
 
     /* Now to pass some optionarinos */
     while ((optch = getopt_long(argc, argv, stropts, lopts, NULL)) != -1) {
@@ -448,11 +444,6 @@ void optionsParse(int argc, char *argv[])
             break;
         case 'm':
             opt.mode = MODE_MULTIDISP;
-            break;
-        case 'n':
-            if (optarg[0] == '\0')
-                errx(EXIT_FAILURE, "Required arguments for --note.");
-            note = optarg;
             break;
         case 'o':
             opt.overwrite = true;
@@ -551,13 +542,6 @@ void optionsParse(int argc, char *argv[])
 
     if (opt.thumb != THUMB_DISABLED)
         opt.thumbFile = optionsNameThumbnail(opt.outputFile);
-
-    if (note) {
-        warnx("--note is deprecated. See: "
-            "https://github.com/resurrecting-open-source-projects/scrot/discussions/207");
-        opt.note = estrdup(note); /* TODO: investigate if dup is needed */
-        scrotNoteNew(opt.note);
-    }
 }
 
 static void showUsage(void)
