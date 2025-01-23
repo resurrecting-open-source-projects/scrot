@@ -60,7 +60,7 @@ scrot requires a few projects and libraries:
 - [autoconf-archive](https://www.gnu.org/software/autoconf-archive/) (build time only)
 - A pkg-config implementation [(e.g. pkgconf)](https://github.com/pkgconf/pkgconf) (build time only)
 - [imlib2](https://sourceforge.net/projects/enlightenment/files/imlib2-src/)
-  (must be built with X and filters support)
+  (must be built with X support)
 - [libbsd](https://libbsd.freedesktop.org/wiki/) (only needed if `<err.h>` is missing)
 - An X11 implementation [(e.g. X.Org)](https://www.x.org/wiki/)
 - libXcomposite [(can be found in X.Org)](https://gitlab.freedesktop.org/xorg/lib/libxcomposite)
