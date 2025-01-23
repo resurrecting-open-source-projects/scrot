@@ -84,7 +84,6 @@ struct ScrotOptions {
     const char *display;
     Window windowId;
     const char *windowClassName;
-    const char *script;
     int autoselectX;
     int autoselectY;
     int autoselectH;
