@@ -62,7 +62,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <X11/extensions/Xfixes.h>
 #include <X11/extensions/Xinerama.h>
 
-#include "note.h"
 #include "options.h"
 #include "scrot.h"
 #include "util.h"
@@ -150,9 +149,6 @@ int main(int argc, char *argv[])
         timeStamp.tv_sec++;
     }
     tm = localtime(&timeStamp.tv_sec);
-
-    if (opt.note)
-        scrotNoteDraw(image);
 
     imlib_context_set_image(image);
     imlib_image_set_format(opt.format);
@@ -255,11 +251,6 @@ static void initXAndImlib(const char *dispStr, int screenNumber)
 /* atexit register func. */
 static void uninitXAndImlib(void)
 {
-    if (opt.note) {
-        scrotNoteFree();
-        free(opt.note);
-    }
-
     if (disp) {
         XCloseDisplay(disp);
         disp = NULL;
