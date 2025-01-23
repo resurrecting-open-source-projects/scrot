@@ -66,5 +66,5 @@ transition for users and avoid depending on bleeding edge library versions.
   - [ ] https://github.com/resurrecting-open-source-projects/scrot/issues/246
   - [ ] https://github.com/resurrecting-open-source-projects/scrot/issues/226
 - [ ] Remove deprecated features
-  - [ ] --note  [#236](https://github.com/resurrecting-open-source-projects/scrot/issues/236)
+  - [x] --note  [#236](https://github.com/resurrecting-open-source-projects/scrot/issues/236)
   - [ ] --script
