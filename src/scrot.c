@@ -261,21 +261,15 @@ static void uninitXAndImlib(void)
 
 static void scrotSaveImage(const char *filename)
 {
-    Imlib_Load_Error imErr;
-    imlib_save_image_with_error_return(filename, &imErr);
+    imlib_save_image(filename);
+    int imErr = imlib_get_error();
     if (imErr) {
-        const char *colon = "", *errmsg = "";  // NOLINT(*DeadStores)
+        const char *errmsg = imlib_strerror(imErr);
         const char imlibPrefix[] = "Imlib2: ";
-#if defined(IMLIB2_VERSION)
-#if IMLIB2_VERSION >= IMLIB2_VERSION_(1, 10, 0)
-        colon = ": ";
-        errmsg = imlib_strerror(imlib_get_error());
-#endif
-#endif
         if (strncmp(errmsg, imlibPrefix, sizeof(imlibPrefix) - 1) == 0)
             errmsg += sizeof(imlibPrefix) - 1;
-        errx(EXIT_FAILURE, "failed to save image: %s%s%s",
-            filename, colon, errmsg);
+        errx(EXIT_FAILURE, "failed to save image: %s: %s",
+            filename, errmsg);
     }
 }
 
