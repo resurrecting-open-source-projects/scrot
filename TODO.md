@@ -59,7 +59,7 @@ Work for it happens on the `v2` branch.
 It will be released when Imlib2 v1.11 is available on Debian stable to ease the
 transition for users and avoid depending on bleeding edge library versions.
 
-- [ ] Require Imlib2 v1.11.0
+- [x] Require Imlib2 v1.11.0
 - [x] Document minimum version of other dependencies [#307](https://github.com/resurrecting-open-source-projects/scrot/issues/307)
 - [ ] Use file descriptors when saving images
   - [ ] https://github.com/resurrecting-open-source-projects/scrot/issues/244
