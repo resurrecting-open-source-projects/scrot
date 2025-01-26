@@ -48,8 +48,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <err.h>
 #include <errno.h>
-#include <stdio.h>
+#include <fcntl.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -68,7 +69,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 static void initXAndImlib(const char *, int);
 static void uninitXAndImlib(void);
-static void scrotSaveImage(const char *);
+static void scrotSaveImage(int, const char *);
 static Imlib_Image scrotGrabFocused(void);
 static Imlib_Image scrotGrabAutoselect(void);
 static long miliToNanoSec(int);
@@ -76,7 +77,7 @@ static Imlib_Image scrotGrabShotMulti(void);
 static Imlib_Image scrotGrabShotMonitor(void);
 static Imlib_Image scrotGrabStackWindows(void);
 static Imlib_Image scrotGrabShot(void);
-static void scrotCheckIfOverwriteFile(char **);
+static int scrotCheckIfOverwriteFile(char **);
 static void scrotExecApp(Imlib_Image, struct tm *, char *, char *);
 static char *imPrintf(const char *, struct tm *, const char *, const char *,
     Imlib_Image);
@@ -102,6 +103,7 @@ int main(int argc, char *argv[])
     char *filenameThumb = NULL;
     struct timespec timeStamp;
     struct tm *tm;
+    int fd;
 
     /* Get the time ASAP to reduce the timing error in case --delay is used. */
     opt.delayStart = clockNow();
@@ -160,9 +162,8 @@ int main(int argc, char *argv[])
     imlib_image_attach_data_value("compression", NULL, opt.compression, NULL);
 
     filenameIM = imPrintf(opt.outputFile, tm, NULL, NULL, image);
-    scrotCheckIfOverwriteFile(&filenameIM);
-
-    scrotSaveImage(filenameIM);
+    fd = scrotCheckIfOverwriteFile(&filenameIM);
+    scrotSaveImage(fd, filenameIM);
 
     if (opt.thumb != THUMB_DISABLED) {
         int cwidth, cheight;
@@ -200,8 +201,8 @@ int main(int argc, char *argv[])
             imlib_image_set_format(opt.format);
 
             filenameThumb = imPrintf(opt.thumbFile, tm, NULL, NULL, thumbnail);
-            scrotCheckIfOverwriteFile(&filenameThumb);
-            scrotSaveImage(filenameThumb);
+            fd = scrotCheckIfOverwriteFile(&filenameThumb);
+            scrotSaveImage(fd, filenameThumb);
             imlib_free_image_and_decache();
         }
     }
@@ -259,9 +260,11 @@ static void uninitXAndImlib(void)
     }
 }
 
-static void scrotSaveImage(const char *filename)
+// save image to fd, filename only used for logging
+// fd will be closed after calling this function
+static void scrotSaveImage(int fd, const char *filename)
 {
-    imlib_save_image(filename);
+    imlib_save_image_fd(fd, filename);
     int imErr = imlib_get_error();
     if (imErr) {
         const char *errmsg = imlib_strerror(imErr);
@@ -542,43 +545,55 @@ static void scrotGrabMousePointer(Imlib_Image image, const int xOffset,
     XFree(xcim);
 }
 
-static void scrotCheckIfOverwriteFile(char **filename)
+static int scrotCheckIfOverwriteFile(char **filename)
 {
-    if (opt.overwrite)
-        return;
-
-    if (access(*filename, F_OK) == -1)
-        return;
-
-    const size_t maxCounter = 999;
-    char fmt[5]; // _000 + NUL byte
-    const size_t slen = strlen(*filename);
-    const size_t nalloc = slen + sizeof(fmt);
-
-    char *ext;
-    size_t extLength = scrotHaveFileExtension(*filename, &ext);
-
-    char *newName = ecalloc(nalloc, sizeof(*newName));
-    memcpy(newName, *filename, slen - extLength);
-    char *ptr = newName + (slen - extLength);
-
-    size_t counter = 0;
-    do {
-        snprintf(fmt, sizeof(fmt), "_%03zu", counter++);
-        memcpy(ptr, fmt, sizeof(fmt));
-        memcpy(ptr + sizeof(fmt) - 1, ext, extLength);
-    } while ((counter < maxCounter) && !access(newName, F_OK));
-
-    scrotAssert(newName[nalloc - 1] == '\0');
-
-    if (counter == maxCounter) {
-        errx(EXIT_FAILURE, "scrot can no longer generate new file names.\n"
-            "The last attempt is %s", newName);
+    if (strcmp(*filename, "-") == 0) {
+        // scrotSaveImage will close the fd, so dup it
+        int fd = fcntl(1, F_DUPFD_CLOEXEC, 3);
+        if (fd < 0)
+            err(EXIT_FAILURE, "dup failed");
+        return fd;
     }
 
-    warnx("`%s` already exists, attempting `%s` instead", *filename, newName);
-    free(*filename);
-    *filename = newName;
+    int flags = O_RDWR | O_CREAT | (opt.overwrite ? O_TRUNC : O_EXCL);
+    int fd = open(*filename, flags, 0644);
+    if (!opt.overwrite && fd < 0 && errno == EEXIST) {
+        const size_t maxCounter = 999;
+        char fmt[5]; // _000 + NUL byte
+        const size_t slen = strlen(*filename);
+        const size_t nalloc = slen + sizeof(fmt);
+
+        char *ext;
+        size_t extLength = scrotHaveFileExtension(*filename, &ext);
+
+        char *newName = ecalloc(nalloc, sizeof(*newName));
+        memcpy(newName, *filename, slen - extLength);
+        char *ptr = newName + (slen - extLength);
+
+        size_t counter = 0;
+        do {
+            snprintf(fmt, sizeof(fmt), "_%03zu", counter++);
+            memcpy(ptr, fmt, sizeof(fmt));
+            memcpy(ptr + sizeof(fmt) - 1, ext, extLength);
+            fd = open(newName, flags, 0644);
+        } while ((counter < maxCounter) && fd < 0 && errno == EEXIST);
+        scrotAssert(newName[nalloc - 1] == '\0');
+
+        if (counter == maxCounter) {
+            errx(EXIT_FAILURE, "scrot can no longer generate new file names.\n"
+                "The last attempt is %s", newName);
+        }
+
+        int saved_errno = errno; // avoid errno getting potentially clobbered
+        warnx("`%s` already exists, attempting `%s` instead", *filename, newName);
+        free(*filename);
+        *filename = newName;
+        errno = saved_errno;
+    }
+
+    if (fd < 0)
+        err(EXIT_FAILURE, "couldn't open file %s", *filename);
+    return fd;
 }
 
 static int scrotMatchWindowClassName(Window target)

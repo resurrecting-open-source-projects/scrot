@@ -361,18 +361,6 @@ static void optionsParseLine(char *optarg)
     } /* while */
 }
 
-static const char *getPathOfStdout(void)
-{
-    const char *paths[] = { "/dev/stdout", "/dev/fd/1", "/proc/self/fd/1" };
-
-    for (size_t i = 0; i < ARRAY_COUNT(paths); ++i) {
-        if (access(paths[i], W_OK) == 0)
-            return paths[i];
-    }
-    err(EXIT_FAILURE, "access to stdout failed");
-    return 0; /* silence tcc warning */
-}
-
 void optionsParse(int argc, char *argv[])
 {
     int optch;
@@ -526,7 +514,6 @@ void optionsParse(int argc, char *argv[])
     if (strcmp(opt.outputFile, "-") == 0) {
         opt.overwrite = true;
         opt.thumb = THUMB_DISABLED;
-        opt.outputFile = getPathOfStdout();
     }
 
     size_t outputFileLen = strlen(opt.outputFile);
