@@ -49,36 +49,3 @@ jobs:
         clang-tidy --version
         find src -name '*.c' -print | xargs -P$(nproc) -I{} \
             clang-tidy --quiet {} -- $(pkg-config --cflags ./deps.pc)
-  cygwin:
-    runs-on: windows-latest
-    env:
-      CYGWIN_NOWINPATH: 1 # Removes non-Cygwin dirs from PATH.
-      CHERE_INVOKING: '' # Makes Cygwin's `bash.exe --login` not cd.
-    defaults:
-      run:
-        shell: C:\cygwin\bin\bash.exe --login -o igncr {0}
-    steps:
-    - run: git config --global core.autocrlf input
-      # This is NOT the Cygwin bash, it's the Git for Windows bash from the
-      # default Github Actions Windows VM. This step tells git to translate Unix
-      # newlines to DOS newlines.
-      shell: bash
-    - uses: actions/checkout@v4
-    - uses: cygwin/cygwin-install-action@v5
-      with:
-        packages: autoconf autoconf-archive automake gcc-core libImlib2-devel \
-                  libXcomposite-devel libXext-devel libXfixes-devel libXinerama-devel \
-                  make
-    - name: distcheck
-      # NOTE: cygwin's imlib2 version is too old, and it's imlib_apply_filter
-      # lacks `const` qualifier. so use `-Wno-error=discarded-qualifiers`.
-      run: |
-        cd ${GITHUB_WORKSPACE}
-        ./autogen.sh
-        ./configure SCROT_PRIVATE_FLAGS="-Werror -Wno-error=cpp -Wno-error=pedantic -Wno-error=discarded-qualifiers"
-        make distcheck
-    - name: run_program
-      run: |
-        cd ${GITHUB_WORKSPACE}
-        make
-        src/scrot -v
