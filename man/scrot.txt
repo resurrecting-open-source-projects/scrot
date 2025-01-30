@@ -175,7 +175,7 @@ SELECTION STYLE
 
   Without the -l option, a default style is used:
 
-    mode=auto,style=solid,width=1,opacity=100
+    mode=auto,style=solid,width=$dpi/75,opacity=100
 
   Example:
 

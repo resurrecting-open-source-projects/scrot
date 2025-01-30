@@ -28,7 +28,7 @@ AS_IF([test "x$orig_CFLAGS" = "x"], [
         AX_APPEND_LINK_FLAGS(["-flto"])
     ])
     m4_foreach([SCROT_FLAG],
-        [["-O3"], ["-Wall"], ["-Wextra"], ["-Wpedantic"]], [
+        [["-O3"], ["-Wall"], ["-Wextra"], ["-Wpedantic"], ["-fno-math-errno"]], [
             AX_APPEND_COMPILE_FLAGS(["SCROT_FLAG"])
             AS_IF([test "x$LTO_ENABLED" = "xyes"], [
                 AX_APPEND_LINK_FLAGS(["SCROT_FLAG"])
