@@ -68,7 +68,6 @@ struct ScrotOptions opt = {
     .quality = 75,
     .compression = 7,
     .lineStyle = LineSolid,
-    .lineWidth = 1,
     .lineOpacity = SELECTION_OPACITY_DEFAULT,
     .stackDirection = HORIZONTAL,
     .outputFile = defaultOutputFile,

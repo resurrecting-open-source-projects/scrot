@@ -43,6 +43,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #define ARRAY_COUNT(X)   (sizeof(X) / sizeof(0[X]))
 #define MAX(A, B)        ((A) > (B) ? (A) : (B))
+#define MIN(A, B)        ((A) < (B) ? (A) : (B))
 
 typedef struct {
     char *buf;
