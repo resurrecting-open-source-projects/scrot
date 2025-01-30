@@ -542,8 +542,13 @@ static void scrotGrabMousePointer(Imlib_Image image, const int xOffset,
 
 static int scrotCheckIfOverwriteFile(char **filename)
 {
-    if (strcmp(*filename, "-") == 0)
-        return 1;
+    if (strcmp(*filename, "-") == 0) {
+        // scrotSaveImage will close the fd, so dup it
+        int fd = fcntl(1, F_DUPFD_CLOEXEC, 3);
+        if (fd < 0)
+            err(EXIT_FAILURE, "dup failed");
+        return fd;
+    }
 
     int flags = O_RDWR | O_CREAT | (opt.overwrite ? O_TRUNC : O_EXCL);
     int fd = open(*filename, flags, 0644);
