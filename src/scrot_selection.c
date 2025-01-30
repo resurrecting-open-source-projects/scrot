@@ -416,6 +416,11 @@ Imlib_Image scrotSelectionSelectMode(void)
             opt.lineMode = LINE_MODE_CLASSIC;
     }
 
+    if (opt.lineWidth == 0) {
+        int width = (scr->height + scr->width) / (scr->mheight + scr->mwidth);
+        opt.lineWidth = MIN(MAX(width/4, 1), 8);
+    }
+
     if (opt.delaySelection)
         scrotDoDelay();
 
