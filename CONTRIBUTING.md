@@ -34,4 +34,9 @@ with the WebKit style by default.
 
 Ongoing tasks will be written to [TODO.md](TODO.md).
 
+Easy tasks which can be solved by newcomers are tagged with
+[good first issue](https://github.com/resurrecting-open-source-projects/scrot/labels/good%20first%20issue).
+Issues tagged with [help wanted](https://github.com/resurrecting-open-source-projects/scrot/labels/help%20wanted)
+are intermediate/difficult issues where we require help.
+
 Regular contributors can ask to join the scrot project on GitHub.
