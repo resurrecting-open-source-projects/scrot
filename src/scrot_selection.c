@@ -35,7 +35,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <err.h>
 #include <errno.h>
-#include <math.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -425,11 +424,8 @@ Imlib_Image scrotSelectionSelectMode(void)
     }
 
     if (opt.lineWidth == 0) {
-        double mmToInches = 1 / 25.4;
-        double inchesDiag = hypot(scr->mwidth, scr->mheight) * mmToInches;
-        double pixelsDiag = hypot(scr->width, scr->height);
-        double dpi = round(pixelsDiag / inchesDiag);
-        opt.lineWidth = fmin(fmax(round(dpi / 75.0), 1), 8);
+        int width = (scr->height + scr->width) / (scr->mheight + scr->mwidth);
+        opt.lineWidth = MIN(MAX(width/4, 1), 8);
     }
 
     if (opt.delaySelection)
