@@ -175,7 +175,9 @@ SELECTION STYLE
 
   Without the -l option, a default style is used:
 
-    mode=auto,style=solid,width=...,opacity=100   # FIXME: width
+    mode=auto,style=solid,width=...,opacity=100
+
+  The default width automatically scales with DPI.
 
   Example:
 
