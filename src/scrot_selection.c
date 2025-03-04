@@ -437,8 +437,10 @@ Imlib_Image scrotSelectionSelectMode(void)
     }
 
     if (!success) {
-        if (opt.freeze)
+        if (opt.freeze) {
             XUngrabServer(disp);
+            XFlush(disp);
+        }
         return NULL;
     }
 
@@ -451,8 +453,10 @@ Imlib_Image scrotSelectionSelectMode(void)
     Imlib_Image capture = scrotGrabRectAndPointer(
         rect0.x, rect0.y, rect0.w, rect0.h, opt.freeze);
 
-    if (opt.freeze)
+    if (opt.freeze) {
         XUngrabServer(disp);
+        XFlush(disp);
+    }
 
     if (opt.selection.mode == SELECTION_MODE_CAPTURE)
         return capture;
