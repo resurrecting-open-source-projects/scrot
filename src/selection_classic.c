@@ -99,6 +99,4 @@ void selectionClassicDestroy(void)
 
     if (pc->gc)
         XFreeGC(disp, pc->gc);
-
-    XFlush(disp);
 }
