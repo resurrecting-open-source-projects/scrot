@@ -160,8 +160,8 @@ static void scrotSelectionDestroy(void)
 {
     XUngrabPointer(disp, CurrentTime);
     freeCursors();
-    XSync(disp, True);
     selection.destroy();
+    XSync(disp, False);
     /* HACK: although we destroyed the selection, the frame still might not
      * have been updated. a compositor might also buffer frames adding
      * latency. so wait a bit for the screen to update and the selection
