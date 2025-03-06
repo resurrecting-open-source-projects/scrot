@@ -55,7 +55,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 static void scrotSelectionCreate(void);
 static void scrotSelectionDestroy(void);
 static void scrotSelectionMotionDraw(int, int, int, int);
-static Status scrotSelectionCreateNamedColor(const char *, XColor *);
 static bool scrotSelectionGetUserSel(struct SelectionRect *);
 
 struct Selection selection;
@@ -187,23 +186,17 @@ static void scrotSelectionMotionDraw(int x0, int y0, int x1, int y1)
     sel->motionDraw(x0, y0, x1, y1);
 }
 
-static Status scrotSelectionCreateNamedColor(const char *nameColor, XColor *color)
+XColor scrotSelectionGetLineColor(void)
 {
-    scrotAssert(nameColor != NULL);
-    scrotAssert(color != NULL);
+    scrotAssert(opt.lineColor != NULL);
 
-    return XAllocNamedColor(disp, XDefaultColormap(disp, DefaultScreen(disp)),
-        nameColor, color, &(XColor){0});
-}
-
-void scrotSelectionGetLineColor(XColor *color)
-{
-    const Status ret = scrotSelectionCreateNamedColor(opt.lineColor, color);
-
-    if (!ret) {
+    XColor color;
+    Colormap cmap = XDefaultColormap(disp, DefaultScreen(disp));
+    if (!XAllocNamedColor(disp, cmap, opt.lineColor, &color, &(XColor){0})) {
         scrotSelectionDestroy();
         errx(EXIT_FAILURE, "Error allocating color: %s", opt.lineColor);
     }
+    return color;
 }
 
 static bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
@@ -461,8 +454,7 @@ Imlib_Image scrotSelectionSelectMode(void)
     if (opt.selection.mode == SELECTION_MODE_CAPTURE)
         return capture;
 
-    XColor color;
-    scrotSelectionGetLineColor(&color);
+    XColor color = scrotSelectionGetLineColor();
 
     const int x = rect1.x - rect0.x; /* NOLINT(*UndefinedBinaryOperatorResult) */
     const int y = rect1.y - rect0.y;

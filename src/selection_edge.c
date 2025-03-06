@@ -50,8 +50,7 @@ void selectionEdgeCreate(void)
 {
     struct SelectionEdge *const pe = &selection.edge;
 
-    XColor color;
-    scrotSelectionGetLineColor(&color);
+    XColor color = scrotSelectionGetLineColor();
 
     XSetWindowAttributes attr;
     attr.background_pixel = color.pixel;
