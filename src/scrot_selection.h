@@ -109,7 +109,7 @@ struct Selection {
 extern struct Selection selection;
 
 void selectionCalculateRect(int, int, int, int);
-void scrotSelectionGetLineColor(XColor *);
+XColor scrotSelectionGetLineColor(void);
 Imlib_Image scrotSelectionSelectMode(void);
 
 #endif /* !defined(H_SCROT_SELECTION) */
