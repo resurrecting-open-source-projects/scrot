@@ -61,7 +61,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <X11/Xutil.h>
 #include <X11/extensions/Xcomposite.h>
 #include <X11/extensions/Xfixes.h>
-#include <X11/extensions/Xinerama.h>
+#include <X11/extensions/Xrandr.h>
 
 #include "options.h"
 #include "scrot.h"
@@ -952,27 +952,17 @@ static Imlib_Image scrotGrabShotMulti(void)
 
 static Imlib_Image scrotGrabShotMonitor(void)
 {
-    int eventBase, errBase;
+    int numMonitors;
+    XRRMonitorInfo *monitors = XRRGetMonitors(disp, root, True, &numMonitors);
+    if (!monitors)
+        errx(EXIT_FAILURE, "XRRGetMonitors() failed");
 
-    if (!XineramaQueryExtension(disp, &eventBase, &errBase))
-        errx(EXIT_FAILURE, "Xinerama extension not found");
-
-    int numScreens = 0;
-    XineramaScreenInfo *screens = XineramaQueryScreens(disp, &numScreens);
-
-    if (!screens && !numScreens)
-        errx(EXIT_FAILURE, "Xinerama not active");
-
-    if (!numScreens)
-        errx(EXIT_FAILURE, "Xinerama active but did not find any output device");
-
-    if (opt.monitor >= numScreens)
+    if (opt.monitor >= numMonitors)
         errx(EXIT_FAILURE, "monitor %d not found", opt.monitor);
 
-    scrotAssert(screens); /* silence clang-tidy */
-    XineramaScreenInfo *mon = &screens[opt.monitor];
-    int x = mon->x_org, y = mon->y_org, w = mon->width, h = mon->height;
-    XFree(screens);
+    XRRMonitorInfo *m = monitors + opt.monitor;
+    int x = m->x, y = m->y, h = m->height, w = m->width;
+    XRRFreeMonitors(monitors);
 
     scrotNiceClip(&x, &y, &w, &h);
     return scrotGrabRectAndPointer(x, y, w, h, false);
