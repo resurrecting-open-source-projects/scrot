@@ -66,7 +66,7 @@ scrot requires a few projects and libraries:
 - libXcomposite [(can be found in X.Org)](https://gitlab.freedesktop.org/xorg/lib/libxcomposite)
 - libXext [(can be found in X.Org)](https://gitlab.freedesktop.org/xorg/lib/libxext)
 - libXfixes [(can be found in X.Org)](https://gitlab.freedesktop.org/xorg/lib/libxfixes)
-- libXinerama [(can be found in X.Org)](https://gitlab.freedesktop.org/xorg/lib/libxinerama)
+- libXrandr [(can be found in X.Org)](https://gitlab.freedesktop.org/xorg/lib/libxrandr)
 
 The [deps.pc](./deps.pc) file documents minimum version requirement for some of
 the libraries.
