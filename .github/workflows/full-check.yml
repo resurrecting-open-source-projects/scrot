@@ -18,7 +18,7 @@ jobs:
       run: |
         sudo apt update && sudo apt upgrade
         sudo apt install tcc libimlib2-dev libxcomposite-dev libxfixes-dev \
-             autoconf-archive libbsd-dev libxinerama-dev cppcheck
+             autoconf-archive libbsd-dev libxrandr-dev cppcheck
     - name: distcheck
       run: |
         ./autogen.sh

@@ -47,7 +47,7 @@ OPTIONS
                             (vertical/horizontal). Default: h
   -l, --line STYLE          STYLE indicates the style of the line when the -s
                             option is used; see SELECTION STYLE.
-  -M, --monitor NUM         Capture Xinerama monitor number NUM.
+  -M, --monitor NUM         Capture Xrandr monitor number NUM.
   -m, --multidisp           For multiple heads, screenshot all of them in order.
   -o, --overwrite           By default scrot does not overwrite the output
                             FILE, use this option to enable it.
