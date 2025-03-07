@@ -53,7 +53,7 @@ task:
   install_script:
     - apk add build-base autoconf autoconf-archive automake gzip pkgconfig $CC
               xorg-server-dev libxcomposite-dev libxext-dev libxfixes-dev
-              libxinerama-dev imlib2-dev
+              libxrandr-dev imlib2-dev
   << : *common_script
 
 task:
@@ -77,7 +77,7 @@ task:
     - apt-get update
     - apt-get install -y autoconf autoconf-archive make pkg-config $CC
                          libx11-dev libxcomposite-dev libxext-dev libxfixes-dev
-                         libxinerama-dev libimlib2-dev
+                         libxrandr-dev libimlib2-dev
   << : *common_script
 
 task:
@@ -92,7 +92,7 @@ task:
       - CC: gcc
   install_script:
     - pkg install -y autoconf autoconf-archive automake pkgconf gcc libX11
-                     libXcomposite libXext libXfixes libXinerama imlib2
+                     libXcomposite libXext libXfixes libXrandr imlib2
   << : *common_script
 
 task:
@@ -108,7 +108,7 @@ task:
   install_script:
     - brew update
     - brew install autoconf autoconf-archive automake make pkg-config gcc libx11
-                   libxcomposite libxext libxfixes libxinerama imlib2
+                   libxcomposite libxext libxfixes libxrandr imlib2
   << : *common_script
 
 task:
@@ -118,7 +118,7 @@ task:
   install_script:
     - apk add build-base pkgconfig
               xorg-server-dev libxcomposite-dev libxext-dev
-              libxfixes-dev libxinerama-dev imlib2-dev
+              libxfixes-dev libxrandr-dev imlib2-dev
   matrix:
     - name: alpine-latest-bare-build
       test_script:
