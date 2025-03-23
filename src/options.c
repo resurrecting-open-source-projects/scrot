@@ -135,7 +135,7 @@ static const struct option_desc {
     /* k */  { "capture overlapped window and join them", "v|h" },
     /* l */  { "specify the style of the selection line", "STYLE" },
     /* M */  { "capture monitor", "NUM" },
-    /* m */  { "capture all monitors", "" },
+    /* m */  { "capture all multi-head screens in order", "" },
     /* n */  { OPT_DEPRECATED, OPT_DEPRECATED },
     /* o */  { "overwrite the output file if needed", "" },
     /* p */  { "capture the mouse pointer as well", "" },
