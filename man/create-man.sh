@@ -16,9 +16,9 @@ txt2man -d "$T2M_DATE" -t $T2M_NAME -r $T2M_NAME-$T2M_VERSION -s $T2M_LEVEL -v "
 #--------------------------------------------------------
 
 # Put here all data for your first manpage (in T2M lines)
-T2M_DATE="09 Jun 2024"
+T2M_DATE="25 Mar 2025"
 T2M_NAME=scrot
-T2M_VERSION=1.11
+T2M_VERSION=1.12
 T2M_LEVEL=1
 T2M_DESC="command line screen capture utility"
 create-man
