@@ -19,7 +19,7 @@ Copyright 2021      Christopher R. Nelson <christopher.nelson@languidnights.com>
 Copyright 2021-2023 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
-Copyright 2022-2023 NRK <nrk@disroot.org>
+Copyright 2022-2024 NRK <nrk@disroot.org>
 Copyright 2022      Zev Weiss <zev@bewilderbeest.net>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
