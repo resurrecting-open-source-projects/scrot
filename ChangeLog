@@ -8,19 +8,19 @@ Version 1.12
  [ NRK ] alias @N-R-K
 
  * Fixes: Racy behavior of --freeze where the screenshot was different than
-   the content it was frozen on (#381)
- * Fixes: Hanging when invoked with a button pressed (#389)
+   the content it was frozen on (#381).
+ * Fixes: Hanging when invoked with a button pressed (#389).
  * Fixes: Certain visual glitches with selection when run under
-   a compositor (#387)
+   a compositor (#387).
  * Document: Correct description of -m in help string.
 
  [ k4gi@pm.me ]
 
- * Document: Formatting of -u in manpage
+ * Document: Formatting of -u in manpage.
 
  [ Vitaly Zdanevich ]
 
- * Document: Clarify "other" formats in the README
+ * Document: Clarify "other" formats in the README.
 
 Mon Jun 10 14:36:36 -03:00 2024  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 Version 1.11.1
