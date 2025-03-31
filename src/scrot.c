@@ -87,7 +87,6 @@ static Window scrotFindWindowByProperty(Display *, const Window, const Atom);
 static Imlib_Image stalkImageConcat(Imlib_Image *, size_t, const enum Direction);
 static int findWindowManagerFrame(Window *const, int *const);
 static Imlib_Image scrotGrabWindowById(Window const window);
-static void scrotGrabMousePointer(Imlib_Image, const int, const int);
 
 /* X11 stuff */
 Display *disp;
@@ -288,9 +287,9 @@ size_t scrotHaveFileExtension(const char *filename, char **ext)
     return strlen(*ext);
 }
 
-Imlib_Image scrotGrabRectAndPointer(int x, int y, int w, int h, bool isGrabbed)
+Imlib_Image scrotGrabRectAndPointer(int x, int y, int w, int h)
 {
-    Imlib_Image im = imlib_create_image_from_drawable(0, x, y, w, h, !isGrabbed);
+    Imlib_Image im = imlib_create_image_from_drawable(0, x, y, w, h, true);
     if (!im)
         errx(EXIT_FAILURE, "failed to grab image");
     if (opt.pointer)
@@ -306,7 +305,7 @@ static Imlib_Image scrotGrabWindowById(Window const window)
     if (!scrotGetGeometry(window, &rx, &ry, &rw, &rh))
         return NULL;
     scrotNiceClip(&rx, &ry, &rw, &rh);
-    im = scrotGrabRectAndPointer(rx, ry, rw, rh, false);
+    im = scrotGrabRectAndPointer(rx, ry, rw, rh);
     clientWindow = window;
     return im;
 }
@@ -324,7 +323,7 @@ static Imlib_Image scrotGrabAutoselect(void)
     int rx = opt.autoselectX, ry = opt.autoselectY, rw = opt.autoselectW,
         rh = opt.autoselectH;
     scrotNiceClip(&rx, &ry, &rw, &rh);
-    return scrotGrabRectAndPointer(rx, ry, rw, rh, false);
+    return scrotGrabRectAndPointer(rx, ry, rw, rh);
 }
 
 void scrotDoDelay(void)
@@ -510,7 +509,7 @@ Window scrotGetWindow(Display *display, Window window, int x, int y)
     return target;
 }
 
-static void scrotGrabMousePointer(Imlib_Image image, const int xOffset,
+void scrotGrabMousePointer(Imlib_Image image, const int xOffset,
     const int yOffset)
 {
     XFixesCursorImage *xcim = XFixesGetCursorImage(disp);
@@ -616,7 +615,7 @@ static int scrotMatchWindowClassName(Window target)
 
 static Imlib_Image scrotGrabShot(void)
 {
-    return scrotGrabRectAndPointer(0, 0, scr->width, scr->height, false);
+    return scrotGrabRectAndPointer(0, 0, scr->width, scr->height);
 }
 
 static void scrotExecApp(Imlib_Image image, struct tm *tm, char *filenameIM,
@@ -965,7 +964,7 @@ static Imlib_Image scrotGrabShotMonitor(void)
     XRRFreeMonitors(monitors);
 
     scrotNiceClip(&x, &y, &w, &h);
-    return scrotGrabRectAndPointer(x, y, w, h, false);
+    return scrotGrabRectAndPointer(x, y, w, h);
 }
 
 static Imlib_Image stalkImageConcat(

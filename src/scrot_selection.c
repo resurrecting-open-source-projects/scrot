@@ -399,6 +399,7 @@ static Imlib_Image loadImage(const char *const fileName, const int opacity)
 Imlib_Image scrotSelectionSelectMode(void)
 {
     struct SelectionRect rect0, rect1;
+    Imlib_Image capture;
 
     const unsigned int oldMode = opt.selection.mode;
     opt.selection.mode = SELECTION_MODE_CAPTURE;
@@ -424,36 +425,50 @@ Imlib_Image scrotSelectionSelectMode(void)
     if (opt.delaySelection)
         scrotDoDelay();
 
-    if (opt.freeze)
+    if (opt.freeze) {
         XGrabServer(disp);
+        // capture immidately to avoid the selection making a mess later
+        capture = imlib_create_image_from_drawable(0, 0, 0,
+            scr->width, scr->height, false);
+        if (!capture)
+            errx(EXIT_FAILURE, "Failed to grab image");
+    }
 
-    bool success = scrotSelectionGetUserSel(&rect0);
-    if (success) {
+    bool selected = scrotSelectionGetUserSel(&rect0);
+    if (selected) {
         opt.selection.mode = oldMode;
         if (opt.selection.mode & SELECTION_MODE_NOT_CAPTURE)
-            success = scrotSelectionGetUserSel(&rect1);
+            selected = scrotSelectionGetUserSel(&rect1);
     }
 
-    if (!success) {
-        if (opt.freeze) {
-            XUngrabServer(disp);
-            XFlush(disp);
-        }
-        return NULL;
-    }
-
-    // this doesn't seem to make much sense if `--freeze` is enabled...
-    if (!opt.delaySelection) {
+    if (selected && !opt.delaySelection) {
+        // this doesn't seem to make much sense if `--freeze` is enabled...
         opt.delayStart = clockNow();
         scrotDoDelay();
     }
 
-    Imlib_Image capture = scrotGrabRectAndPointer(
-        rect0.x, rect0.y, rect0.w, rect0.h, opt.freeze);
-
     if (opt.freeze) {
         XUngrabServer(disp);
         XFlush(disp);
+        // captured already, just crop it
+        imlib_context_set_image(capture);
+        if (selected) {
+            capture = imlib_create_cropped_image(
+                rect0.x, rect0.y, rect0.w, rect0.h);
+        } else {
+            capture = NULL;
+        }
+        imlib_free_image(); // frees the uncropped capture that's in context
+        if (capture && opt.pointer)
+            scrotGrabMousePointer(capture, rect0.x, rect0.y);
+    } else if (selected) {
+        capture = scrotGrabRectAndPointer(rect0.x, rect0.y, rect0.w, rect0.h);
+    }
+
+    if (capture == NULL) {
+        if (selected)
+            errx(EXIT_FAILURE, "Failed to grab image");
+        return NULL;
     }
 
     if (opt.selection.mode == SELECTION_MODE_CAPTURE)
