@@ -399,7 +399,7 @@ static Imlib_Image loadImage(const char *const fileName, const int opacity)
 Imlib_Image scrotSelectionSelectMode(void)
 {
     struct SelectionRect rect0, rect1;
-    Imlib_Image capture;
+    Imlib_Image capture = NULL;
 
     const unsigned int oldMode = opt.selection.mode;
     opt.selection.mode = SELECTION_MODE_CAPTURE;
