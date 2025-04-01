@@ -169,9 +169,9 @@ SELECTION STYLE
 
     mode=MODE       MODE can be "auto", "edge" or "classic" without quotes.
                     edge is the new selection, classic uses the old one.
-                    "auto" uses "edge" if no compositor is running, "classic"
-                    otherwise. "edge" ignores the style specifier, "classic"
-                    ignores the opacity specifier.
+                    "auto" uses "edge" if no compositor is running and -f flag
+                    isn't active, "classic" otherwise. "edge" ignores the style
+                    specifier, "classic" ignores the opacity specifier.
 
   Without the -l option, a default style is used:
 
