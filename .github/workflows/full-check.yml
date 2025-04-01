@@ -16,6 +16,7 @@ jobs:
     - uses: actions/checkout@v4
     - name: install_dependencies
       run: |
+        sudo apt update && sudo apt upgrade
         sudo apt install tcc libimlib2-dev libxcomposite-dev libxfixes-dev \
              autoconf-archive libbsd-dev libxinerama-dev cppcheck
     - name: distcheck
