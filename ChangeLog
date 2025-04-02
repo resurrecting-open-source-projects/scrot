@@ -1,3 +1,12 @@
+DRAFT
+Version 1.12.1
+
+ [ NRK ] alias @N-R-K
+
+ * Fixes: Do no default to --line mode=edge if --freeze is also specified
+   since that combination can lead to artifacts (#408).
+ * Document: Correct description of edge mode regarding -f flag.
+
 Tue Mar 25 22:52:44 -03:00 2025  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 Version 1.12
 
