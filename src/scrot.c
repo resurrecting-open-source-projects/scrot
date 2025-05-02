@@ -151,6 +151,11 @@ int main(int argc, char *argv[])
     }
     tm = localtime(&timeStamp.tv_sec);
 
+    if (!opt.silent) {
+        XBell(disp, 0);
+        XFlush(disp);
+    }
+
     if (opt.note)
         scrotNoteDraw(image);
 
@@ -624,8 +629,6 @@ static int scrotMatchWindowClassName(Window target)
 
 static Imlib_Image scrotGrabShot(void)
 {
-    if (!opt.silent)
-        XBell(disp, 0);
     return scrotGrabRectAndPointer(0, 0, scr->width, scr->height, false);
 }
 
