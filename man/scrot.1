@@ -338,7 +338,7 @@ Taking a screenshot and annotating it with \fBImageMagick\fP(1):
 .PP
 .nf
 .fam C
-  $ scrot - | convert -pointsize 64 -gravity North -annotate '+16+16' 'hello, world!' - out.png
+  $ scrot - | magick - -pointsize 64 -gravity North -annotate +16+16 'hello, world' out.png
 
 .fam T
 .fi
