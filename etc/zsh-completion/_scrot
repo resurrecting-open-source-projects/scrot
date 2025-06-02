@@ -21,8 +21,12 @@ for ln in ${(f)list}; do
         O) sopt+="+"; lopt+="=" ;; # Optional
         N) ;; # None
     esac
-    args+=("(-${sopt} --${lopt})-${sopt}${desc}")
-    args+=("(-${sopt} --${lopt})--${lopt}${desc}")
+    if [[ "${sopt}" = [[:alnum:]]* ]]; then
+        args+=("(-${sopt} --${lopt})-${sopt}${desc}")
+        args+=("(-${sopt} --${lopt})--${lopt}${desc}")
+    else 
+        args+=( "--${lopt}${desc}" )
+    fi
 
 done
 _arguments "${args[@]}"
