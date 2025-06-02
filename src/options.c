@@ -107,8 +107,6 @@ static const struct option lopts[] = {
     {"select",          optional_argument,  NULL,   's'},
     {"thumb",           required_argument,  NULL,   't'},
     {"focused",         no_argument,        NULL,   'u'},
-    /* macquarie dictionary has both spellings */
-    {"focussed",        no_argument,        NULL,   'u'},
     {"version",         no_argument,        NULL,   'v'},
     {"window",          required_argument,  NULL,   'w'},
     {"compression",     required_argument,  NULL,   'Z'},
@@ -143,7 +141,6 @@ static const struct option_desc {
     /* S */  { OPT_DEPRECATED, OPT_DEPRECATED },
     /* s */  { "interactively select a region to capture", "OPTS" },
     /* t */  { "also generate a thumbnail", "% | WxH" },
-    /* u */  { "capture the currently focused window", "" },
     /* u */  { "capture the currently focused window", "" },
     /* v */  { "output version and exit", "" },
     /* w */  { "X window ID to capture", "WID" },

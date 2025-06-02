@@ -14,17 +14,17 @@ for ln in ${(f)list}; do
     local lopt="${tokens[2]}"
     local argtype=${tokens[3]%%:*}
     local argdesc=${tokens[3]#*:}
-    local desc="[${tokens[4]}]"
+    if [[ "${sopt}" = [[:alnum:]]* ]]; then 
+        local desc="[(-${sopt}) ${tokens[4]}]"
+    else 
+        local desc="[     ${tokens[4]}]"
+    fi
 
     case "$argtype" in
         R) desc+=":$argdesc" ;; # Required
         O) sopt+="+"; lopt+="=" ;; # Optional
         N) ;; # None
     esac
-
-    if [[ "${sopt}" = [[:alnum:]]* ]]; then
-        args+=( "-${sopt}${desc}" )
-    fi
     args+=( "--${lopt}${desc}" )
 done
 _arguments "${args[@]}"
