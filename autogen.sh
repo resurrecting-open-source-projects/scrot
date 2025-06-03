@@ -28,6 +28,14 @@ if [ "$#" -eq 0 ]; then
     echo "autogen.sh: done."
     echo "Run './configure && make && make install' to install."
     echo "Or run './autogen.sh clean' to clean up."
+    echo "To install the zsh completion script, run ./autogen.sh with-zsh-completion-path=/foo/bar"
+elif [ "$#" -eq 1 ] && [[ "$1" == with-zsh-completion-path=* ]]; then
+    if [ -e ${1#with-zsh-completion-path=} ]; then
+        cp etc/zsh-completion/_scrot ${1#with-zsh-completion-path=}
+    else
+	echo "Invalid directory. Ensure that the path is the absolute path."
+	exit 1
+    fi
 elif [ "$#" -eq 1 ] && [ "$1" = "clean" ]; then
     if [ -e Makefile ]; then
         echo "Cannot clean. Run 'make distclean' first." >&2
