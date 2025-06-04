@@ -112,12 +112,6 @@ $ ./autogen.sh clean
 Bash and Zsh completion scripts are available in [etc/](./etc).
 Distro packagers are encouraged to install them to the appropriate directory.
 
-To install the Zsh completion script, run the following
-```console
-$ ./autogen.sh with-zsh-completion-path={add absolute path here}
-```
-To verify which path can be used, check out the $FPATH variable
-
 ## Author ##
 
 scrot was originally developed by Tom Gilbert.
