@@ -21,6 +21,11 @@ for ln in ${(f)list}; do
         O) sopt+="+"; lopt+="=" ;; # Optional
         N) ;; # None
     esac
+
+    if [[ $lopt == "focussed" ]]; then
+        continue
+    fi
+
     if [[ "${sopt}" = [[:alnum:]]* ]]; then
         args+=("(-${sopt} --${lopt})-${sopt}${desc}")
         args+=("(-${sopt} --${lopt})--${lopt}${desc}")
