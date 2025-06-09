@@ -19,6 +19,20 @@ AC_PROG_MAKE_SET
 
 AM_MAINTAINER_MODE
 
+# Install bash completion script
+AC_ARG_WITH([bash-completion-path],
+    [AS_HELP_STRING([--with-bash-completion-path=DIR],
+        [Custom installation directory for the bash completion script (Default=/usr/share/bash-completion/completions)])],
+    [bash_completion_dir="$withval"],
+    [bash_completion_dir="/usr/share/bash-completion/completions"])
+
+# Install zsh completion script
+AC_ARG_WITH([zsh-completion-path],
+    [AS_HELP_STRING([--with-zsh-completion-path=DIR],
+        [Custom installation directory for the zsh completion script (Default=/usr/share/zsh/site-functions)])],
+    [zsh_completion_dir="$withval"],
+    [zsh_completion_dir="/usr/share/zsh/site-functions"])
+
 m4_pattern_forbid([^AX_],[=> GNU autoconf-archive not present. <=])
 AS_IF([test "x$orig_CFLAGS" = "x"], [
     CFLAGS=""
@@ -61,8 +75,14 @@ AS_IF([test "x$LIBBSD_NEEDED" = "xyes"], [
         [AC_MSG_ERROR([BSD functions not found, libbsd is required])])
 ])
 
+AM_CONDITIONAL(BASH, [test "x$bash_completion_dir" != "xno"])
+AM_CONDITIONAL(ZSH, [test "x$zsh_completion_dir" != "xno"])
+
 AC_SUBST([LIBS], ["$SCROT_DEPS_LIBS $LIBBSD_LIBS $LIBS"])
 AC_SUBST([CPPFLAGS], ["$SCROT_DEPS_CFLAGS $LIBBSD_CFLAGS $CPPFLAGS"])
+
+AC_SUBST([bash_completion_dir])
+AC_SUBST([zsh_completion_dir])
 
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_OUTPUT

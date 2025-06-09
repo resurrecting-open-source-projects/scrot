@@ -42,6 +42,16 @@ EXTRA_DIST = $(man_MANS) autogen.sh deps.pc etc
 
 SUBDIRS = src
 
+if BASH
+bashcompletiondir = @bash_completion_dir@
+bashcompletion_DATA = etc/bash-completion/scrot
+endif
+
+if ZSH
+zshcompletiondir = @zsh_completion_dir@
+zshcompletion_DATA = etc/zsh-completion/_scrot
+endif
+
 distclean-local:
 	-rm -rf autom4te.cache/
 
