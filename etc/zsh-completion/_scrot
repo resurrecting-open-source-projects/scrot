@@ -22,9 +22,14 @@ for ln in ${(f)list}; do
         N) ;; # None
     esac
 
+    [[ $lopt == "focussed" ]] && continue
+
     if [[ "${sopt}" = [[:alnum:]]* ]]; then
-        args+=( "-${sopt}${desc}" )
+        args+=( "(-${sopt} --${lopt})-${sopt}${desc}" )
+        args+=( "(-${sopt} --${lopt})--${lopt}${desc}" )
+    else
+        args+=( "--${lopt}${desc}" )
     fi
-    args+=( "--${lopt}${desc}" )
+
 done
 _arguments "${args[@]}"

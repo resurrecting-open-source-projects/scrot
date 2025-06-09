@@ -14,9 +14,9 @@ Look for any bugs reported downstream or in our github issues and fix them:
 ## Shell completion improvements
 
 - Improve the bash completion script. Currently it's quite rudimentary.
-- Filter out mutually exclusive options in zsh completion. E.g if `-b` is
+- ~~Filter out mutually exclusive options in zsh completion. E.g if `-b` is
   already provided then `--border` should no longer be considered a potential
-  match.
+  match.~~
 - Add some way to install zsh/bash completion scripts. Since the directory where
   completion script go into can vary, we want the user to explicitly set the
   installation directory. E.g via the configure script
