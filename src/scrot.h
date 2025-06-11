@@ -47,6 +47,7 @@ struct timespec clockNow(void);
 struct timespec scrotSleepFor(struct timespec, int);
 void scrotDoDelay(void);
 Imlib_Image scrotGrabRectAndPointer(int, int, int, int, bool);
+void scrotGrabMousePointer(Imlib_Image, const int, const int);
 size_t scrotHaveFileExtension(const char *, char **);
 
 #endif /* !defined(H_SCROT) */

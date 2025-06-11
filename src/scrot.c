@@ -88,7 +88,6 @@ static Window scrotFindWindowByProperty(Display *, const Window, const Atom);
 static Imlib_Image stalkImageConcat(Imlib_Image *, size_t, const enum Direction);
 static int findWindowManagerFrame(Window *const, int *const);
 static Imlib_Image scrotGrabWindowById(Window const window);
-static void scrotGrabMousePointer(Imlib_Image, const int, const int);
 
 /* X11 stuff */
 Display *disp;
@@ -525,7 +524,7 @@ Window scrotGetWindow(Display *display, Window window, int x, int y)
     return target;
 }
 
-static void scrotGrabMousePointer(Imlib_Image image, const int xOffset,
+void scrotGrabMousePointer(Imlib_Image image, const int xOffset,
     const int yOffset)
 {
     XFixesCursorImage *xcim = XFixesGetCursorImage(disp);
