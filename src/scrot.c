@@ -43,8 +43,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#define _DEFAULT_SOURCE /* for usleep */
-#define _GNU_SOURCE /* for asprintf */
 #include <sys/stat.h>
 #include <sys/wait.h>
 
@@ -666,8 +664,12 @@ static void scrotCopyToClipboard(const char *filename)
     if (filename[0] != '/') {
         char *cwd = getcwd(NULL, 0);
         if (cwd) {
-            if (asprintf(&fullPath, "%s/%s", cwd, filename) == -1) {
-                warn("Failed to create full path for clipboard");
+            size_t pathLen = strlen(cwd) + 1 + strlen(filename) + 1;
+            fullPath = malloc(pathLen);
+            if (fullPath) {
+                snprintf(fullPath, pathLen, "%s/%s", cwd, filename);
+            } else {
+                warn("Failed to allocate memory for clipboard path");
                 free(cwd);
                 return;
             }
@@ -750,7 +752,7 @@ static void scrotCopyToClipboard(const char *filename)
                 break;
             }
         }
-        usleep(10000); /* Sleep for 10ms */
+        scrotSleepFor(clockNow(), 10); /* Sleep for 10ms */
     }
 
     if (!opt.silent)
