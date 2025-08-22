@@ -43,6 +43,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
+#define _DEFAULT_SOURCE /* for usleep */
+#define _GNU_SOURCE /* for asprintf */
 #include <sys/stat.h>
 #include <sys/wait.h>
 
@@ -58,6 +60,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <Imlib2.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <X11/Xatom.h>
 #include <X11/extensions/Xcomposite.h>
 #include <X11/extensions/Xfixes.h>
 #include <X11/extensions/Xinerama.h>
@@ -82,6 +85,7 @@ static void scrotCheckIfOverwriteFile(char **);
 static void scrotExecApp(Imlib_Image, struct tm *, char *, char *);
 static char *imPrintf(const char *, struct tm *, const char *, const char *,
     Imlib_Image);
+static void scrotCopyToClipboard(const char *);
 static char *scrotGetWindowName(Window);
 static Window scrotGetClientWindow(Display *, Window);
 static Window scrotFindWindowByProperty(Display *, const Window, const Atom);
@@ -214,6 +218,9 @@ int main(int argc, char *argv[])
     }
     if (opt.exec)
         scrotExecApp(image, tm, filenameIM, filenameThumb);
+
+    if (opt.clipboard)
+        scrotCopyToClipboard(filenameIM);
 
     imlib_context_set_image(image);
     imlib_free_image_and_decache();
@@ -642,6 +649,118 @@ static void scrotExecApp(Imlib_Image image, struct tm *tm, char *filenameIM,
     else if (!WIFEXITED(ret) || WEXITSTATUS(ret) != 0)
         exit(69 /* EX_UNAVAILABLE */ );
     free(execStr);
+}
+
+static void scrotCopyToClipboard(const char *filename)
+{
+    Atom clipboardAtom, targetsAtom, textAtom, utf8Atom;
+    Window clipboardOwner;
+    XEvent event;
+    int maxWait = 50; /* Wait up to 500ms for clipboard operations */
+    char *fullPath = NULL;
+
+    if (filename == NULL)
+        return;
+
+    /* Convert relative path to absolute path */
+    if (filename[0] != '/') {
+        char *cwd = getcwd(NULL, 0);
+        if (cwd) {
+            if (asprintf(&fullPath, "%s/%s", cwd, filename) == -1) {
+                warn("Failed to create full path for clipboard");
+                free(cwd);
+                return;
+            }
+            free(cwd);
+        } else {
+            warn("Failed to get current directory for clipboard");
+            return;
+        }
+    } else {
+        fullPath = strdup(filename);
+        if (!fullPath) {
+            warn("Failed to allocate memory for clipboard path");
+            return;
+        }
+    }
+
+    const char *clipboardText = fullPath;
+
+    /* Get necessary atoms */
+    clipboardAtom = XInternAtom(disp, "CLIPBOARD", False);
+    targetsAtom = XInternAtom(disp, "TARGETS", False);
+    textAtom = XInternAtom(disp, "TEXT", False);
+    utf8Atom = XInternAtom(disp, "UTF8_STRING", False);
+
+    /* Create a window to own the clipboard */
+    clipboardOwner = XCreateSimpleWindow(disp, root, -10, -10, 1, 1, 0, 0, 0);
+
+    /* Set the clipboard data as a property on our window */
+    XChangeProperty(disp, clipboardOwner, clipboardAtom, utf8Atom, 8,
+                    PropModeReplace, (unsigned char *)clipboardText, strlen(clipboardText));
+
+    /* Claim ownership of the clipboard */
+    XSetSelectionOwner(disp, clipboardAtom, clipboardOwner, CurrentTime);
+
+    /* Check if we successfully got ownership */
+    if (XGetSelectionOwner(disp, clipboardAtom) != clipboardOwner) {
+        warnx("Failed to acquire clipboard ownership");
+        XDestroyWindow(disp, clipboardOwner);
+        free(fullPath);
+        return;
+    }
+
+    /* Process clipboard requests for a short time to ensure the data is available */
+    XFlush(disp);
+
+    while (maxWait-- > 0) {
+        if (XPending(disp)) {
+            XNextEvent(disp, &event);
+
+            if (event.type == SelectionRequest) {
+                XSelectionRequestEvent *req = &event.xselectionrequest;
+                XSelectionEvent response;
+
+                response.type = SelectionNotify;
+                response.requestor = req->requestor;
+                response.selection = req->selection;
+                response.target = req->target;
+                response.time = req->time;
+                response.property = None;
+
+                if (req->target == targetsAtom) {
+                    /* Respond with supported targets */
+                    Atom targets[] = { utf8Atom, textAtom, XA_STRING };
+                    XChangeProperty(disp, req->requestor, req->property,
+                                    XA_ATOM, 32, PropModeReplace,
+                                    (unsigned char *)targets, 3);
+                    response.property = req->property;
+                } else if (req->target == utf8Atom || req->target == textAtom ||
+                           req->target == XA_STRING) {
+                    /* Provide the filename text */
+                    XChangeProperty(disp, req->requestor, req->property,
+                                    req->target, 8, PropModeReplace,
+                                    (unsigned char *)clipboardText, strlen(clipboardText));
+                    response.property = req->property;
+                }
+
+                XSendEvent(disp, req->requestor, False, 0, (XEvent *)&response);
+            } else if (event.type == SelectionClear) {
+                /* Lost clipboard ownership */
+                break;
+            }
+        }
+        usleep(10000); /* Sleep for 10ms */
+    }
+
+    if (!opt.silent)
+        fprintf(stderr, "Filename copied to clipboard: %s\n", clipboardText);
+
+    free(fullPath);
+
+    /* Note: We're intentionally not destroying the window here
+     * as it needs to persist to serve clipboard requests.
+     * It will be cleaned up when the program exits. */
 }
 
 static char *imPrintf(const char *str, struct tm *tm, const char *filenameIM,

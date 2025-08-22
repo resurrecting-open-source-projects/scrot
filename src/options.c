@@ -81,7 +81,7 @@ enum { /* long opt only */
     OPT_FORMAT = UCHAR_MAX + 1,
     OPT_LIST_OPTS,
 };
-static const char stropts[] = "a:bC:cD:d:e:F:fhik::l:M:mn:opq:S:s::t:uvw:Z:z";
+static const char stropts[] = "a:bC:cD:d:e:F:fhik::l:M:mn:opq:S:s::t:uvw:xZ:z";
 // NOTE: make sure lopts and opt_description indexes are kept in sync
 static const struct option lopts[] = {
     {"autoselect",      required_argument,  NULL,   'a'},
@@ -111,6 +111,7 @@ static const struct option lopts[] = {
     {"focussed",        no_argument,        NULL,   'u'},
     {"version",         no_argument,        NULL,   'v'},
     {"window",          required_argument,  NULL,   'w'},
+    {"clipboard",       no_argument,        NULL,   'x'},
     {"compression",     required_argument,  NULL,   'Z'},
     {"silent",          no_argument,        NULL,   'z'},
     {"format",          required_argument,  NULL, OPT_FORMAT},
@@ -147,6 +148,7 @@ static const struct option_desc {
     /* u */  { "capture the currently focused window", "" },
     /* v */  { "output version and exit", "" },
     /* w */  { "X window ID to capture", "WID" },
+    /* x */  { "copy the output filename to the clipboard", "" },
     /* Z */  { "image compression level", "LVL" },
     /* z */  { "prevent beeping", "" },
     /* OPT_FORMAT */     { "specify output file format", "FMT" },
@@ -490,6 +492,9 @@ void optionsParse(int argc, char *argv[])
                 errx(EXIT_FAILURE, "option --window: '%s' is %s", optarg,
                     errmsg);
             }
+            break;
+        case 'x':
+            opt.clipboard = true;
             break;
         case 'Z':
             opt.compression = optionsParseNum(optarg, 0, 9, &errmsg);
