@@ -2,7 +2,7 @@ NAME
   scrot - command line screen capture utility
 
 SYNOPSIS
-  scrot [-bcfhimopuvz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY] [-d SEC] [-e CMD]
+  scrot [-bcfhimopuvxz] [-a X,Y,W,H] [-C NAME] [-D DISPLAY] [-d SEC] [-e CMD]
         [-k OPT] [-l STYLE] [-M NUM] [-n OPTS] [-q NUM] [-s OPTS] [-t % | WxH]
         [-w NUM] [[-F] FILE]
 
@@ -73,6 +73,7 @@ OPTIONS
   -v, --version             Output version information and exit.
   -w, --window WID          Window identifier to capture.
                             WID must be a valid identifier (see xwininfo(1)).
+  -x, --clipboard           Copy the output filename to the clipboard.
   -Z, --compression LVL     Compression level to use, LVL must be within
                             [0, 9]. Higher level compression provides lower file
                             size at the cost of slower encoding/saving speed.
