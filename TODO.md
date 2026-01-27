@@ -11,6 +11,16 @@ Look for any bugs reported downstream or in our github issues and fix them:
 - <https://bugzilla.redhat.com/buglist.cgi?bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&component=scrot&product=Fedora>
 - <https://bugs.gentoo.org/buglist.cgi?quicksearch=scrot>
 
+Github issues can be filtered via tags to find specific areas that are
+interesting to you. Some notable tags are:
+
+- [Enhancement](https://github.com/resurrecting-open-source-projects/scrot/issues?q=is%3Aissue%20state%3Aopen%20label%3Aenhancement):
+  New feature request or enhancing an existing feature.
+- [Help Wanted](https://github.com/resurrecting-open-source-projects/scrot/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22help%20wanted%22):
+  Difficult issues where we require help.
+- [Code quality](https://github.com/resurrecting-open-source-projects/scrot/issues?q=is%3Aissue%20state%3Aopen%20label%3Acode-quality):
+  Issues to improve the reliability or robustness of scort.
+
 ## Misc TODOs
 
 - [ ] Improve the bash completion script. Currently it's quite rudimentary.
