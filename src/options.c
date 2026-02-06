@@ -599,7 +599,6 @@ void optionsParseAutoselect(char *optarg)
     int *dimensions[] = {&opt.autoselectX, &opt.autoselectY, &opt.autoselectW,
         &opt.autoselectH, NULL /* Sentinel. */};
     int i = 0;
-    int min;
     const char *errmsg;
 
     /* Geometry dimensions must be in format x,y,w,h */
@@ -608,7 +607,7 @@ void optionsParseAutoselect(char *optarg)
         if (dimensions[i] == NULL)
             errx(EXIT_FAILURE, "option --autoselect: too many dimensions");
 
-        min = i >= 2; /* X,Y offsets may be 0. Width and height may not. */
+        int min = i >= 2; /* X,Y offsets may be 0. Width and height may not. */
         *dimensions[i] = optionsParseNum(token, min, INT_MAX, &errmsg);
         if (errmsg) {
             errx(EXIT_FAILURE, "option --autoselect: '%s' is %s", token,

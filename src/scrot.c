@@ -485,16 +485,15 @@ int scrotGetGeometry(Window target, int *rx, int *ry, int *rw, int *rh)
 Window scrotGetWindow(Display *display, Window window, int x, int y)
 {
     Window source, target;
-
-    int status, xOffset, yOffset;
+    int xOffset, yOffset;
 
     source = root;
     target = window;
     if (window == None)
         window = root;
     while (1) {
-        status = XTranslateCoordinates(display, source, window, x, y, &xOffset,
-            &yOffset, &target);
+        int status = XTranslateCoordinates(display, source, window, x, y,
+            &xOffset, &yOffset, &target);
         if (!status)
             break;
         if (target == None)
