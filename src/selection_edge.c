@@ -3,7 +3,7 @@
 Copyright 2020-2021 Daniel T. Borelli <danieltborelli@gmail.com>
 Copyright 2021-2023 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
-Copyright 2023-2025 NRK <nrk@disroot.org>
+Copyright 2023-2026 NRK <nrk@disroot.org>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -38,7 +38,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <X11/Xatom.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-#include <X11/extensions/shape.h>
 
 #include "options.h"
 #include "scrot.h"
@@ -55,26 +54,28 @@ void selectionEdgeCreate(void)
     XSetWindowAttributes attr;
     attr.background_pixel = color.pixel;
     attr.override_redirect = True;
+    Atom winType = XInternAtom(disp, "_NET_WM_WINDOW_TYPE", False);
+    Atom winDock = XInternAtom(disp, "_NET_WM_WINDOW_TYPE_DOCK", False);
+    Atom winOpacity = XInternAtom(disp, "_NET_WM_WINDOW_OPACITY", False);
 
-    pe->wndDraw = XCreateWindow(disp, root, 0, 0, WidthOfScreen(scr),
-        HeightOfScreen(scr), 0, CopyFromParent, InputOutput, CopyFromParent,
-        CWOverrideRedirect | CWBackPixel, &attr);
+    for (size_t i = 0; i < ARRAY_COUNT(pe->windows); ++i) {
+        pe->windows[i] = XCreateWindow(disp, root,
+            0, 0, WidthOfScreen(scr), HeightOfScreen(scr), 0,
+            CopyFromParent, InputOutput, CopyFromParent,
+            CWOverrideRedirect | CWBackPixel, &attr);
+
+        XChangeProperty(disp, pe->windows[i], winType, XA_ATOM, 32,
+            PropModeReplace, (unsigned char *)&winDock, 1L);
+
+        unsigned long opacity = opt.lineOpacity * (0xFFFFFFFFu / 255);
+        XChangeProperty(disp, pe->windows[i], winOpacity, XA_CARDINAL, 32,
+            PropModeReplace, (unsigned char *)&opacity, 1L);
+
+        XClassHint hint = { .res_name = "scrot", .res_class = "scrot" };
+        XSetClassHint(disp, pe->windows[i], &hint);
+    }
     pe->isMapped = false;
 
-    unsigned long opacity = opt.lineOpacity * (0xFFFFFFFFu / 255);
-
-    XChangeProperty(disp, pe->wndDraw,
-        XInternAtom(disp, "_NET_WM_WINDOW_OPACITY", False), XA_CARDINAL, 32,
-        PropModeReplace, (unsigned char *) &opacity, 1L);
-
-    XChangeProperty(disp, pe->wndDraw,
-        XInternAtom(disp, "_NET_WM_WINDOW_TYPE", False), XA_ATOM, 32,
-        PropModeReplace,
-        (unsigned char *) &(Atom) { XInternAtom(disp, "_NET_WM_WINDOW_TYPE_DOCK", False) },
-        1L);
-
-    XClassHint hint = { .res_name = "scrot", .res_class = "scrot" };
-    XSetClassHint(disp, pe->wndDraw, &hint);
 }
 
 void selectionEdgeDraw(void)
@@ -83,18 +84,22 @@ void selectionEdgeDraw(void)
     struct SelectionEdge *const pe = &sel->edge;
 
     XRectangle rects[4] = {
-        { sel->rect.x, sel->rect.y, opt.lineWidth, sel->rect.h }, // left
+        { sel->rect.x, sel->rect.y + opt.lineWidth,
+            opt.lineWidth, sel->rect.h - opt.lineWidth }, // left
         { sel->rect.x, sel->rect.y, sel->rect.w, opt.lineWidth }, // top
-        // right
-        { sel->rect.x + sel->rect.w, sel->rect.y, opt.lineWidth, sel->rect.h },
-        // bottom
+        { sel->rect.x + sel->rect.w, sel->rect.y, opt.lineWidth, sel->rect.h }, // right
         { sel->rect.x, sel->rect.y + sel->rect.h, sel->rect.w + opt.lineWidth,
-            opt.lineWidth }
+            opt.lineWidth } // bottom
     };
 
-    XShapeCombineRectangles(disp, pe->wndDraw, ShapeBounding, 0, 0, rects, 4,
-        ShapeSet, 0);
-    XMapWindow(disp, pe->wndDraw);
+    if (sel->rect.w == 0 || sel->rect.h == 0)
+        return;
+
+    for (size_t i = 0; i < ARRAY_COUNT(pe->windows); ++i) {
+        XRectangle *rp = rects + i;
+        XMoveResizeWindow(disp, pe->windows[i], rp->x, rp->y, rp->width, rp->height);
+        XMapWindow(disp, pe->windows[i]);
+    }
     pe->isMapped = true;
 }
 
@@ -116,15 +121,17 @@ void selectionEdgeDestroy(void)
 {
     const struct SelectionEdge *pe = &selection.edge;
 
-    if (pe->wndDraw != None) {
-        XSelectInput(disp, pe->wndDraw, StructureNotifyMask);
-        XDestroyWindow(disp, pe->wndDraw);
+    for (size_t i = 0; i < ARRAY_COUNT(pe->windows); ++i) {
+        if (pe->windows[i] == None)
+            continue;
+        XSelectInput(disp, pe->windows[i], StructureNotifyMask);
+        XDestroyWindow(disp, pe->windows[i]);
         bool isUnmapped = !pe->isMapped, isDestroyed = false;
         for (XEvent ev; !(isUnmapped && isDestroyed);) {
             XNextEvent(disp, &ev);
-            if (ev.type == DestroyNotify && ev.xdestroywindow.window == pe->wndDraw)
+            if (ev.type == DestroyNotify && ev.xdestroywindow.window == pe->windows[i])
                 isDestroyed = true;
-            if (ev.type == UnmapNotify && ev.xunmap.window == pe->wndDraw)
+            if (ev.type == UnmapNotify && ev.xunmap.window == pe->windows[i])
                 isUnmapped = true;
         }
     }

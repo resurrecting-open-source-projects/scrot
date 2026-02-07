@@ -64,7 +64,6 @@ scrot requires a few projects and libraries:
 - [libbsd](https://libbsd.freedesktop.org/wiki/) (only needed if `<err.h>` is missing)
 - An X11 implementation [(e.g. X.Org)](https://www.x.org/wiki/)
 - libXcomposite [(can be found in X.Org)](https://gitlab.freedesktop.org/xorg/lib/libxcomposite)
-- libXext [(can be found in X.Org)](https://gitlab.freedesktop.org/xorg/lib/libxext)
 - libXfixes [(can be found in X.Org)](https://gitlab.freedesktop.org/xorg/lib/libxfixes)
 - libXrandr [(can be found in X.Org)](https://gitlab.freedesktop.org/xorg/lib/libxrandr)
 
