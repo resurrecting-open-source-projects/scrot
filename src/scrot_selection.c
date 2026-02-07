@@ -405,16 +405,8 @@ Imlib_Image scrotSelectionSelectMode(void)
     opt.selection.mode = SELECTION_MODE_CAPTURE;
 
     if (opt.lineMode == LINE_MODE_AUTO) {
-        char buf[128];
-        snprintf(buf, sizeof(buf), "_NET_WM_CM_S%d", DefaultScreen(disp));
-        Atom cm = XInternAtom(disp, buf, False);
-        /* edge mode has some issues with compositor.
-         * also doesn't work well in combination with --freeze.
-         */
-        if (XGetSelectionOwner(disp, cm) == None && !opt.freeze)
-            opt.lineMode = LINE_MODE_EDGE;
-        else
-            opt.lineMode = LINE_MODE_CLASSIC;
+        /* edge mode doesn't work well in combination with --freeze. */
+        opt.lineMode = opt.freeze ? LINE_MODE_CLASSIC : LINE_MODE_EDGE;
     }
 
     if (opt.lineWidth == 0) {
