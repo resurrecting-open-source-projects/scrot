@@ -51,8 +51,8 @@ task:
       - CC: clang
       - CC: gcc
   install_script:
-    - apk add build-base autoconf autoconf-archive automake gzip pkgconfig $CC
-              xorg-server-dev libxcomposite-dev libxext-dev libxfixes-dev
+    - apk add build-base autoconf autoconf-archive automake tar gzip pkgconfig
+              $CC xorg-server-dev libxcomposite-dev libxext-dev libxfixes-dev
               libxrandr-dev imlib2-dev
   << : *common_script
 
@@ -72,7 +72,8 @@ task:
     matrix:
       - CC: clang
       - CC: gcc
-      - CC: tcc
+      # TODO: compile tcc ourselves if debian repos don't support it
+      # - CC: tcc
   install_script:
     - apt-get update
     - apt-get install -y autoconf autoconf-archive make pkg-config $CC
