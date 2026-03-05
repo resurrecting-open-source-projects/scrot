@@ -113,7 +113,6 @@ $ ./autogen.sh clean
 ```
 
 Bash and Zsh completion scripts are available in [etc/](./etc).
-Distro packagers are encouraged to install them to the appropriate directory.
 
 ## Author ##
 
