@@ -1,3 +1,28 @@
+DRAFT
+Version 2.0.0
+
+ [ NRK ] alias @N-R-K
+
+ * Fixes: `--line mode=edge` glitches under compositors (#423).
+ * Fixes: Selection border getting into the screenshot with `--freeze` (#409).
+ * Fixes: Ringing the bell after taking screenshot (#413).
+ * Improvement: Use Xrandr instead of Xinerama for monitor capture (#406).
+ * Improvement: Default line width is derived from the display DPI (#420).
+ * Document: Correct description of $f and $m format specifier (#419).
+ * Removed: `--note` and `--script` options (#420).
+ * Document: Minimum required version for the required libraries (#420).
+ * Upgrade: Upgrade minimum requiring Imlib2 version to 1.11.0 (#420).
+
+ [ Ratiq Narwal ] alias @DogeTheBeast
+
+ * Fixes: Mutually exclusive zsh completion (#415).
+ * Improvement: Install zsh and bash completion by default (#415).
+
+ [ Matt Stevens ] alias @Matt-Deacalion
+
+ * Document: Correct image magick example (#414).
+
+
 Wed Apr 02 12:25:52 -03:00 2025  Joao Eriberto Mota Filho <eriberto@eriberto.pro.br>
 Version 1.12.1
 
