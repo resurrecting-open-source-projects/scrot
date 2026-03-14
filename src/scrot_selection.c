@@ -5,7 +5,7 @@ Copyright 2021-2023 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      Martin C <martincation@protonmail.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 Copyright 2021      Wilson Smith <01wsmith+gh@gmail.com>
-Copyright 2022-2025 NRK <nrk@disroot.org>
+Copyright 2022-2026 NRK <nrk@disroot.org>
 Copyright 2024      7xnl <7xnl@proton.me>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
