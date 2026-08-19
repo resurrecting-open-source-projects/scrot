@@ -206,6 +206,7 @@ static bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
     enum { WAIT, DONE, ABORT } done = WAIT;
     int rx = 0, ry = 0, rw = 0, rh = 0;
     bool isButtonPressed = false;
+    bool isStartSelectionKeyPressed = false;
     unsigned int buttonId = -1;
     Window target = None;
     Status ret;
@@ -253,44 +254,72 @@ static bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
         {
             KeySym *keysym = NULL;
             int keycode; /*dummy*/
+			      struct Point p = { ev.xkey.x, ev.xkey.y };
+			      int delta = (ev.xkey.state & ControlMask) ? 1 :
+			            ((ev.xkey.state & ShiftMask) ? 128 : 16);
 
             keysym = XGetKeyboardMapping(disp, ev.xkey.keycode, 1, &keycode);
 
             if (!keysym)
                 break;
 
-            if (!isButtonPressed) {
-            key_abort_shot:
-                if (!opt.ignoreKeyboard || *keysym == XK_Escape) {
-                    warnx("Key was pressed, aborting shot");
-                    done = ABORT;
-                }
+            if (!opt.ignoreKeyboard) {
+                warnx("Key was pressed, aborting shot");
+                done = ABORT;
                 XFree(keysym);
                 break;
             }
 
             switch (*keysym) {
+            case XK_l:
             case XK_Right:
-                if (++rx > scr->width)
-                    rx = scr->width;
+                if ((p.x += delta) > scr->width)
+                    p.x = scr->width;
                 break;
+            case XK_h:
             case XK_Left:
-                if (--rx < 0)
-                    rx = 0;
+                if ((p.x -= delta) < 0)
+                    p.x = 0;
                 break;
+            case XK_j:
             case XK_Down:
-                if (++ry > scr->height)
-                    ry = scr->height;
+                if ((p.y += delta) > scr->height)
+                    p.y = scr->height;
                 break;
+            case XK_k:
             case XK_Up:
-                if (--ry < 0)
-                    ry = 0;
+                if ((p.y -= delta) < 0)
+                    p.y = 0;
+                break;
+            case XK_q:
+            case XK_Escape:
+                done = ABORT;
+                break;
+            case XK_space:
+                target = scrotGetWindow(disp, ev.xbutton.subwindow, ev.xbutton.x, ev.xbutton.y);
+                if (target == None)
+                    target = root;
+                if (!isStartSelectionKeyPressed) {
+                    isStartSelectionKeyPressed = true;
+                    rx = p.x; ry = p.y;
+                }
+                else {
+                    done = DONE;
+                }
+
                 break;
             default:
-                goto key_abort_shot;
+                break;
             }
             XFree(keysym);
-            scrotSelectionMotionDraw(rx, ry, ev.xkey.x, ev.xkey.y);
+
+            if (p.x != ev.xkey.x_root || p.y != ev.xkey.y_root) {
+                XWarpPointer(disp, None, root, 0, 0, 0, 0, p.x, p.y);
+            }
+
+            if (isStartSelectionKeyPressed && (rx != p.x || ry != p.y)) {
+                scrotSelectionMotionDraw(rx, ry, p.x, p.y);
+            }
             break;
         }
         case DestroyNotify:
