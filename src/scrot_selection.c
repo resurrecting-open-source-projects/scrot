@@ -7,6 +7,7 @@ Copyright 2021      Peter Wu <peterwu@hotmail.com>
 Copyright 2021      Wilson Smith <01wsmith+gh@gmail.com>
 Copyright 2022-2026 NRK <nrk@disroot.org>
 Copyright 2024      7xnl <7xnl@proton.me>
+Copyright 2026      Henry Wandover <henrywandover@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
@@ -139,7 +140,7 @@ static void scrotSelectionCreate(void)
 
     sel->create();
 
-    unsigned int const EVENT_MASK = ButtonMotionMask | ButtonPressMask | ButtonReleaseMask;
+    unsigned int const EVENT_MASK = PointerMotionMask | ButtonMotionMask | ButtonPressMask | ButtonReleaseMask;
 
     int ret;
     struct timespec t = clockNow();
@@ -172,7 +173,7 @@ static void scrotSelectionDestroy(void)
 static void scrotSelectionMotionDraw(int x0, int y0, int x1, int y1)
 {
     const struct Selection *const sel = &selection;
-    const unsigned int EVENT_MASK = ButtonMotionMask | ButtonPressMask | ButtonReleaseMask;
+    const unsigned int EVENT_MASK = PointerMotionMask | ButtonMotionMask | ButtonPressMask | ButtonReleaseMask;
     Cursor cursor = None;
 
     if (x1 > x0 && y1 > y0)
@@ -206,6 +207,7 @@ static bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
     enum { WAIT, DONE, ABORT } done = WAIT;
     int rx = 0, ry = 0, rw = 0, rh = 0;
     bool isButtonPressed = false;
+    bool isStartSelectionKeyPressed = false;
     unsigned int buttonId = -1;
     Window target = None;
     Status ret;
@@ -228,11 +230,11 @@ static bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
         XNextEvent(disp, &ev);
         switch (ev.type) {
         case MotionNotify:
-            if (isButtonPressed)
+            if (isButtonPressed || isStartSelectionKeyPressed)
                 scrotSelectionMotionDraw(rx, ry, ev.xmotion.x, ev.xmotion.y);
             break;
         case ButtonPress:
-            if (!isButtonPressed) {
+            if (!isButtonPressed && !isStartSelectionKeyPressed) {
                 isButtonPressed = true;
                 buttonId = ev.xbutton.button;
                 rx = ev.xbutton.x;
@@ -241,8 +243,7 @@ static bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
                 if (target == None)
                     target = root;
             } else {
-                warnx("Alternate button pressed, aborting shot");
-                done = ABORT;
+                done = DONE;
             }
             break;
         case ButtonRelease:
@@ -253,44 +254,111 @@ static bool scrotSelectionGetUserSel(struct SelectionRect *selectionRect)
         {
             KeySym *keysym = NULL;
             int keycode; /*dummy*/
+            struct Point p = { ev.xkey.x, ev.xkey.y };
+            struct Point r = { rx, ry };
+            int delta = 1;
+
+            if (opt.useKeyboard && !(ev.xkey.state & ControlMask))
+                delta = (ev.xkey.state & ShiftMask) ? 128 : 16;
+
+            if (opt.ignoreKeyboard)
+                break;
 
             keysym = XGetKeyboardMapping(disp, ev.xkey.keycode, 1, &keycode);
-
             if (!keysym)
                 break;
 
-            if (!isButtonPressed) {
-            key_abort_shot:
-                if (!opt.ignoreKeyboard || *keysym == XK_Escape) {
-                    warnx("Key was pressed, aborting shot");
-                    done = ABORT;
+            switch (*keysym) {
+            case XK_l:
+            case XK_Right:
+                if ((p.x += delta) > scr->width)
+                    p.x = scr->width;
+                if ((r.x += delta) > scr->width)
+                    r.x = scr->width;
+                break;
+            case XK_h:
+            case XK_Left:
+                if ((p.x -= delta) < 0)
+                    p.x = 0;
+                if ((r.x -= delta) < 0)
+                    r.x = 0;
+                break;
+            case XK_j:
+            case XK_Down:
+                if ((p.y += delta) > scr->height)
+                    p.y = scr->height;
+                if ((r.y += delta) > scr->height)
+                    r.y = scr->height;
+                break;
+            case XK_k:
+            case XK_Up:
+                if ((p.y -= delta) < 0)
+                    p.y = 0;
+                if ((r.y -= delta) < 0)
+                    r.y = 0;
+                break;
+            case XK_q:
+            case XK_Escape:
+                done = ABORT;
+                break;
+            case XK_space:
+                if (opt.useKeyboard) {
+                    target = scrotGetWindow(disp, ev.xbutton.subwindow,
+                        ev.xbutton.x, ev.xbutton.y);
+                    if (target == None)
+                        target = root;
+
+                    if (!isStartSelectionKeyPressed && !isButtonPressed) {
+                        isStartSelectionKeyPressed = true;
+                        rx = p.x; ry = p.y;
+                    } else {
+                        done = DONE;
+                    }
+                    break;
                 }
-                XFree(keysym);
+                done = ABORT;
+                break;
+            case XK_Control_L:
+            case XK_Control_R:
+            case XK_Shift_L:
+            case XK_Shift_R:
+                if (isButtonPressed)
+                    break;
+                // fallthrough
+            default:
+                if (!opt.useKeyboard)
+                    done = ABORT;
                 break;
             }
 
-            switch (*keysym) {
-            case XK_Right:
-                if (++rx > scr->width)
-                    rx = scr->width;
-                break;
-            case XK_Left:
-                if (--rx < 0)
-                    rx = 0;
-                break;
-            case XK_Down:
-                if (++ry > scr->height)
-                    ry = scr->height;
-                break;
-            case XK_Up:
-                if (--ry < 0)
-                    ry = 0;
-                break;
-            default:
-                goto key_abort_shot;
+            if (done == WAIT) {
+                if (opt.useKeyboard) {
+                    if ((isStartSelectionKeyPressed || isButtonPressed) &&
+                        ev.xkey.state & Mod1Mask)
+                    {
+                        rx = r.x; ry = r.y;
+                        scrotSelectionMotionDraw(rx, ry,
+                            ev.xkey.x_root, ev.xkey.y_root);
+                    } else {
+                        if (p.x != ev.xkey.x_root || p.y != ev.xkey.y_root)
+                            XWarpPointer(disp, None, root, 0, 0, 0, 0, p.x, p.y);
+                        if (isStartSelectionKeyPressed && (rx != p.x || ry != p.y))
+                            scrotSelectionMotionDraw(rx, ry, p.x, p.y);
+                    }
+                } else {
+                    if (isButtonPressed) {
+                        rx = r.x; ry = r.y;
+                        scrotSelectionMotionDraw(rx, ry, ev.xkey.x, ev.xkey.y);
+                    } else {
+                        done = ABORT;
+                    }
+                }
             }
+
+            if (done == ABORT)
+                warnx("Key was pressed, aborting shot");
+
             XFree(keysym);
-            scrotSelectionMotionDraw(rx, ry, ev.xkey.x, ev.xkey.y);
             break;
         }
         case DestroyNotify:

@@ -41,6 +41,8 @@ OPTIONS
   -f, --freeze              Freeze the screen when -s is used.
   -h, --help                Display help and exit.
   -i, --ignorekeyboard      Don't exit for keyboard input. ESC still exits.
+  -K, --keyboard            Enables the use of selection via keyboard.
+                            See KEYBOARD CONTROLS section for more details.
   -k, --stack[=OPT]         Capture stack/overlapped windows and join them. A
                             running Composite Manager is needed for it to work
                             correctly. OPT is optional join letter: v/h
@@ -190,6 +192,15 @@ For lossless formats (e.g PNG), the quality options is ignored. For lossy
 formats where the quality and compression are tied together (e.g JPEG),
 compression will be ignored. And for image formats where quality and
 compression can be independently set (e.g WebP, JXL), both flags are respected.
+
+KEYBOARD CONTROLS
+
+Enabling keyboard selection allows making the selection purely via keyboard.
+Both Arrow keys and vim style HJKL are valid for navigation. Escape exits
+without taking a screenshot. Space will start the rectangle select mode and an
+additional press of Space will finalize the selection. Holding Control during
+navigation will slow it down to 1px per keypress, Shift speeds it up. Holding
+Alt while navigating allows readjusting the starting selection point.
 
 EXAMPLES
 

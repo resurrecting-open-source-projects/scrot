@@ -21,6 +21,7 @@ Copyright 2021      IFo Hancroft <contact@ifohancroft.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 Copyright 2022-2026 NRK <nrk@disroot.org>
 Copyright 2022      Zev Weiss <zev@bewilderbeest.net>
+Copyright 2026      Henry Wandover <henrywandover@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
