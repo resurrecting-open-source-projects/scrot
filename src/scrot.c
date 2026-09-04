@@ -107,9 +107,14 @@ int main(int argc, char *argv[])
     /* Get the time ASAP to reduce the timing error in case --delay is used. */
     opt.delayStart = clockNow();
 
-    atexit(uninitXAndImlib);
-
     optionsParse(argc, argv);
+
+    if (opt.ignoreKeyboard && opt.useKeyboard) {
+      fprintf(stderr, "scrot: can not read input from keyboard if also set to be ignored\n");
+      return 1;
+    }
+
+    atexit(uninitXAndImlib);
 
     initXAndImlib(opt.display, 0);
 
