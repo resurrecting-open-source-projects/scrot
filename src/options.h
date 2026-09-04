@@ -98,6 +98,7 @@ struct ScrotOptions {
     bool overwrite;
     bool freeze;
     bool ignoreKeyboard;
+    bool useKeyboard;
 };
 
 extern struct ScrotOptions opt;

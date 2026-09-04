@@ -79,7 +79,7 @@ enum { /* long opt only */
     OPT_FORMAT = UCHAR_MAX + 1,
     OPT_LIST_OPTS,
 };
-static const char stropts[] = "a:bC:cD:d:e:F:fhik::l:M:mopq:s::t:uvw:Z:z";
+static const char stropts[] = "a:bC:cD:d:e:F:fhiKk::l:M:mopq:s::t:uvw:Z:z";
 // NOTE: make sure lopts and opt_description indexes are kept in sync
 static const struct option lopts[] = {
     {"autoselect",      required_argument,  NULL,   'a'},
@@ -93,6 +93,7 @@ static const struct option lopts[] = {
     {"freeze",          no_argument,        NULL,   'f'},
     {"help",            no_argument,        NULL,   'h'},
     {"ignorekeyboard",  no_argument,        NULL,   'i'},
+    {"usekeyboard",     no_argument,        NULL,   'K'},
     {"stack",           optional_argument,  NULL,   'k'},
     {"line",            required_argument,  NULL,   'l'},
     {"monitor",         required_argument,  NULL,   'M'},
@@ -128,6 +129,7 @@ static const struct option_desc {
     /* f */  { "freeze the screen when -s is used", "" },
     /* h */  { "display help and exit", "" },
     /* i */  { "ignore keyboard", "" },
+    /* K */  { "enable keyboard control", "" },
     /* k */  { "capture overlapped window and join them", "v|h" },
     /* l */  { "specify the style of the selection line", "STYLE" },
     /* M */  { "capture monitor", "NUM" },
@@ -411,6 +413,9 @@ void optionsParse(int argc, char *argv[])
             break;
         case 'i':
             opt.ignoreKeyboard = true;
+            break;
+        case 'K':
+            opt.useKeyboard = true;
             break;
         case 'k':
             opt.mode = MODE_STACK;
