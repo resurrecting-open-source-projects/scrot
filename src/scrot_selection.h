@@ -5,6 +5,7 @@ Copyright 2021-2023 Guilherme Janczak <guilherme.janczak@yandex.com>
 Copyright 2021      Martin C <martincation@protonmail.com>
 Copyright 2021      Peter Wu <peterwu@hotmail.com>
 Copyright 2023-2026 NRK <nrk@disroot.org>
+Copyright 2026      Henry Wandover <henrywandover@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to
